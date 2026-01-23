@@ -43,6 +43,7 @@
         <Button Content="ReorderContourPoints" Command="{Binding ReorderContourPointsCommand}" />
         <Button Content="ShowContourOrder" Command="{Binding ShowContourOrderCommand}" />
         <Button Content="CopyWithDirection" Command="{Binding CopyWithDirectionCommand}" />
+        <Button Content="LocateToPrecisePosition" Command="{Binding LocateToPrecisePositionCommand}" />
 
     </StackPanel>
 </Page>

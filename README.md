@@ -89,6 +89,12 @@
 
 ![CopyWithDirection](Resources/Introduction_CopyWithDirection.gif)
 
+## LocateToPrecisePosition (重定位到精确的位置)
+
+建模过程中，柱梁有时会有一些微小的偏差（如长度为 5999.99 等），可用此工具修复。特别适用于框架结构。
+
+可先选中柱梁，再执行命令；也可先执行命令再选择柱梁。
+
 ## MoveToElevation (移动到指定标高)
 
 便捷地移动模型对象到指定标高，可指定目标标高是顶标高、中心标高或底标高，还可指定是全局标高或相对标高。

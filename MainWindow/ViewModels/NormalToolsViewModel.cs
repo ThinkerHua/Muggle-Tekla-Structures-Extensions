@@ -218,5 +218,60 @@ namespace Muggle.TeklaPlugins.MainWindow.ViewModels {
                 model.CommitChanges();
             }
         }
+
+        [RelayCommand]
+        private void LocateToPrecisePosition() {
+            //  微小的位移会被忽略，需要先移动较大的距离，再移回去
+            void Move(Point point) {
+                point.X = Math.Round(point.X, 0) + 10;
+                point.Y = Math.Round(point.Y, 0) + 10;
+                point.Z = Math.Round(point.Z, 0) + 10;
+            }
+
+            void MoveBack(Point point) {
+                point.X -= 10;
+                point.Y -= 10;
+                point.Z -= 10;
+            }
+
+
+            ModelObjectEnumerator parts;
+            List<Beam> beams = [];
+            try {
+                if (!model.GetConnectionStatus()) throw new InvalidOperationException(App.NOT_CONNECTED);
+
+                parts = uiSelector.GetSelectedObjects();
+                if (parts == null || parts.GetSize() == 0) {
+                    parts = picker.PickObjects(Picker.PickObjectsEnum.PICK_N_PARTS);
+                    if (parts == null || parts.GetSize() == 0) {
+                        throw new Exception("No parts were selected.");
+                    }
+                }
+
+                foreach (var part in parts) {
+                    if (part is Beam beam) {
+                        Move(beam.StartPoint);
+                        Move(beam.EndPoint);
+                        beam.Modify();
+
+                        beams.Add(beam);
+                    }
+                }
+
+                model.CommitChanges();
+
+                foreach (var beam in beams) {
+                    MoveBack(beam.StartPoint);
+                    MoveBack(beam.EndPoint);
+                    beam.Modify();
+                }
+
+                model.CommitChanges();
+            } catch (Exception e) when (e.Message == "User interrupt") {
+                return;
+            } catch (Exception e) {
+                messageBoxService.ShowError(e.ToString());
+            }
+        }
     }
 }
