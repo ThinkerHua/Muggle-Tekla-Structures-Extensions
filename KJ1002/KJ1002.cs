@@ -126,7 +126,6 @@ namespace Muggle.TeklaPlugins.KJ1002 {
             Model = new Model();
             Data = data;
         }
-
         #endregion
 
         #region Overrides
@@ -259,19 +258,25 @@ namespace Muggle.TeklaPlugins.KJ1002 {
             });
 
             var primSeg = segments.First();
-            var secdSegs = segments.Skip(1);
+            var secdSeg = segments.ElementAt(1);
 
-            var secd_0_midPoint = (secdSegs.First().StartPoint + secdSegs.First().EndPoint).Multiply(0.5);
-            if (Distance.PointToPoint(primSeg.StartPoint, secd_0_midPoint) >
-                Distance.PointToPoint(primSeg.EndPoint, secd_0_midPoint)) {
-                reverse[0] = true;
-            }
+            var d1 = Distance.PointToPoint(primSeg.StartPoint, secdSeg.StartPoint);
+            var d2 = Distance.PointToPoint(primSeg.StartPoint, secdSeg.EndPoint);
+            var d3 = Distance.PointToPoint(primSeg.EndPoint, secdSeg.StartPoint);
+            var d4 = Distance.PointToPoint(primSeg.EndPoint, secdSeg.EndPoint);
 
-            for (int i = 0; i < secdSegs.Count(); i++) {
-                var seg = secdSegs.ElementAt(i);
-                if (Distance.PointToPoint(seg.StartPoint, primSeg.StartPoint) >
-                    Distance.PointToPoint(seg.EndPoint, primSeg.StartPoint)) {
-                    reverse[i + 1] = true;
+            if (Math.Min(d1, d2) > Math.Min(d3, d4)) reverse[0] = true;
+            if (Math.Min(d1, d3) > Math.Min(d2, d4)) reverse[1] = true;
+
+            var basePoint = reverse[0] ? primSeg.EndPoint : primSeg.StartPoint;
+
+            var otherSegs = segments.Skip(2);
+
+            for (int i = 0; i < otherSegs.Count(); i++) {
+                var seg = otherSegs.ElementAt(i);
+                if (Distance.PointToPoint(seg.StartPoint, basePoint) >
+                    Distance.PointToPoint(seg.EndPoint, basePoint)) {
+                    reverse[i] = true;
                 }
             }
 
@@ -287,25 +292,28 @@ namespace Muggle.TeklaPlugins.KJ1002 {
         private void Verify(IEnumerable<Identifier> beamIDs, IEnumerable<bool> reverseDirection) {
             var beams = beamIDs.Select(id => model.SelectModelObject(id) as Beam);
             var centerLines = beams.Zip(reverseDirection, (beam, reverse) => {
-                var line = new Line(beam.StartPoint, beam.EndPoint);
+                var centerLine = beam.GetCenterLine(false).Cast<Point>();
+                var line = new Line(centerLine.First(), centerLine.Last());
                 if (reverse) line.Direction *= -1;
                 return line;
             });
 
+            var primLine = centerLines.First();
+
             //  不能全部平行
             if (centerLines.Skip(1)
-                .All(line => Parallel.VectorToVector(line.Direction, centerLines.First().Direction))) {
+                .All(line => Parallel.VectorToVector(line.Direction, primLine.Direction))) {
                 throw new Exception("Can't apply connection because all beams are parallel.");
             }
 
             //  所有向量必须共面
             var firstNotParallelLineIndex = centerLines.Skip(1)
                 .Select((line, index) => (line, index))
-                .First(item => !Parallel.VectorToVector(item.line.Direction, centerLines.First().Direction))
+                .First(item => !Parallel.VectorToVector(item.line.Direction, primLine.Direction))
                 .index + 1;
             var plane = new GeometricPlane(
                 new Point(),
-                centerLines.First().Direction,
+                primLine.Direction,
                 centerLines.ElementAt(firstNotParallelLineIndex).Direction);
             if (centerLines.Skip(1)
                 .Take(firstNotParallelLineIndex - 1)
@@ -316,7 +324,7 @@ namespace Muggle.TeklaPlugins.KJ1002 {
 
             //  必须交汇于同一点
             var projectionLines =
-                centerLines.Select(line => new Line(Projection.PointToPlane(line.Origin, plane), line.Direction));
+                centerLines.Select(line => Projection.LineToPlane(line, plane));
             var p = IntersectionExtension
                 .LineToLine(projectionLines.First(), projectionLines.ElementAt(firstNotParallelLineIndex)).StartPoint;
             if (projectionLines.Skip(1)

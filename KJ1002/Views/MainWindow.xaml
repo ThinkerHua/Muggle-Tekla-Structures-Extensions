@@ -99,7 +99,7 @@
                             </Image.Clip>
                         </Image>
                         <TextBlock Canvas.Left="197" Canvas.Top="23" Text="L" />
-                        <TextBlock Canvas.Left="245" Canvas.Top="165" Text="P" />
+                        <TextBlock Canvas.Left="245" Canvas.Top="165" Text="B" />
                         <TextBlock Canvas.Left="322" Canvas.Top="97" Text="t1" />
                         <TextBlock Canvas.Left="304" Canvas.Top="112" Text="t2" />
                         <TextBlock Canvas.Left="112" Canvas.Top="230" Text="C" />
@@ -136,7 +136,7 @@
 
                         <TextBlock Grid.Row="1" Grid.Column="0" Text="{tsd:Loc albl_brace_profile}" />
                         <uiCtrls:WpfFilterCheckBox Grid.Row="1" Grid.Column="1" AttributeName="bracePRF" />
-                        <TextBlock Grid.Row="1" Grid.Column="2" HorizontalAlignment="Center" Text="P" />
+                        <TextBlock Grid.Row="1" Grid.Column="2" HorizontalAlignment="Center" Text="B" />
                         <TextBox Grid.Row="1" Grid.Column="3" Text="{Binding BraceProfile, Mode=TwoWay}" />
                         <uiCtrls:WpfProfileCatalog Grid.Row="1" Grid.Column="4" SelectClicked="WpfProfileCatalog_SelectClicked" SelectionDone="WpfProfileCatalog_SelectionDone" />
 
