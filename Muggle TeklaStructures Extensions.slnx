@@ -1,0 +1,15 @@
+<Solution>
+  <Project Path="Common.WPF/Common.WPF.csproj" />
+  <Project Path="Common/Common.csproj" />
+  <Project Path="HJ1001/HJ1001.csproj" />
+  <Project Path="KJ1001/KJ1001.csproj" />
+  <Project Path="KJ1002/KJ1002.csproj" />
+  <Project Path="KJ2001/KJ2001.csproj" />
+  <Project Path="MainWindow/MainWindow.csproj" />
+  <Project Path="MG1001/MG1001.csproj" />
+  <Project Path="MG1002/MG1002.csproj" />
+  <Project Path="MJ5001/MJ5001.csproj" />
+  <Project Path="Test_Console/Test_Console.csproj" />
+  <Project Path="UnitTesting_NUnit3/UnitTesting_NUnit3.csproj" />
+  <Project Path="WK1001/WK1001.csproj" />
+</Solution>

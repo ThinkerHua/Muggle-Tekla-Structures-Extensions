@@ -15,22 +15,72 @@ namespace Muggle.TeklaPlugins.MainWindow {
         internal const string USER_INTERRUPT = "User interrupt";
         internal const string NOT_CONNECTED = "Not connected to a model.";
 
-        private readonly string XSDATADIR;
-        private readonly Model model;
-        private readonly Events events;
+        private string XSDATADIR;
+        private Model model;
+        private Events events;
 
-        internal TSDialog.Localization Localization { get; }
+        private readonly ServiceCollection servicesBuilder;
+
+        internal TSDialog.Localization Localization { get; private set; }
 
         public static new App Current => (App)Application.Current;
 
-        public IServiceProvider Services { get; }
+        public IServiceProvider Services { get; private set; }
 
         public App() {
-            model = new Model();
+            //  先配置MessageboxService，以便出现异常时可以弹出消息框
+            servicesBuilder = new ServiceCollection();
+            servicesBuilder.AddSingleton<IMessageBoxService, MessageBoxService>();
 
-            events = new Events();
-            events.TeklaStructuresExit += ExitApp;
-            events.Register();
+            Services = servicesBuilder.BuildServiceProvider();
+        }
+
+        private IServiceProvider ConfigureServices() {
+            servicesBuilder.AddSingleton<IMessageBoxService, MessageBoxService>();
+            servicesBuilder.AddSingleton<INavigationService, NavigationService>();
+
+            servicesBuilder.AddSingleton<MainWindowViewModel>();
+            servicesBuilder.AddSingleton<Views.MainWindow>();
+
+            servicesBuilder.AddTransient<NormalToolsViewModel>();
+            servicesBuilder.AddTransient<Views.NormalTools>();
+
+            servicesBuilder.AddTransient<SelectBooleansViewModel>();
+            servicesBuilder.AddTransient<Views.SelectBooleans>();
+
+            servicesBuilder.AddTransient<ThreeDimensionalRotationViewModel>();
+            servicesBuilder.AddTransient<Views.ThreeDimensionalRotation>();
+
+            servicesBuilder.AddTransient<PluginsViewModel>();
+            servicesBuilder.AddTransient<Views.Plugins>();
+
+            servicesBuilder.AddTransient<MoveToElevationViewModel>();
+            servicesBuilder.AddTransient<Views.MoveToElevation>();
+
+            servicesBuilder.AddTransient<ConnectionStatusFilterViewModel>();
+            servicesBuilder.AddTransient<Views.ConnectionStatusFilter>();
+
+            return servicesBuilder.BuildServiceProvider();
+        }
+
+        private void Application_Startup(object sender, StartupEventArgs e) {
+
+            IMessageBoxService messageBoxService = null;
+
+            try {
+                messageBoxService = Services.GetRequiredService<IMessageBoxService>();
+
+                model = new Model();
+                if (!model.GetConnectionStatus()) throw new Exception(NOT_CONNECTED);
+
+                events = new Events();
+                events.TeklaStructuresExit += ExitApp;
+                events.Register();
+            } catch (Exception ex) {
+                messageBoxService?.ShowError(ex.ToString());
+                ExitApp();
+                return;
+            }
 
             try {
                 var language = string.Empty;
@@ -48,55 +98,13 @@ namespace Muggle.TeklaPlugins.MainWindow {
 
             Services = ConfigureServices();
 
-        }
-
-        private static IServiceProvider ConfigureServices() {
-            var services = new ServiceCollection();
-
-            services.AddSingleton<IMessageBoxService, MessageBoxService>();
-            services.AddSingleton<INavigationService, NavigationService>();
-
-            services.AddSingleton<MainWindowViewModel>();
-            services.AddSingleton<Views.MainWindow>();
-
-            services.AddTransient<NormalToolsViewModel>();
-            services.AddTransient<Views.NormalTools>();
-
-            services.AddTransient<SelectBooleansViewModel>();
-            services.AddTransient<Views.SelectBooleans>();
-
-            services.AddTransient<ThreeDimensionalRotationViewModel>();
-            services.AddTransient<Views.ThreeDimensionalRotation>();
-
-            services.AddTransient<PluginsViewModel>();
-            services.AddTransient<Views.Plugins>();
-
-            services.AddTransient<MoveToElevationViewModel>();
-            services.AddTransient<Views.MoveToElevation>();
-
-            services.AddTransient<ConnectionStatusFilterViewModel>();
-            services.AddTransient<Views.ConnectionStatusFilter>();
-
-            return services.BuildServiceProvider();
-        }
-
-        private void Application_Startup(object sender, StartupEventArgs e) {
-
-            IMessageBoxService messageBoxService = null;
-
             try {
-                messageBoxService = Services.GetRequiredService<IMessageBoxService>();
-
-                if (!model.GetConnectionStatus()) throw new Exception(NOT_CONNECTED);
-
                 var mainWindow = Services.GetRequiredService<Views.MainWindow>();
                 mainWindow.Show();
             } catch (Exception ex) {
                 messageBoxService?.ShowError(ex.ToString());
                 ExitApp();
-                return;
             }
-
         }
 
         private void ExitApp() {
