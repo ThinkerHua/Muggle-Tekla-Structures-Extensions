@@ -12,25 +12,25 @@ using TSDialog = Tekla.Structures.Dialog;
 
 namespace Muggle.TeklaPlugins.MainWindow {
     public partial class App : Application {
-        internal static string USER_INTERRUPT = "User interrupt";
-        internal static string NOT_CONNECTED = "Not connected to a model.";
+        internal const string USER_INTERRUPT = "User interrupt";
+        internal const string NOT_CONNECTED = "Not connected to a model.";
 
+        private readonly string XSDATADIR;
         private readonly Model model;
         private readonly Events events;
 
-        private readonly string XSDATADIR = string.Empty;
-
         internal TSDialog.Localization Localization { get; }
-        public App() {
-            try {
-                model = new Model();
-                if (!model.GetConnectionStatus()) Shutdown();
 
-                events = new Events();
-            } catch {
-                Shutdown();
-                return;
-            }
+        public static new App Current => (App)Application.Current;
+
+        public IServiceProvider Services { get; }
+
+        public App() {
+            model = new Model();
+
+            events = new Events();
+            events.TeklaStructuresExit += ExitApp;
+            events.Register();
 
             try {
                 var language = string.Empty;
@@ -46,15 +46,9 @@ namespace Muggle.TeklaPlugins.MainWindow {
                 Localization = new TSDialog.Localization();
             }
 
-            events.TeklaStructuresExit += ExitApp;
-            events.Register();
-
             Services = ConfigureServices();
+
         }
-
-        public static new App Current => (App)Application.Current;
-
-        public IServiceProvider Services { get; }
 
         private static IServiceProvider ConfigureServices() {
             var services = new ServiceCollection();
@@ -84,31 +78,28 @@ namespace Muggle.TeklaPlugins.MainWindow {
         }
 
         private void Application_Startup(object sender, StartupEventArgs e) {
-            IMessageBoxService messageBoxService;
-            Views.MainWindow mainWindow;
+
+            IMessageBoxService messageBoxService = null;
 
             try {
                 messageBoxService = Services.GetRequiredService<IMessageBoxService>();
-            } catch {
-                Current.Shutdown();
-                return;
-            }
 
-            try {
-                mainWindow = Services.GetRequiredService<Views.MainWindow>();
+                if (!model.GetConnectionStatus()) throw new Exception(NOT_CONNECTED);
+
+                var mainWindow = Services.GetRequiredService<Views.MainWindow>();
+                mainWindow.Show();
             } catch (Exception ex) {
                 messageBoxService?.ShowError(ex.ToString());
-                Current.Shutdown();
+                ExitApp();
                 return;
             }
 
-            mainWindow?.Show();
         }
 
         private void ExitApp() {
             events.UnRegister();
             Dispatcher.Invoke(() => {
-                Current.Shutdown();
+                Shutdown();
             });
             /*new Thread(() => {
                 Environment.Exit(0);
