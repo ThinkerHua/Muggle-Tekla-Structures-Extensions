@@ -10,14 +10,9 @@ namespace UnitTesting_NUnit3 {
 
         [SetUp]
         public void SetUp() {
-            Model model;
-            try {
-                model = new Model();
-                if (!model.GetConnectionStatus()) {
-                    Assert.Inconclusive($"Model connection is not established.");
-                }
-            } catch {
-                return;
+            var model = new Model();
+            if (!model.GetConnectionStatus()) {
+                Assert.Inconclusive($"Model connection is not established.");
             }
 
             var picker = new Picker();
