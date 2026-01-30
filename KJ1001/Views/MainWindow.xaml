@@ -596,7 +596,7 @@
                            Grid.Column="0"
                            Height="80"
                            HorizontalAlignment="Right"
-                           Source="/KJ1001;component/Resources/Up direction.png" />
+                           Source="/Common.WPF;component/Assets/Up direction.png" />
                     <uiCtrls:WpfFilterCheckBox Grid.Row="1" Grid.Column="1" AttributeName="zang1" />
                     <TextBox Grid.Row="1" Grid.Column="2" Text="{Binding RotationAngleY, Mode=TwoWay}" />
                     <uiCtrls:WpfFilterCheckBox Grid.Row="2" Grid.Column="1" AttributeName="zang2" />

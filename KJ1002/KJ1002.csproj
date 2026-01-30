@@ -13,9 +13,6 @@
 		<AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
 	</PropertyGroup>
 	<ItemGroup>
-		<None Remove="Resources\Up direction.png" />
-	</ItemGroup>
-	<ItemGroup>
 		<PackageReference Include="Tekla.Structures" Version="2021.0.0" ExcludeAssets="runtime" />
 		<PackageReference Include="Tekla.Structures.Catalogs" Version="2021.0.0" ExcludeAssets="runtime" />
 		<PackageReference Include="Tekla.Structures.Datatype" Version="2021.0.0" ExcludeAssets="runtime" />
@@ -26,9 +23,6 @@
 	<ItemGroup>
 		<ProjectReference Include="..\Common.WPF\Common.WPF.csproj" private="false" />
 		<ProjectReference Include="..\Common\Common.csproj" private="false" />
-	</ItemGroup>
-	<ItemGroup>
-		<Resource Include="Resources\Up direction.png" />
 	</ItemGroup>
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
 		<Exec Command="xcopy &quot;$(TargetDir)$(TargetName).dll&quot; &quot;D:\Program Files\Tekla Structures\2021.0\Environments\common\extensions\MuggleTSExtensions\&quot; /Y /C /Q /R" />
