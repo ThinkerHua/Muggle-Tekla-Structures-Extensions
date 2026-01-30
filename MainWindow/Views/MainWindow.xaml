@@ -22,8 +22,8 @@
                    xmlns:vm="clr-namespace:Muggle.TeklaPlugins.MainWindow.ViewModels"
                    xmlns:svs="clr-namespace:Muggle.TeklaPlugins.MainWindow.Services"
                    Title="MainWindow"
-                   Width="480"
-                   Height="300"
+                   Width="500"
+                   Height="320"
                    MinWidth="340"
                    MinHeight="300"
                    d:DataContext="{d:DesignInstance Type=vm:MainWindowViewModel}"
@@ -47,7 +47,7 @@
 
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="128" MinWidth="128" />
+            <ColumnDefinition Width="144" MinWidth="128" />
             <ColumnDefinition Width="4" />
             <ColumnDefinition Width="1*" MinWidth="128" />
         </Grid.ColumnDefinitions>
@@ -74,6 +74,11 @@
                         <RadioButton Content="MoveToElevation" GroupName="menuBtn" Command="{Binding NavigateCommand}">
                             <RadioButton.CommandParameter>
                                 <local:MoveToElevation />
+                            </RadioButton.CommandParameter>
+                        </RadioButton>
+                        <RadioButton Content="ConnectionStatusFilter" GroupName="menuBtn" Command="{Binding NavigateCommand}">
+                            <RadioButton.CommandParameter>
+                                <local:ConnectionStatusFilter />
                             </RadioButton.CommandParameter>
                         </RadioButton>
                     </StackPanel>

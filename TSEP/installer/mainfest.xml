@@ -4,7 +4,7 @@
 	<Product
 		Id="MuggleTSExtensions"
 		UpgradeCode="547B1AA5-0F0D-4276-8D0C-BD54561E1D56"
-		Version="0.4" Language="1033"
+		Version="0.5" Language="1033"
 		Name="Muggle TeklaStructures Extensions"
 		Manufacturer="Huang YongXing (thinkerhua@hotmail.com)"
 		Description= "Extensions for Tekla Structures."
@@ -97,6 +97,8 @@
 		<File Id="MuggleTSExtensions" Source="%BinariesFolder%\MuggleTSExtensions.exe" Target="%BinariesDirectory%"/>
 		<File Id="MuggleTSExtensions.config" Source="%BinariesFolder%\MuggleTSExtensions.exe.config" Target="%BinariesDirectory%"/>
 		<File Id="CommunityToolkit.Mvvm" Source="%BinariesFolder%\CommunityToolkit.Mvvm.dll" Target="%BinariesDirectory%"/>
+		<File Id="CalcBinding" Source="%BinariesFolder%\CalcBinding.dll" Target="%BinariesDirectory%"/>
+		<File Id="DynamicExpresso.Core" Source="%BinariesFolder%\DynamicExpresso.Core.dll" Target="%BinariesDirectory%"/>
 		<File Id="Microsoft.Bcl.AsyncInterfaces" Source="%BinariesFolder%\Microsoft.Bcl.AsyncInterfaces.dll" Target="%BinariesDirectory%"/>
 		<File Id="Microsoft.Extensions.DependencyInjection.Abstractions" Source="%BinariesFolder%\Microsoft.Extensions.DependencyInjection.Abstractions.dll" Target="%BinariesDirectory%"/>
 		<File Id="Microsoft.Extensions.DependencyInjection" Source="%BinariesFolder%\Microsoft.Extensions.DependencyInjection.dll" Target="%BinariesDirectory%"/>

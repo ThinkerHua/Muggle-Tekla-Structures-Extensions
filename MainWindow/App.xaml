@@ -11,11 +11,12 @@
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Styles/Uniform.xaml" />
                 <ResourceDictionary Source="/Styles/ExpanderStyle1.xaml" />
                 <ResourceDictionary Source="/Styles/MenuButtonStyle1.xaml" />
                 <ResourceDictionary Source="/Styles/ButtonStyle1.xaml" />
                 <ResourceDictionary Source="/Styles/PluginCardButtonStyle1.xaml" />
-                <ResourceDictionary Source="/Styles/Uniform.xaml" />
+                <ResourceDictionary Source="/Styles/ToggleButtonStyle1.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
             <cvc:EnumToBoolValueConverter x:Key="enumToBool" />

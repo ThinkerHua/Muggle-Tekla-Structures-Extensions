@@ -20,7 +20,10 @@
 - [ReorderContourPoints (重排多边形板轮廓点顺序)](#reordercontourpoints-重排多边形板轮廓点顺序)
 - [ShowContourOrder (显示轮廓点顺序)](#showcontourorder-显示轮廓点顺序)
 - [CopyWithDirection (带基点和方向复制)](#copywithdirection-带基点和方向复制)
+- [3DRotation (三维旋转)](#3drotation-三维旋转)
 - [MoveToElevatio (移动到指定标高)](#movetoelevation-移动到指定标高)
+- [LocateToPrecisePosition (重定位到精确的位置)](#locatetopreciseposition-重定位到精确的位置)
+- [ConnectionStatusFilter (组件状态过滤)](#connectionstatusfilter-组件状态过滤)
 
 >组件
 
@@ -89,11 +92,19 @@
 
 ![CopyWithDirection](Resources/Introduction_CopyWithDirection.gif)
 
+## 3DRotation (三维旋转)
+
+比系统提供的旋转命令多一些选项。
+
 ## LocateToPrecisePosition (重定位到精确的位置)
 
 建模过程中，柱梁有时会有一些微小的偏差（如长度为 5999.99 等），可用此工具修复。特别适用于框架结构。
 
 可先选中柱梁，再执行命令；也可先执行命令再选择柱梁。
+
+## ConnectionStatusFilter (组件状态过滤)
+
+系统提供的选择过滤无法过滤组件的状态，此工具可解决该问题。
 
 ## MoveToElevation (移动到指定标高)
 

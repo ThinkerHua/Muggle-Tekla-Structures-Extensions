@@ -74,6 +74,9 @@ namespace Muggle.TeklaPlugins.MainWindow {
             services.AddTransient<MoveToElevationViewModel>();
             services.AddTransient<Views.MoveToElevation>();
 
+            services.AddTransient<ConnectionStatusFilterViewModel>();
+            services.AddTransient<Views.ConnectionStatusFilter>();
+
             return services.BuildServiceProvider();
         }
 
