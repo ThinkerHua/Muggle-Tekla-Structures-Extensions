@@ -154,5 +154,59 @@ namespace Muggle.TeklaPlugins.Common.Geometry3d {
 
             return matrix;
         }
+
+        /// <summary>
+        /// 根据给定坐标系的原点和轴向量创建变换矩阵，使用此矩阵可将点从当前工作平面坐标系变换到目标坐标系。
+        /// </summary>
+        /// <remarks>官方提供的 <see cref="MatrixFactory.ToCoordinateSystem(CoordinateSystem)"/> 方法，
+        /// 只能创建正交非缩放矩阵，此方法可突破此限制（如切变、缩放等）。</remarks>
+        /// <param name="axisX">给定坐标系的 X 轴</param>
+        /// <param name="axisY">给定坐标系的 Y 轴</param>
+        /// <param name="axisZ">给定坐标系的 Z 轴</param>
+        /// <param name="origin">给定坐标系的原点</param>
+        /// <returns>成功创建的矩阵。</returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        public static Matrix ToCoordinateSystem(Vector axisX, Vector axisY, Vector axisZ, Point origin) {
+            if (origin is null) {
+                throw new ArgumentNullException(nameof(origin));
+            }
+
+            if (axisX is null) {
+                throw new ArgumentNullException(nameof(axisX));
+            }
+
+            if (axisY is null) {
+                throw new ArgumentNullException(nameof(axisY));
+            }
+
+            if (axisZ is null) {
+                throw new ArgumentNullException(nameof(axisZ));
+            }
+
+            var matrix = new Matrix();
+            matrix[0, 0] = axisX.X; matrix[0, 1] = axisY.X; matrix[0, 2] = axisZ.X;
+            matrix[1, 0] = axisX.Y; matrix[1, 1] = axisY.Y; matrix[1, 2] = axisZ.Y;
+            matrix[2, 0] = axisX.Z; matrix[2, 1] = axisY.Z; matrix[2, 2] = axisZ.Z;
+            matrix[3, 0] = -(origin.X * axisX.X + origin.Y * axisX.Y + origin.Z * axisX.Z);
+            matrix[3, 1] = -(origin.X * axisY.X + origin.Y * axisY.Y + origin.Z * axisY.Z);
+            matrix[3, 2] = -(origin.X * axisZ.X + origin.Y * axisZ.Y + origin.Z * axisZ.Z);
+
+            return matrix;
+        }
+
+        /// <summary>
+        /// 根据给定坐标系的原点和轴向量创建变换矩阵，使用此矩阵可将点从目标坐标系变换到当前工作平面坐标系。
+        /// </summary>
+        /// <remarks>官方提供的 <see cref="MatrixFactory.FromCoordinateSystem(CoordinateSystem)"/> 方法，
+        /// 只能创建正交非缩放矩阵，此方法可突破此限制（如切变、缩放等）。</remarks>
+        /// <param name="axisX">给定坐标系的 X 轴</param>
+        /// <param name="axisY">给定坐标系的 Y 轴</param>
+        /// <param name="axisZ">给定坐标系的 Z 轴</param>
+        /// <param name="origin">给定坐标系的原点</param>
+        /// <returns>成功创建的矩阵。</returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        public static Matrix FromCoordinateSystem(Vector axisX, Vector axisY, Vector axisZ, Point origin) {
+            return ToCoordinateSystem(axisX, axisY, axisZ, origin).Inverse();
+        }
     }
 }
