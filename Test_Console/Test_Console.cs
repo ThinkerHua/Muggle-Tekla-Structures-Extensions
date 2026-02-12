@@ -18,6 +18,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
 using Muggle.TeklaPlugins.Common.Geometry3d;
+using Muggle.TeklaPlugins.Common.Model;
 using Muggle.TeklaPlugins.Common.ModelUI;
 using Tekla.Structures;
 using Tekla.Structures.Geometry3d;
@@ -29,8 +30,10 @@ namespace Muggle.TeklaPlugins.Test {
     internal class Test_Console {
         private const string NOTRUNNING_MESSAGE = "Tekla structures not running.";
         private const string USER_INTERRUPT = "User interrupt";
+
         [DllImport("user32.dll")]
         private static extern bool SetForegroundWindow(IntPtr hWnd);
+
         static void Main() {
         Start:
             Console.WriteLine("选择要运行的测试：");
@@ -39,6 +42,7 @@ namespace Muggle.TeklaPlugins.Test {
             Console.WriteLine("[3] Get model object type");
             Console.WriteLine("[4] Select model object with bounding box");
             Console.WriteLine("[5] Solid.IntersectAllFaces(Point, Point, Point)");
+            Console.WriteLine("[6] Create stiffener(s)");
             Console.WriteLine("[0] 结束运行");
             int CASE;
             while (true) {
@@ -69,6 +73,9 @@ namespace Muggle.TeklaPlugins.Test {
                     goto Start;
                 case 5:
                     TestSolidIntersectAllFaces();
+                    goto Start;
+                case 6:
+                    TestCreatStiffeners();
                     goto Start;
                 default:
                     Console.WriteLine("没有此选项，请重新选择。");
@@ -227,45 +234,155 @@ namespace Muggle.TeklaPlugins.Test {
                 return;
             }
 
+            Solid.SolidCreationTypeEnum creationType;
+            while (true) {
+                Console.WriteLine("Choose solid creation type ([R]AW, [H]IGH_ACCURACY):");
+                string keyword = Console.ReadLine().ToUpper();
+                switch (keyword) {
+                    case "R":
+                        creationType = Solid.SolidCreationTypeEnum.RAW;
+                        goto BREAK_CREATION_TYPE;
+                    case "H":
+                        creationType = Solid.SolidCreationTypeEnum.HIGH_ACCURACY;
+                        goto BREAK_CREATION_TYPE;
+                    default:
+                        Console.WriteLine("Invalid input, please try again.");
+                        break;
+                }
+            }
+        BREAK_CREATION_TYPE:;
+
+            bool pickSurface;
+            while (true) {
+                Console.WriteLine("How to pick a face (3 [P]oints / [S]urface): ");
+                string keyword = Console.ReadLine().ToUpper();
+                switch (keyword) {
+                    case "P":
+                        pickSurface = false;
+                        goto BREAK_FACE_TYPE;
+                    case "S":
+                        pickSurface = true;
+                        goto BREAK_FACE_TYPE;
+                    default:
+                        break;
+                }
+            }
+        BREAK_FACE_TYPE:;
+
+            bool multiPick;
+            while (true) {
+                Console.WriteLine("Number of parts ([O]ne / [M]ulti: ");
+                string keyword = Console.ReadLine().ToUpper();
+                switch (keyword) {
+                    case "O":
+                        multiPick = false;
+                        goto BREAK_MULTI_PICK;
+                    case "M":
+                        multiPick = true;
+                        goto BREAK_MULTI_PICK;
+                    default:
+                        break;
+                }
+            }
+        BREAK_MULTI_PICK:;
+
             try {
                 var picker = new Picker();
-                var part = picker.PickObject(Picker.PickObjectEnum.PICK_ONE_PART) as Part;
-                var points = new Point[3];
-                var totalNum = 3;
-                for (int i = 0; i < totalNum; i++) {
-                    var referencePoint = i == 0 ? null : points[i - 1];
-                    points[i] = picker.PickPoint($"Pick {totalNum} points to form a plane ({i}/{totalNum} completed).", referencePoint);
+                IEnumerator parts;
+                if (multiPick) {
+                    parts = picker.PickObjects(Picker.PickObjectsEnum.PICK_N_PARTS);
+                } else {
+                    parts = new ModelObject[] { picker.PickObject(Picker.PickObjectEnum.PICK_ONE_PART) }.GetEnumerator();
                 }
-                Operation.DisplayPrompt(string.Empty);
+                var points = new Point[3];
+                if (pickSurface) {
+                    foreach (InputItem item in picker.PickFace()) {
+                        if (item.GetInputType() == InputItem.InputTypeEnum.INPUT_POLYGON) {
+                            var pointArray = item.GetData() as ArrayList;
+                            points[0] = pointArray[0] as Point;
+                            points[1] = pointArray[1] as Point;
+                            points[2] = pointArray[2] as Point;
+                        }
+                    }
+                } else {
+                    var totalNum = 3;
+                    for (int i = 0; i < totalNum; i++) {
+                        var referencePoint = i == 0 ? null : points[i - 1];
+                        points[i] = picker.PickPoint($"Pick {totalNum} points to form a plane ({i + 1}/{totalNum} currently).", referencePoint);
+                    }
+                    Operation.DisplayPrompt(string.Empty);
+                }
 
                 var drawer = new GraphicsDrawer();
-                var solid = part.GetSolid(Solid.SolidCreationTypeEnum.RAW);
-                var faceEnum = solid.IntersectAllFaces(points[0], points[1], points[2]);
-                var faceIndex = -1;
-                while (faceEnum.MoveNext()) {
-                    ++faceIndex;
+                while (parts.MoveNext()) {
+                    var part = parts.Current as Part;
 
-                    var face = faceEnum.Current as ArrayList;
-                    var loopEnum = face.GetEnumerator();
-                    var loopIndex = -1;
-                    while (loopEnum.MoveNext()) {
-                        ++loopIndex;
+                    var solid = part.GetSolid(creationType);
+                    var faceEnum = solid.IntersectAllFaces(points[0], points[1], points[2]);
+                    var faceIndex = -1;
+                    while (faceEnum.MoveNext()) {
+                        ++faceIndex;
 
-                        var vertices = loopEnum.Current as ArrayList;
-                        var vertexEnum = vertices.GetEnumerator();
-                        var vertexIndex = -1;
-                        while (vertexEnum.MoveNext()) {
-                            ++vertexIndex;
+                        var face = faceEnum.Current as ArrayList;
+                        var loopEnum = face.GetEnumerator();
+                        var loopIndex = -1;
+                        while (loopEnum.MoveNext()) {
+                            ++loopIndex;
 
-                            var v = vertexEnum.Current as Point;
+                            var vertices = loopEnum.Current as ArrayList;
+                            var vertexEnum = vertices.GetEnumerator();
+                            var vertexIndex = -1;
+                            while (vertexEnum.MoveNext()) {
+                                ++vertexIndex;
 
-                            drawer.DrawText(v, $"F{faceIndex}L{loopIndex}V{vertexIndex}", ColorExtension.DarkBlue);
+                                var v = vertexEnum.Current as Point;
+
+                                var controlPoint = new ControlPoint(v);
+                                controlPoint.Insert();
+                                drawer.DrawText(v, $"F{faceIndex}L{loopIndex}V{vertexIndex}", ColorExtension.DarkBlue);
+                            }
                         }
                     }
                 }
 
                 model.CommitChanges();
 
+            } catch (Exception e) when (e.Message == USER_INTERRUPT) {
+                Console.WriteLine(USER_INTERRUPT);
+            } catch (Exception e) {
+                Console.WriteLine(e.ToString());
+            }
+        }
+
+        private static void TestCreatStiffeners() {
+            var model = new Model();
+            if (!model.GetConnectionStatus()) {
+                Console.WriteLine(NOTRUNNING_MESSAGE);
+                return;
+            }
+
+            double rotationArroundY;
+            while (true) {
+                Console.WriteLine("Input rotation degrees arround axis Y: ");
+                if (double.TryParse(Console.ReadLine(), out rotationArroundY)) break;
+            }
+
+            double rotationArroundZ;
+            while (true) {
+                Console.WriteLine("Input rotation degrees arround axis Z: ");
+                if (double.TryParse(Console.ReadLine(), out rotationArroundZ)) break;
+            }
+
+            try {
+                var picker = new Picker();
+                var part = picker.PickObject(Picker.PickObjectEnum.PICK_ONE_PART) as Part;
+                var point = picker.PickPoint("Pick a position (point) for stiffener(s)");
+
+                ModelOperation.CreatStiffeners(part, point, 10,
+                    rotationArroundY: rotationArroundY / 180 * Math.PI, rotationArroundZ: rotationArroundZ / 180 * Math.PI,
+                    indent: 10, indent2: 10, chamferType: Chamfer.ChamferTypeEnum.CHAMFER_LINE, chamferSizeX: 15, chamferSizeY: 15);
+
+                model.CommitChanges();
             } catch (Exception e) when (e.Message == USER_INTERRUPT) {
                 Console.WriteLine(USER_INTERRUPT);
             } catch (Exception e) {

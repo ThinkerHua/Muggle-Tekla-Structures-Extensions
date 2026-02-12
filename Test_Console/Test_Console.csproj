@@ -5,14 +5,14 @@
 		<RootNamespace>Muggle.TeklaPlugins.Test</RootNamespace>
 	</PropertyGroup>
 	<ItemGroup>
-		<PackageReference Include="Tekla.Structures" Version="2021.0.0" ExcludeAssets="runtime" />
-		<PackageReference Include="Tekla.Structures.Catalogs" Version="2021.0.0" ExcludeAssets="runtime" />
-		<PackageReference Include="Tekla.Structures.Datatype" Version="2021.0.0" ExcludeAssets="runtime" />
-		<PackageReference Include="Tekla.Structures.Dialog" Version="2021.0.0" ExcludeAssets="runtime" />
-		<PackageReference Include="Tekla.Structures.Model" Version="2021.0.0" ExcludeAssets="runtime" />
-		<PackageReference Include="Tekla.Structures.Plugins" Version="2021.0.0" ExcludeAssets="runtime" />
+		<PackageReference Include="Tekla.Structures" Version="2021.0.0" ExcludeAssets="runtime"/>
+		<PackageReference Include="Tekla.Structures.Catalogs" Version="2021.0.0" ExcludeAssets="runtime"/>
+		<PackageReference Include="Tekla.Structures.Datatype" Version="2021.0.0" ExcludeAssets="runtime"/>
+		<PackageReference Include="Tekla.Structures.Dialog" Version="2021.0.0" ExcludeAssets="runtime"/>
+		<PackageReference Include="Tekla.Structures.Model" Version="2021.0.0" ExcludeAssets="runtime"/>
+		<PackageReference Include="Tekla.Structures.Plugins" Version="2021.0.0" ExcludeAssets="runtime"/>
 	</ItemGroup>
 	<ItemGroup>
-		<ProjectReference Include="..\Common\Common.csproj" private="false" />
+		<ProjectReference Include="..\Common\Common.csproj" private="True" />
 	</ItemGroup>
 </Project>

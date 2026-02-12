@@ -16,8 +16,8 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using Muggle.TeklaPlugins.Common.Geometry3d;
-using Tekla.Structures.Datatype;
 using Tekla.Structures.Geometry3d;
 using Tekla.Structures.Model;
 
@@ -26,6 +26,9 @@ namespace Muggle.TeklaPlugins.Common.Model {
     /// 模型操作。
     /// </summary>
     public static class ModelOperation {
+
+        private const string UNKNOWN_SECTION_TYPE = "Unknown section type.";
+
         /// <summary>
         /// 用给定轮廓点集合创建布尔操作多边形。
         /// </summary>
@@ -473,6 +476,7 @@ namespace Muggle.TeklaPlugins.Common.Model {
                 Class = @class,
                 Position = { Depth = depthEnum, DepthOffset = depthOffset },
             };
+
             if (!contourPlate.Insert())
                 throw new Exception("Failed to insert ContourPlate.");
 
@@ -1244,6 +1248,946 @@ namespace Muggle.TeklaPlugins.Common.Model {
             hole.Delete();
 
             return parts;
+        }
+
+        /// <summary>
+        /// 获取截面前缀。
+        /// </summary>
+        /// <param name="profileText">截面文本</param>
+        /// <returns>截面前缀</returns>
+        /// <exception cref="ArgumentException"></exception>
+        /// <exception cref="Exception">不是有效的截面文本时引发。</exception>
+        private static string GetProfilePrefix(string profileText) {
+            if (string.IsNullOrEmpty(profileText)) {
+                throw new ArgumentException($"“{nameof(profileText)}”不能为 null 或空。", nameof(profileText));
+            }
+
+            const string pattern = @"\A(?<prefix>[^0-9]+)[0-9].+\Z";
+            var match = Regex.Match(profileText, pattern);
+            if (!match.Success) {
+                throw new Exception("Not a valid profile text.");
+            }
+
+            return match.Groups["prefix"].Value;
+        }
+
+        /// <summary>
+        /// 求零件实体(<seealso cref="Solid"/>)与加劲板前后表面所在的平面的交集。
+        /// </summary>
+        /// <remarks>
+        /// 返回的数组有两个元素，第一个元素是加劲板前表面所在的平面与零件实体的交集，第二个元素是加劲板后表面所在的平面与零件实体的交集。
+        /// 以在零件坐标系X轴上相对方向区分前后，正向为前，负向为后。
+        /// 以 <see cref="Solid.IntersectAllFaces(Point, Point, Point)"/> 方法计算交集。
+        /// </remarks>
+        /// <param name="part"><inheritdoc 
+        /// cref="CreatStiffeners(Part, Point, double, string, string, double, double, double, double, double, Chamfer.ChamferTypeEnum, double, double)" 
+        /// path="/param[1]"/>
+        /// </param>
+        /// <param name="position"><inheritdoc 
+        /// cref="CreatStiffeners(Part, Point, double, string, string, double, double, double, double, double, Chamfer.ChamferTypeEnum, double, double)" 
+        /// path="/param[2]"/>
+        /// </param>
+        /// <param name="thickness"><inheritdoc 
+        /// cref="CreatStiffeners(Part, Point, double, string, string, double, double, double, double, double, Chamfer.ChamferTypeEnum, double, double)" 
+        /// path="/param[3]"/>
+        /// </param>
+        /// <param name="partCS">加劲板所处位置处映射的零件坐标系</param>
+        /// <param name="stifPlane">加劲板中心平面</param>
+        /// <param name="rotationArroundY"><inheritdoc 
+        /// cref="CreatStiffeners(Part, Point, double, string, string, double, double, double, double, double, Chamfer.ChamferTypeEnum, double, double)" 
+        /// path="/param[6]"/>
+        /// </param>
+        /// <param name="rotationArroundZ"><inheritdoc 
+        /// cref="CreatStiffeners(Part, Point, double, string, string, double, double, double, double, double, Chamfer.ChamferTypeEnum, double, double)" 
+        /// path="/param[7]"/>
+        /// </param>
+        /// <returns>
+        /// 零件实体与加劲板前后表面所在的平面的交集。
+        /// 使用方法参考 <see cref="Solid.IntersectAllFaces(Point, Point, Point)"/> 方法的官方示例文档。
+        /// </returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        /// <exception cref="ArgumentException"><paramref name="part"/> 不是 <see cref="Beam"/> 或 <see cref="PolyBeam"/> 时引发。</exception>
+        private static IEnumerator[] IntersectionWithStiffenerSurfacePlane(
+            Part part, Point position, double thickness, out CoordinateSystem partCS, out GeometricPlane stifPlane,
+            double rotationArroundY = 0.0, double rotationArroundZ = 0.0) {
+            if (part is null) {
+                throw new ArgumentNullException(nameof(part));
+            }
+
+            if (position is null) {
+                throw new ArgumentNullException(nameof(position));
+            }
+
+            var radiansOf85 = 85.0 / 180.0 * Math.PI;
+            if (Math.Abs(rotationArroundY) > radiansOf85) {
+                throw new ArgumentOutOfRangeException(
+                    $"Rotation angle \"{nameof(rotationArroundY)}\" out of range, only supports in range of -85~85 degrees.",
+                    nameof(rotationArroundY));
+            }
+            if (Math.Abs(rotationArroundZ) > radiansOf85) {
+                throw new ArgumentOutOfRangeException(
+                    $"Rotation angle \"{nameof(rotationArroundY)}\" out of range, only supports in range of -85~85 degrees.",
+                    nameof(rotationArroundZ));
+            }
+
+            var centerLine = part.GetCenterLine(false).Cast<Point>();
+            var segLines = centerLine.Take(centerLine.Count() - 1).Zip(centerLine.Skip(1), (p1, p2) => new Line(p1, p2));
+            var nearestSegLine = segLines.OrderBy(line => Distance.PointToLine(position, line)).First();
+
+            CoordinateSystem cs;
+            if (part is Beam beam) {
+                cs = beam.GetCoordinateSystem();
+            } else if (part is PolyBeam polyBeam) {
+                var css = polyBeam.GetPolybeamCoordinateSystems().Cast<CoordinateSystem>();
+                cs = css.First(cs => nearestSegLine.Origin.Equals(cs.Origin));
+            } else {
+                throw new ArgumentException($"\"{nameof(part)}\" is neither \"Beam\" nor \"PolyBeam\".", nameof(part));
+            }
+            partCS = new CoordinateSystem(Projection.PointToLine(position, nearestSegLine), cs.AxisX, cs.AxisY);
+
+            var axisX = new Vector(1000, 0, 0);
+            var axisY = new Vector(0, 1000, 0);
+            var axisZ = new Vector(0, 0, 1000);
+            var matrixRotationY = MatrixFactory.Rotate(-rotationArroundY, axisY);
+            var matrixRotationZ = MatrixFactory.Rotate(-rotationArroundZ, axisZ);
+            var matrix = matrixRotationZ * matrixRotationY;
+
+            var planeAxisX = MatrixExtension.Transform(matrix, -1 * axisZ).TransformFrom(partCS);
+            var planeAxisY = MatrixExtension.Transform(matrix, axisY).TransformFrom(partCS);
+            var planeNormal = planeAxisX.Cross(planeAxisY).GetNormal();
+            stifPlane = new GeometricPlane(partCS.Origin, planeNormal);
+
+            var offsetVector = planeNormal * (thickness * 0.5);
+
+            var planeFront_Origin = partCS.Origin + offsetVector;
+            var planeFront_PointX = planeFront_Origin + planeAxisX;
+            var planeFront_PointY = planeFront_Origin + planeAxisY;
+
+            var planeBehind_Origin = partCS.Origin - offsetVector;
+            var planeBehind_PointX = planeBehind_Origin + planeAxisX;
+            var planeBehind_PointY = planeBehind_Origin + planeAxisY;
+
+            //  Solid.SolidCreationTypeEnum.RAW 基本轮廓
+            //  Solid.SolidCreationTypeEnum.HIGH_ACCURACY 高精度轮廓
+            var solid = part.GetSolid(Solid.SolidCreationTypeEnum.RAW);
+            var faceEnumFront = solid.IntersectAllFaces(planeFront_Origin, planeFront_PointX, planeFront_PointY);
+            var faceEnumBehind = solid.IntersectAllFaces(planeBehind_Origin, planeBehind_PointX, planeBehind_PointY);
+
+            return [faceEnumFront, faceEnumBehind];
+        }
+
+        /// <summary>
+        /// 将集合中的顶点按规则排序。
+        /// </summary>
+        /// <remarks>
+        /// 根据各顶点在零件坐标系 <paramref name="partCS"/> 中的坐标值（不改变当前坐标值）进行排序，
+        /// 先按 Z 坐标从小到大排序，再按 Y 坐标从大到小排序，以序列第一点为起点，
+        /// 其余点绕 X 轴按右手螺旋法则依次排序。
+        /// </remarks>
+        /// <param name="vertices">原顶点集合</param>
+        /// <param name="partCS">零件坐标系</param>
+        /// <returns>排序后的顶点集合。</returns>
+        private static IEnumerable<Point> OrderVertices(IEnumerable<Point> vertices, CoordinateSystem partCS) {
+            var cnt = vertices.Count();
+
+            var transfomedVertices = vertices.Select(p => p.TransformTo(partCS));
+            var firstIndex = transfomedVertices
+                .Select((p, i) => (p, i))
+                .OrderBy(item => item.p.Z)
+                .ThenByDescending(item => item.p.Y)
+                .First()
+                .i;
+            var preIndex = firstIndex == 0 ? cnt - 1 : firstIndex - 1;
+            var nxtIndex = firstIndex == cnt - 1 ? 0 : firstIndex + 1;
+            var reverse = partCS.AxisX.Dot(
+                new Vector(vertices.ElementAt(nxtIndex) - vertices.ElementAt(firstIndex))
+                .Cross(new Vector(vertices.ElementAt(preIndex) - vertices.ElementAt(firstIndex)))) < 0;
+
+            if (reverse) {
+                vertices = vertices.Reverse();
+                vertices = vertices.Skip(cnt - 1 - firstIndex).Concat(vertices.Take(cnt - 1 - firstIndex));
+            } else {
+                vertices = vertices.Skip(firstIndex).Concat(vertices.Take(firstIndex));
+            }
+
+            return vertices;
+        }
+
+        /// <summary>
+        /// 为 H 型钢创建加劲板。
+        /// </summary>
+        /// <param name="part"></param>
+        /// <param name="position"></param>
+        /// <param name="thickness"></param>
+        /// <param name="material"></param>
+        /// <param name="class"></param>
+        /// <param name="rotationArroundY"></param>
+        /// <param name="rotationArroundZ"></param>
+        /// <param name="indent"></param>
+        /// <param name="clearance"></param>
+        /// <param name="chamferType"></param>
+        /// <param name="chamferSizeX"></param>
+        /// <param name="chamferSizeY"></param>
+        /// <returns>成功创建的加劲板集合，
+        /// 第一个元素在零件坐标系 Z 轴正向侧，第二个元素在零件坐标系 Z 轴负向侧。</returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="ArgumentException"></exception>
+        /// <exception cref="Exception"></exception>
+        private static IEnumerable<ContourPlate> CreatStiffenersForTypeI(
+            Part part, Point position, double thickness, string material = "Q235B", string @class = "99",
+            double rotationArroundY = 0.0, double rotationArroundZ = 0.0, double indent = 0.0, double clearance = 2.0,
+            Chamfer.ChamferTypeEnum chamferType = 0, double chamferSizeX = 0.0, double chamferSizeY = 0.0) {
+
+            if (part is null) {
+                throw new ArgumentNullException(nameof(part));
+            }
+
+            if (position is null) {
+                throw new ArgumentNullException(nameof(position));
+            }
+
+            if (string.IsNullOrEmpty(material)) {
+                throw new ArgumentException($"“{nameof(material)}”不能为 null 或空。", nameof(material));
+            }
+
+            if (string.IsNullOrEmpty(@class)) {
+                throw new ArgumentException($"“{nameof(@class)}”不能为 null 或空。", nameof(@class));
+            }
+
+            var faceEnumArr = IntersectionWithStiffenerSurfacePlane(
+                part, position, thickness, out CoordinateSystem partCS, out GeometricPlane stifPlane, rotationArroundY, rotationArroundZ);
+            var faceEnumFront = faceEnumArr[0];
+            var faceEnumBehind = faceEnumArr[1];
+
+            static IEnumerable<Point> GetVertices(IEnumerator faceEnum) {
+                var vertices = new List<Point>();
+
+                var faceCnt = 0;
+                while (faceEnum.MoveNext()) {
+                    if (++faceCnt > 1) throw new Exception(UNKNOWN_SECTION_TYPE);
+
+                    var face = faceEnum.Current as ArrayList;
+                    var loopEnum = face.GetEnumerator();
+
+                    var loopCnt = 0;
+                    while (loopEnum.MoveNext()) {
+                        if (++loopCnt > 1) throw new Exception(UNKNOWN_SECTION_TYPE);
+
+                        var loop = loopEnum.Current as ArrayList;
+                        var vertexEnum = loop.GetEnumerator();
+
+                        var verticesCnt = 0;
+                        while (vertexEnum.MoveNext()) {
+                            ++verticesCnt;
+
+                            var vertext = vertexEnum.Current as Point;
+                            vertices.Add(vertext);
+                        }
+                        //  使用 RAW 选项是 12 个顶点，使用 HIGH_ACCURACY 选项对于不同类型的截面有不同数量的顶点
+                        if (verticesCnt != 12) throw new Exception(UNKNOWN_SECTION_TYPE);
+                    }
+                }
+
+                return vertices;
+            }
+            var verticesFront = GetVertices(faceEnumFront);
+            var verticesBehind = GetVertices(faceEnumBehind);
+            verticesFront = OrderVertices(verticesFront, partCS);
+            verticesBehind = OrderVertices(verticesBehind, partCS);
+            verticesFront = verticesFront.Skip(2).Take(4).Concat(verticesFront.Skip(8));
+            verticesBehind = verticesBehind.Skip(2).Take(4).Concat(verticesBehind.Skip(8));
+
+            var offset_Z_indent = new Vector(0, 0, indent).TransformFrom(partCS);
+            var offset_Z_clearance = new Vector(0, 0, clearance).TransformFrom(partCS);
+            var offset_Y_clearance = new Vector(0, clearance, 0).TransformFrom(partCS);
+            var arrList = new List<Point[]> { verticesFront.ToArray(), verticesBehind.ToArray() };
+            foreach (var arr in arrList) {
+                arr[0] -= offset_Z_indent; arr[3] -= offset_Z_indent; arr[4] += offset_Z_indent; arr[7] += offset_Z_indent;
+                arr[1] += offset_Z_clearance; arr[2] += offset_Z_clearance; arr[5] -= offset_Z_clearance; arr[6] -= offset_Z_clearance;
+                arr[0] -= offset_Y_clearance; arr[1] -= offset_Y_clearance; arr[2] += offset_Y_clearance; arr[3] += offset_Y_clearance;
+                arr[4] += offset_Y_clearance; arr[5] += offset_Y_clearance; arr[6] -= offset_Y_clearance; arr[7] -= offset_Y_clearance;
+            }
+            var lines = arrList[0].Zip(arrList[1], (p1, p2) => new Line(p1, p2));
+            var stifFrontPlane = new GeometricPlane(stifPlane.Origin + stifPlane.Normal.GetNormal(thickness * 0.5), stifPlane.Normal);
+            var stifBehindPlane = new GeometricPlane(stifPlane.Origin - stifPlane.Normal.GetNormal(thickness * 0.5), stifPlane.Normal);
+
+            var partZXPlane = new GeometricPlane(partCS.Origin, partCS.AxisY);
+            var partXYPlane = new GeometricPlane(partCS.Origin, partCS.AxisX.Cross(partCS.AxisY));
+            var shearAxisX = Intersection.PlaneToPlane(partZXPlane, stifPlane).Direction;
+            var shearAxisY = Intersection.PlaneToPlane(partXYPlane, stifPlane).Direction;
+            var shearAxisZ = shearAxisX.Cross(shearAxisY);
+            var matrix_ToStif = MatrixFactoryExtension.ToCoordinateSystem(shearAxisX, shearAxisY, shearAxisZ, stifPlane.Origin);
+            var matrix_FromStif = matrix_ToStif.Inverse();
+
+            verticesFront = lines.Select(l => matrix_ToStif.Transform(Intersection.LineToPlane(l, stifFrontPlane)));
+            verticesBehind = lines.Select(l => matrix_ToStif.Transform(Intersection.LineToPlane(l, stifBehindPlane)));
+
+            static Point BottomRight(Point p1, Point p2) => new(Math.Min(p1.X, p2.X), Math.Max(p1.Y, p2.Y), 0.0);
+            static Point BottomLeft(Point p1, Point p2) => new(Math.Max(p1.X, p2.X), Math.Max(p1.Y, p2.Y), 0.0);
+            static Point TopLeft(Point p1, Point p2) => new(Math.Max(p1.X, p2.X), Math.Min(p1.Y, p2.Y), 0.0);
+            static Point TopRight(Point p1, Point p2) => new(Math.Min(p1.X, p2.X), Math.Min(p1.Y, p2.Y), 0.0);
+            var corners1 = new Point[4] {
+                TopLeft(verticesFront.ElementAt(0), verticesBehind.ElementAt(0)),
+                TopRight(verticesFront.ElementAt(1), verticesBehind.ElementAt(1)),
+                BottomRight(verticesFront.ElementAt(2), verticesBehind.ElementAt(2)),
+                BottomLeft(verticesFront.ElementAt(3), verticesBehind.ElementAt(3)),
+            };
+            var corners2 = new Point[4] {
+                BottomRight(verticesFront.ElementAt(4), verticesBehind.ElementAt(4)),
+                BottomLeft(verticesFront.ElementAt(5), verticesBehind.ElementAt(5)),
+                TopLeft(verticesFront.ElementAt(6), verticesBehind.ElementAt(6)),
+                TopRight(verticesFront.ElementAt(7), verticesBehind.ElementAt(7)),
+            };
+            for (int i = 0; i < 4; i++) {
+                corners1[i] = matrix_FromStif.Transform(corners1[i]);
+                corners2[i] = matrix_FromStif.Transform(corners2[i]);
+            }
+
+            var contourPlates = new ContourPlate[2];
+            contourPlates[0] = ModelOperation.CreatContourPlate(new ArrayList {
+                new ContourPoint(corners1[0], new Chamfer()),
+                new ContourPoint(corners1[1], new Chamfer(chamferSizeX, chamferSizeY, chamferType)),
+                new ContourPoint(corners1[2], new Chamfer(chamferSizeY, chamferSizeX, chamferType)),
+                new ContourPoint(corners1[3], new Chamfer())
+            }, "STIFFENER", $"PL{thickness}", material, @class: @class);
+            contourPlates[1] = ModelOperation.CreatContourPlate(new ArrayList {
+                new ContourPoint(corners2[3], new Chamfer()),
+                new ContourPoint(corners2[2], new Chamfer(chamferSizeX, chamferSizeY, chamferType)),
+                new ContourPoint(corners2[1], new Chamfer(chamferSizeY, chamferSizeX, chamferType)),
+                new ContourPoint(corners2[0], new Chamfer())
+            }, "STIFFENER", $"PL{thickness}", material, @class: @class);
+
+            return contourPlates;
+        }
+
+        /// <summary>
+        /// 为 T 型钢创建加劲板。
+        /// </summary>
+        /// <param name="part"></param>
+        /// <param name="position"></param>
+        /// <param name="thickness"></param>
+        /// <param name="material"></param>
+        /// <param name="class"></param>
+        /// <param name="rotationArroundY"></param>
+        /// <param name="rotationArroundZ"></param>
+        /// <param name="indent"></param>
+        /// <param name="indent2"></param>
+        /// <param name="clearance"></param>
+        /// <param name="chamferType"></param>
+        /// <param name="chamferSizeX"></param>
+        /// <param name="chamferSizeY"></param>
+        /// <returns>成功创建的加劲板集合，
+        /// 第一个元素在零件坐标系 Z 轴正向侧，第二个元素在零件坐标系 Z 轴负向侧。</returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="ArgumentException"></exception>
+        /// <exception cref="Exception"></exception>
+        private static IEnumerable<ContourPlate> CreatStiffenersForTypeT(
+            Part part, Point position, double thickness, string material = "Q235B", string @class = "99",
+            double rotationArroundY = 0.0, double rotationArroundZ = 0.0, double indent = 0.0, double indent2 = 0.0, double clearance = 2.0,
+            Chamfer.ChamferTypeEnum chamferType = 0, double chamferSizeX = 0.0, double chamferSizeY = 0.0) {
+            if (part is null) {
+                throw new ArgumentNullException(nameof(part));
+            }
+
+            if (position is null) {
+                throw new ArgumentNullException(nameof(position));
+            }
+
+            if (string.IsNullOrEmpty(material)) {
+                throw new ArgumentException($"“{nameof(material)}”不能为 null 或空。", nameof(material));
+            }
+
+            if (string.IsNullOrEmpty(@class)) {
+                throw new ArgumentException($"“{nameof(@class)}”不能为 null 或空。", nameof(@class));
+            }
+
+            var faceEnumArr = IntersectionWithStiffenerSurfacePlane(
+                part, position, thickness, out CoordinateSystem partCS, out GeometricPlane stifPlane, rotationArroundY, rotationArroundZ);
+            var faceEnumFront = faceEnumArr[0];
+            var faceEnumBehind = faceEnumArr[1];
+
+            static IEnumerable<Point> GetVertices(IEnumerator faceEnum) {
+                var vertices = new List<Point>();
+
+                var faceCnt = 0;
+                while (faceEnum.MoveNext()) {
+                    if (++faceCnt > 1) throw new Exception(UNKNOWN_SECTION_TYPE);
+
+                    var face = faceEnum.Current as ArrayList;
+                    var loopEnum = face.GetEnumerator();
+
+                    var loopCnt = 0;
+                    while (loopEnum.MoveNext()) {
+                        if (++loopCnt > 1) throw new Exception(UNKNOWN_SECTION_TYPE);
+
+                        var loop = loopEnum.Current as ArrayList;
+                        var vertexEnum = loop.GetEnumerator();
+
+                        var verticesCnt = 0;
+                        while (vertexEnum.MoveNext()) {
+                            ++verticesCnt;
+
+                            var vertext = vertexEnum.Current as Point;
+                            vertices.Add(vertext);
+                        }
+                        //  使用 RAW 选项是 8 个顶点，
+                        //  使用 HIGH_ACCURACY 选项，对于 T, TN, TM, TW 类型的截面是 16 个顶点，
+                        //  对于 B_WLD_E 类型的截面是 8 个顶点
+                        if (verticesCnt != 8) throw new Exception(UNKNOWN_SECTION_TYPE);
+                    }
+                }
+
+                return vertices;
+            }
+            var verticesFront = GetVertices(faceEnumFront);
+            var verticesBehind = GetVertices(faceEnumBehind);
+            verticesFront = OrderVertices(verticesFront, partCS);
+            verticesBehind = OrderVertices(verticesBehind, partCS);
+            verticesFront = verticesFront.Skip(2);
+            verticesBehind = verticesBehind.Skip(2);
+
+            var offset_Z_indent = new Vector(0, 0, indent).TransformFrom(partCS);
+            var offset_Z_clearance = new Vector(0, 0, clearance).TransformFrom(partCS);
+            var offset_Y_indent2 = new Vector(0, indent2, 0).TransformFrom(partCS);
+            var offset_Y_clearance = new Vector(0, clearance, 0).TransformFrom(partCS);
+            var arrList = new List<Point[]> { verticesFront.ToArray(), verticesBehind.ToArray() };
+            foreach (var arr in arrList) {
+                arr[0] -= offset_Z_indent; arr[5] += offset_Z_indent;
+                arr[2] += offset_Y_indent2; arr[3] += offset_Y_indent2;
+                arr[1] += offset_Z_clearance; arr[2] += offset_Z_clearance;
+                arr[3] -= offset_Z_clearance; arr[4] -= offset_Z_clearance;
+                arr[0] -= offset_Y_clearance; arr[1] -= offset_Y_clearance;
+                arr[4] -= offset_Y_clearance; arr[5] -= offset_Y_clearance;
+            }
+            var lines = arrList[0].Zip(arrList[1], (p1, p2) => new Line(p1, p2));
+            var stifFrontPlane = new GeometricPlane(stifPlane.Origin + stifPlane.Normal.GetNormal(thickness * 0.5), stifPlane.Normal);
+            var stifBehindPlane = new GeometricPlane(stifPlane.Origin - stifPlane.Normal.GetNormal(thickness * 0.5), stifPlane.Normal);
+
+            var partZXPlane = new GeometricPlane(partCS.Origin, partCS.AxisY);
+            var partXYPlane = new GeometricPlane(partCS.Origin, partCS.AxisX.Cross(partCS.AxisY));
+            var shearAxisX = Intersection.PlaneToPlane(partZXPlane, stifPlane).Direction;
+            var shearAxisY = Intersection.PlaneToPlane(partXYPlane, stifPlane).Direction;
+            var shearAxisZ = shearAxisX.Cross(shearAxisY);
+            var matrix_ToStif = MatrixFactoryExtension.ToCoordinateSystem(shearAxisX, shearAxisY, shearAxisZ, stifPlane.Origin);
+            var matrix_FromStif = matrix_ToStif.Inverse();
+
+            verticesFront = lines.Select(l => matrix_ToStif.Transform(Intersection.LineToPlane(l, stifFrontPlane)));
+            verticesBehind = lines.Select(l => matrix_ToStif.Transform(Intersection.LineToPlane(l, stifBehindPlane)));
+
+            static Point BottomRight(Point p1, Point p2) => new(Math.Min(p1.X, p2.X), Math.Max(p1.Y, p2.Y), 0.0);
+            static Point BottomLeft(Point p1, Point p2) => new(Math.Max(p1.X, p2.X), Math.Max(p1.Y, p2.Y), 0.0);
+            static Point TopLeft(Point p1, Point p2) => new(Math.Max(p1.X, p2.X), Math.Min(p1.Y, p2.Y), 0.0);
+            static Point TopRight(Point p1, Point p2) => new(Math.Min(p1.X, p2.X), Math.Min(p1.Y, p2.Y), 0.0);
+            var corners1 = new Point[4] {
+                TopLeft(verticesFront.ElementAt(0), verticesBehind.ElementAt(0)),
+                TopRight(verticesFront.ElementAt(1), verticesBehind.ElementAt(1)),
+                BottomRight(verticesFront.ElementAt(2), verticesBehind.ElementAt(2)),
+                new()
+            };
+            var corners2 = new Point[4] {
+                new(),
+                BottomLeft(verticesFront.ElementAt(3), verticesBehind.ElementAt(3)),
+                TopLeft(verticesFront.ElementAt(4), verticesBehind.ElementAt(4)),
+                TopRight(verticesFront.ElementAt(5), verticesBehind.ElementAt(5))
+            };
+            for (int i = 0; i < 4; i++) {
+                corners1[i] = matrix_FromStif.Transform(corners1[i]);
+                corners2[i] = matrix_FromStif.Transform(corners2[i]);
+            }
+            corners1[3] = corners1[0] + corners1[2] - corners1[1];
+            corners2[0] = corners2[1] + corners2[3] - corners2[2];
+
+            var contourPlates = new ContourPlate[2];
+            contourPlates[0] = ModelOperation.CreatContourPlate(new ArrayList {
+                new ContourPoint(corners1[0], new Chamfer()),
+                new ContourPoint(corners1[1], new Chamfer(chamferSizeX, chamferSizeY, chamferType)),
+                new ContourPoint(corners1[2], new Chamfer()),
+                new ContourPoint(corners1[3], new Chamfer())
+            }, "STIFFENER", $"PL{thickness}", material, @class: @class);
+            contourPlates[1] = ModelOperation.CreatContourPlate(new ArrayList {
+                new ContourPoint(corners2[3], new Chamfer()),
+                new ContourPoint(corners2[2], new Chamfer(chamferSizeX, chamferSizeY, chamferType)),
+                new ContourPoint(corners2[1], new Chamfer()),
+                new ContourPoint(corners2[0], new Chamfer())
+            }, "STIFFENER", $"PL{thickness}", material, @class: @class);
+
+            return contourPlates;
+        }
+
+        private static ContourPlate CreatStiffenersForTypeU(
+            Part part, Point position, double thickness, string material = "Q235B", string @class = "99",
+            double rotationArroundY = 0.0, double rotationArroundZ = 0.0, double indent = 0.0, double clearance = 2.0,
+            Chamfer.ChamferTypeEnum chamferType = 0, double chamferSizeX = 0.0, double chamferSizeY = 0.0) {
+
+            if (part is null) {
+                throw new ArgumentNullException(nameof(part));
+            }
+
+            if (position is null) {
+                throw new ArgumentNullException(nameof(position));
+            }
+
+            if (string.IsNullOrEmpty(material)) {
+                throw new ArgumentException($"“{nameof(material)}”不能为 null 或空。", nameof(material));
+            }
+
+            if (string.IsNullOrEmpty(@class)) {
+                throw new ArgumentException($"“{nameof(@class)}”不能为 null 或空。", nameof(@class));
+            }
+
+            var faceEnumArr = IntersectionWithStiffenerSurfacePlane(
+                part, position, thickness, out CoordinateSystem partCS, out GeometricPlane stifPlane, rotationArroundY, rotationArroundZ);
+            var faceEnumFront = faceEnumArr[0];
+            var faceEnumBehind = faceEnumArr[1];
+
+            static IEnumerable<Point> GetVertices(IEnumerator faceEnum) {
+                var vertices = new List<Point>();
+
+                var faceCnt = 0;
+                while (faceEnum.MoveNext()) {
+                    if (++faceCnt > 1) throw new Exception(UNKNOWN_SECTION_TYPE);
+
+                    var face = faceEnum.Current as ArrayList;
+                    var loopEnum = face.GetEnumerator();
+
+                    var loopCnt = 0;
+                    while (loopEnum.MoveNext()) {
+                        if (++loopCnt > 1) throw new Exception(UNKNOWN_SECTION_TYPE);
+
+                        var loop = loopEnum.Current as ArrayList;
+                        var vertexEnum = loop.GetEnumerator();
+
+                        var verticesCnt = 0;
+                        while (vertexEnum.MoveNext()) {
+                            ++verticesCnt;
+
+                            var vertext = vertexEnum.Current as Point;
+                            vertices.Add(vertext);
+                        }
+                        //  使用 RAW 选项是 8 个顶点；
+                        //  使用 HIGH_ACCURACY 选项，
+                        //  对于 C 前缀单参数（如 C22A ）截面是 24 个顶点，
+                        //  对于 C 前缀三参数（如 C200*100*5 ）、BLC、BLU、U 前缀截面是 16 个顶点，
+                        //  对于 B_WLD_D、C_BUILT、C_VAR_A、C_VAR_B、C_VAR_C、C_VAR_D 前缀截面是 8 个顶点
+                        if (verticesCnt != 8) throw new Exception(UNKNOWN_SECTION_TYPE);
+                    }
+                }
+
+                return vertices;
+            }
+            var verticesFront = GetVertices(faceEnumFront);
+            var verticesBehind = GetVertices(faceEnumBehind);
+            verticesFront = OrderVertices(verticesFront, partCS);
+            verticesBehind = OrderVertices(verticesBehind, partCS);
+            verticesFront = verticesFront.Skip(2).Take(4);
+            verticesBehind = verticesBehind.Skip(2).Take(4);
+
+            var offset_Z_indent = new Vector(0, 0, indent).TransformFrom(partCS);
+            var offset_Z_clearance = new Vector(0, 0, clearance).TransformFrom(partCS);
+            var offset_Y_clearance = new Vector(0, clearance, 0).TransformFrom(partCS);
+            var arrList = new List<Point[]> { verticesFront.ToArray(), verticesBehind.ToArray() };
+            foreach (var arr in arrList) {
+                arr[0] -= offset_Z_indent; arr[3] -= offset_Z_indent;
+                arr[1] += offset_Z_clearance; arr[2] += offset_Z_clearance;
+                arr[0] -= offset_Y_clearance; arr[1] -= offset_Y_clearance;
+                arr[2] += offset_Y_clearance; arr[3] += offset_Y_clearance;
+            }
+            var lines = arrList[0].Zip(arrList[1], (p1, p2) => new Line(p1, p2));
+            var stifFrontPlane = new GeometricPlane(stifPlane.Origin + stifPlane.Normal.GetNormal(thickness * 0.5), stifPlane.Normal);
+            var stifBehindPlane = new GeometricPlane(stifPlane.Origin - stifPlane.Normal.GetNormal(thickness * 0.5), stifPlane.Normal);
+
+            var partZXPlane = new GeometricPlane(partCS.Origin, partCS.AxisY);
+            var partXYPlane = new GeometricPlane(partCS.Origin, partCS.AxisX.Cross(partCS.AxisY));
+            var shearAxisX = Intersection.PlaneToPlane(partZXPlane, stifPlane).Direction;
+            var shearAxisY = Intersection.PlaneToPlane(partXYPlane, stifPlane).Direction;
+            var shearAxisZ = shearAxisX.Cross(shearAxisY);
+            var matrix_ToStif = MatrixFactoryExtension.ToCoordinateSystem(shearAxisX, shearAxisY, shearAxisZ, stifPlane.Origin);
+            var matrix_FromStif = matrix_ToStif.Inverse();
+
+            verticesFront = lines.Select(l => matrix_ToStif.Transform(Intersection.LineToPlane(l, stifFrontPlane)));
+            verticesBehind = lines.Select(l => matrix_ToStif.Transform(Intersection.LineToPlane(l, stifBehindPlane)));
+
+            static Point BottomRight(Point p1, Point p2) => new(Math.Min(p1.X, p2.X), Math.Max(p1.Y, p2.Y), 0.0);
+            static Point BottomLeft(Point p1, Point p2) => new(Math.Max(p1.X, p2.X), Math.Max(p1.Y, p2.Y), 0.0);
+            static Point TopLeft(Point p1, Point p2) => new(Math.Max(p1.X, p2.X), Math.Min(p1.Y, p2.Y), 0.0);
+            static Point TopRight(Point p1, Point p2) => new(Math.Min(p1.X, p2.X), Math.Min(p1.Y, p2.Y), 0.0);
+            var corners = new Point[4] {
+                TopLeft(verticesFront.ElementAt(0), verticesBehind.ElementAt(0)),
+                TopRight(verticesFront.ElementAt(1), verticesBehind.ElementAt(1)),
+                BottomRight(verticesFront.ElementAt(2), verticesBehind.ElementAt(2)),
+                BottomLeft(verticesFront.ElementAt(3), verticesBehind.ElementAt(3)),
+            };
+            for (int i = 0; i < 4; i++) {
+                corners[i] = matrix_FromStif.Transform(corners[i]);
+            }
+
+            var contourPlate = ModelOperation.CreatContourPlate(new ArrayList {
+                new ContourPoint(corners[0], new Chamfer()),
+                new ContourPoint(corners[1], new Chamfer(chamferSizeX, chamferSizeY, chamferType)),
+                new ContourPoint(corners[2], new Chamfer(chamferSizeY, chamferSizeX, chamferType)),
+                new ContourPoint(corners[3], new Chamfer())
+            }, "STIFFENER", $"PL{thickness}", material, @class: @class);
+
+            return contourPlate;
+        }
+
+        private static ContourPlate CreatStiffenersForTypeM(
+            Part part, Point position, double thickness, string material = "Q235B", string @class = "99",
+            double rotationArroundY = 0.0, double rotationArroundZ = 0.0, double clearance = 2.0,
+            Chamfer.ChamferTypeEnum chamferType = 0, double chamferSizeX = 0.0, double chamferSizeY = 0.0) {
+            if (part is null) {
+                throw new ArgumentNullException(nameof(part));
+            }
+
+            if (position is null) {
+                throw new ArgumentNullException(nameof(position));
+            }
+
+            if (string.IsNullOrEmpty(material)) {
+                throw new ArgumentException($"“{nameof(material)}”不能为 null 或空。", nameof(material));
+            }
+
+            if (string.IsNullOrEmpty(@class)) {
+                throw new ArgumentException($"“{nameof(@class)}”不能为 null 或空。", nameof(@class));
+            }
+
+            var faceEnumArr = IntersectionWithStiffenerSurfacePlane(
+                part, position, thickness, out CoordinateSystem partCS, out GeometricPlane stifPlane, rotationArroundY, rotationArroundZ);
+            var faceEnumFront = faceEnumArr[0];
+            var faceEnumBehind = faceEnumArr[1];
+
+            /*  
+             *  顶点顺序与调用 IntersecAllFaces 方法时传入的 3 个点顺序有关
+             *  
+             *  RAW 选项：
+             *  F, TUB, CFRHS, P, RHS, SHS, [], B_WLD_J 前缀截面，内外 2 个 Loop，每个 Loop 各 4 个顶点
+             *  B_WLD_F 前缀截面，1 个 Loop，10 个顶点
+             *      1------------------------2
+             *      | 4--------------------3  8
+             *  	| |       Y .           7 |
+             *      | |        /|\          | |
+             *      | |         |           | |
+             *      | |         ---->       | |
+             *      | |             Z       | |
+             *      | |                     | |
+             *      | 5---------------------6 |
+             *      0-------------------------9
+             *  B_VAR_A, B_VAR_B, B_VAR_C 前缀截面，1 个 Loop， 10 个顶点
+             *      1-------------------------2
+             *      | 8---------------------7 |
+             *  	| |       Y .           | |
+             *      | |        /|\          | |
+             *      | |         |           | |
+             *      | |         ---->       | |
+             *      | |             Z       | |
+             *      | |                     | |
+             *      0 9 5-------------------6 |
+             *      4-------------------------3
+             *  B_BUILT 前缀截面，1 个 Loop，22 个顶点
+             *      1-------------------------2
+             *     22-2116---------------15 4-3
+             *     19-20|     Y .         | 5-6
+             *      |   |      /|\        |   |
+             *      |   |       |         |   |
+             *      |   |       ---->     |   |
+             *      |   |           Z     |   |
+             *     18---17                | 8-7
+             *     13--------------------14 9-10
+             *     12-------------------------11
+             *
+             *  HIGH_ACCURACY 选项：
+             *  B_WLD_J 前缀截面，内外 2 个 Loop，每个 Loop 各 4 个顶点
+             *  F, TUB, CFRHS, P, RHS, SHS, [] 前缀截面，内外 2 个 Loop，每个 Loop 各 20 个顶点
+             *  B_WLD_F 前缀截面，同 RAW 选项
+             *  B_VAR_A, B_VAR_B, B_VAR_C 前缀截面，同 RAW 选项
+             *  B_BUILT 前缀截面，同 RAW 选项
+             */
+            static IEnumerable<Point> GetVertices(IEnumerator faceEnum) {
+                var vertices = new List<Point>();
+
+                var faceCnt = 0;
+                while (faceEnum.MoveNext()) {
+                    if (++faceCnt > 1) throw new Exception(UNKNOWN_SECTION_TYPE);
+
+                    var face = faceEnum.Current as ArrayList;
+                    var loopEnum = face.GetEnumerator();
+
+                    var loopCnt = 0;
+                    while (loopEnum.MoveNext()) {
+                        if (++loopCnt > 1) vertices.Clear();
+
+                        var loop = loopEnum.Current as ArrayList;
+                        var vertexEnum = loop.GetEnumerator();
+
+                        var verticesCnt = 0;
+                        while (vertexEnum.MoveNext()) {
+                            ++verticesCnt;
+
+                            var vertext = vertexEnum.Current as Point;
+                            vertices.Add(vertext);
+                        }
+                    }
+                }
+
+                return vertices;
+            }
+            var verticesFront = GetVertices(faceEnumFront);
+            var verticesBehind = GetVertices(faceEnumBehind);
+            verticesFront = OrderVertices(verticesFront, partCS);
+            verticesBehind = OrderVertices(verticesBehind, partCS);
+
+            var prefix = GetProfilePrefix(part.Profile.ProfileString);
+            switch (prefix) {
+                case "B_WLD_F":
+                    verticesFront = verticesFront.Skip(3).Take(3)
+                        .Append(verticesFront.ElementAt(3) + verticesFront.ElementAt(5) - verticesFront.ElementAt(4));
+                    verticesBehind = verticesBehind.Skip(3).Take(3)
+                        .Append(verticesBehind.ElementAt(3) + verticesBehind.ElementAt(5) - verticesBehind.ElementAt(4));
+                    verticesFront = OrderVertices(verticesFront, partCS);
+                    verticesBehind = OrderVertices(verticesBehind, partCS);
+                    break;
+                case "B_VAR_A":
+                case "B_VAR_B":
+                case "B_VAR_C":
+                    verticesFront = verticesFront.Skip(5).Take(4);
+                    verticesBehind = verticesBehind.Skip(5).Take(4);
+                    verticesFront = OrderVertices(verticesFront, partCS);
+                    verticesBehind = OrderVertices(verticesBehind, partCS);
+                    break;
+                case "B_BUILT":
+                    verticesFront = verticesFront.Skip(13).Take(3)
+                        .Append(verticesFront.ElementAt(13) + verticesFront.ElementAt(15) - verticesFront.ElementAt(14));
+                    verticesBehind = verticesBehind.Skip(13).Take(3)
+                        .Append(verticesBehind.ElementAt(13) + verticesBehind.ElementAt(15) - verticesBehind.ElementAt(14));
+                    verticesFront = OrderVertices(verticesFront, partCS);
+                    verticesBehind = OrderVertices(verticesBehind, partCS);
+                    break;
+                default:
+                    break;
+            }
+
+            var offset_Z = new Vector(0, 0, clearance).TransformFrom(partCS);
+            var offset_Y = new Vector(0, clearance, 0).TransformFrom(partCS);
+            var arrList = new List<Point[]> { verticesFront.ToArray(), verticesBehind.ToArray() };
+            foreach (var arr in arrList) {
+                arr[0] += offset_Z; arr[1] -= offset_Z;
+                arr[2] -= offset_Z; arr[3] += offset_Z;
+                arr[0] -= offset_Y; arr[1] -= offset_Y;
+                arr[2] += offset_Y; arr[3] += offset_Y;
+            }
+            var lines = arrList[0].Zip(arrList[1], (p1, p2) => new Line(p1, p2));
+            var stifFrontPlane = new GeometricPlane(stifPlane.Origin + stifPlane.Normal.GetNormal(thickness * 0.5), stifPlane.Normal);
+            var stifBehindPlane = new GeometricPlane(stifPlane.Origin - stifPlane.Normal.GetNormal(thickness * 0.5), stifPlane.Normal);
+
+            var partZXPlane = new GeometricPlane(partCS.Origin, partCS.AxisY);
+            var partXYPlane = new GeometricPlane(partCS.Origin, partCS.AxisX.Cross(partCS.AxisY));
+            var shearAxisX = Intersection.PlaneToPlane(partZXPlane, stifPlane).Direction;
+            var shearAxisY = Intersection.PlaneToPlane(partXYPlane, stifPlane).Direction;
+            var shearAxisZ = shearAxisX.Cross(shearAxisY);
+            var matrix_ToStif = MatrixFactoryExtension.ToCoordinateSystem(shearAxisX, shearAxisY, shearAxisZ, stifPlane.Origin);
+            var matrix_FromStif = matrix_ToStif.Inverse();
+
+            verticesFront = lines.Select(l => matrix_ToStif.Transform(Intersection.LineToPlane(l, stifFrontPlane)));
+            verticesBehind = lines.Select(l => matrix_ToStif.Transform(Intersection.LineToPlane(l, stifBehindPlane)));
+
+            static Point BottomRight(Point p1, Point p2) => new(Math.Min(p1.X, p2.X), Math.Max(p1.Y, p2.Y), 0.0);
+            static Point BottomLeft(Point p1, Point p2) => new(Math.Max(p1.X, p2.X), Math.Max(p1.Y, p2.Y), 0.0);
+            static Point TopLeft(Point p1, Point p2) => new(Math.Max(p1.X, p2.X), Math.Min(p1.Y, p2.Y), 0.0);
+            static Point TopRight(Point p1, Point p2) => new(Math.Min(p1.X, p2.X), Math.Min(p1.Y, p2.Y), 0.0);
+            var corners = new Point[4] {
+                TopRight(verticesFront.ElementAt(0), verticesBehind.ElementAt(0)),
+                TopLeft(verticesFront.ElementAt(1), verticesBehind.ElementAt(1)),
+                BottomLeft(verticesFront.ElementAt(2), verticesBehind.ElementAt(2)),
+                BottomRight(verticesFront.ElementAt(3), verticesBehind.ElementAt(3)),
+            };
+            for (int i = 0; i < 4; i++) {
+                corners[i] = matrix_FromStif.Transform(corners[i]);
+            }
+
+            var contourPlate = ModelOperation.CreatContourPlate(new ArrayList {
+                new ContourPoint(corners[0], new Chamfer(chamferSizeY, chamferSizeX, chamferType)),
+                new ContourPoint(corners[1], new Chamfer(chamferSizeX, chamferSizeY, chamferType)),
+                new ContourPoint(corners[2], new Chamfer(chamferSizeY, chamferSizeX, chamferType)),
+                new ContourPoint(corners[3], new Chamfer(chamferSizeX, chamferSizeY, chamferType))
+            }, "STIFFENER", $"PL{thickness}", material, @class: @class);
+
+            return contourPlate;
+        }
+
+        private static ContourPlate CreatStiffenersForTypeRO(
+            Part part, Point position, double thickness, string material = "Q235B", string @class = "99",
+            double rotationArroundY = 0.0, double rotationArroundZ = 0.0, double clearance = 2.0) {
+            if (part is null) {
+                throw new ArgumentNullException(nameof(part));
+            }
+
+            if (position is null) {
+                throw new ArgumentNullException(nameof(position));
+            }
+
+            if (string.IsNullOrEmpty(material)) {
+                throw new ArgumentException($"“{nameof(material)}”不能为 null 或空。", nameof(material));
+            }
+
+            if (string.IsNullOrEmpty(@class)) {
+                throw new ArgumentException($"“{nameof(@class)}”不能为 null 或空。", nameof(@class));
+            }
+
+            var faceEnumArr = IntersectionWithStiffenerSurfacePlane(
+                part, position, thickness, out CoordinateSystem partCS, out GeometricPlane stifPlane, rotationArroundY, rotationArroundZ);
+            var faceEnumFront = faceEnumArr[0];
+            var faceEnumBehind = faceEnumArr[1];
+
+            static IEnumerable<Point> GetVertices(IEnumerator faceEnum) {
+                var vertices = new List<Point>();
+
+                var faceCnt = 0;
+                while (faceEnum.MoveNext()) {
+                    if (++faceCnt > 1) throw new Exception(UNKNOWN_SECTION_TYPE);
+
+                    var face = faceEnum.Current as ArrayList;
+                    var loopEnum = face.GetEnumerator();
+
+                    var loopCnt = 0;
+                    while (loopEnum.MoveNext()) {
+                        if (++loopCnt == 1) continue;  //  跳过外层 Loop
+                        if (loopCnt > 2) throw new Exception(UNKNOWN_SECTION_TYPE);
+
+                        var loop = loopEnum.Current as ArrayList;
+                        var vertexEnum = loop.GetEnumerator();
+
+                        var verticesCnt = 0;
+                        while (vertexEnum.MoveNext()) {
+                            ++verticesCnt;
+
+                            var vertext = vertexEnum.Current as Point;
+                            vertices.Add(vertext);
+                        }
+                    }
+                }
+
+                return vertices;
+            }
+            var verticesFront = GetVertices(faceEnumFront);
+            var verticesBehind = GetVertices(faceEnumBehind);
+            verticesFront = OrderVertices(verticesFront, partCS);
+            verticesBehind = OrderVertices(verticesBehind, partCS);
+
+            var centerLine = new Line(partCS.Origin, partCS.AxisX);
+            var arrFront = verticesFront.ToArray();
+            var arrBehind = verticesBehind.ToArray();
+            for (int i = 0; i < arrFront.Length; ++i) {
+                arrFront[i] -= new Vector(arrFront[i] - Projection.PointToLine(arrFront[i], centerLine)).GetNormal(clearance);
+                arrBehind[i] -= new Vector(arrBehind[i] - Projection.PointToLine(arrBehind[i], centerLine)).GetNormal(clearance);
+            }
+
+            var lines = arrFront.Zip(arrBehind, (p1, p2) => new Line(p1, p2));
+            var stifFrontPlane = new GeometricPlane(stifPlane.Origin + stifPlane.Normal.GetNormal(thickness * 0.5), stifPlane.Normal);
+            var stifBehindPlane = new GeometricPlane(stifPlane.Origin - stifPlane.Normal.GetNormal(thickness * 0.5), stifPlane.Normal);
+
+            verticesFront = lines.Select(l => Intersection.LineToPlane(l, stifFrontPlane));
+            verticesBehind = lines.Select(l => Intersection.LineToPlane(l, stifBehindPlane));
+            var center = verticesFront.Concat(verticesBehind).Aggregate((p1, p2) => p1 + p2).Multiply(verticesFront.Count() * 2);
+
+            var contourPoints = verticesFront.Select(p => Projection.PointToPlane(p, stifPlane))
+                .Zip(verticesBehind.Select(p => Projection.PointToPlane(p, stifPlane)), (p1, p2) =>
+                    Distance.PointToLine(p1, centerLine) < Distance.PointToLine(p2, centerLine) ? p1 : p2);
+
+            var contourPlate = ModelOperation.CreatContourPlate(contourPoints, "STIFFENER", $"PL{thickness}", material, @class: @class);
+
+            return contourPlate;
+        }
+
+        /// <summary>
+        /// 创建加劲板。
+        /// </summary>
+        /// <param name="part">要创建加劲板的零件</param>
+        /// <param name="position">创建加劲板的位置</param>
+        /// <param name="thickness">加劲板厚度</param>
+        /// <param name="material">加劲板材质</param>
+        /// <param name="class">加劲板等级</param>
+        /// <param name="rotationArroundY">加劲板绕零件坐标系Y轴旋转角度，弧度制</param>
+        /// <param name="rotationArroundZ">加劲板绕零件坐标系Z轴旋转角度，弧度制</param>
+        /// <param name="indent">加劲板缩进长度，仅适用于 H型钢、T型钢、工字钢、槽钢</param>
+        /// <param name="indent2">加劲板另一个方向的缩进长度，仅适用于 T型钢</param>
+        /// <param name="clearance">加劲板与零件表面的净距</param>
+        /// <param name="chamferType">加劲板倒角类型，仅适用于 H型钢、T型钢、工字钢、槽钢、矩形管</param>
+        /// <param name="chamferSizeX">加劲板倒角尺寸X，仅适用于 H型钢、T型钢、工字钢、槽钢、矩形管</param>
+        /// <param name="chamferSizeY">加劲板倒角尺寸Y，仅适用于 H型钢、T型钢、工字钢、槽钢、矩形管</param>
+        /// <returns>成功创建的加劲板。</returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        /// <exception cref="ArgumentException"></exception>
+        /// <exception cref="Exception">不支持的截面类型引发。</exception>
+        public static IEnumerable<ContourPlate> CreatStiffeners(
+            Part part, Point position, double thickness, string material = "Q235B", string @class = "99",
+            double rotationArroundY = 0.0, double rotationArroundZ = 0.0, double indent = 0.0, double indent2 = 0.0, double clearance = 2.0,
+            Chamfer.ChamferTypeEnum chamferType = 0, double chamferSizeX = 0.0, double chamferSizeY = 0.0) {
+            if (part is null) {
+                throw new ArgumentNullException(nameof(part));
+            }
+
+            if (position is null) {
+                throw new ArgumentNullException(nameof(position));
+            }
+
+            if (string.IsNullOrEmpty(material)) {
+                throw new ArgumentException($"“{nameof(material)}”不能为 null 或空。", nameof(material));
+            }
+
+            if (string.IsNullOrEmpty(@class)) {
+                throw new ArgumentException($"“{nameof(@class)}”不能为 null 或空。", nameof(@class));
+            }
+
+            const string PROPERTY_NAME = "PROFILE_TYPE";
+            var profiles_I = new[] { "B_WLD_A", "B_WLD_H", "B_WLD_K" };
+            var profiles_T = new[] { "B_WLD_E" };
+            var profiles_U = new[] { "B_WLD_D", "C_BUILT", "C_VAR_A", "C_VAR_B", "C_VAR_C", "C_VAR_D" };
+            var profiles_M = new[] { "B_WLD_F", "B_WLD_J", "B_BUILT", "B_VAR_A", "B_VAR_B", "B_VAR_C" };
+
+            var profileType = string.Empty;
+            if (!part.GetReportProperty(PROPERTY_NAME, ref profileType)) {
+                throw new Exception($"Failed to get \"{PROPERTY_NAME}\" for {part.Identifier}.");
+            }
+
+            var profileText = part.Profile.ProfileString;
+
+            switch (profileType) {
+                case "I":
+                    return CreatStiffenersForTypeI(part, position, thickness, material, @class,
+                        rotationArroundY, rotationArroundZ, indent, clearance,
+                        chamferType, chamferSizeX, chamferSizeY);
+                case "T":
+                    return CreatStiffenersForTypeT(part, position, thickness, material, @class,
+                        rotationArroundY, rotationArroundZ, indent, indent2, clearance,
+                        chamferType, chamferSizeX, chamferSizeY);
+                case "U":
+                    return [ CreatStiffenersForTypeU(part, position, thickness, material, @class,
+                    rotationArroundY, rotationArroundZ, indent, clearance,
+                    chamferType, chamferSizeX, chamferSizeY)];
+                case "M":
+                    return [ CreatStiffenersForTypeM(part, position, thickness, material, @class,
+                    rotationArroundY, rotationArroundZ, clearance,
+                    chamferType, chamferSizeX, chamferSizeY)];
+                case "RO":
+                    return [ CreatStiffenersForTypeRO(part, position, thickness, material, @class,
+                    rotationArroundY, rotationArroundZ, clearance)];
+                case "Z":
+                    var profilePrefix = GetProfilePrefix(profileText);
+                    if (profiles_I.Contains(profilePrefix)) {
+                        goto case "I";
+                    } else if (profiles_T.Contains(profilePrefix)) {
+                        goto case "T";
+                    } else if (profiles_U.Contains(profilePrefix)) {
+                        goto case "U";
+                    } else if (profiles_M.Contains(profilePrefix)) {
+                        goto case "M";
+                    } else {
+                        goto default;
+                    }
+                default:
+                    throw new Exception($"Profile \"{profileText}\" not supported yet.");
+            }
         }
 
         /// <summary>
