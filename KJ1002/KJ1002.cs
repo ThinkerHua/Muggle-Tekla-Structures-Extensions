@@ -277,7 +277,7 @@ namespace Muggle.TeklaPlugins.KJ1002 {
                 var seg = otherSegs.ElementAt(i);
                 if (Distance.PointToPoint(seg.StartPoint, basePoint) >
                     Distance.PointToPoint(seg.EndPoint, basePoint)) {
-                    reverse[i] = true;
+                    reverse[i + 2] = true;
                 }
             }
 
@@ -401,8 +401,10 @@ namespace Muggle.TeklaPlugins.KJ1002 {
             var primVector = zip.First().vector;
             var axisZ = new Vector(0, 0, 100);
 
-            var ordered = zip.Take(1).Concat(
-                zip.Skip(1).OrderBy(z => primVector.GetAngleBetween_WithDirection(z.vector, axisZ)));
+            var ordered = zip.Take(1)
+                .Concat(zip.Skip(1).OrderBy(z => 
+                    primVector.GetAngleBetween_WithDirection(z.vector, axisZ)))
+                .ToArray();
 
             reverseDirection = ordered.Select(o => o.reverse);
             return ordered.Select(o => o.id);
