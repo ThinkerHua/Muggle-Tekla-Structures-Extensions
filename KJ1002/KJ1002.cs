@@ -27,6 +27,7 @@ using Tekla.Structures.Plugins;
 using DistanceList = Tekla.Structures.Datatype.DistanceList;
 using Point = Tekla.Structures.Geometry3d.Point;
 using TSD = Tekla.Structures.Datatype;
+using TSMO = Tekla.Structures.Model.Operations;
 using Vector = Tekla.Structures.Geometry3d.Vector;
 
 namespace Muggle.TeklaPlugins.KJ1002 {
@@ -570,6 +571,59 @@ namespace Muggle.TeklaPlugins.KJ1002 {
         /// <summary>
         /// 在梁上创建加劲板。
         /// </summary>
+        /// <param name="beamID"></param>
+        /// <param name="reverseDirection"></param>
+        /// <param name="position">内侧加劲板的外侧（靠近节点为内侧，反之为外侧）</param>
+        /// <param name="thickness"></param>
+        /// <param name="distanceNet"></param>
+        /// <param name="material"></param>
+        /// <returns>成功创建的加劲板的 Identifier 集合。
+        /// 第一个加劲板在梁右内侧，第二个加劲板在梁右外侧，
+        /// 第三个加劲板在梁左内侧，第四个加劲板在梁左外侧。</returns>
+        private IEnumerable<Identifier> CreatStiffeners(Identifier beamID, bool reverseDirection, Point position,
+            double thickness, double distanceNet, string material) {
+
+            var beam = model.SelectModelObject(beamID) as Part;
+            var centerLine = beam.GetCenterLine(false).Cast<Point>();
+            var direction = new Vector(centerLine.Last() - centerLine.First()).GetNormal();
+            direction *= reverseDirection ? -1 : 1;
+
+            var stifs1 = ModelOperation.CreatStiffeners(beam, position - direction * thickness * 0.5, thickness, material);
+            var stifs2 = ModelOperation.CreatStiffeners(beam, position + direction * (distanceNet + thickness * 0.5), thickness, material);
+
+            var tmpTP = new TransformationPlane(centerLine.First(), direction, new Vector(0, 0, 1).Cross(direction));
+
+            var p = stifs1.First().Contour.ContourPoints[0] as Point;
+            p = p.TransformTo(tmpTP);
+            ContourPlate[] stifs;
+            if (p.Y <= 0) {
+                stifs = new ContourPlate[] { stifs1.ElementAt(0), stifs2.ElementAt(0), stifs1.ElementAt(1), stifs2.ElementAt(1) };
+            } else {
+                stifs = new ContourPlate[] { stifs1.ElementAt(1), stifs2.ElementAt(1), stifs1.ElementAt(0), stifs2.ElementAt(0) };
+            }
+
+            var currentTP = model.GetWorkPlaneHandler().GetCurrentTransformationPlane();
+            model.GetWorkPlaneHandler().SetCurrentTransformationPlane(tmpTP);
+
+            foreach (var stif in stifs) {
+                ModelOperation.CreatWeld(beam, stif, false,
+                    typeBelow: BaseWeld.WeldTypeEnum.WELD_TYPE_FILLET, sizeBelow: 6);
+                ModelOperation.CreatWeld(beam, stif, false,
+                    position: Weld.WeldPositionEnum.WELD_POSITION_PLUS_Z,
+                    typeBelow: BaseWeld.WeldTypeEnum.WELD_TYPE_FILLET, sizeBelow: 6);
+                ModelOperation.CreatWeld(beam, stif, false,
+                    position: Weld.WeldPositionEnum.WELD_POSITION_MINUS_Z,
+                    typeBelow: BaseWeld.WeldTypeEnum.WELD_TYPE_FILLET, sizeBelow: 6);
+            }
+
+            model.GetWorkPlaneHandler().SetCurrentTransformationPlane(currentTP);
+
+            return stifs.Select(stif => stif.Identifier);
+        }
+
+        /*/// <summary>
+        /// 在梁上创建加劲板。
+        /// </summary>
         /// <remarks>
         /// 使用系统细部 Stiffeners(1034) 创建，插入点为内侧加劲板的外侧（靠近节点为内，反之为外侧）。
         /// </remarks>
@@ -650,9 +704,9 @@ namespace Muggle.TeklaPlugins.KJ1002 {
             }
 
             return detail.Identifier;
-        }
+        }*/
 
-        private void FixStiffenerWeldsPosition(IEnumerable<Identifier> weldIDs, Identifier modelObjectID) {
+        /*private void FixStiffenerWeldsPosition(IEnumerable<Identifier> weldIDs, Identifier modelObjectID) {
             if (weldIDs is null) {
                 throw new ArgumentNullException(nameof(weldIDs));
             }
@@ -678,7 +732,7 @@ namespace Muggle.TeklaPlugins.KJ1002 {
                 }
             }
             model.GetWorkPlaneHandler().SetCurrentTransformationPlane(currentTP);
-        }
+        }*/
 
         /// <summary>
         /// 获取一个 <see cref="Part"/> 的标高。
@@ -851,15 +905,15 @@ namespace Muggle.TeklaPlugins.KJ1002 {
             var angleMax = 170.0 / 180.0 * Math.PI;
             var braceProfile = new ProfileL(braceProfileStr);
             var coincidentLength = boltPositions.Sum(dis => dis.Value);
-            var cnt = -1;
+            var index = -1;
             foreach (var id in beamIDs) {
-                ++cnt;
-                var preIndex = cnt == 0 ? totalNum - 1 : cnt - 1;
-                var nxtIndex = cnt == totalNum - 1 ? 0 : cnt + 1;
+                ++index;
+                var preIndex = index == 0 ? totalNum - 1 : index - 1;
+                var nxtIndex = index == totalNum - 1 ? 0 : index + 1;
 
-                var curBeam = beams.ElementAt(cnt);
+                var curBeam = beams.ElementAt(index);
                 var preLine = centerLines.ElementAt(preIndex);
-                var curLine = centerLines.ElementAt(cnt);
+                var curLine = centerLines.ElementAt(index);
                 var nxtLine = centerLines.ElementAt(nxtIndex);
 
                 var angle_pre = preLine.Direction.GetAngleBetween_WithDirection(curLine.Direction, axisZ);
@@ -881,6 +935,7 @@ namespace Muggle.TeklaPlugins.KJ1002 {
                     }
                 }
 
+                //  计算连接板角点
                 //  确保前后加劲板位置一致
                 IEnumerable<Point> gussetPoints_pre = null, gussetPoints_nxt = null;
                 double p2_X = double.MaxValue, p3_X = double.MinValue;
@@ -922,39 +977,11 @@ namespace Muggle.TeklaPlugins.KJ1002 {
                 var matrix = MatrixFactory.Rotate(-axisX.GetAngleBetween_WithDirection(curLine.Direction, axisZ), axisZ);
                 var matrixTranspose = matrix.GetTranspose();
 
-                //  创建加劲板并排序、修复焊缝位置
-                var detailPosition = matrix.Transform(new Point(p2_X, 0, 0));
+                //  创建加劲板
+                var position = matrix.Transform(new Point(p2_X, 0, 0));
                 var distanceNet = p3_X - p2_X;
-                var detail = model.SelectModelObject(CreatStiffeners(id, reverseDirection.ElementAt(cnt), detailPosition,
-                        stiffenerThickness, distanceNet, materialStr));
-                var stiffeners = new List<ContourPlate>();
-                var weldIDs = new List<Identifier>();
-                foreach (ModelObject obj in detail.GetChildren()) {
-                    if (obj is ContourPlate plate)
-                        stiffeners.Add(plate);
-                    else if (obj is Weld weld)
-                        weldIDs.Add(weld.Identifier);
-                }
-
-                stiffeners = stiffeners.OrderBy(stif => {
-                    double cog_X = 0.0, cog_Y = 0.0, cog_Z = 0.0;
-                    if (!stif.GetReportProperty("COG_X", ref cog_X)) {
-                        throw new Exception($"Can't get COG_X for {stif.Identifier}.");
-                    }
-
-                    if (!stif.GetReportProperty("COG_Y", ref cog_Y)) {
-                        throw new Exception($"Can't get COG_Y for {stif.Identifier}.");
-                    }
-
-                    if (!stif.GetReportProperty("COG_Z", ref cog_Z)) {
-                        throw new Exception($"Can't get COG_Z for {stif.Identifier}.");
-                    }
-
-                    //  COG_X, COG_Y, COG_Z 均为全局坐标系下的值，需作转换
-                    return matrixTranspose.Transform(new Point(cog_X, cog_Y, cog_Z).TransformFrom(new TransformationPlane())).Y;
-                }).ToList();
-
-                FixStiffenerWeldsPosition(weldIDs, id);
+                var stifIDs = CreatStiffeners(id, reverseDirection.ElementAt(index), position, stiffenerThickness, distanceNet, materialStr);
+                var stiffeners = stifIDs.Select(id => model.SelectModelObject(id) as ContourPlate);
 
                 //  创建连接板
                 ContourPlate gusset;
@@ -965,9 +992,9 @@ namespace Muggle.TeklaPlugins.KJ1002 {
                     goto SKIP_GUSSET_PRE;
 
                 gussetPoints = gussetPoints_pre.Select(p => matrix.Transform(p));
-                gussetID = CreatGusset(id, stiffeners.Take(2).Select(stif => stif.Identifier),
-                    beamIDs.ElementAt(preIndex), ref gussetPoints, gussetThickness, materialStr, true, true);
-                gussetIDs[cnt].pre_lower = gussetID;
+                gussetID = CreatGusset(id, stifIDs.Take(2), beamIDs.ElementAt(preIndex),
+                    ref gussetPoints, gussetThickness, materialStr, true, true);
+                gussetIDs[index].pre_lower = gussetID;
                 //  修复轮廓点顺序错误
                 gusset = model.SelectModelObject(gussetID) as ContourPlate;
                 gusset.Contour.ContourPoints = new ArrayList(gussetPoints.Select(p => new ContourPoint(p, new Chamfer())).ToArray());
@@ -975,9 +1002,9 @@ namespace Muggle.TeklaPlugins.KJ1002 {
 
                 if (creatUpperSplices == 1) {
                     gussetPoints = gussetPoints_pre.Select(p => matrix.Transform(p));
-                    gussetID = CreatGusset(id, stiffeners.Take(2).Select(stif => stif.Identifier),
-                        beamIDs.ElementAt(preIndex), ref gussetPoints, gussetThickness, materialStr, true, false);
-                    gussetIDs[cnt].pre_upper = gussetID;
+                    gussetID = CreatGusset(id, stifIDs.Take(2), beamIDs.ElementAt(preIndex),
+                        ref gussetPoints, gussetThickness, materialStr, true, false);
+                    gussetIDs[index].pre_upper = gussetID;
                     //  修复轮廓点顺序错误
                     gusset = model.SelectModelObject(gussetID) as ContourPlate;
                     gusset.Contour.ContourPoints = new ArrayList(gussetPoints.Select(p => new ContourPoint(p, new Chamfer())).ToArray());
@@ -990,9 +1017,9 @@ namespace Muggle.TeklaPlugins.KJ1002 {
                     goto SKIP_GUSSET_NXT;
 
                 gussetPoints = gussetPoints_nxt.Select(p => matrix.Transform(p));
-                gussetID = CreatGusset(id, stiffeners.Skip(2).Select(stif => stif.Identifier),
-                    beamIDs.ElementAt(nxtIndex), ref gussetPoints, gussetThickness, materialStr, false, true);
-                gussetIDs[cnt].nxt_lower = gussetID;
+                gussetID = CreatGusset(id, stifIDs.Skip(2), beamIDs.ElementAt(nxtIndex),
+                    ref gussetPoints, gussetThickness, materialStr, false, true);
+                gussetIDs[index].nxt_lower = gussetID;
                 //  修复轮廓点顺序错误
                 gusset = model.SelectModelObject(gussetID) as ContourPlate;
                 gusset.Contour.ContourPoints = new ArrayList(gussetPoints.Select(p => new ContourPoint(p, new Chamfer())).ToArray());
@@ -1000,9 +1027,9 @@ namespace Muggle.TeklaPlugins.KJ1002 {
 
                 if (creatUpperSplices == 1) {
                     gussetPoints = gussetPoints_nxt.Select(p => matrix.Transform(p));
-                    gussetID = CreatGusset(id, stiffeners.Skip(2).Select(stif => stif.Identifier),
-                        beamIDs.ElementAt(nxtIndex), ref gussetPoints, gussetThickness, materialStr, false, false);
-                    gussetIDs[cnt].nxt_upper = gussetID;
+                    gussetID = CreatGusset(id, stifIDs.Skip(2), beamIDs.ElementAt(nxtIndex),
+                        ref gussetPoints, gussetThickness, materialStr, false, false);
+                    gussetIDs[index].nxt_upper = gussetID;
                     //  修复轮廓点顺序错误
                     gusset = model.SelectModelObject(gussetID) as ContourPlate;
                     gusset.Contour.ContourPoints = new ArrayList(gussetPoints.Select(p => new ContourPoint(p, new Chamfer())).ToArray());
@@ -1013,12 +1040,12 @@ namespace Muggle.TeklaPlugins.KJ1002 {
             }
 
             //  创建支撑
-            cnt = -1;
+            index = -1;
             foreach (var id in beamIDs) {
-                ++cnt;
-                var nxtIndex = cnt == totalNum - 1 ? 0 : cnt + 1;
+                ++index;
+                var nxtIndex = index == totalNum - 1 ? 0 : index + 1;
 
-                var curLine = centerLines.ElementAt(cnt);
+                var curLine = centerLines.ElementAt(index);
                 var nxtLine = centerLines.ElementAt(nxtIndex);
 
                 var radian_nxt = curLine.Direction.GetAngleBetween_WithDirection(nxtLine.Direction, axisZ);
@@ -1026,11 +1053,11 @@ namespace Muggle.TeklaPlugins.KJ1002 {
                 if (radian_nxt >= angleMax)
                     goto SKIP_BRACE_NXT;
 
-                CreatBraceAndBolt(gussetIDs[cnt].nxt_lower, gussetIDs[nxtIndex].pre_lower, braceProfileStr, materialStr,
+                CreatBraceAndBolt(gussetIDs[index].nxt_lower, gussetIDs[nxtIndex].pre_lower, braceProfileStr, materialStr,
                     boltPositions, boltStandard, boltSize, true);
 
                 if (creatUpperSplices == 1) {
-                    CreatBraceAndBolt(gussetIDs[cnt].nxt_upper, gussetIDs[nxtIndex].pre_upper, braceProfileStr, materialStr,
+                    CreatBraceAndBolt(gussetIDs[index].nxt_upper, gussetIDs[nxtIndex].pre_upper, braceProfileStr, materialStr,
                         boltPositions, boltStandard, boltSize, false);
                 }
 
