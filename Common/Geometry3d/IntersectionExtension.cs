@@ -46,29 +46,27 @@ namespace Muggle.TeklaPlugins.Common.Geometry3d {
         /// <summary>
         /// 两条直线间最短线段。
         /// </summary>
-        /// <remarks>本实现旨在解决在两直线相交的情况下，官方实现求得的线段长度不等于0的问题。
-        /// 同时也实现了求直线退化成点，即 <see cref="Line.Direction"/> 为零向量时的解。
-        /// <para>主要求解公式推导过程如下(<a href="https://math.stackexchange.com/a/4764188">参考</a>)：</para>
-        /// <para>L1上的点方程：P=P1+s*V1, L2上的点方程：P=P2+t*V2，最短线段所在直线上的点方程：P=P3+r*V3</para>
-        /// <para>由于最短线段两端分别落在L1、L2上，则有：(P2+t*V2)+r*V3=P1+s*V1</para>
-        /// <para>可令V3=(P2+t*V2)-(P1+s*V1)，代入上述方程，则有：</para>
-        /// <para><i>(1) P1+s*V1=P2+t*V2，即s*V1-t*V2=P2-P1</i></para>
-        /// <para>由于向量与其自身叉积为0，则有：</para>
-        /// <para><i>(2) s*V1×V2=(P2-P1)×V2</i></para>
-        /// <para>这是一个向量方程，要得到实数方程，可以对两边用V1×V2做点积：</para>
-        /// <para>s*(V1×V2)∙(V1×V2)=((P2-P1)×V2)∙(V1×V2)，求解出：</para>
-        /// <para><i>(3) s=((P2-P1)×V2)∙(V1×V2)/||V1×V2||^2</i></para>
-        /// <para>再将s代入步骤(1)方程即可求解出：</para>
-        /// <para><i>(4) t=(s*V1-(P2-P1))∙V2/(V2∙V2)</i> - 由于向量没有除法，所以此处需用点积形式做除法</para>
-        /// <para>据此即可算出最短线段的两个端点。</para>
-        /// <para>
-        ///     上述方程中，P1、P2可分别取值为L1、L2的 <see cref="Line.Origin"/> 属性，
-        ///     V1、V2分别为L1、L2的 <see cref="Line.Direction"/> 属性。
-        /// </para>
+        /// <remarks><para>本实现旨在解决在两直线相交的情况下，官方实现求得的线段长度不等于0的问题。
+        /// 同时也实现了求直线退化成点，即 <see cref="Line.Direction"/> 为零向量时的解。</para>
+        /// <para>主要求解公式推导过程如下(<a href="https://math.stackexchange.com/a/4764188">参考</a>)：<br/>
+        /// L1上的点方程：P=P1+s*V1, L2上的点方程：P=P2+t*V2，最短线段所在直线上的点方程：P=P3+r*V3<br/>
+        /// 由于最短线段两端分别落在L1、L2上，则有：(P2+t*V2)+r*V3=P1+s*V1<br/>
+        /// 可令V3=(P2+t*V2)-(P1+s*V1)，代入上述方程，则有：<br/>
+        /// <i><![CDATA[  ]]>(1) P1+s*V1=P2+t*V2，即s*V1-t*V2=P2-P1</i><br/>
+        /// 由于向量与其自身叉积为0，则有：<br/>
+        /// <i><![CDATA[  ]]>(2) s*V1×V2=(P2-P1)×V2</i><br/>
+        /// 这是一个向量方程，要得到实数方程，可以对两边用V1×V2做点积：
+        /// s*(V1×V2)∙(V1×V2)=((P2-P1)×V2)∙(V1×V2)，求解出：<br/>
+        /// <i><![CDATA[  ]]>(3) s=((P2-P1)×V2)∙(V1×V2)/||V1×V2||^2</i><br/>
+        /// 再将s代入步骤(1)方程即可求解出：<br/>
+        /// <i><![CDATA[  ]]>(4) t=(s*V1-(P2-P1))∙V2/(V2∙V2)</i> - 由于向量没有除法，所以此处需用点积形式做除法<br/>
+        /// 据此即可算出最短线段的两个端点。</para>
+        /// <para>上述方程中，P1、P2可分别取值为L1、L2的 <see cref="Line.Origin"/> 属性，
+        /// V1、V2分别为L1、L2的 <see cref="Line.Direction"/> 属性。</para>
         /// <para>另外，最短距离可用公式 <i>d = (P2-P1)∙(V1×V2)/||V1×V2||</i> 求得。</para></remarks>
         /// <param name="line1">给定直线1</param>
         /// <param name="line2">给定直线2</param>
-        /// <returns>两条直线之间的最短线段。如果直线平行，则为null。</returns>
+        /// <returns>两条直线之间的最短线段。如果直线平行，则为 null。</returns>
         /// <exception cref="ArgumentNullException"></exception>
         public static LineSegment LineToLine(Line line1, Line line2) {
             if (line1 is null) {

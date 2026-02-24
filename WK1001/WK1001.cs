@@ -20,6 +20,7 @@ using System.Windows.Forms;
 using Muggle.TeklaPlugins.Common.Geometry3d;
 using Muggle.TeklaPlugins.Common.Model;
 using Muggle.TeklaPlugins.Common.Profile;
+using Tekla.Structures;
 using Tekla.Structures.Geometry3d;
 using Tekla.Structures.Model;
 using Tekla.Structures.Plugins;
@@ -49,6 +50,8 @@ namespace Muggle.TeklaPlugins.WK1001 {
     [Plugin("WK1001")]
     [PluginUserInterface("Muggle.TeklaPlugins.WK1001.Views.MainWindow")]
     [SecondaryType(SecondaryType.SECONDARYTYPE_MULTIPLE)]
+    [PositionType(PositionTypeEnum.END_END_PLANE)]
+    [AutoDirectionType(AutoDirectionTypeEnum.AUTODIR_GLOBAL_Z)]
     public class WK1001 : ConnectionBase {
         #region Fields
         private Model _model;
@@ -64,11 +67,10 @@ namespace Muggle.TeklaPlugins.WK1001 {
         private double _extLength_B;
         private string _materialStr;
 
-        private List<Beam> parts;
+        private List<Identifier> partIDs;
         private List<ProfileRect_Invariant> profiles;
         private List<Line> centerlines;
         private List<double> angles;//杆件间依次角度，即2号与1号之间、3号与2号之间...
-        private bool ordered = false;
 
         private TransformationPlane globalTP, originTP, workTP;
         #endregion
@@ -97,28 +99,39 @@ namespace Muggle.TeklaPlugins.WK1001 {
         #region MainMethod
 
         public override bool Run() {
-            bool flag = false;
             try {
 
-                if (parts == null) GetParts();
-
-                if (globalTP == null) globalTP = new TransformationPlane();
-                if (originTP == null) originTP = _model.GetWorkPlaneHandler().GetCurrentTransformationPlane();
-                if (workTP == null) workTP = GetWorkTransformationPlane();
-                _model.GetWorkPlaneHandler().SetCurrentTransformationPlane(workTP);
-
-                if (!ordered) {
-                    OrderParts();
-                    ordered = true;
+                if (partIDs == null) {
+                    partIDs = new List<Identifier> { Primary };
+                    partIDs.AddRange(Secondaries);
                 }
 
-                flag = CreatConnection();
+                var parts = partIDs.Select(id => Model.SelectModelObject(id) as Part);
+                profiles = parts.Select(p => new ProfileRect_Invariant(p.Profile.ProfileString)).ToList();
+                centerlines = parts.Select(p => {
+                    var l = p.GetCenterLine(false);
+                    var p1 = l[0] as Point;
+                    var p2 = l[l.Count - 1] as Point;
+                    return new Line(p1, p2);
+                }).ToList();
+
+                AdjustOriginDirection();
+
+                globalTP ??= new TransformationPlane();
+                originTP ??= _model.GetWorkPlaneHandler().GetCurrentTransformationPlane();
+                workTP ??= GetWorkTransformationPlane();
+                _model.GetWorkPlaneHandler().SetCurrentTransformationPlane(workTP);
+
+                OrderParts();
+
+                CreatConnection();
 
             } catch (Exception ex) {
                 MessageBox.Show(ex.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
             }
 
-            return flag;
+            return true;
         }
         #endregion
 
@@ -149,89 +162,103 @@ namespace Muggle.TeklaPlugins.WK1001 {
             if (IsDefaultValue(_materialStr))
                 _materialStr = "Q345B";
         }
-        private void GetParts() {
 
-            if (parts != null) return;
+        private void AdjustOriginDirection() {
+            var p00 = centerlines[0].Origin;
+            var p01 = p00 + centerlines[0].Direction;
+            var p10 = centerlines[1].Origin;
+            var p11 = p10 + centerlines[1].Direction;
 
-            parts = new List<Beam> {
-                    _model.SelectModelObject(Primary) as Beam,
-                };
-            foreach (var identifier in Secondaries) {
-                parts.Add(_model.SelectModelObject(identifier) as Beam);
+            if (Math.Min(Distance.PointToPoint(p00, p10), Distance.PointToPoint(p00, p11))
+                > Math.Min(Distance.PointToPoint(p01, p10), Distance.PointToPoint(p01, p11))) {
+                centerlines[0].Origin += centerlines[0].Direction;
+                centerlines[0].Direction *= -1;
             }
 
-            ArrayList centerline;
-            Point point1, point2, origin = new Point();
-
-            profiles = new List<ProfileRect_Invariant>();
-            centerlines = new List<Line>();
-            angles = new List<double>();
-            foreach (var part in parts) {
-                profiles.Add(new ProfileRect_Invariant(part.Profile.ProfileString));
-                centerline = part.GetCenterLine(false);
-                point1 = centerline[0] as Point;
-                point2 = centerline[1] as Point;
-                centerlines.Add(Distance.PointToPoint(origin, point1) < Distance.PointToPoint(origin, point2) ?
-                    new Line(point1, point2) : new Line(point2, point1));//统一成从中心指向外围
+            var basePoint = centerlines[0].Origin;
+            for (int i = 1; i < centerlines.Count; i++) {
+                var p1 = centerlines[i].Origin;
+                var p2 = p1 + centerlines[i].Direction;
+                if (Distance.PointToPoint(p1, basePoint) > Distance.PointToPoint(p2, basePoint)) {
+                    centerlines[i].Origin += centerlines[i].Direction;
+                    centerlines[i].Direction *= -1;
+                }
             }
+
         }
+
         private TransformationPlane GetWorkTransformationPlane() {
 
+            var globalZ = new Vector(0, 0, 1).TransformFrom(globalTP);
+
+            Point origin;
+            Vector axisX, axisY;
+
+            //  只有两根杆件的情形
+            if (centerlines.Count == 2) {
+                axisX = centerlines.First().Direction.GetNormal();
+
+                var seg0 = Intersection.LineToLine(centerlines.First(), centerlines.Last());
+                if (seg0 == null) {
+                    origin = centerlines.First().Origin;
+                    axisY = globalZ.Cross(axisX);
+                } else {
+                    origin = seg0.StartPoint;
+                    axisY = centerlines.Last().Direction.GetNormal();
+                }
+
+                return new TransformationPlane(origin, axisX, axisY);
+            }
+
+            //  多根杆件的情形
+            var parts = partIDs.Select(id => Model.SelectModelObject(id) as Part);
+            var directions = centerlines.Select(l => l.Direction);
+
+            //  选取与全局Z轴夹角最小的3根杆件
+            var orderedIndexs = directions
+                .Select((v, i) => (v, i))
+                .OrderBy(item => {
+                    var degree = globalZ.GetAngleBetween(item.v);
+                    if (degree > Math.PI * 0.5) return Math.PI - degree;
+                    return degree;
+                })
+                .Select(item => item.i)
+                .Take(3);
+
+            var line0 = centerlines[orderedIndexs.ElementAt(0)];
+            var line1 = centerlines[orderedIndexs.ElementAt(1)];
+            var line2 = centerlines[orderedIndexs.ElementAt(2)];
+
+            var seg1 = Intersection.LineToLine(line0, line1)
+                ?? Intersection.LineToLine(line0, line2)
+                ?? throw new InvalidOperationException("There are multiple parallel members, unable to creat the connection.");
+            origin = seg1.StartPoint;
+
+            var p0 = line0.Origin + line0.Direction.GetNormal(1000);
+            var p1 = line1.Origin + line1.Direction.GetNormal(1000);
+            var p2 = line2.Origin + line2.Direction.GetNormal(1000);
+
             Vector normal;
-
-            //根据前三个选择的杆件求共同法向（此时零件尚未排序）
-            var part0 = parts[0];
-            var part1 = parts[1];
-            var part2 = parts[2];
-
-            var part0_centerLine = part0.GetCenterLine(false).Cast<Point>();
-            var part1_centerLine = part1.GetCenterLine(false).Cast<Point>();
-            var part2_centerLine = part2.GetCenterLine(false).Cast<Point>();
-
-            var part0Line = new Line(part0_centerLine.First(), part0_centerLine.Last());
-            var part1Line = new Line(part1_centerLine.First(), part1_centerLine.Last());
-            var part2Line = new Line(part2_centerLine.First(), part2_centerLine.Last());
-
-            var origin = (IntersectionExtension.LineToLine(part0Line, part1Line)?.StartPoint)
-                ?? throw new InvalidOperationException("存在平行杆件，无法安装节点。");
-
-            var p0 = Distance.PointToPoint(origin, part0_centerLine.First())
-                > Distance.PointToPoint(origin, part0_centerLine.Last())
-                ? part0_centerLine.First() : part0_centerLine.Last();
-            var p1 = Distance.PointToPoint(origin, part1_centerLine.First())
-                > Distance.PointToPoint(origin, part1_centerLine.Last())
-                ? part1_centerLine.First() : part1_centerLine.Last();
-            var p2 = Distance.PointToPoint(origin, part2_centerLine.First())
-                > Distance.PointToPoint(origin, part2_centerLine.Last())
-                ? part2_centerLine.First() : part2_centerLine.Last();
-
-            var v0 = new Vector(p0 - origin).GetNormal(500);
-            var v1 = new Vector(p1 - origin).GetNormal(500);
-            var v2 = new Vector(p2 - origin).GetNormal(500);
-
-            p0 = origin + v0; p1 = origin + v1; p2 = origin + v2;
-
             var gplane = GeometricPlaneFactory.ByPoints(p0, p1, p2);
-
             if (origin == Projection.PointToPlane(origin, gplane)) {
                 //在同一平面上
                 normal = gplane.GetNormal();
             } else {
                 //不在同一平面上
-                normal = new Vector(origin - Geometry3dOperation.CenterOfSphere(origin, p0, p1, p2));
+                normal = new Vector(origin - Geometry3dOperation.CenterOfSphere(origin, p0, p1, p2)).GetNormal();
             }
+            //  使法向基本朝上
+            if (normal.Dot(globalZ) < 0) normal *= -1;
 
-            if (Vector.Dot(normal, new Vector(0, 0, 500).TransformFrom(globalTP)) < 0)
-                normal *= -1;//使法向基本朝上
-
-            var axisY = Vector.Cross(normal, v0);
-            var axisX = Vector.Cross(axisY, normal);
+            axisY = Vector.Cross(normal, line0.Direction);
+            axisX = Vector.Cross(axisY, normal);
 
             return new TransformationPlane(origin, axisX, axisY);
         }
+
         /// <summary>
         /// 按模型中实际的顺序（逆时针方向）调整零件顺序，
-        /// 字段parts, profiles, centerlines, angles均调整。
+        /// 字段partIDs, profiles, centerlines, angles均调整。
         /// 同时将centerlines的原点和方向转换到workTP。
         /// </summary>
         private void OrderParts() {
@@ -249,15 +276,18 @@ namespace Muggle.TeklaPlugins.WK1001 {
                     axisZ));
             }
 
-            var sort = angles.Select((value, index) => (Value: value, OriginalIndex: index)).OrderBy(result => result.Value).ToArray();
-            var sortedIndex = sort.Select(x => x.OriginalIndex).ToArray();
+            var sortedIndex = angles
+                .Select((a, i) => (a, i))
+                .OrderBy(x => x.a)
+                .Select(x => x.i)
+                .ToArray();
 
-            var newParts = new Beam[sortedIndex.Length];
+            var newPartIDs = new Identifier[sortedIndex.Length];
             var newProfiles = new ProfileRect_Invariant[sortedIndex.Length];
             var newCenterlines = new Line[sortedIndex.Length];
             var newAngles = new double[sortedIndex.Length];
             for (int i = 0; i < sortedIndex.Length; i++) {
-                newParts[i] = parts[sortedIndex[i]];
+                newPartIDs[i] = partIDs[sortedIndex[i]];
                 newProfiles[i] = profiles[sortedIndex[i]];
                 newCenterlines[i] = centerlines[sortedIndex[i]];
                 newAngles[i] = angles[sortedIndex[i]];
@@ -268,11 +298,12 @@ namespace Muggle.TeklaPlugins.WK1001 {
                 angles[i] = newAngles[i] - newAngles[i - 1];
             }
 
-            parts.Clear(); parts.AddRange(newParts);
+            partIDs.Clear(); partIDs.AddRange(newPartIDs);
             profiles.Clear(); profiles.AddRange(newProfiles);
             centerlines.Clear(); centerlines.AddRange(newCenterlines);
         }
-        private bool CreatConnection() {
+
+        private void CreatConnection() {
 
             Point point1, point2, point3, point4;
             bool typeA = IsDefaultValue(_diam_BEndplate) || _diam_BEndplate == 0;
@@ -391,7 +422,7 @@ namespace Muggle.TeklaPlugins.WK1001 {
             point1.Z += 100;
             point2.Z -= 100;
             var booleanPart = ModelOperation.CreatBeam(point1, point2, profileStr: $"D{prfPipe.d1}", @class: BooleanPart.BooleanOperativeClassName);
-            foreach (var part in parts) {
+            foreach (var part in partIDs.Select(id => Model.SelectModelObject(id) as Part)) {
                 ModelOperation.ApplyBooleanOperation(part, booleanPart);
                 ModelOperation.CreatWeld(part, pipe, position: Weld.WeldPositionEnum.WELD_POSITION_PLUS_Z);
             }
@@ -418,7 +449,6 @@ namespace Muggle.TeklaPlugins.WK1001 {
             ModelOperation.CreatWeld(stif1, stif3);
 
             #endregion
-            return true;
         }
         #endregion
     }
