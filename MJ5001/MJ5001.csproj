@@ -21,6 +21,7 @@
 		<PackageReference Include="Tekla.Structures.Plugins" Version="2021.0.0" ExcludeAssets="runtime" />
 	</ItemGroup>
 	<ItemGroup>
+		<ProjectReference Include="..\Common.WPF\Common.WPF.csproj" />
 		<ProjectReference Include="..\Common\Common.csproj" private="false" />
 	</ItemGroup>
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">

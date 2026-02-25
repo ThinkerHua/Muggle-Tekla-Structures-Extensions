@@ -12,12 +12,12 @@
  *  MainWindowViewModel.cs: view model for main window of MG1002
  *  written by Huang YongXing - thinkerhua@hotmail.com
  *==============================================================================*/
-using System.ComponentModel;
+using Muggle.TeklaPlugins.Common.WPF.ViewModels;
 using Tekla.Structures.Dialog;
 using TD = Tekla.Structures.Datatype;
 
 namespace Muggle.TeklaPlugins.MG1002.ViewModels {
-    public class MainWindowViewModel : INotifyPropertyChanged {
+    public class MainWindowViewModel : ConnectionViewModel {
 
         private string endPlate_profile = "PL30*460*1093";
         [StructuresDialog("prfStr_EndPlate", typeof(TD.String))]
@@ -197,92 +197,6 @@ namespace Muggle.TeklaPlugins.MG1002.ViewModels {
                 material = string.IsNullOrEmpty(value) ? "Q345B" : value;
                 OnPropertyChanged("Material");
             }
-        }
-
-        private int upDirection = 7;
-        [StructuresDialog("zsuunta", typeof(TD.Integer))]
-        public int UpDirection {
-            get { return upDirection; }
-            set {
-                upDirection = value <= 0 || value > 7 ? 7 : value;
-                OnPropertyChanged("UpDirection");
-            }
-        }
-
-        private double rotationAngleY = 0.0;
-        [StructuresDialog("zang1", typeof(TD.Double))]
-        public double RotationAngleY {
-            get { return rotationAngleY; }
-            set {
-                rotationAngleY = value == int.MinValue ? 0.0 : value;
-                OnPropertyChanged("RotationAngleY");
-            }
-        }
-
-        private double rotationAngleX = 0.0;
-        [StructuresDialog("zang2", typeof(TD.Double))]
-        public double RotationAngleX {
-            get { return rotationAngleX; }
-            set {
-                rotationAngleX = value == int.MinValue ? 0.0 : value;
-                OnPropertyChanged("RotationAngleX");
-            }
-        }
-
-        private int locked = 0;
-        [StructuresDialog("OBJECT_LOCKED", typeof(TD.Integer))]
-        public int Locked {
-            get { return locked; }
-            set {
-                locked = value == 1 ? 1 : 0;
-                OnPropertyChanged("Locked");
-            }
-        }
-
-        private int @class = -1;
-        [StructuresDialog("group_no", typeof(TD.Integer))]
-        public int Class {
-            get { return @class; }
-            set {
-                @class = value == int.MinValue ? 0 : value;
-                OnPropertyChanged("Class");
-            }
-        }
-
-        private string connectionCode = string.Empty;
-        [StructuresDialog("joint_code", typeof(TD.String))]
-        public string ConnectionCode {
-            get { return connectionCode; }
-            set {
-                connectionCode = value ?? string.Empty;
-                OnPropertyChanged("ConnectionCode");
-            }
-        }
-
-        private string autoDefaults = string.Empty;
-        [StructuresDialog("ad_root", typeof(TD.String))]
-        public string AutoDefaults {
-            get { return autoDefaults; }
-            set {
-                autoDefaults = value ?? string.Empty;
-                OnPropertyChanged("AutoDefaults");
-            }
-        }
-
-        private string autoConnection = string.Empty;
-        [StructuresDialog("ac_root", typeof(TD.String))]
-        public string AutoConnection {
-            get { return autoConnection; }
-            set {
-                autoConnection = value ?? string.Empty;
-                OnPropertyChanged("AutoConnection");
-            }
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected void OnPropertyChanged(string name) {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
     }
 }

@@ -12,7 +12,7 @@
  *  MainWindowViewModel.cs: view model for main window of MJ5001
  *  written by Huang YongXing - thinkerhua@hotmail.com
  *==============================================================================*/
-using System.ComponentModel;
+using Muggle.TeklaPlugins.Common.WPF.ViewModels;
 using Tekla.Structures.Dialog;
 using TD = Tekla.Structures.Datatype;
 
@@ -20,7 +20,7 @@ namespace Muggle.TeklaPlugins.MJ5001.ViewModels {
     /// <summary>
     /// Data logic for MainWindow
     /// </summary>
-    public class MainWindowViewModel : INotifyPropertyChanged {
+    public class MainWindowViewModel : NotificationObject {
         private double gap = 15.0;
         [StructuresDialog("gap", typeof(TD.Double))]
         public double Gap {
@@ -219,12 +219,6 @@ namespace Muggle.TeklaPlugins.MJ5001.ViewModels {
                 group_no = value == int.MinValue ? 0 : value;
                 OnPropertyChanged("GroupNo");
             }
-        }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
-        protected void OnPropertyChanged(string name) {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
         }
 
     }

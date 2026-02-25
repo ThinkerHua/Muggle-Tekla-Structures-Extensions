@@ -868,7 +868,7 @@ namespace Muggle.TeklaPlugins.KJ1001 {
             #endregion
 
             return;
-        #endregion
+            #endregion
 
         ShortBeam:;
             #region 短梁
@@ -1047,7 +1047,7 @@ namespace Muggle.TeklaPlugins.KJ1001 {
 
             return;
 
-        #endregion
+            #endregion
 
         Type2:;
             #region Type2

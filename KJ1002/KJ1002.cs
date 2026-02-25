@@ -27,7 +27,6 @@ using Tekla.Structures.Plugins;
 using DistanceList = Tekla.Structures.Datatype.DistanceList;
 using Point = Tekla.Structures.Geometry3d.Point;
 using TSD = Tekla.Structures.Datatype;
-using TSMO = Tekla.Structures.Model.Operations;
 using Vector = Tekla.Structures.Geometry3d.Vector;
 
 namespace Muggle.TeklaPlugins.KJ1002 {
@@ -402,7 +401,7 @@ namespace Muggle.TeklaPlugins.KJ1002 {
             var axisZ = new Vector(0, 0, 100);
 
             var ordered = zip.Take(1)
-                .Concat(zip.Skip(1).OrderBy(z => 
+                .Concat(zip.Skip(1).OrderBy(z =>
                     primVector.GetAngleBetween_WithDirection(z.vector, axisZ)))
                 .ToArray();
 
