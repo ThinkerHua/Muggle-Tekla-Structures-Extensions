@@ -54,6 +54,8 @@
 
 - PointExtension 和 VectorExtension 的 Transform 系列方法，可以更便捷地在各种变换平面或坐标系中进行转换。
 
+- ModelOperation.CreatStiffeners 方法，可方便地为梁创建加劲板，无须在节点中嵌套使用系统节点（出现多个节点符号）。
+
 - ...
 
 更多内容参见 [API Reference of Common.chm](Documents/API%20Reference%20of%20Common.chm)。
