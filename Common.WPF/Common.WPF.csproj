@@ -14,14 +14,6 @@
 		<AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
 	</PropertyGroup>
 
-	<ItemGroup>
-		<None Remove="Assets\Up direction.png" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<Resource Include="Assets\Up direction.png"/>
-	</ItemGroup>
-
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
 		<Exec Command="xcopy &quot;$(TargetDir)$(TargetName).dll&quot; &quot;D:\Program Files\Tekla Structures\2021.0\Environments\common\extensions\MuggleTSExtensions\&quot; /Y /C /Q /R" />
 	</Target>

@@ -37,6 +37,7 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/HJ1001;component/Resources/backgroundImage.xaml" />
+                <ResourceDictionary Source="/Common.WPF;component/Assets/Up direction.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
             <cvc:UpDirectionToSelectedIndexValueConverter x:Key="upDirectionToSelectedIndex" />
@@ -219,9 +220,13 @@
                     <Image Grid.Row="1"
                            Grid.RowSpan="3"
                            Grid.Column="0"
+                           Width="80"
                            Height="80"
-                           HorizontalAlignment="Right"
-                           Source="/Common.WPF;component/Assets/Up direction.png" />
+                           HorizontalAlignment="Right">
+                        <Image.Source>
+                            <DrawingImage Drawing="{StaticResource UpDirection}" />
+                        </Image.Source>
+                    </Image>
                     <uiCtrls:WpfFilterCheckBox Grid.Row="1" Grid.Column="1" AttributeName="zang1" />
                     <TextBox Grid.Row="1" Grid.Column="2" Text="{Binding RotationAngleY, Mode=TwoWay}" />
                     <uiCtrls:WpfFilterCheckBox Grid.Row="2" Grid.Column="1" AttributeName="zang2" />

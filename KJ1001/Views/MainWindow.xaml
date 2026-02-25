@@ -42,6 +42,7 @@
                 <ResourceDictionary Source="/KJ1001;component/Resources/backgroundImage_Type0.xaml" />
                 <ResourceDictionary Source="/KJ1001;component/Resources/backgroundImage_type1.xaml" />
                 <ResourceDictionary Source="/KJ1001;component/Resources/backgroundImage_type2.xaml" />
+                <ResourceDictionary Source="/Common.WPF;component/Assets/Up direction.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
             <converters:ConnectionTypeToBoolConverter x:Key="TypeToBoolConverter" />
@@ -594,9 +595,13 @@
                     <Image Grid.Row="1"
                            Grid.RowSpan="3"
                            Grid.Column="0"
+                           Width="80"
                            Height="80"
-                           HorizontalAlignment="Right"
-                           Source="/Common.WPF;component/Assets/Up direction.png" />
+                           HorizontalAlignment="Right">
+                        <Image.Source>
+                            <DrawingImage Drawing="{StaticResource UpDirection}" />
+                        </Image.Source>
+                    </Image>
                     <uiCtrls:WpfFilterCheckBox Grid.Row="1" Grid.Column="1" AttributeName="zang1" />
                     <TextBox Grid.Row="1" Grid.Column="2" Text="{Binding RotationAngleY, Mode=TwoWay}" />
                     <uiCtrls:WpfFilterCheckBox Grid.Row="2" Grid.Column="1" AttributeName="zang2" />

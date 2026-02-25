@@ -39,6 +39,8 @@
                 <ResourceDictionary Source="/KJ2001;component/Resources/backgroundImage_basePlate.xaml" />
                 <ResourceDictionary Source="/KJ2001;component/Resources/backgroundImage_innerStiffener.xaml" />
                 <ResourceDictionary Source="/KJ2001;component/Resources/backgroundImage_stud.xaml" />
+                <ResourceDictionary Source="/Common.WPF;component/Assets/Up direction.xaml" />
+                <ResourceDictionary Source="/Common.WPF;component/Assets/Position in relation to primary part.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
             <cvc:UpDirectionToSelectedIndexValueConverter x:Key="upDirectionToSelectedIndex" />
@@ -455,9 +457,13 @@
                     <Image Grid.Row="1"
                            Grid.RowSpan="3"
                            Grid.Column="0"
+                           Width="80"
                            Height="80"
-                           HorizontalAlignment="Right"
-                           Source="/Common.WPF;component/Assets/Up direction.png" />
+                           HorizontalAlignment="Right">
+                        <Image.Source>
+                            <DrawingImage Drawing="{StaticResource UpDirection}" />
+                        </Image.Source>
+                    </Image>
                     <uiCtrls:WpfFilterCheckBox Grid.Row="1" Grid.Column="1" AttributeName="zang1" />
                     <TextBox Grid.Row="1" Grid.Column="2" Text="{Binding RotationAngleY, Mode=TwoWay}" />
                     <uiCtrls:WpfFilterCheckBox Grid.Row="2" Grid.Column="1" AttributeName="zang2" />
@@ -473,37 +479,15 @@
                                                IsChecked="{Binding ElementName=filterVerticalPosition, Path=IsChecked, Mode=TwoWay}" />
 
                     <!-- UpMiddleLeft UpMiddleMiddle UpMiddleRight -->
-                    <Canvas Grid.Row="4"
-                            Grid.RowSpan="3"
-                            Grid.Column="2"
-                            Width="100"
-                            Height="90">
-                        <Path Canvas.Left="3"
-                              Canvas.Top="33"
-                              Data="M 0,0 H 94 V 24 H 0 Z"
-                              Stroke="Black"
-                              StrokeThickness="1.5"
-                              Fill="#FF808080" />
-                        <Path Canvas.Left="42" Canvas.Top="37" Data="M 0,0 H 16 V 16 H 0 Z" Fill="White" />
-                        <Path Canvas.Left="48.5"
-                              Canvas.Top="30"
-                              Data="M 0,0 H 3 V 3 H 0 Z"
-                              Stroke="Red"
-                              StrokeThickness="1"
-                              Fill="White" />
-                        <Path Canvas.Left="37"
-                              Canvas.Top="43.5"
-                              Data="M 0,0 H 3 V 3 H 0 Z"
-                              Stroke="Red"
-                              StrokeThickness="1"
-                              Fill="White" />
-                        <Path Canvas.Left="48.5"
-                              Canvas.Top="57"
-                              Data="M 0,0 H 3 V 3 H 0 Z"
-                              Stroke="Red"
-                              StrokeThickness="1"
-                              Fill="White" />
-                    </Canvas>
+                    <Image Grid.Row="4"
+                           Grid.RowSpan="3"
+                           Grid.Column="2"
+                           Width="100"
+                           Height="90">
+                        <Image.Source>
+                            <DrawingImage Drawing="{StaticResource PositionInRelationToPrimaryPart1}" />
+                        </Image.Source>
+                    </Image>
                     <CheckBox Grid.Row="4"
                               Grid.Column="2"
                               HorizontalAlignment="Center"
@@ -523,59 +507,15 @@
                     <!-- TopLeft    TopMiddle    TopRight -->
                     <!-- MiddleLeft MiddleMiddle MiddleRight -->
                     <!-- BottomLeft BottomMiddle BottomRight -->
-                    <Canvas Grid.Row="7"
-                            Grid.RowSpan="3"
-                            Grid.Column="2"
-                            Width="100"
-                            Height="100">
-                        <Path Canvas.Left="25"
-                              Canvas.Top="25"
-                              Stroke="Black"
-                              StrokeThickness="1.5"
-                              Fill="#FF808080"
-                              Data="M 0,0 H 50 V 10 H 30 V 40 H 50 V 50 H 0 V 40 H 20 V 10 H 0 Z" />
-                        <Path Canvas.Left="46" Canvas.Top="35" Fill="Black" Data="M 4,0 L 8,4 L 5.2,3.5 V 10 H 2.8 V 3.5 L 0,4 H 0 Z" />
-                        <Path Canvas.Left="65" Canvas.Top="46" Fill="Black" Data="M 4,0 L 8,4 L 5.2,3.5 V 10 H 2.8 V 3.5 L 0,4 H 0 Z">
-                            <Path.RenderTransform>
-                                <RotateTransform Angle="90" />
-                            </Path.RenderTransform>
-                        </Path>
-                        <Path Canvas.Left="22"
-                              Canvas.Top="22"
-                              Data="M 0,0 H 3 V 3 H 0 Z"
-                              Stroke="Red"
-                              StrokeThickness="1" />
-                        <Path Canvas.Left="48.5"
-                              Canvas.Top="22"
-                              Data="M 0,0 H 3 V 3 H 0 Z"
-                              Stroke="Red"
-                              StrokeThickness="1" />
-                        <Path Canvas.Left="75"
-                              Canvas.Top="22"
-                              Data="M 0,0 H 3 V 3 H 0 Z"
-                              Stroke="Red"
-                              StrokeThickness="1" />
-                        <Path Canvas.Left="37"
-                              Canvas.Top="48.5"
-                              Data="M 0,0 H 3 V 3 H 0 Z"
-                              Stroke="Red"
-                              StrokeThickness="1" />
-                        <Path Canvas.Left="22"
-                              Canvas.Top="75"
-                              Data="M 0,0 H 3 V 3 H 0 Z"
-                              Stroke="Red"
-                              StrokeThickness="1" />
-                        <Path Canvas.Left="48.5"
-                              Canvas.Top="75"
-                              Data="M 0,0 H 3 V 3 H 0 Z"
-                              Stroke="Red"
-                              StrokeThickness="1" />
-                        <Path Canvas.Left="75"
-                              Canvas.Top="75"
-                              Data="M 0,0 H 3 V 3 H 0 Z"
-                              Stroke="Red"
-                              StrokeThickness="1" />
-                    </Canvas>
+                    <Image Grid.Row="7"
+                           Grid.RowSpan="3"
+                           Grid.Column="2"
+                           Width="60"
+                           Height="60" Margin="20">
+                        <Image.Source>
+                            <DrawingImage Drawing="{StaticResource PositionInRelationToPrimaryPart2}" />
+                        </Image.Source>
+                    </Image>
                     <CheckBox Grid.Row="7"
                               Grid.Column="2"
                               HorizontalAlignment="Left"
