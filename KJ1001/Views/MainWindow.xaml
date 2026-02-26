@@ -42,7 +42,7 @@
                 <ResourceDictionary Source="/KJ1001;component/Resources/backgroundImage_Type0.xaml" />
                 <ResourceDictionary Source="/KJ1001;component/Resources/backgroundImage_type1.xaml" />
                 <ResourceDictionary Source="/KJ1001;component/Resources/backgroundImage_type2.xaml" />
-                <ResourceDictionary Source="/Common.WPF;component/Assets/Up direction.xaml" />
+                <ResourceDictionary Source="/Common.WPF;component/Assets/UpDirection.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
             <converters:ConnectionTypeToBoolConverter x:Key="TypeToBoolConverter" />
@@ -572,7 +572,7 @@
                         <RowDefinition Height="auto" />
                         <RowDefinition Height="auto" />
                         <RowDefinition Height="auto" />
-                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="1*" />
                         <RowDefinition Height="auto" />
                         <RowDefinition Height="auto" />
                         <RowDefinition Height="auto" />

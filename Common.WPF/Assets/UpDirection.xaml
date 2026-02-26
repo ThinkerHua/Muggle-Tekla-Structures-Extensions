@@ -6,7 +6,7 @@
                 <Pen Brush="Black" Thickness="0.2" />
             </GeometryDrawing.Pen>
             <GeometryDrawing.Geometry>
-                <PathGeometry Figures="M 0,35.5 H 15 L 30,28.5 H 15 Z" />
+                <PathGeometry Figures="M 0,35.5 H 15 L 30,29.5 H 15 Z" />
             </GeometryDrawing.Geometry>
         </GeometryDrawing>
         <GeometryDrawing Brush="White">
@@ -14,7 +14,7 @@
                 <Pen Brush="Black" Thickness="0.2" />
             </GeometryDrawing.Pen>
             <GeometryDrawing.Geometry>
-                <PathGeometry Figures="M 9,35.5 L 24,28.5 V 14.5 L 9,21.5 Z" />
+                <PathGeometry Figures="M 8.5,35.5 L 23.5,29.5 V 18.5 L 8.5,24.5 Z" />
             </GeometryDrawing.Geometry>
         </GeometryDrawing>
         <GeometryDrawing Brush="White">
@@ -22,7 +22,7 @@
                 <Pen Brush="Black" Thickness="0.2" />
             </GeometryDrawing.Pen>
             <GeometryDrawing.Geometry>
-                <PathGeometry Figures="M 15,38.5 L 30,31.5 V 28.5 L 15,35.5 Z" />
+                <PathGeometry Figures="M 15,37.5 L 30,31.5 V 29.5 L 15,35.5 Z" />
             </GeometryDrawing.Geometry>
         </GeometryDrawing>
         <GeometryDrawing Brush="White">
@@ -30,7 +30,7 @@
                 <Pen Brush="Black" Thickness="0.2" />
             </GeometryDrawing.Pen>
             <GeometryDrawing.Geometry>
-                <PathGeometry Figures="M 15,21.5 L 30,14.5 V 11.5 L 15,18.5 Z" />
+                <PathGeometry Figures="M 15,24.5 L 30,18.5 V 16.5 L 15,22.5 Z" />
             </GeometryDrawing.Geometry>
         </GeometryDrawing>
         <GeometryDrawing Brush="White">
@@ -38,7 +38,7 @@
                 <Pen Brush="Black" Thickness="0.2" />
             </GeometryDrawing.Pen>
             <GeometryDrawing.Geometry>
-                <PathGeometry Figures="M 0,18.5 H 15 L 30,11.5 H 15 Z" />
+                <PathGeometry Figures="M 0,22.5 H 15 L 30,16.5 H 15 Z" />
             </GeometryDrawing.Geometry>
         </GeometryDrawing>
         <GeometryDrawing Brush="White">
@@ -46,7 +46,7 @@
                 <Pen Brush="Black" Thickness="0.2" />
             </GeometryDrawing.Pen>
             <GeometryDrawing.Geometry>
-                <PathGeometry Figures="M 0,38.5 H 15 V 35.5 H 9 V 21.5 H 15 V 18.5 H 0 V 21.5 H 6 V 35.5 H 0 Z" />
+                <PathGeometry Figures="M 0,37.5 H 15 V 35.5 H 8.5 V 24.5 H 15 V 22.5 H 0 V 24.5 H 6.5 V 35.5 H 0 Z" />
             </GeometryDrawing.Geometry>
         </GeometryDrawing>
         <GeometryDrawing>
@@ -54,7 +54,7 @@
                 <Pen Brush="Black" Thickness="0.5" />
             </GeometryDrawing.Pen>
             <GeometryDrawing.Geometry>
-                <PathGeometry Figures="M 15,15 H 40 M 38.58,16.41 L 40,15 L 38.58,13.58 M 35.75,12 S 32.25,15 35.75,18" />
+                <PathGeometry Figures="M 15,19.5 H 40 M 38.586,18.086 L 40,19.5 L 38.586,20.914 M 35.758,16.5 S 32.258,19.5 35.758,22.5" />
             </GeometryDrawing.Geometry>
         </GeometryDrawing>
         <GeometryDrawing>
@@ -62,7 +62,7 @@
                 <Pen Brush="Black" Thickness="0.5" />
             </GeometryDrawing.Pen>
             <GeometryDrawing.Geometry>
-                <PathGeometry Figures="M 15,15 L 40,3.33 M 39.31,5.21 L 40,3.33 L 38.12,2.65 M 34.79,2.76 S 38.29,5.76 34.79,8.76" />
+                <PathGeometry Figures="M 15,19.5 L 40,7.833 M 39.317,9.713 L 40,7.833 L 38.12,7.15 M 34.796,7.262 S 38.296,10.262 34.796,13.262" />
             </GeometryDrawing.Geometry>
         </GeometryDrawing>
         <GeometryDrawing>
@@ -74,7 +74,7 @@
                     <PathGeometry.Transform>
                         <TransformGroup>
                             <RotateTransform Angle="180" />
-                            <TranslateTransform X="35.78" Y="18" />
+                            <TranslateTransform X="35.758" Y="22.5" />
                         </TransformGroup>
                     </PathGeometry.Transform>
                 </PathGeometry>
@@ -89,7 +89,7 @@
                     <PathGeometry.Transform>
                         <TransformGroup>
                             <RotateTransform Angle="270" />
-                            <TranslateTransform X="34.79" Y="8.76" />
+                            <TranslateTransform X="34.796" Y="13.262" />
                         </TransformGroup>
                     </PathGeometry.Transform>
                 </PathGeometry>
@@ -100,7 +100,7 @@
                 <Pen Brush="Black" Thickness="0.5" />
             </GeometryDrawing.Pen>
             <GeometryDrawing.Geometry>
-                <PathGeometry Figures="M 15,15 V 0 M 13.58,1.41 L 15,0 L 16.41,1.41" />
+                <PathGeometry Figures="M 15,19.5 V 0 M 13.586,1.414 L 15,0 L 16.414,1.414" />
             </GeometryDrawing.Geometry>
         </GeometryDrawing>
         <GeometryDrawing Brush="LightGreen">
@@ -108,7 +108,7 @@
                 <Pen Brush="Gray" Thickness="0.5" />
             </GeometryDrawing.Pen>
             <GeometryDrawing.Geometry>
-                <PathGeometry Figures="M 11.25,15 H 18.75 L 15,5 Z" />
+                <PathGeometry Figures="M 11.25,19.5 H 18.75 L 15,9.5 Z" />
             </GeometryDrawing.Geometry>
         </GeometryDrawing>
         <GeometryDrawing Brush="LightGreen">
@@ -116,7 +116,7 @@
                 <Pen Brush="Gray" Thickness="0.5" />
             </GeometryDrawing.Pen>
             <GeometryDrawing.Geometry>
-                <EllipseGeometry Center="15,15" RadiusX="3.75" RadiusY="1.5" />
+                <EllipseGeometry Center="15,19.5" RadiusX="3.75" RadiusY="1.5" />
             </GeometryDrawing.Geometry>
         </GeometryDrawing>
     </DrawingGroup>

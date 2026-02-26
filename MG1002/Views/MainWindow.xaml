@@ -38,7 +38,7 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/MG1002;component/Resources/backgroundImage1.xaml" />
                 <ResourceDictionary Source="/MG1002;component/Resources/backgroundImage2.xaml" />
-                <ResourceDictionary Source="/Common.WPF;component/Assets/Up direction.xaml" />
+                <ResourceDictionary Source="/Common.WPF;component/Assets/UpDirection.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
             <cvc:UpDirectionToSelectedIndexValueConverter x:Key="upDirectionToSelectedIndex" />
@@ -261,7 +261,7 @@
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
-                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="1*" />
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
