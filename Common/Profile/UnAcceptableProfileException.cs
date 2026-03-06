@@ -14,7 +14,7 @@
  *==============================================================================*/
 using System;
 
-namespace Muggle.TeklaPlugins.Common.Profile {
+namespace Muggle.TsExtensions.Common.Profile {
     /// <summary>
     /// 不支持的截面或不支持的截面参数引发的异常。
     /// </summary>

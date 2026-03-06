@@ -15,9 +15,9 @@
 using System;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Muggle.TeklaPlugins.Common.Geometry3d;
-using Muggle.TeklaPlugins.Common.Model;
-using Muggle.TeklaPlugins.MainWindow.Services;
+using Muggle.TsExtensions.Common.Geometry3d;
+using Muggle.TsExtensions.Common.Model;
+using Muggle.TsExtensions.MainWindow.Services;
 using Tekla.Structures.Dialog;
 using Tekla.Structures.Geometry3d;
 using Tekla.Structures.Model;
@@ -25,7 +25,7 @@ using Tekla.Structures.Model.Operations;
 using Tekla.Structures.Model.UI;
 using UISelector = Tekla.Structures.Model.UI.ModelObjectSelector;
 
-namespace Muggle.TeklaPlugins.MainWindow.ViewModels {
+namespace Muggle.TsExtensions.MainWindow.ViewModels {
     public partial class MoveToElevationViewModel : ViewModelBase {
         public enum ElevationTypeEnum {
             Top,

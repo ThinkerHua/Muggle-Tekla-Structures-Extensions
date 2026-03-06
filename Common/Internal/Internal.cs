@@ -13,13 +13,13 @@
  *  written by Huang YongXing - thinkerhua@hotmail.com
  *==============================================================================*/
 using System;
-using Muggle.TeklaPlugins.Common.Geometry3d;
-using Muggle.TeklaPlugins.Common.ModelUI;
+using Muggle.TsExtensions.Common.Geometry3d;
+using Muggle.TsExtensions.Common.ModelUI;
 using Tekla.Structures.Geometry3d;
 using Tekla.Structures.Model;
 using Tekla.Structures.Model.UI;
 
-namespace Muggle.TeklaPlugins.Common.Internal {
+namespace Muggle.TsExtensions.Common.Internal {
     /// <summary>
     /// 内部使用的类。主要用于开发过程中的测试。
     /// </summary>

@@ -14,11 +14,11 @@
  *==============================================================================*/
 using System;
 using System.Windows;
-using Muggle.TeklaPlugins.KJ1001.ViewModels;
+using Muggle.TsExtensions.KJ1001.ViewModels;
 using Tekla.Structures.Dialog;
 using Tekla.Structures.Dialog.UIControls;
 
-namespace Muggle.TeklaPlugins.KJ1001.Views {
+namespace Muggle.TsExtensions.KJ1001.Views {
     /// <summary>
     /// Interaction logic for MainPluginWindow.xaml
     /// </summary>

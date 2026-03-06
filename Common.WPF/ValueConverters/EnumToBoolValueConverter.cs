@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 
-namespace Muggle.TeklaPlugins.Common.WPF.ValueConverters {
+namespace Muggle.TsExtensions.Common.WPF.ValueConverters {
     /// <summary>
     /// Converts an enumeration value to a boolean and vice versa for use in data binding scenarios.
     /// </summary>

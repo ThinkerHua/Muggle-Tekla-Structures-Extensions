@@ -16,9 +16,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Muggle.TeklaPlugins.Common.Geometry3d;
-using Muggle.TeklaPlugins.Common.Model;
-using Muggle.TeklaPlugins.Common.Profile;
+using Muggle.TsExtensions.Common.Geometry3d;
+using Muggle.TsExtensions.Common.Model;
+using Muggle.TsExtensions.Common.Profile;
 using Tekla.Structures;
 using Tekla.Structures.Datatype;
 using Tekla.Structures.Geometry3d;
@@ -29,7 +29,7 @@ using MessageBoxButton = System.Windows.MessageBoxButton;
 using MessageBoxImage = System.Windows.MessageBoxImage;
 using TSG3d = Tekla.Structures.Geometry3d;
 
-namespace Muggle.TeklaPlugins.MG1002 {
+namespace Muggle.TsExtensions.MG1002 {
     public class MG1002Data {
         [StructuresField("prfStr_EndPlate")]
         public string prfStr_EndPlate;
@@ -70,7 +70,7 @@ namespace Muggle.TeklaPlugins.MG1002 {
     }
 
     [Plugin("MG1002")]
-    [PluginUserInterface("Muggle.TeklaPlugins.MG1002.Views.MainWindow")]
+    [PluginUserInterface("Muggle.TsExtensions.MG1002.Views.MainWindow")]
     [SecondaryType(SecondaryType.SECONDARYTYPE_TWO)]
     [AutoDirectionType(AutoDirectionTypeEnum.AUTODIR_BASIC)]
     public class MG1002 : ConnectionBase {

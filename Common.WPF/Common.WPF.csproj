@@ -5,7 +5,7 @@
 		<LangVersion>latest</LangVersion>
 		<OutputType>Library</OutputType>
 		<UseWPF>true</UseWPF>
-		<RootNamespace>Muggle.TeklaPlugins.Common.WPF</RootNamespace>
+		<RootNamespace>Muggle.TsExtensions.Common.WPF</RootNamespace>
 		<Authors>thinkerhua@hotmail.com</Authors>
 		<Copyright>Copyright © 2025 thinkerhua@hotmail.com. All rights reserved.</Copyright>
 		<GenerateDocumentationFile>True</GenerateDocumentationFile>

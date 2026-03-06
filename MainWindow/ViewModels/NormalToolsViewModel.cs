@@ -17,17 +17,17 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using CommunityToolkit.Mvvm.Input;
-using Muggle.TeklaPlugins.Common.Geometry3d;
-using Muggle.TeklaPlugins.Common.Internal;
-using Muggle.TeklaPlugins.Common.ModelUI;
-using Muggle.TeklaPlugins.MainWindow.Services;
+using Muggle.TsExtensions.Common.Geometry3d;
+using Muggle.TsExtensions.Common.Internal;
+using Muggle.TsExtensions.Common.ModelUI;
+using Muggle.TsExtensions.MainWindow.Services;
 using Tekla.Structures.Geometry3d;
 using Tekla.Structures.Model;
 using Tekla.Structures.Model.Operations;
 using Tekla.Structures.Model.UI;
 using TSMUI = Tekla.Structures.Model.UI;
 
-namespace Muggle.TeklaPlugins.MainWindow.ViewModels {
+namespace Muggle.TsExtensions.MainWindow.ViewModels {
     public partial class NormalToolsViewModel : ViewModelBase {
         private readonly Model model = new Model();
         private readonly Picker picker = new Picker();

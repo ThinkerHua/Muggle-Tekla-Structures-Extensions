@@ -12,11 +12,11 @@
  *  MainWindowViewModel.cs: view model for main window of KJ1001
  *  written by Huang YongXing - thinkerhua@hotmail.com
  *==============================================================================*/
-using Muggle.TeklaPlugins.Common.WPF.ViewModels;
+using Muggle.TsExtensions.Common.WPF.ViewModels;
 using Tekla.Structures.Dialog;
 using TD = Tekla.Structures.Datatype;
 
-namespace Muggle.TeklaPlugins.KJ1001.ViewModels {
+namespace Muggle.TsExtensions.KJ1001.ViewModels {
     public class MainWindowViewModel : ConnectionViewModel {
         private int type = 0;
         [StructuresDialog("type", typeof(TD.Integer))]

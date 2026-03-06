@@ -14,9 +14,9 @@
  *==============================================================================*/
 using System.Windows.Controls;
 using Microsoft.Extensions.DependencyInjection;
-using Muggle.TeklaPlugins.MainWindow.ViewModels;
+using Muggle.TsExtensions.MainWindow.ViewModels;
 
-namespace Muggle.TeklaPlugins.MainWindow.Views {
+namespace Muggle.TsExtensions.MainWindow.Views {
     /// <summary>
     /// ThreeDimensionalRotation.xaml 的交互逻辑
     /// </summary>

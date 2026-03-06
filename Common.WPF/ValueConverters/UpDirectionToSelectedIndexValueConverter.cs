@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 
-namespace Muggle.TeklaPlugins.Common.WPF.ValueConverters {
+namespace Muggle.TsExtensions.Common.WPF.ValueConverters {
     /// <summary>
     /// 用于将组件通用选项卡中的向上方向枚举值转换为ComboBox的选中索引。
     /// </summary>

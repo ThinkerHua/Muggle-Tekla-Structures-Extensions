@@ -12,11 +12,11 @@
  *  MainWindowViewModel.cs: view model for main window of WK1001
  *  written by Huang YongXing - thinkerhua@hotmail.com
  *==============================================================================*/
-using Muggle.TeklaPlugins.Common.WPF.ViewModels;
+using Muggle.TsExtensions.Common.WPF.ViewModels;
 using Tekla.Structures.Dialog;
 using TD = Tekla.Structures.Datatype;
 
-namespace Muggle.TeklaPlugins.WK1001.ViewModels {
+namespace Muggle.TsExtensions.WK1001.ViewModels {
     public class MainWindowViewModel : ConnectionViewModel {
         private string pipe_profile = string.Empty;
         [StructuresDialog("prfStr_Pipe", typeof(TD.String))]

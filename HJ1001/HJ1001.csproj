@@ -4,7 +4,7 @@
 		<LangVersion>8.0</LangVersion>
 		<UseWPF>true</UseWPF>
 		<AssemblyName>HJ1001</AssemblyName>
-		<RootNamespace>Muggle.TeklaPlugins.HJ1001</RootNamespace>
+		<RootNamespace>Muggle.TsExtensions.HJ1001</RootNamespace>
 		<Authors>thinkerhua@hotmail.com</Authors>
 		<Copyright>Copyright © 2024 thinkerhua@hotmail.com. All rights reserved.</Copyright>
 		<OutputPath>../TSEP/binaries</OutputPath>

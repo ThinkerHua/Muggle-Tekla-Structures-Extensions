@@ -13,10 +13,10 @@
  *  written by Huang YongXing - thinkerhua@hotmail.com
  *==============================================================================*/
 using System;
-using Muggle.TeklaPlugins.MJ5001.ViewModels;
+using Muggle.TsExtensions.MJ5001.ViewModels;
 using Tekla.Structures.Dialog;
 
-namespace Muggle.TeklaPlugins.MJ5001.Views {
+namespace Muggle.TsExtensions.MJ5001.Views {
     /// <summary>
     /// Interaction logic for MainPluginWindow.xaml
     /// </summary>

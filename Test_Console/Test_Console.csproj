@@ -2,7 +2,7 @@
 	<PropertyGroup>
 		<TargetFramework>net48</TargetFramework>
 		<OutputType>Exe</OutputType>
-		<RootNamespace>Muggle.TeklaPlugins.Test</RootNamespace>
+		<RootNamespace>Muggle.TsExtensions.Test</RootNamespace>
 	</PropertyGroup>
 	<ItemGroup>
 		<PackageReference Include="Tekla.Structures" Version="2021.0.0" ExcludeAssets="runtime"/>

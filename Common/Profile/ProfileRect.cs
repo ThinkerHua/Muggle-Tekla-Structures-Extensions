@@ -14,7 +14,7 @@
  *==============================================================================*/
 using System.Text.RegularExpressions;
 
-namespace Muggle.TeklaPlugins.Common.Profile {
+namespace Muggle.TsExtensions.Common.Profile {
     /// <summary>
     /// 矩形管（通用形式，含冷弯矩形管和焊接矩形管）。适用如下形式：
     /// <br/><see cref="PatternCollection.CFH_J_1"/>：<inheritdoc cref="PatternCollection.CFH_J_1"/>

@@ -14,7 +14,7 @@
  *==============================================================================*/
 using System.Text.RegularExpressions;
 
-namespace Muggle.TeklaPlugins.Common.Profile {
+namespace Muggle.TsExtensions.Common.Profile {
     /// <summary>
     /// H型钢（通用形式）。适用如下形式：
     /// <br/><see cref="PatternCollection.H_1"/>：<inheritdoc cref="PatternCollection.H_1"/>

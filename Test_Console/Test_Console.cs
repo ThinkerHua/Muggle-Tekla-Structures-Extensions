@@ -17,16 +17,16 @@ using System.Collections;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
-using Muggle.TeklaPlugins.Common.Geometry3d;
-using Muggle.TeklaPlugins.Common.Model;
-using Muggle.TeklaPlugins.Common.ModelUI;
+using Muggle.TsExtensions.Common.Geometry3d;
+using Muggle.TsExtensions.Common.Model;
+using Muggle.TsExtensions.Common.ModelUI;
 using Tekla.Structures;
 using Tekla.Structures.Geometry3d;
 using Tekla.Structures.Model;
 using Tekla.Structures.Model.Operations;
 using Tekla.Structures.Model.UI;
 
-namespace Muggle.TeklaPlugins.Test {
+namespace Muggle.TsExtensions.Test {
     internal class Test_Console {
         private const string NOTRUNNING_MESSAGE = "Tekla structures not running.";
         private const string USER_INTERRUPT = "User interrupt";

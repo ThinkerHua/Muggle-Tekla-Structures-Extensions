@@ -21,7 +21,7 @@ using System.Reflection;
 using System.Runtime.Serialization;
 using System.Windows.Media.Imaging;
 using CommunityToolkit.Mvvm.Input;
-using Muggle.TeklaPlugins.MainWindow.Services;
+using Muggle.TsExtensions.MainWindow.Services;
 using Tekla.Structures;
 using Tekla.Structures.Dialog;
 using Tekla.Structures.Geometry3d;
@@ -31,7 +31,7 @@ using Tekla.Structures.Plugins;
 using Assembly = System.Reflection.Assembly;
 using TSMUI = Tekla.Structures.Model.UI;
 
-namespace Muggle.TeklaPlugins.MainWindow.ViewModels {
+namespace Muggle.TsExtensions.MainWindow.ViewModels {
     public class PluginCard {
         public string PluginName { get; set; }
         public BitmapImage Icon { get; set; }

@@ -17,11 +17,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Muggle.TeklaPlugins.Common.Geometry3d;
+using Muggle.TsExtensions.Common.Geometry3d;
 using Tekla.Structures.Geometry3d;
 using Tekla.Structures.Model;
 
-namespace Muggle.TeklaPlugins.Common.Model {
+namespace Muggle.TsExtensions.Common.Model {
     /// <summary>
     /// 模型操作。
     /// </summary>
@@ -2201,7 +2201,7 @@ namespace Muggle.TeklaPlugins.Common.Model {
         /// <returns>成功旋转复制的对象集合（不包括初始对象）。</returns>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="ArgumentException"><paramref name="num"/> &lt;= 0 时引发。</exception>
-        [Obsolete("应改为使用 Muggle.TeklaPlugins.Model.ModelOperation.CopyObject(ModelObject obj, Matrix matrix, int num)方法", true)]
+        [Obsolete("应改为使用 Muggle.TsExtensions.Model.ModelOperation.CopyObject(ModelObject obj, Matrix matrix, int num)方法", true)]
         public static List<ModelObject> Copy_Rotate(
             ModelObject obj,
             Point Axis_Origin,
@@ -2244,7 +2244,7 @@ namespace Muggle.TeklaPlugins.Common.Model {
         /// <param name="radians">旋转角度，弧度制</param>
         /// <returns>成功返回 True，失败返回 False。</returns>
         /// <exception cref="ArgumentNullException"></exception>
-        [Obsolete("应改为使用 Muggle.TeklaPlugins.Model.ModelOperation.MoveObject(ModelObject obj, Matrix matrix)方法", true)]
+        [Obsolete("应改为使用 Muggle.TsExtensions.Model.ModelOperation.MoveObject(ModelObject obj, Matrix matrix)方法", true)]
         public static bool Move_Rotate(
             ModelObject obj,
             Point Axis_Origin,

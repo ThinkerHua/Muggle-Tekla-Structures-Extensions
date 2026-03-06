@@ -13,9 +13,9 @@
  *  written by Huang YongXing - thinkerhua@hotmail.com
  *==============================================================================*/
 using System;
-using Muggle.TeklaPlugins.Common.Geometry3d;
-using Muggle.TeklaPlugins.Common.Model;
-using Muggle.TeklaPlugins.Common.Profile;
+using Muggle.TsExtensions.Common.Geometry3d;
+using Muggle.TsExtensions.Common.Model;
+using Muggle.TsExtensions.Common.Profile;
 using Tekla.Structures.Datatype;
 using Tekla.Structures.Geometry3d;
 using Tekla.Structures.Model;
@@ -25,7 +25,7 @@ using MessageBoxButton = System.Windows.MessageBoxButton;
 using MessageBoxImage = System.Windows.MessageBoxImage;
 using TSD = Tekla.Structures.Datatype;
 
-namespace Muggle.TeklaPlugins.KJ2001 {
+namespace Muggle.TsExtensions.KJ2001 {
     public class PluginData {
         [StructuresField("base_MATL")]
         public string basePlate_material;
@@ -96,7 +96,7 @@ namespace Muggle.TeklaPlugins.KJ2001 {
     }
 
     [Plugin("KJ2001")]
-    [PluginUserInterface("Muggle.TeklaPlugins.KJ2001.Views.MainWindow")]
+    [PluginUserInterface("Muggle.TsExtensions.KJ2001.Views.MainWindow")]
     [SecondaryType(SecondaryType.SECONDARYTYPE_ZERO)]
     [AutoDirectionType(Tekla.Structures.AutoDirectionTypeEnum.AUTODIR_DETAIL)]
     [DetailType(Tekla.Structures.DetailTypeEnum.END)]

@@ -12,11 +12,11 @@
  *  MainWindowViewModel.cs: view model for main window of MJ5001
  *  written by Huang YongXing - thinkerhua@hotmail.com
  *==============================================================================*/
-using Muggle.TeklaPlugins.Common.WPF.ViewModels;
+using Muggle.TsExtensions.Common.WPF.ViewModels;
 using Tekla.Structures.Dialog;
 using TD = Tekla.Structures.Datatype;
 
-namespace Muggle.TeklaPlugins.MJ5001.ViewModels {
+namespace Muggle.TsExtensions.MJ5001.ViewModels {
     /// <summary>
     /// Data logic for MainWindow
     /// </summary>

@@ -17,12 +17,12 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Muggle.TeklaPlugins.Common.Operation;
+using Muggle.TsExtensions.Common.Operation;
 using Tekla.Structures.Geometry3d;
 using Tekla.Structures.Model;
 using Task = System.Threading.Tasks.Task;
 
-namespace Muggle.TeklaPlugins.Common.Geometry3d {
+namespace Muggle.TsExtensions.Common.Geometry3d {
     /// <summary>
     /// 三维几何操作相关功能
     /// </summary>

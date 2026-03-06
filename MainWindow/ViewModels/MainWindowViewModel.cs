@@ -15,9 +15,9 @@
 using System;
 using System.Windows.Controls;
 using CommunityToolkit.Mvvm.Input;
-using Muggle.TeklaPlugins.MainWindow.Services;
+using Muggle.TsExtensions.MainWindow.Services;
 
-namespace Muggle.TeklaPlugins.MainWindow.ViewModels {
+namespace Muggle.TsExtensions.MainWindow.ViewModels {
     public partial class MainWindowViewModel : ViewModelBase {
 
         private readonly IMessageBoxService messageBoxService;

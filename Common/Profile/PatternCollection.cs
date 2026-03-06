@@ -12,7 +12,7 @@
  *  PatternCollection.cs: patterns of profile's text
  *  written by Huang YongXing - thinkerhua@hotmail.com
  *==============================================================================*/
-namespace Muggle.TeklaPlugins.Common.Profile {
+namespace Muggle.TsExtensions.Common.Profile {
     /// <summary>
     /// 匹配模式集合
     /// </summary>

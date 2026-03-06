@@ -5,7 +5,7 @@
 		<UseWPF>true</UseWPF>
 		<AssemblyName>MG1001</AssemblyName>
 		<Authors>thinkerhua@hotmail.com</Authors>
-		<RootNamespace>Muggle.TeklaPlugins.MG1001</RootNamespace>
+		<RootNamespace>Muggle.TsExtensions.MG1001</RootNamespace>
 		<Copyright>Copyright © 2024 thinkerhua@hotmail.com. All rights reserved.</Copyright>
 		<OutputPath>../TSEP/binaries</OutputPath>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>

@@ -14,7 +14,7 @@
  *==============================================================================*/
 using System.Text.RegularExpressions;
 
-namespace Muggle.TeklaPlugins.Common.Profile {
+namespace Muggle.TsExtensions.Common.Profile {
     /// <summary>
     /// 等截面H型钢和对称变截面H型钢（b2 == b1 的情形）。适用如下形式：
     /// <br/><see cref="PatternCollection.H_1"/>：<inheritdoc cref="PatternCollection.H_1"/>

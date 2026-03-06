@@ -12,11 +12,11 @@
  *  MainWindowViewModel.cs: view model for main window of MG1001
  *  written by Huang YongXing - thinkerhua@hotmail.com
  *==============================================================================*/
-using Muggle.TeklaPlugins.Common.WPF.ViewModels;
+using Muggle.TsExtensions.Common.WPF.ViewModels;
 using Tekla.Structures.Dialog;
 using TD = Tekla.Structures.Datatype;
 
-namespace Muggle.TeklaPlugins.MG1001.ViewModels {
+namespace Muggle.TsExtensions.MG1001.ViewModels {
     public class MainWindowViewModel : ConnectionViewModel {
         private string prfStr_top = string.Empty;
         [StructuresDialog("prfStr_TOP", typeof(TD.String))]

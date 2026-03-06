@@ -1,11 +1,11 @@
-﻿<Application x:Class="Muggle.TeklaPlugins.MainWindow.App"
+﻿<Application x:Class="Muggle.TsExtensions.MainWindow.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:cvt="clr-namespace:Muggle.TeklaPlugins.MainWindow.Converters"
-             xmlns:cvc="clr-namespace:Muggle.TeklaPlugins.Common.WPF.ValueConverters;assembly=Common.WPF"
-             xmlns:local="clr-namespace:Muggle.TeklaPlugins.MainWindow"
+             xmlns:cvt="clr-namespace:Muggle.TsExtensions.MainWindow.Converters"
+             xmlns:cvc="clr-namespace:Muggle.TsExtensions.Common.WPF.ValueConverters;assembly=Common.WPF"
+             xmlns:local="clr-namespace:Muggle.TsExtensions.MainWindow"
              xmlns:theme="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero2"
-             xmlns:views="clr-namespace:Muggle.TeklaPlugins.MainWindow.Views"
+             xmlns:views="clr-namespace:Muggle.TsExtensions.MainWindow.Views"
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
              Startup="Application_Startup">
     <Application.Resources>

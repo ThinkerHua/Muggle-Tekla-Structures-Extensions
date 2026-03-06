@@ -17,15 +17,15 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
-using Muggle.TeklaPlugins.Common.Geometry3d;
-using Muggle.TeklaPlugins.Common.Model;
-using Muggle.TeklaPlugins.Common.Profile;
+using Muggle.TsExtensions.Common.Geometry3d;
+using Muggle.TsExtensions.Common.Model;
+using Muggle.TsExtensions.Common.Profile;
 using Tekla.Structures;
 using Tekla.Structures.Geometry3d;
 using Tekla.Structures.Model;
 using Tekla.Structures.Plugins;
 
-namespace Muggle.TeklaPlugins.WK1001 {
+namespace Muggle.TsExtensions.WK1001 {
     public class PluginData {
         [StructuresField("prfStr_Pipe")]
         public string prfStr_Pipe;
@@ -48,7 +48,7 @@ namespace Muggle.TeklaPlugins.WK1001 {
 
     }
     [Plugin("WK1001")]
-    [PluginUserInterface("Muggle.TeklaPlugins.WK1001.Views.MainWindow")]
+    [PluginUserInterface("Muggle.TsExtensions.WK1001.Views.MainWindow")]
     [SecondaryType(SecondaryType.SECONDARYTYPE_MULTIPLE)]
     [PositionType(PositionTypeEnum.END_END_PLANE)]
     [AutoDirectionType(AutoDirectionTypeEnum.AUTODIR_GLOBAL_Z)]

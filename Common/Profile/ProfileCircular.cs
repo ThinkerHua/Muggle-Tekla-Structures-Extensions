@@ -14,7 +14,7 @@
  *==============================================================================*/
 using System.Text.RegularExpressions;
 
-namespace Muggle.TeklaPlugins.Common.Profile {
+namespace Muggle.TsExtensions.Common.Profile {
     /// <summary>
     /// 圆钢或圆管（通用形式，含椭圆）。适用如下形式：
     /// <br/><see cref="PatternCollection.CIRC_1"/>：<inheritdoc cref="PatternCollection.CIRC_1"/>

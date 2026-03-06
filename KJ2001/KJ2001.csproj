@@ -4,7 +4,7 @@
 		<AssemblyTitle>KJ2001</AssemblyTitle>
 		<Copyright>Copyright © 2025 thinkerhua@hotmail.com. All rights reserved.</Copyright>
 		<UseWPF>true</UseWPF>
-		<RootNamespace>Muggle.TeklaPlugins.KJ2001</RootNamespace>
+		<RootNamespace>Muggle.TsExtensions.KJ2001</RootNamespace>
 		<AssemblyName>KJ2001</AssemblyName>
 		<OutputPath>../TSEP/binaries</OutputPath>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>

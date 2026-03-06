@@ -16,7 +16,7 @@ using System;
 using Tekla.Structures.Geometry3d;
 using Tekla.Structures.Model;
 
-namespace Muggle.TeklaPlugins.Common.Model {
+namespace Muggle.TsExtensions.Common.Model {
     /// <summary>
     /// <see cref="Tekla.Structures.Model"/>.<see cref="ContourPoint"/> 的扩展。
     /// </summary>

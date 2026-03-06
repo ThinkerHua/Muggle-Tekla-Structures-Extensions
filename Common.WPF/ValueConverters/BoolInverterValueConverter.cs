@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 
-namespace Muggle.TeklaPlugins.Common.WPF.ValueConverters {
+namespace Muggle.TsExtensions.Common.WPF.ValueConverters {
     /// <summary>
     /// Converts a boolean value to its inverse.
     /// </summary>

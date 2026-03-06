@@ -17,9 +17,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
-using Muggle.TeklaPlugins.Common.Geometry3d;
-using Muggle.TeklaPlugins.Common.Model;
-using Muggle.TeklaPlugins.Common.Profile;
+using Muggle.TsExtensions.Common.Geometry3d;
+using Muggle.TsExtensions.Common.Model;
+using Muggle.TsExtensions.Common.Profile;
 using Tekla.Structures;
 using Tekla.Structures.Datatype;
 using Tekla.Structures.Geometry3d;
@@ -29,7 +29,7 @@ using Tekla.Structures.Plugins;
 using TSD = Tekla.Structures.Datatype;
 using TSG = Tekla.Structures.Geometry3d;
 
-namespace Muggle.TeklaPlugins.MJ5001 {
+namespace Muggle.TsExtensions.MJ5001 {
     public class PluginData {
         #region Fields
         [StructuresField("gap")]
@@ -92,7 +92,7 @@ namespace Muggle.TeklaPlugins.MJ5001 {
     }
 
     [Plugin("MJ5001")]
-    [PluginUserInterface("Muggle.TeklaPlugins.MJ5001.Views.MainWindow")]
+    [PluginUserInterface("Muggle.TsExtensions.MJ5001.Views.MainWindow")]
     [InputObjectDependency(InputObjectDependency.DEPENDENT)]
     public class MJ5001 : PluginBase {
         #region Fields

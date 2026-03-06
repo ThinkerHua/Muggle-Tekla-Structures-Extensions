@@ -12,11 +12,11 @@
  *  MainWindowViewModel.cs: view model for main window of HJ1001
  *  written by Huang YongXing - thinkerhua@hotmail.com
  *==============================================================================*/
-using Muggle.TeklaPlugins.Common.WPF.ViewModels;
+using Muggle.TsExtensions.Common.WPF.ViewModels;
 using Tekla.Structures.Dialog;
 using TD = Tekla.Structures.Datatype;
 
-namespace Muggle.TeklaPlugins.HJ1001.ViewModels {
+namespace Muggle.TsExtensions.HJ1001.ViewModels {
     public class MainWindowViewModel : ConnectionViewModel {
         private double endplate_thickness = 20.0;
         [StructuresDialog("endPlateTHK", typeof(TD.Double))]

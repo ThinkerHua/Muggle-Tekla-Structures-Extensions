@@ -17,9 +17,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
-using Muggle.TeklaPlugins.Common.Geometry3d;
-using Muggle.TeklaPlugins.Common.Model;
-using Muggle.TeklaPlugins.Common.Profile;
+using Muggle.TsExtensions.Common.Geometry3d;
+using Muggle.TsExtensions.Common.Model;
+using Muggle.TsExtensions.Common.Profile;
 using Tekla.Structures;
 using Tekla.Structures.Datatype;
 using Tekla.Structures.Geometry3d;
@@ -30,7 +30,7 @@ using TSD = Tekla.Structures.Datatype;
 using TSG = Tekla.Structures.Geometry3d;
 using Vector = Tekla.Structures.Geometry3d.Vector;
 
-namespace Muggle.TeklaPlugins.KJ1001 {
+namespace Muggle.TsExtensions.KJ1001 {
     public class PluginData {
         /// <summary>
         /// <list type="bullet">
@@ -124,7 +124,7 @@ namespace Muggle.TeklaPlugins.KJ1001 {
     }
 
     [Plugin("KJ1001")]
-    [PluginUserInterface("Muggle.TeklaPlugins.KJ1001.Views.MainWindow")]
+    [PluginUserInterface("Muggle.TsExtensions.KJ1001.Views.MainWindow")]
     [SecondaryType(SecondaryType.SECONDARYTYPE_ONE)]
     [PositionType(PositionTypeEnum.MIDDLE_PLANE)]
     public class KJ1001 : ConnectionBase {

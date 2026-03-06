@@ -15,7 +15,7 @@
 using System;
 using Tekla.Structures.Geometry3d;
 
-namespace Muggle.TeklaPlugins.Common.Geometry3d {
+namespace Muggle.TsExtensions.Common.Geometry3d {
     /// <summary>
     /// <see cref="Tekla.Structures.Geometry3d"/>.<see cref="Distance"/> 的扩展。
     /// </summary>

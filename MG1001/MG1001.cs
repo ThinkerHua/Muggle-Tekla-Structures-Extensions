@@ -16,9 +16,9 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Muggle.TeklaPlugins.Common.Geometry3d;
-using Muggle.TeklaPlugins.Common.Model;
-using Muggle.TeklaPlugins.Common.Profile;
+using Muggle.TsExtensions.Common.Geometry3d;
+using Muggle.TsExtensions.Common.Model;
+using Muggle.TsExtensions.Common.Profile;
 using Tekla.Structures;
 using Tekla.Structures.Datatype;
 using Tekla.Structures.Geometry3d;
@@ -30,7 +30,7 @@ using MessageBoxImage = System.Windows.MessageBoxImage;
 using TSDatatype = Tekla.Structures.Datatype;
 using TSG3d = Tekla.Structures.Geometry3d;
 
-namespace Muggle.TeklaPlugins.MG1001 {
+namespace Muggle.TsExtensions.MG1001 {
     /// <summary>
     /// <para>prfStr_TOP:柱顶板规格，[PLt[*b]]，缺省的参数表示与梁翼缘相同</para>
     /// <para>bol_TOPHOR:柱顶板水平布置或顺坡</para>
@@ -124,7 +124,7 @@ namespace Muggle.TeklaPlugins.MG1001 {
     }
 
     [Plugin("MG1001")]
-    [PluginUserInterface("Muggle.TeklaPlugins.MG1001.Views.MainWindow")]
+    [PluginUserInterface("Muggle.TsExtensions.MG1001.Views.MainWindow")]
     //[InputObjectType(InputObjectType.INPUTOBJECT_PART)]
     [SecondaryType(SecondaryType.SECONDARYTYPE_ONE)]
     [AutoDirectionType(AutoDirectionTypeEnum.AUTODIR_BASIC)]

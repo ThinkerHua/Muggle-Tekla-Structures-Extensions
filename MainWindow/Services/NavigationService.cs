@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Controls;
 
-namespace Muggle.TeklaPlugins.MainWindow.Services {
+namespace Muggle.TsExtensions.MainWindow.Services {
     public class NavigationService : INavigationService {
         private Frame frame;
 

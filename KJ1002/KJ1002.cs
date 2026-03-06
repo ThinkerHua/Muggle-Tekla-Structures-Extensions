@@ -17,9 +17,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
-using Muggle.TeklaPlugins.Common.Geometry3d;
-using Muggle.TeklaPlugins.Common.Model;
-using Muggle.TeklaPlugins.Common.Profile;
+using Muggle.TsExtensions.Common.Geometry3d;
+using Muggle.TsExtensions.Common.Model;
+using Muggle.TsExtensions.Common.Profile;
 using Tekla.Structures;
 using Tekla.Structures.Geometry3d;
 using Tekla.Structures.Model;
@@ -29,7 +29,7 @@ using Point = Tekla.Structures.Geometry3d.Point;
 using TSD = Tekla.Structures.Datatype;
 using Vector = Tekla.Structures.Geometry3d.Vector;
 
-namespace Muggle.TeklaPlugins.KJ1002 {
+namespace Muggle.TsExtensions.KJ1002 {
     public class PluginData {
         #region Fields
 
@@ -70,7 +70,7 @@ namespace Muggle.TeklaPlugins.KJ1002 {
     }
 
     [Plugin("KJ1002")]
-    [PluginUserInterface("Muggle.TeklaPlugins.KJ1002.Views.MainWindow")]
+    [PluginUserInterface("Muggle.TsExtensions.KJ1002.Views.MainWindow")]
     [SecondaryType(SecondaryType.SECONDARYTYPE_MULTIPLE)]
     [AutoDirectionType(AutoDirectionTypeEnum.AUTODIR_GLOBAL_Z)]
     public class KJ1002 : ConnectionBase {

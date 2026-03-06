@@ -7,7 +7,7 @@
 		<Copyright>Copyright © 2025 thinkerhua@hotmail.com. All rights reserved.</Copyright>
 		<AssemblyTitle>KJ1002</AssemblyTitle>
 		<AssemblyName>KJ1002</AssemblyName>
-		<RootNamespace>Muggle.TeklaPlugins.KJ1002</RootNamespace>
+		<RootNamespace>Muggle.TsExtensions.KJ1002</RootNamespace>
 		<OutputPath>../TSEP/binaries</OutputPath>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 		<AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>

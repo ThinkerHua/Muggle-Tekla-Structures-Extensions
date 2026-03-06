@@ -14,9 +14,9 @@
  *==============================================================================*/
 using System;
 using System.Collections;
-using Muggle.TeklaPlugins.Common.Geometry3d;
-using Muggle.TeklaPlugins.Common.Model;
-using Muggle.TeklaPlugins.Common.Profile;
+using Muggle.TsExtensions.Common.Geometry3d;
+using Muggle.TsExtensions.Common.Model;
+using Muggle.TsExtensions.Common.Profile;
 using Tekla.Structures;
 using Tekla.Structures.Geometry3d;
 using Tekla.Structures.Model;
@@ -26,7 +26,7 @@ using MessageBoxButton = System.Windows.MessageBoxButton;
 using MessageBoxImage = System.Windows.MessageBoxImage;
 using TSG = Tekla.Structures.Geometry3d;
 
-namespace Muggle.TeklaPlugins.HJ1001 {
+namespace Muggle.TsExtensions.HJ1001 {
     public class PluginData {
         #region Fields
         [StructuresField("endPlateTHK")]
@@ -63,7 +63,7 @@ namespace Muggle.TeklaPlugins.HJ1001 {
     }
 
     [Plugin("HJ1001")]
-    [PluginUserInterface("Muggle.TeklaPlugins.HJ1001.Views.MainWindow")]
+    [PluginUserInterface("Muggle.TsExtensions.HJ1001.Views.MainWindow")]
     [InputObjectType(InputObjectType.INPUTOBJECT_PART)]
     [SecondaryType(SecondaryType.SECONDARYTYPE_ONE)]
     [PositionType(PositionTypeEnum.END_END_PLANE)]

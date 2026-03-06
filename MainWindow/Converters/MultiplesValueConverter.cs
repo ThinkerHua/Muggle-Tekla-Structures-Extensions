@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 
-namespace Muggle.TeklaPlugins.MainWindow.Converters {
+namespace Muggle.TsExtensions.MainWindow.Converters {
     public class MultiplesValueConverter : IValueConverter {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
             if ((double)parameter == 0.0) return DependencyProperty.UnsetValue;

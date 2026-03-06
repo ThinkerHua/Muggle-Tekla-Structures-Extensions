@@ -12,15 +12,15 @@
  *  MainWindow.xaml: view for all tools and plugins.
  *  written by Huang YongXing - thinkerhua@hotmail.com
  *==============================================================================-->
-<dialog:WindowBase x:Class="Muggle.TeklaPlugins.MainWindow.Views.MainWindow"
+<dialog:WindowBase x:Class="Muggle.TsExtensions.MainWindow.Views.MainWindow"
                    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                   xmlns:local="clr-namespace:Muggle.TeklaPlugins.MainWindow.Views"
+                   xmlns:local="clr-namespace:Muggle.TsExtensions.MainWindow.Views"
                    xmlns:dialog="clr-namespace:Tekla.Structures.Dialog;assembly=Tekla.Structures.Dialog"
-                   xmlns:vm="clr-namespace:Muggle.TeklaPlugins.MainWindow.ViewModels"
-                   xmlns:svs="clr-namespace:Muggle.TeklaPlugins.MainWindow.Services"
+                   xmlns:vm="clr-namespace:Muggle.TsExtensions.MainWindow.ViewModels"
+                   xmlns:svs="clr-namespace:Muggle.TsExtensions.MainWindow.Services"
                    Title="MainWindow"
                    Width="500"
                    Height="320"

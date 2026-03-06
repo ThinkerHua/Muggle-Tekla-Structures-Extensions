@@ -12,11 +12,11 @@
  *  MainWindowViewModel.cs: view model for main window of MG1002
  *  written by Huang YongXing - thinkerhua@hotmail.com
  *==============================================================================*/
-using Muggle.TeklaPlugins.Common.WPF.ViewModels;
+using Muggle.TsExtensions.Common.WPF.ViewModels;
 using Tekla.Structures.Dialog;
 using TD = Tekla.Structures.Datatype;
 
-namespace Muggle.TeklaPlugins.MG1002.ViewModels {
+namespace Muggle.TsExtensions.MG1002.ViewModels {
     public class MainWindowViewModel : ConnectionViewModel {
 
         private string endPlate_profile = "PL30*460*1093";

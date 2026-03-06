@@ -6,7 +6,7 @@
 		<Authors>thinkerhua@hotmail.com</Authors>
 		<Copyright>Copyright © 2025 thinkerhua@hotmail.com. All rights reserved.</Copyright>
 		<UseWPF>true</UseWPF>
-		<RootNamespace>Muggle.TeklaPlugins.MJ5001</RootNamespace>
+		<RootNamespace>Muggle.TsExtensions.MJ5001</RootNamespace>
 		<AssemblyName>MJ5001</AssemblyName>
 		<OutputPath>../TSEP/binaries</OutputPath>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>

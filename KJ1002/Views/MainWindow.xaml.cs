@@ -14,11 +14,11 @@
  *==============================================================================*/
 using System;
 using System.Windows;
-using Muggle.TeklaPlugins.KJ1002.ViewModels;
+using Muggle.TsExtensions.KJ1002.ViewModels;
 using Tekla.Structures.Dialog;
 using Tekla.Structures.Dialog.UIControls;
 
-namespace Muggle.TeklaPlugins.KJ1002.Views {
+namespace Muggle.TsExtensions.KJ1002.Views {
     public partial class MainWindow : PluginWindowBase {
 
         public MainWindowViewModel dataModel;

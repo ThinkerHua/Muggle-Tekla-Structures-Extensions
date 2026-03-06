@@ -4,7 +4,7 @@ using System.IO;
 using System.Windows.Data;
 using System.Windows.Media.Imaging;
 
-namespace Muggle.TeklaPlugins.MainWindow.Converters {
+namespace Muggle.TsExtensions.MainWindow.Converters {
     public class PluginNameToIconValueConverter : IValueConverter {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
             var currentDirectory = AppDomain.CurrentDomain.BaseDirectory;

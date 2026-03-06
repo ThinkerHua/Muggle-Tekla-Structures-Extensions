@@ -13,12 +13,12 @@
  *  written by Huang YongXing - thinkerhua@hotmail.com
  *==============================================================================*/
 using System.Collections.Generic;
-using Muggle.TeklaPlugins.Common.WPF.ViewModels;
+using Muggle.TsExtensions.Common.WPF.ViewModels;
 using Tekla.Structures.Catalogs;
 using Tekla.Structures.Dialog;
 using TD = Tekla.Structures.Datatype;
 
-namespace Muggle.TeklaPlugins.KJ2001.ViewModels {
+namespace Muggle.TsExtensions.KJ2001.ViewModels {
     /// <summary>
     /// Data logic for MainWindow
     /// </summary>

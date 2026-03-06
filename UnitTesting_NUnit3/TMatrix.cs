@@ -1,5 +1,5 @@
 ﻿using System;
-using Muggle.TeklaPlugins.Common.Geometry3d;
+using Muggle.TsExtensions.Common.Geometry3d;
 using Tekla.Structures.Geometry3d;
 
 namespace UnitTesting_NUnit3 {

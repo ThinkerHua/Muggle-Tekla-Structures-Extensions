@@ -14,11 +14,11 @@
  *==============================================================================*/
 using System;
 using System.Windows;
-using Muggle.TeklaPlugins.MG1001.ViewModels;
+using Muggle.TsExtensions.MG1001.ViewModels;
 using Tekla.Structures.Dialog;
 using Tekla.Structures.Dialog.UIControls;
 
-namespace Muggle.TeklaPlugins.MG1001.Views {
+namespace Muggle.TsExtensions.MG1001.Views {
     /// <summary>
     /// MainWindow.xaml 的交互逻辑
     /// </summary>

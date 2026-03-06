@@ -1,5 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 
-namespace Muggle.TeklaPlugins.MainWindow.ViewModels {
+namespace Muggle.TsExtensions.MainWindow.ViewModels {
     public class ViewModelBase : ObservableObject { }
 }

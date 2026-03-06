@@ -16,14 +16,14 @@ using System;
 using System.Collections;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Muggle.TeklaPlugins.MainWindow.Services;
+using Muggle.TsExtensions.MainWindow.Services;
 using Tekla.Structures;
 using Tekla.Structures.Model;
 using Tekla.Structures.Model.UI;
 using TSM = Tekla.Structures.Model;
 using TSMUI = Tekla.Structures.Model.UI;
 
-namespace Muggle.TeklaPlugins.MainWindow.ViewModels {
+namespace Muggle.TsExtensions.MainWindow.ViewModels {
     public partial class ConnectionStatusFilterViewModel : ViewModelBase {
         [Flags]
         public enum ConnectionStatusFilterFlag {

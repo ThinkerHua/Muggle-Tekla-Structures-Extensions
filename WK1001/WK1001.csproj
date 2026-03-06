@@ -5,7 +5,7 @@
 		<UseWindowsForms>true</UseWindowsForms>
 		<UseWPF>true</UseWPF>
 		<AssemblyName>WK1001</AssemblyName>
-		<RootNamespace>Muggle.TeklaPlugins.WK1001</RootNamespace>
+		<RootNamespace>Muggle.TsExtensions.WK1001</RootNamespace>
 		<Copyright>Copyright © 2025 thinkerhua@hotmail.com. All rights reserved.</Copyright>
 		<OutputPath>../TSEP/binaries</OutputPath>
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>

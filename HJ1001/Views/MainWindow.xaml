@@ -12,16 +12,16 @@
  *  MainWindow.xaml: user interface for the plugin HJ1001
  *  written by Huang YongXing - thinkerhua@hotmail.com
  *==============================================================================-->
-<tsd:PluginWindowBase x:Class="Muggle.TeklaPlugins.HJ1001.Views.MainWindow"
+<tsd:PluginWindowBase x:Class="Muggle.TsExtensions.HJ1001.Views.MainWindow"
                       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                       xmlns:tsd="clr-namespace:Tekla.Structures.Dialog;assembly=Tekla.Structures.Dialog"
                       xmlns:uiCtrls="clr-namespace:Tekla.Structures.Dialog.UIControls;assembly=Tekla.Structures.Dialog"
-                      xmlns:local="clr-namespace:Muggle.TeklaPlugins.HJ1001.Views"
-                      xmlns:viewModels="clr-namespace:Muggle.TeklaPlugins.HJ1001.ViewModels"
-                      xmlns:cvc="clr-namespace:Muggle.TeklaPlugins.Common.WPF.ValueConverters;assembly=Common.WPF"
+                      xmlns:local="clr-namespace:Muggle.TsExtensions.HJ1001.Views"
+                      xmlns:viewModels="clr-namespace:Muggle.TsExtensions.HJ1001.ViewModels"
+                      xmlns:cvc="clr-namespace:Muggle.TsExtensions.Common.WPF.ValueConverters;assembly=Common.WPF"
                       Title="{tsd:Loc albl_HJ1001_title}"
                       ResizeMode="NoResize"
                       SizeToContent="WidthAndHeight"

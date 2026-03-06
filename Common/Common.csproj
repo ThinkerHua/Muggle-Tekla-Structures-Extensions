@@ -3,7 +3,7 @@
 		<TargetFramework>net48</TargetFramework>
 		<LangVersion>Latest</LangVersion>
 		<OutputType>Library</OutputType>
-		<RootNamespace>Muggle.TeklaPlugins.Common</RootNamespace>
+		<RootNamespace>Muggle.TsExtensions.Common</RootNamespace>
 		<Authors>thinkerhua@hotmail.com</Authors>
 		<Copyright>Copyright © 2024 thinkerhua@hotmail.com. All rights reserved.</Copyright>
 		<GenerateDocumentationFile>True</GenerateDocumentationFile>

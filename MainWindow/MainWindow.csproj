@@ -6,7 +6,7 @@
 		<OutputType>WinExe</OutputType>
 		<UseWPF>true</UseWPF>
 		<AssemblyName>MuggleTSExtensions</AssemblyName>
-		<RootNamespace>Muggle.TeklaPlugins.MainWindow</RootNamespace>
+		<RootNamespace>Muggle.TsExtensions.MainWindow</RootNamespace>
 		<Authors>thinkerhua@hotmail.com</Authors>
 		<Copyright>Copyright © 2024 thinkerhua@hotmail.com. All rights reserved.</Copyright>
 		<OutputPath>../TSEP/binaries</OutputPath>

@@ -12,16 +12,16 @@
  *  MainWindow.xaml: user interface for the plugin KJ1002
  *  written by Huang YongXing - thinkerhua@hotmail.com
  *==============================================================================-->
-<tsd:PluginWindowBase x:Class="Muggle.TeklaPlugins.KJ1002.Views.MainWindow"
+<tsd:PluginWindowBase x:Class="Muggle.TsExtensions.KJ1002.Views.MainWindow"
                       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                       xmlns:uiCtrls="clr-namespace:Tekla.Structures.Dialog.UIControls;assembly=Tekla.Structures.Dialog"
                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                      xmlns:local="clr-namespace:Muggle.TeklaPlugins.KJ1002"
+                      xmlns:local="clr-namespace:Muggle.TsExtensions.KJ1002"
                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                       xmlns:tsd="clr-namespace:Tekla.Structures.Dialog;assembly=Tekla.Structures.Dialog"
-                      xmlns:vm="clr-namespace:Muggle.TeklaPlugins.KJ1002.ViewModels"
-                      xmlns:cvc="clr-namespace:Muggle.TeklaPlugins.Common.WPF.ValueConverters;assembly=Common.WPF"
+                      xmlns:vm="clr-namespace:Muggle.TsExtensions.KJ1002.ViewModels"
+                      xmlns:cvc="clr-namespace:Muggle.TsExtensions.Common.WPF.ValueConverters;assembly=Common.WPF"
                       Title="{tsd:Loc albl_KJ1002_title}"
                       d:DataContext="{d:DesignInstance Type=vm:MainWindowViewModel}"
                       SizeToContent="WidthAndHeight"

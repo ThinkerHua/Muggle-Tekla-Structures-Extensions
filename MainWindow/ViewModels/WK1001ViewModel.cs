@@ -16,12 +16,12 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using Muggle.TeklaPlugins.Common.Geometry3d;
+using Muggle.TsExtensions.Common.Geometry3d;
 using Tekla.Structures.Geometry3d;
 using Tekla.Structures.Model;
 using Tekla.Structures.Model.UI;
 
-namespace Muggle.TeklaPlugins.MainWindow.ViewModels {
+namespace Muggle.TsExtensions.MainWindow.ViewModels {
     public partial class PluginsViewModel {
         private void RunWK1001() {
             try {

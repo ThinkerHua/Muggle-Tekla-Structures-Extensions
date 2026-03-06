@@ -2,15 +2,15 @@
 using System.IO;
 using System.Windows;
 using Microsoft.Extensions.DependencyInjection;
-using Muggle.TeklaPlugins.MainWindow.Services;
-using Muggle.TeklaPlugins.MainWindow.ViewModels;
+using Muggle.TsExtensions.MainWindow.Services;
+using Muggle.TsExtensions.MainWindow.ViewModels;
 using Tekla.Structures;
 using Tekla.Structures.Dialog;
 using Events = Tekla.Structures.Model.Events;
 using Model = Tekla.Structures.Model.Model;
 using TSDialog = Tekla.Structures.Dialog;
 
-namespace Muggle.TeklaPlugins.MainWindow {
+namespace Muggle.TsExtensions.MainWindow {
     public partial class App : Application {
         internal const string USER_INTERRUPT = "User interrupt";
         internal const string NOT_CONNECTED = "Not connected to a model.";

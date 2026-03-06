@@ -14,7 +14,7 @@
  *==============================================================================*/
 using System;
 
-namespace Muggle.TeklaPlugins.Common.Profile {
+namespace Muggle.TsExtensions.Common.Profile {
     /// <summary>
     /// 截面文本变更事件参数。
     /// </summary>
