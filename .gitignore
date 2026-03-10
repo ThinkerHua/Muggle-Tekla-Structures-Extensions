@@ -363,8 +363,11 @@ MigrationBackup/
 FodyWeavers.xsd
 
 # Rider
-/.idea/.idea.Muggle Tekla-Plugins/.idea
+/.idea/
 
 # TSEP
 /TSEP/binaries/*
 /TSEP/installer/output/*
+
+# Debug launch settings
+/CodingHelper/Properties/launchSettings.json

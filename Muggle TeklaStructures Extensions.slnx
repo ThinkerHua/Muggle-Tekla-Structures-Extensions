@@ -1,4 +1,5 @@
 <Solution>
+  <Project Path="CodingHelper/CodingHelper.csproj" />
   <Project Path="Common.WPF/Common.WPF.csproj" />
   <Project Path="Common/Common.csproj" />
   <Project Path="HJ1001/HJ1001.csproj" />

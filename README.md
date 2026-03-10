@@ -11,6 +11,7 @@
 >开发工具类库
 
 - [Common](#common)
+- [CodingHelper](#codinghelper)
 
 >建模辅助工具
 
@@ -59,6 +60,12 @@
 - ...
 
 更多内容参见 [API Reference of Common.chm](Documents/API%20Reference%20of%20Common.chm)。
+
+## CodingHelper
+
+包含源生成器和诊断，有助于快速生成 PluginData 的字段（应用 StructuresFieldAttribute 特性）和 ViewModel 的通知属性（应用 StructuresDialogAttribute 特性），避免繁重的手动编写工作。
+
+OpenAPI 中模型对象的属性与上述特性名称的对应关系参见 [Attribute name reference](CodingHelper/AttributeNameReference.md)。
 
 ## ShowModelObjectCoordinateSystem (显示模型零件坐标系)
 
