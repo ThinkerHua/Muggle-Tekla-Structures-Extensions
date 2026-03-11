@@ -13,7 +13,7 @@
  *  written by Huang YongXing - thinkerhua@hotmail.com
  *==============================================================================*/
 using System.Collections.Generic;
-using Muggle.TsExtensions.Common.WPF.ViewModels;
+using Muggle.TsExtensions.CodingHelper.Generators;
 using Tekla.Structures.Catalogs;
 using Tekla.Structures.Dialog;
 using TD = Tekla.Structures.Datatype;

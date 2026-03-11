@@ -19,6 +19,7 @@
 		<PackageReference Include="Tekla.Structures.Plugins" Version="2021.0.0" ExcludeAssets="runtime" />
 	</ItemGroup>
 	<ItemGroup>
+		<ProjectReference Include="..\CodingHelper\CodingHelper.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false"  />
 		<ProjectReference Include="..\Common.WPF\Common.WPF.csproj" private="false" />
 		<ProjectReference Include="..\Common\Common.csproj" private="false" />
 	</ItemGroup>

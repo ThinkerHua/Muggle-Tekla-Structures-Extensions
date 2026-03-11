@@ -12,7 +12,7 @@
  *  MainWindowViewModel.cs: view model for main window of MG1002
  *  written by Huang YongXing - thinkerhua@hotmail.com
  *==============================================================================*/
-using Muggle.TsExtensions.Common.WPF.ViewModels;
+using Muggle.TsExtensions.CodingHelper.Generators;
 using Tekla.Structures.Dialog;
 using TD = Tekla.Structures.Datatype;
 
