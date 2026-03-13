@@ -1,5 +1,5 @@
 ﻿<!--==============================================================================
- *  Muggle Tekla-Plugins - tools and plugins for Tekla Structures
+ *  Muggle TsExtensions - extensions for Tekla Structures
  *
  *  Copyright © 2025 Huang YongXing.
  *
@@ -20,11 +20,11 @@
       xmlns:local="clr-namespace:Muggle.TsExtensions.MainWindow.Views"
       xmlns:vm="clr-namespace:Muggle.TsExtensions.MainWindow.ViewModels"
       Title="Elevation"
+      mc:Ignorable="d"
       d:DesignHeight="450"
       d:DesignWidth="800"
       d:DataContext="{d:DesignInstance Type=vm:MoveToElevationViewModel}"
-      d:Background="AliceBlue"
-      mc:Ignorable="d">
+      d:Background="AliceBlue">
 
     <Page.Resources>
         <ResourceDictionary>

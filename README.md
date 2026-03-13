@@ -110,11 +110,14 @@ See  [API Reference of Common.chm](Documents/API%20Reference%20of%20Common.chm) 
 
 ## Common.WPF
 
-Contains some common assets (vector graphics) and value converters.
+Contains some common assets (vector graphics), user controls and value converters.
 For example, the SelectedIndex of the UpDirection ComboBox in the general tab of the system component is opposite to its corresponding parameter "zsuunta", and **UpDirectionToSelectedIndexValueConverter** provides this conversion.
 
-包含一些通用的资产（矢量图形）和值转换器。
+包含一些通用的资产（矢量图形）、自定义控件和值转换器。
 例如，系统组件常规选项卡中的 UpDirection 组合框的 SelectedIndex 与其对应的组件参数 "zsuunta" 是相反的，**UpDirectionToSelectedIndexValueConverter** 提供了这种转换
+
+![BoltUserControls](Resources/Introduction_BoltUserControls.png)
+![UpDirection+PositionInRelationToPrimaryPart](Resources/Introduction_UpDirection+PositionInRelationToPrimaryPart.png)
 
 ## CodingHelper
 

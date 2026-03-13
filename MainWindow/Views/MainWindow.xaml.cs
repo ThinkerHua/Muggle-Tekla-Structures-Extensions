@@ -1,5 +1,5 @@
 ﻿/*==============================================================================
- *  Muggle Tekla-Plugins - tools and plugins for Tekla Structures
+ *  Muggle TsExtensions - extensions for Tekla Structures
  *
  *  Copyright © 2025 Huang YongXing.                 
  *

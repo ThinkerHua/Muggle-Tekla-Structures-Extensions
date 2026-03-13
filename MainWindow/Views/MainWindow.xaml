@@ -1,5 +1,5 @@
 ﻿<!--==============================================================================
- *  Muggle Tekla-Plugins - tools and plugins for Tekla Structures
+ *  Muggle TsExtensions - extensions for Tekla Structures
  *
  *  Copyright © 2025 Huang YongXing.
  *
@@ -26,12 +26,12 @@
                    Height="320"
                    MinWidth="340"
                    MinHeight="300"
-                   d:DataContext="{d:DesignInstance Type=vm:MainWindowViewModel}"
                    ShowInTaskbar="True"
                    WindowStartupLocation="CenterScreen"
                    Background="#FFFFFFFF"
                    Icon="/Resources/logo.ico"
-                   mc:Ignorable="d">
+                   mc:Ignorable="d"
+                   d:DataContext="{d:DesignInstance Type=vm:MainWindowViewModel}">
 
     <dialog:WindowBase.Resources>
         <ResourceDictionary>

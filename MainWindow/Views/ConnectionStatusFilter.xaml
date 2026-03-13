@@ -1,5 +1,5 @@
 ﻿<!--==============================================================================
- *  Muggle Tekla-Plugins - tools and plugins for Tekla Structures
+ *  Muggle TsExtensions - extensions for Tekla Structures
  *
  *  Copyright © 2026 Huang YongXing.
  *
@@ -20,11 +20,11 @@
       xmlns:local="clr-namespace:Muggle.TsExtensions.MainWindow.Views"
       xmlns:vm="clr-namespace:Muggle.TsExtensions.MainWindow.ViewModels"
       Title="ConnectionStatusFilter"
+      mc:Ignorable="d"
       d:DesignHeight="200"
       d:DesignWidth="300"
       d:Background="AliceBlue"
-      d:DataContext="{d:DesignInstance Type={x:Type vm:ConnectionStatusFilterViewModel}}"
-      mc:Ignorable="d">
+      d:DataContext="{d:DesignInstance Type={x:Type vm:ConnectionStatusFilterViewModel}}">
     <Page.Resources>
         <ResourceDictionary>
             <Style x:Key="element" TargetType="FrameworkElement">
