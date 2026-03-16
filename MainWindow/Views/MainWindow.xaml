@@ -23,7 +23,7 @@
                    xmlns:svs="clr-namespace:Muggle.TsExtensions.MainWindow.Services"
                    Title="MainWindow"
                    Width="500"
-                   Height="320"
+                   Height="380"
                    MinWidth="340"
                    MinHeight="300"
                    ShowInTaskbar="True"
@@ -79,6 +79,11 @@
                         <RadioButton Content="ConnectionStatusFilter" GroupName="menuBtn" Command="{Binding NavigateCommand}">
                             <RadioButton.CommandParameter>
                                 <local:ConnectionStatusFilter />
+                            </RadioButton.CommandParameter>
+                        </RadioButton>
+                        <RadioButton Content="ExtendBeam" GroupName="menuBtn" Command="{Binding NavigateCommand}">
+                            <RadioButton.CommandParameter>
+                                <local:ExtendBeam />
                             </RadioButton.CommandParameter>
                         </RadioButton>
                     </StackPanel>

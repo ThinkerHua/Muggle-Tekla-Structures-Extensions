@@ -32,6 +32,7 @@ Developed based on version 2021 of the Tekla Open API, other versions are untest
 - [MoveToElevatio](#movetoelevation)
 - [LocateToPrecisePosition](#locatetopreciseposition)
 - [ConnectionStatusFilter](#connectionstatusfilter)
+- [ExtendBeam](#extendbeam)
 
 >Components
 >组件
@@ -121,7 +122,7 @@ For example, the SelectedIndex of the UpDirection ComboBox in the general tab of
 
 ## CodingHelper
 
-When creating custom components, it is usually necessary to manually write a large amount of code for component parameters (in the PluginData class and the ViewModel class) and apply attributes, which is tedious and time-consuming. 
+When creating custom components, it is usually necessary to manually write a large amount of code for component parameters (in the PluginData class and the ViewModel class) and apply attributes, which is tedious and time-consuming.
 
 This analyzer is designed to solve this problem, containing two source generators and corresponding diagnostics. It helps quickly generate code for component parameters, avoiding mismatches that may occur from manual coding, saving time, and allowing more focus on the core logic of the component.
 
@@ -201,6 +202,22 @@ Offers more options than the rotation commands provided by the system.
 
 比系统提供的旋转命令多一些选项。
 
+![3dRotation](Resources/Introduction_3dRotation.png)
+
+## MoveToElevation
+
+## 移动到指定标高
+
+Easily move model objects to a specified elevation; you can specify the target elevation as top elevation, center elevation, or bottom elevation, and you can also specify whether it is a global elevation or a relative elevation.
+
+You can start the command first and then select the model objects, or you can select the model objects first and then start the command.
+
+便捷地移动模型对象到指定标高，可指定目标标高是顶标高、中心标高或底标高，还可指定是全局标高或相对标高。
+
+可以先启动命令，再选择模型对象；也可先选择模型对象，再启动命令。
+
+![MoveToElevation](Resources/Introduction_MoveToElevation.png)
+
 ## LocateToPrecisePosition
 
 ## 重定位到精确的位置
@@ -221,19 +238,21 @@ The selection filter provided by the system cannot filter the state of component
 
 系统提供的选择过滤无法过滤组件的状态，此工具可解决该问题。
 
-## MoveToElevation
+![ConnectionStatusFilter](Resources/Introduction_ConnectionStatusFilter.png)
 
-## 移动到指定标高
+## ExtendBeam
 
-Easily move model objects to a specified elevation; you can specify the target elevation as top elevation, center elevation, or bottom elevation, and you can also specify whether it is a global elevation or a relative elevation.
+## 延伸梁
 
-You can start the command first and then select the model objects, or you can select the model objects first and then start the command.
+The three extension tools provided by the system are not very convenient. This tool only requires selecting the beams that need to be extended, and they will automatically extend to nearby column (three options: 'middle plane', 'bounding box plane', 'surface') or beam (non-optional: 'middle plane').
 
-便捷地移动模型对象到指定标高，可指定目标标高是顶标高、中心标高或底标高，还可指定是全局标高或相对标高。
+You can first select the beams that need to be extended and then execute the command; or you can execute the command first and then select the beams that need to be extended.
 
-可以先启动命令，再选择模型对象；也可先选择模型对象，再启动命令。
+系统提供的三款延伸工具不是很方便，此工具仅需选择要进行延伸的梁，即可自动进行延伸到附近的柱（三个选项：“中心平面”、“包围框”、“表面”）或梁（非可选项：“中心平面”）。
 
-![MoveToElevation](Resources/Introduction_MoveToElevation.png)
+可先选中需延伸的梁，再执行命令；也可先执行命令，再选择需延伸的梁。
+
+![ExtendBeam](Resources/Introduction_ExtendBeam.png)
 
 ## MG1001
 
