@@ -361,16 +361,16 @@ namespace Muggle.TsExtensions.Test {
                 return;
             }
 
-            double rotationArroundY;
+            double rotationAroundY;
             while (true) {
-                Console.WriteLine("Input rotation degrees arround axis Y: ");
-                if (double.TryParse(Console.ReadLine(), out rotationArroundY)) break;
+                Console.WriteLine("Input rotation degrees around axis Y: ");
+                if (double.TryParse(Console.ReadLine(), out rotationAroundY)) break;
             }
 
-            double rotationArroundZ;
+            double rotationAroundZ;
             while (true) {
-                Console.WriteLine("Input rotation degrees arround axis Z: ");
-                if (double.TryParse(Console.ReadLine(), out rotationArroundZ)) break;
+                Console.WriteLine("Input rotation degrees around axis Z: ");
+                if (double.TryParse(Console.ReadLine(), out rotationAroundZ)) break;
             }
 
             try {
@@ -379,7 +379,7 @@ namespace Muggle.TsExtensions.Test {
                 var point = picker.PickPoint("Pick a position (point) for stiffener(s)");
 
                 ModelOperation.CreatStiffeners(part, point, 10,
-                    rotationArroundY: rotationArroundY / 180 * Math.PI, rotationArroundZ: rotationArroundZ / 180 * Math.PI,
+                    rotationAroundY: rotationAroundY / 180 * Math.PI, rotationAroundZ: rotationAroundZ / 180 * Math.PI,
                     indent: 10, indent2: 10, chamferType: Chamfer.ChamferTypeEnum.CHAMFER_LINE, chamferSizeX: 15, chamferSizeY: 15);
 
                 model.CommitChanges();

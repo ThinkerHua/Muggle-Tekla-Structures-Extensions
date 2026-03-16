@@ -568,7 +568,7 @@ namespace Muggle.TsExtensions.Common.Model {
         /// </summary>
         /// <param name="mainObject">焊接到对象</param>
         /// <param name="secondaryObject">焊接对象</param>
-        /// <param name="arroundWeld">环焊缝(true)或边缘焊缝(false)，默认值 true</param>
+        /// <param name="aroundWeld">环焊缝(true)或边缘焊缝(false)，默认值 true</param>
         /// <param name="shopWeld">车间焊接(true)或现场焊接(false)，默认值 true</param>
         /// <param name="position">位置，默认值 <see cref="Weld.WeldPositionEnum.WELD_POSITION_PLUS_X"/></param>
         /// <param name="preparation">焊接准备，默认值 <see cref="BaseWeld.WeldPreparationTypeEnum.PREPARATION_NONE"/></param>
@@ -582,7 +582,7 @@ namespace Muggle.TsExtensions.Common.Model {
         /// <exception cref="ArgumentNullException"></exception>
         public static Weld CreatWeld(
             ModelObject mainObject, ModelObject secondaryObject,
-            bool arroundWeld = true, bool shopWeld = true,
+            bool aroundWeld = true, bool shopWeld = true,
             Weld.WeldPositionEnum position = Weld.WeldPositionEnum.WELD_POSITION_PLUS_X,
             BaseWeld.WeldPreparationTypeEnum preparation = BaseWeld.WeldPreparationTypeEnum.PREPARATION_NONE,
             Weld.WeldTypeEnum typeAbove = BaseWeld.WeldTypeEnum.WELD_TYPE_FILLET, double sizeAbove = 6.0, double angleAbove = 0.0,
@@ -599,7 +599,7 @@ namespace Muggle.TsExtensions.Common.Model {
             Weld weld = new Weld {
                 MainObject = mainObject,
                 SecondaryObject = secondaryObject,
-                AroundWeld = arroundWeld,
+                AroundWeld = aroundWeld,
                 ShopWeld = shopWeld,
                 Position = position,
                 Preparation = preparation,
@@ -622,7 +622,7 @@ namespace Muggle.TsExtensions.Common.Model {
         /// <param name="mainObject">焊接到对象</param>
         /// <param name="secondaryObject">焊接的对象</param>
         /// <param name="polygon">多边形</param>
-        /// <param name="arroundWeld">环焊缝(true)或边缘焊缝(false)，默认值 true</param>
+        /// <param name="aroundWeld">环焊缝(true)或边缘焊缝(false)，默认值 true</param>
         /// <param name="shopWeld">车间焊接(true)或现场焊接(false)，默认值 true</param>
         /// <param name="preparation">焊接准备，默认值 <see cref="BaseWeld.WeldPreparationTypeEnum.PREPARATION_NONE"/></param>
         /// <param name="typeAbove">上焊缝类型，默认值 <see cref="BaseWeld.WeldTypeEnum.WELD_TYPE_FILLET"/></param>
@@ -634,7 +634,7 @@ namespace Muggle.TsExtensions.Common.Model {
         /// <returns>创建的多边形焊缝</returns>
         public static PolygonWeld CreatPolygonWeld(
             ModelObject mainObject, ModelObject secondaryObject, Polygon polygon,
-            bool arroundWeld = false, bool shopWeld = true,
+            bool aroundWeld = false, bool shopWeld = true,
             BaseWeld.WeldPreparationTypeEnum preparation = BaseWeld.WeldPreparationTypeEnum.PREPARATION_NONE,
             Weld.WeldTypeEnum typeAbove = BaseWeld.WeldTypeEnum.WELD_TYPE_FILLET, double sizeAbove = 6.0, double angleAbove = 0.0,
             Weld.WeldTypeEnum typeBelow = BaseWeld.WeldTypeEnum.WELD_TYPE_NONE, double sizeBelow = 0.0, double angleBelow = 0.0) {
@@ -655,7 +655,7 @@ namespace Muggle.TsExtensions.Common.Model {
                 MainObject = mainObject,
                 SecondaryObject = secondaryObject,
                 Polygon = polygon,
-                AroundWeld = arroundWeld,
+                AroundWeld = aroundWeld,
                 ShopWeld = shopWeld,
                 Preparation = preparation,
                 TypeAbove = typeAbove,
@@ -1293,11 +1293,11 @@ namespace Muggle.TsExtensions.Common.Model {
         /// </param>
         /// <param name="partCS">加劲板所处位置处映射的零件坐标系</param>
         /// <param name="stifPlane">加劲板中心平面</param>
-        /// <param name="rotationArroundY"><inheritdoc 
+        /// <param name="rotationAroundY"><inheritdoc 
         /// cref="CreatStiffeners(Part, Point, double, string, string, double, double, double, double, double, Chamfer.ChamferTypeEnum, double, double)" 
         /// path="/param[6]"/>
         /// </param>
-        /// <param name="rotationArroundZ"><inheritdoc 
+        /// <param name="rotationAroundZ"><inheritdoc 
         /// cref="CreatStiffeners(Part, Point, double, string, string, double, double, double, double, double, Chamfer.ChamferTypeEnum, double, double)" 
         /// path="/param[7]"/>
         /// </param>
@@ -1310,7 +1310,7 @@ namespace Muggle.TsExtensions.Common.Model {
         /// <exception cref="ArgumentException"><paramref name="part"/> 不是 <see cref="Beam"/> 或 <see cref="PolyBeam"/> 时引发。</exception>
         private static IEnumerator[] IntersectionWithStiffenerSurfacePlane(
             Part part, Point position, double thickness, out CoordinateSystem partCS, out GeometricPlane stifPlane,
-            double rotationArroundY = 0.0, double rotationArroundZ = 0.0) {
+            double rotationAroundY = 0.0, double rotationAroundZ = 0.0) {
             if (part is null) {
                 throw new ArgumentNullException(nameof(part));
             }
@@ -1320,15 +1320,15 @@ namespace Muggle.TsExtensions.Common.Model {
             }
 
             var radiansOf85 = 85.0 / 180.0 * Math.PI;
-            if (Math.Abs(rotationArroundY) > radiansOf85) {
+            if (Math.Abs(rotationAroundY) > radiansOf85) {
                 throw new ArgumentOutOfRangeException(
-                    $"Rotation angle \"{nameof(rotationArroundY)}\" out of range, only supports in range of -85~85 degrees.",
-                    nameof(rotationArroundY));
+                    $"Rotation angle \"{nameof(rotationAroundY)}\" out of range, only supports in range of -85~85 degrees.",
+                    nameof(rotationAroundY));
             }
-            if (Math.Abs(rotationArroundZ) > radiansOf85) {
+            if (Math.Abs(rotationAroundZ) > radiansOf85) {
                 throw new ArgumentOutOfRangeException(
-                    $"Rotation angle \"{nameof(rotationArroundY)}\" out of range, only supports in range of -85~85 degrees.",
-                    nameof(rotationArroundZ));
+                    $"Rotation angle \"{nameof(rotationAroundY)}\" out of range, only supports in range of -85~85 degrees.",
+                    nameof(rotationAroundZ));
             }
 
             var centerLine = part.GetCenterLine(false).Cast<Point>();
@@ -1349,8 +1349,8 @@ namespace Muggle.TsExtensions.Common.Model {
             var axisX = new Vector(1000, 0, 0);
             var axisY = new Vector(0, 1000, 0);
             var axisZ = new Vector(0, 0, 1000);
-            var matrixRotationY = MatrixFactory.Rotate(-rotationArroundY, axisY);
-            var matrixRotationZ = MatrixFactory.Rotate(-rotationArroundZ, axisZ);
+            var matrixRotationY = MatrixFactory.Rotate(-rotationAroundY, axisY);
+            var matrixRotationZ = MatrixFactory.Rotate(-rotationAroundZ, axisZ);
             var matrix = matrixRotationZ * matrixRotationY;
 
             var planeAxisX = MatrixExtension.Transform(matrix, -1 * axisZ).TransformFrom(partCS);
@@ -1422,8 +1422,8 @@ namespace Muggle.TsExtensions.Common.Model {
         /// <param name="thickness"></param>
         /// <param name="material"></param>
         /// <param name="class"></param>
-        /// <param name="rotationArroundY"></param>
-        /// <param name="rotationArroundZ"></param>
+        /// <param name="rotationAroundY"></param>
+        /// <param name="rotationAroundZ"></param>
         /// <param name="indent"></param>
         /// <param name="clearance"></param>
         /// <param name="chamferType"></param>
@@ -1436,7 +1436,7 @@ namespace Muggle.TsExtensions.Common.Model {
         /// <exception cref="Exception"></exception>
         private static IEnumerable<ContourPlate> CreatStiffenersForTypeI(
             Part part, Point position, double thickness, string material = "Q235B", string @class = "99",
-            double rotationArroundY = 0.0, double rotationArroundZ = 0.0, double indent = 0.0, double clearance = 2.0,
+            double rotationAroundY = 0.0, double rotationAroundZ = 0.0, double indent = 0.0, double clearance = 2.0,
             Chamfer.ChamferTypeEnum chamferType = 0, double chamferSizeX = 0.0, double chamferSizeY = 0.0) {
 
             if (part is null) {
@@ -1456,7 +1456,7 @@ namespace Muggle.TsExtensions.Common.Model {
             }
 
             var faceEnumArr = IntersectionWithStiffenerSurfacePlane(
-                part, position, thickness, out CoordinateSystem partCS, out GeometricPlane stifPlane, rotationArroundY, rotationArroundZ);
+                part, position, thickness, out CoordinateSystem partCS, out GeometricPlane stifPlane, rotationAroundY, rotationAroundZ);
             var faceEnumFront = faceEnumArr[0];
             var faceEnumBehind = faceEnumArr[1];
 
@@ -1569,8 +1569,8 @@ namespace Muggle.TsExtensions.Common.Model {
         /// <param name="thickness"></param>
         /// <param name="material"></param>
         /// <param name="class"></param>
-        /// <param name="rotationArroundY"></param>
-        /// <param name="rotationArroundZ"></param>
+        /// <param name="rotationAroundY"></param>
+        /// <param name="rotationAroundZ"></param>
         /// <param name="indent"></param>
         /// <param name="indent2"></param>
         /// <param name="clearance"></param>
@@ -1584,7 +1584,7 @@ namespace Muggle.TsExtensions.Common.Model {
         /// <exception cref="Exception"></exception>
         private static IEnumerable<ContourPlate> CreatStiffenersForTypeT(
             Part part, Point position, double thickness, string material = "Q235B", string @class = "99",
-            double rotationArroundY = 0.0, double rotationArroundZ = 0.0, double indent = 0.0, double indent2 = 0.0, double clearance = 2.0,
+            double rotationAroundY = 0.0, double rotationAroundZ = 0.0, double indent = 0.0, double indent2 = 0.0, double clearance = 2.0,
             Chamfer.ChamferTypeEnum chamferType = 0, double chamferSizeX = 0.0, double chamferSizeY = 0.0) {
             if (part is null) {
                 throw new ArgumentNullException(nameof(part));
@@ -1603,7 +1603,7 @@ namespace Muggle.TsExtensions.Common.Model {
             }
 
             var faceEnumArr = IntersectionWithStiffenerSurfacePlane(
-                part, position, thickness, out CoordinateSystem partCS, out GeometricPlane stifPlane, rotationArroundY, rotationArroundZ);
+                part, position, thickness, out CoordinateSystem partCS, out GeometricPlane stifPlane, rotationAroundY, rotationAroundZ);
             var faceEnumFront = faceEnumArr[0];
             var faceEnumBehind = faceEnumArr[1];
 
@@ -1717,7 +1717,7 @@ namespace Muggle.TsExtensions.Common.Model {
 
         private static ContourPlate CreatStiffenersForTypeU(
             Part part, Point position, double thickness, string material = "Q235B", string @class = "99",
-            double rotationArroundY = 0.0, double rotationArroundZ = 0.0, double indent = 0.0, double clearance = 2.0,
+            double rotationAroundY = 0.0, double rotationAroundZ = 0.0, double indent = 0.0, double clearance = 2.0,
             Chamfer.ChamferTypeEnum chamferType = 0, double chamferSizeX = 0.0, double chamferSizeY = 0.0) {
 
             if (part is null) {
@@ -1737,7 +1737,7 @@ namespace Muggle.TsExtensions.Common.Model {
             }
 
             var faceEnumArr = IntersectionWithStiffenerSurfacePlane(
-                part, position, thickness, out CoordinateSystem partCS, out GeometricPlane stifPlane, rotationArroundY, rotationArroundZ);
+                part, position, thickness, out CoordinateSystem partCS, out GeometricPlane stifPlane, rotationAroundY, rotationAroundZ);
             var faceEnumFront = faceEnumArr[0];
             var faceEnumBehind = faceEnumArr[1];
 
@@ -1834,7 +1834,7 @@ namespace Muggle.TsExtensions.Common.Model {
 
         private static ContourPlate CreatStiffenersForTypeM(
             Part part, Point position, double thickness, string material = "Q235B", string @class = "99",
-            double rotationArroundY = 0.0, double rotationArroundZ = 0.0, double clearance = 2.0,
+            double rotationAroundY = 0.0, double rotationAroundZ = 0.0, double clearance = 2.0,
             Chamfer.ChamferTypeEnum chamferType = 0, double chamferSizeX = 0.0, double chamferSizeY = 0.0) {
             if (part is null) {
                 throw new ArgumentNullException(nameof(part));
@@ -1853,7 +1853,7 @@ namespace Muggle.TsExtensions.Common.Model {
             }
 
             var faceEnumArr = IntersectionWithStiffenerSurfacePlane(
-                part, position, thickness, out CoordinateSystem partCS, out GeometricPlane stifPlane, rotationArroundY, rotationArroundZ);
+                part, position, thickness, out CoordinateSystem partCS, out GeometricPlane stifPlane, rotationAroundY, rotationAroundZ);
             var faceEnumFront = faceEnumArr[0];
             var faceEnumBehind = faceEnumArr[1];
 
@@ -2017,7 +2017,7 @@ namespace Muggle.TsExtensions.Common.Model {
 
         private static ContourPlate CreatStiffenersForTypeRO(
             Part part, Point position, double thickness, string material = "Q235B", string @class = "99",
-            double rotationArroundY = 0.0, double rotationArroundZ = 0.0, double clearance = 2.0) {
+            double rotationAroundY = 0.0, double rotationAroundZ = 0.0, double clearance = 2.0) {
             if (part is null) {
                 throw new ArgumentNullException(nameof(part));
             }
@@ -2035,7 +2035,7 @@ namespace Muggle.TsExtensions.Common.Model {
             }
 
             var faceEnumArr = IntersectionWithStiffenerSurfacePlane(
-                part, position, thickness, out CoordinateSystem partCS, out GeometricPlane stifPlane, rotationArroundY, rotationArroundZ);
+                part, position, thickness, out CoordinateSystem partCS, out GeometricPlane stifPlane, rotationAroundY, rotationAroundZ);
             var faceEnumFront = faceEnumArr[0];
             var faceEnumBehind = faceEnumArr[1];
 
@@ -2107,8 +2107,8 @@ namespace Muggle.TsExtensions.Common.Model {
         /// <param name="thickness">加劲板厚度</param>
         /// <param name="material">加劲板材质</param>
         /// <param name="class">加劲板等级</param>
-        /// <param name="rotationArroundY">加劲板绕零件坐标系Y轴旋转角度，弧度制</param>
-        /// <param name="rotationArroundZ">加劲板绕零件坐标系Z轴旋转角度，弧度制</param>
+        /// <param name="rotationAroundY">加劲板绕零件坐标系Y轴旋转角度，弧度制</param>
+        /// <param name="rotationAroundZ">加劲板绕零件坐标系Z轴旋转角度，弧度制</param>
         /// <param name="indent">加劲板缩进长度，仅适用于 H型钢、T型钢、工字钢、槽钢</param>
         /// <param name="indent2">加劲板另一个方向的缩进长度，仅适用于 T型钢</param>
         /// <param name="clearance">加劲板与零件表面的净距</param>
@@ -2121,7 +2121,7 @@ namespace Muggle.TsExtensions.Common.Model {
         /// <exception cref="Exception">不支持的截面类型引发。</exception>
         public static IEnumerable<ContourPlate> CreatStiffeners(
             Part part, Point position, double thickness, string material = "Q235B", string @class = "99",
-            double rotationArroundY = 0.0, double rotationArroundZ = 0.0, double indent = 0.0, double indent2 = 0.0, double clearance = 2.0,
+            double rotationAroundY = 0.0, double rotationAroundZ = 0.0, double indent = 0.0, double indent2 = 0.0, double clearance = 2.0,
             Chamfer.ChamferTypeEnum chamferType = 0, double chamferSizeX = 0.0, double chamferSizeY = 0.0) {
             if (part is null) {
                 throw new ArgumentNullException(nameof(part));
@@ -2155,23 +2155,23 @@ namespace Muggle.TsExtensions.Common.Model {
             switch (profileType) {
                 case "I":
                     return CreatStiffenersForTypeI(part, position, thickness, material, @class,
-                        rotationArroundY, rotationArroundZ, indent, clearance,
+                        rotationAroundY, rotationAroundZ, indent, clearance,
                         chamferType, chamferSizeX, chamferSizeY);
                 case "T":
                     return CreatStiffenersForTypeT(part, position, thickness, material, @class,
-                        rotationArroundY, rotationArroundZ, indent, indent2, clearance,
+                        rotationAroundY, rotationAroundZ, indent, indent2, clearance,
                         chamferType, chamferSizeX, chamferSizeY);
                 case "U":
                     return [ CreatStiffenersForTypeU(part, position, thickness, material, @class,
-                    rotationArroundY, rotationArroundZ, indent, clearance,
+                    rotationAroundY, rotationAroundZ, indent, clearance,
                     chamferType, chamferSizeX, chamferSizeY)];
                 case "M":
                     return [ CreatStiffenersForTypeM(part, position, thickness, material, @class,
-                    rotationArroundY, rotationArroundZ, clearance,
+                    rotationAroundY, rotationAroundZ, clearance,
                     chamferType, chamferSizeX, chamferSizeY)];
                 case "RO":
                     return [ CreatStiffenersForTypeRO(part, position, thickness, material, @class,
-                    rotationArroundY, rotationArroundZ, clearance)];
+                    rotationAroundY, rotationAroundZ, clearance)];
                 case "Z":
                     var profilePrefix = GetProfilePrefix(profileText);
                     if (profiles_I.Contains(profilePrefix)) {

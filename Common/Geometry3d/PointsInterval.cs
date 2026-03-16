@@ -334,7 +334,7 @@ namespace Muggle.TsExtensions.Common.Geometry3d {
         /// <returns>区间内给定实数值左右各数个连续间距的值的集合。</returns>
         /// <exception cref="ArgumentException"><paramref name="value"/>不在区间内。</exception>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="dis"/> &lt;= 0.0 或 <paramref name="num"/> &lt;= 0.0 时引发。</exception>
-        public IEnumerable<double> GetValuesArround(double value, double dis, int num) {
+        public IEnumerable<double> GetValuesAround(double value, double dis, int num) {
             if (double.IsNaN(value) || value < _start || value > _end) {
                 var msg = ToString(null);
                 msg = msg.Replace("\n", " ");
@@ -368,8 +368,8 @@ namespace Muggle.TsExtensions.Common.Geometry3d {
         /// <exception cref="ArgumentException"><paramref name="point"/>不在区间内。</exception>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="dis"/> &lt;= 0.0 或 <paramref name="num"/> &lt;= 0.0 时引发。</exception>
         [Obsolete("由于计算精度问题，可能出现误判参数“point”不在区间内，谨慎使用。" +
-            "应优先转换思路，使用“PointsInterval.GetPointsArround(double value, double dis, int num)”方法。", false)]
-        public IEnumerable<Point> GetPointsArround(Point point, double dis, int num) {
+            "应优先转换思路，使用“PointsInterval.GetPointsAround(double value, double dis, int num)”方法。", false)]
+        public IEnumerable<Point> GetPointsAround(Point point, double dis, int num) {
             if (point is null) {
                 throw new ArgumentNullException(nameof(point));
             }
@@ -388,7 +388,7 @@ namespace Muggle.TsExtensions.Common.Geometry3d {
                 throw new ArgumentOutOfRangeException($"“{nameof(num)} = {num}”不应小于等于0。");
             }
 
-            return GetPointsArround(value, dis, num);
+            return GetPointsAround(value, dis, num);
         }
 
         /// <summary>
@@ -400,7 +400,7 @@ namespace Muggle.TsExtensions.Common.Geometry3d {
         /// <returns>区间内给定实数值对应的点左右各数个连续间距的点的集合。</returns>
         /// <exception cref="ArgumentException"><paramref name="value"/>不在区间内。</exception>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="dis"/> &lt;= 0.0 或 <paramref name="num"/> &lt;= 0.0 时引发。</exception>
-        public IEnumerable<Point> GetPointsArround(double value, double dis, int num) {
+        public IEnumerable<Point> GetPointsAround(double value, double dis, int num) {
             if (double.IsNaN(value) || value < _start || value > _end) {
                 var msg = ToString(null);
                 msg = msg.Replace("\n", " ");

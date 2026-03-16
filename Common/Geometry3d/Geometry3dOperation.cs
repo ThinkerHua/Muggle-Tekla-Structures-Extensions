@@ -592,7 +592,7 @@ namespace Muggle.TsExtensions.Common.Geometry3d {
 
                 var vertex3Values = new List<double>();
                 foreach (var value in minExtremeValues) {
-                    foreach (var v in vertex3Interval.GetValuesArround(value, spacing, 10)) {
+                    foreach (var v in vertex3Interval.GetValuesAround(value, spacing, 10)) {
                         if (vertex3Values.Any() && v <= vertex3Values.Last()) continue;
                         vertex3Values.Add(v);
                     }
