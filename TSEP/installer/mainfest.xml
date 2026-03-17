@@ -4,7 +4,7 @@
 	<Product
 		Id="MuggleTSExtensions"
 		UpgradeCode="547B1AA5-0F0D-4276-8D0C-BD54561E1D56"
-		Version="0.6" Language="1033"
+		Version="0.7" Language="1033"
 		Name="Muggle TeklaStructures Extensions"
 		Manufacturer="Huang YongXing (thinkerhua@hotmail.com)"
 		Description= "Extensions for Tekla Structures."
