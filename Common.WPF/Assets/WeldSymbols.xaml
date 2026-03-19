@@ -1,0 +1,540 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:templates="clr-namespace:Muggle.TsExtensions.Common.WPF.DataTemplates">
+    <DrawingGroup x:Key="AroundWeld_Edge">
+        <GeometryDrawing>
+            <GeometryDrawing.Pen>
+                <Pen Thickness="1" Brush="Black" />
+            </GeometryDrawing.Pen>
+            <GeometryDrawing.Geometry>
+                <PathGeometry Figures="M0,6 L6,0 H26" />
+            </GeometryDrawing.Geometry>
+        </GeometryDrawing>
+        <GeometryDrawing Brush="Black">
+            <GeometryDrawing.Pen>
+                <Pen Thickness="1" Brush="Black" />
+            </GeometryDrawing.Pen>
+            <GeometryDrawing.Geometry>
+                <PathGeometry Figures="M0,3 L0,6 L3,6 Z" />
+            </GeometryDrawing.Geometry>
+        </GeometryDrawing>
+    </DrawingGroup>
+    <DrawingGroup x:Key="AroundWeld_Around">
+        <GeometryDrawing>
+            <GeometryDrawing.Pen>
+                <Pen Thickness="1" Brush="Black" />
+            </GeometryDrawing.Pen>
+            <GeometryDrawing.Geometry>
+                <PathGeometry Figures="M0,6 L6,0 H26 M 3,0 A 3,3 180 1 1 9,0 A 3,3 180 1 1 3,0" />
+            </GeometryDrawing.Geometry>
+        </GeometryDrawing>
+        <GeometryDrawing Brush="Black">
+            <GeometryDrawing.Pen>
+                <Pen Thickness="1" Brush="Black" />
+            </GeometryDrawing.Pen>
+            <GeometryDrawing.Geometry>
+                <PathGeometry Figures="M0,3 L0,6 L3,6 Z" />
+            </GeometryDrawing.Geometry>
+        </GeometryDrawing>
+    </DrawingGroup>
+
+    <DrawingGroup x:Key="ShopWeld_Workshop">
+        <GeometryDrawing>
+            <GeometryDrawing.Pen>
+                <Pen Thickness="1" Brush="Black" />
+            </GeometryDrawing.Pen>
+            <GeometryDrawing.Geometry>
+                <PathGeometry Figures="M0,5 L5,0 H26" />
+            </GeometryDrawing.Geometry>
+        </GeometryDrawing>
+    </DrawingGroup>
+    <DrawingGroup x:Key="ShopWeld_Site">
+        <GeometryDrawing>
+            <GeometryDrawing.Pen>
+                <Pen Thickness="1" Brush="Black" />
+            </GeometryDrawing.Pen>
+            <GeometryDrawing.Geometry>
+                <PathGeometry Figures="M0,5 L5,0 H26 M5,0 V-5" />
+            </GeometryDrawing.Geometry>
+        </GeometryDrawing>
+        <GeometryDrawing Brush="Black">
+            <GeometryDrawing.Geometry>
+                <PathGeometry Figures="M5,-5 V-2 L12,-3.5 Z" />
+            </GeometryDrawing.Geometry>
+        </GeometryDrawing>
+    </DrawingGroup>
+
+    <DrawingGroup x:Key="WeldContour_None">
+    </DrawingGroup>
+    <DrawingGroup x:Key="WeldContour_Flush">
+        <GeometryDrawing>
+            <GeometryDrawing.Pen>
+                <Pen Thickness="2" Brush="Black" />
+            </GeometryDrawing.Pen>
+            <GeometryDrawing.Geometry>
+                <PathGeometry Figures="M0,0 H26" />
+            </GeometryDrawing.Geometry>
+        </GeometryDrawing>
+    </DrawingGroup>
+    <DrawingGroup x:Key="WeldContour_Convex">
+        <GeometryDrawing>
+            <GeometryDrawing.Pen>
+                <Pen Thickness="2" Brush="Black" />
+            </GeometryDrawing.Pen>
+            <GeometryDrawing.Geometry>
+                <PathGeometry Figures="M0,0 A 20,20 0 0 1 24,0" />
+            </GeometryDrawing.Geometry>
+        </GeometryDrawing>
+    </DrawingGroup>
+    <DrawingGroup x:Key="WeldContour_Concave">
+        <GeometryDrawing>
+            <GeometryDrawing.Pen>
+                <Pen Thickness="2" Brush="Black" />
+            </GeometryDrawing.Pen>
+            <GeometryDrawing.Geometry>
+                <PathGeometry Figures="M0,0 A 20,20 0 0 0 24,0" />
+            </GeometryDrawing.Geometry>
+        </GeometryDrawing>
+    </DrawingGroup>
+
+    <DrawingGroup x:Key="WeldIntermittent_Continuous">
+        <GeometryDrawing Brush="Black">
+            <GeometryDrawing.Geometry>
+                <GeometryGroup>
+                    <RectangleGeometry Rect="0,0,26,3" />
+                    <RectangleGeometry Rect="0,7,26,3" />
+                </GeometryGroup>
+            </GeometryDrawing.Geometry>
+        </GeometryDrawing>
+        <GeometryDrawing>
+            <GeometryDrawing.Pen>
+                <Pen Thickness="1" Brush="Black" />
+            </GeometryDrawing.Pen>
+            <GeometryDrawing.Geometry>
+                <PathGeometry Figures="M26,3 H0.5 V7 H26" />
+            </GeometryDrawing.Geometry>
+        </GeometryDrawing>
+    </DrawingGroup>
+    <DrawingGroup x:Key="WeldIntermittent_ChainIntermittent">
+        <GeometryDrawing>
+            <GeometryDrawing.Pen>
+                <Pen Thickness="1" Brush="Black" />
+            </GeometryDrawing.Pen>
+            <GeometryDrawing.Geometry>
+                <PathGeometry Figures="M26,3 H0.5 V7 H26" />
+            </GeometryDrawing.Geometry>
+        </GeometryDrawing>
+        <GeometryDrawing Brush="Black">
+            <GeometryDrawing.Geometry>
+                <GeometryGroup>
+                    <RectangleGeometry Rect="0,0,4,3" />
+                    <RectangleGeometry Rect="6,0,4,3" />
+                    <RectangleGeometry Rect="12,0,4,3" />
+                    <RectangleGeometry Rect="18,0,4,3" />
+                    <RectangleGeometry Rect="0,7,4,3" />
+                    <RectangleGeometry Rect="6,7,4,3" />
+                    <RectangleGeometry Rect="12,7,4,3" />
+                    <RectangleGeometry Rect="18,7,4,3" />
+                </GeometryGroup>
+            </GeometryDrawing.Geometry>
+        </GeometryDrawing>
+    </DrawingGroup>
+    <DrawingGroup x:Key="WeldIntermittent_StaggeredIntermittent">
+        <GeometryDrawing>
+            <GeometryDrawing.Pen>
+                <Pen Thickness="1" Brush="Black" />
+            </GeometryDrawing.Pen>
+            <GeometryDrawing.Geometry>
+                <PathGeometry Figures="M26,3 H0.5 V7 H26" />
+            </GeometryDrawing.Geometry>
+        </GeometryDrawing>
+        <GeometryDrawing Brush="Black">
+            <GeometryDrawing.Geometry>
+                <GeometryGroup>
+                    <RectangleGeometry Rect="0,0,4,3" />
+                    <RectangleGeometry Rect="12,0,4,3" />
+                    <RectangleGeometry Rect="6,7,4,3" />
+                    <RectangleGeometry Rect="18,7,4,3" />
+                </GeometryGroup>
+            </GeometryDrawing.Geometry>
+        </GeometryDrawing>
+    </DrawingGroup>
+
+    <DrawingGroup x:Key="WeldFinish_None">
+    </DrawingGroup>
+    <DrawingGroup x:Key="WeldFinish_Grind">
+        <GeometryDrawing>
+            <GeometryDrawing.Pen>
+                <Pen Thickness="2" Brush="Black" />
+            </GeometryDrawing.Pen>
+            <GeometryDrawing.Geometry>
+                <PathGeometry Figures="M7,1 A 5,5 0 1 0 7,9 V5.5 H3" />
+            </GeometryDrawing.Geometry>
+        </GeometryDrawing>
+    </DrawingGroup>
+    <DrawingGroup x:Key="WeldFinish_Machine">
+        <GeometryDrawing>
+            <GeometryDrawing.Pen>
+                <Pen Thickness="2" Brush="Black" />
+            </GeometryDrawing.Pen>
+            <GeometryDrawing.Geometry>
+                <PathGeometry Figures="M0,10 V0 H1 L4.5,7 L8,0 H9 V10" />
+            </GeometryDrawing.Geometry>
+        </GeometryDrawing>
+    </DrawingGroup>
+    <DrawingGroup x:Key="WeldFinish_Chip">
+        <GeometryDrawing>
+            <GeometryDrawing.Pen>
+                <Pen Thickness="2" Brush="Black" />
+            </GeometryDrawing.Pen>
+            <GeometryDrawing.Geometry>
+                <PathGeometry Figures="M7,1 A 5,5 0 1 0 7,9" />
+            </GeometryDrawing.Geometry>
+        </GeometryDrawing>
+    </DrawingGroup>
+    <DrawingGroup x:Key="WeldFinish_FinishedWeld">
+        <GeometryDrawing>
+            <GeometryDrawing.Pen>
+                <Pen Thickness="2" Brush="Black" />
+            </GeometryDrawing.Pen>
+            <GeometryDrawing.Geometry>
+                <PathGeometry Figures="M12,4 H0 L6,10 L16,0" />
+            </GeometryDrawing.Geometry>
+        </GeometryDrawing>
+    </DrawingGroup>
+    <DrawingGroup x:Key="WeldFinish_SmoothTransition">
+        <GeometryDrawing>
+            <GeometryDrawing.Pen>
+                <Pen Thickness="2" Brush="Black" />
+            </GeometryDrawing.Pen>
+            <GeometryDrawing.Geometry>
+                <PathGeometry Figures="M8,0 V7 A2,2 0 0 1 0,7 M8,7 A2,2 0 0 0 16,7" />
+            </GeometryDrawing.Geometry>
+        </GeometryDrawing>
+    </DrawingGroup>
+
+    <DrawingGroup x:Key="WeldType_None">
+    </DrawingGroup>
+    <DrawingGroup x:Key="WeldType_EdgeFlange">
+        <GeometryDrawing>
+            <GeometryDrawing.Pen>
+                <Pen Thickness="2" Brush="Black" />
+            </GeometryDrawing.Pen>
+            <GeometryDrawing.Geometry>
+                <PathGeometry Figures="M3,0 V4 A5,8 0 0 1 0,12 M7,0 V4 A5,8 0 0 0 10,12" />
+            </GeometryDrawing.Geometry>
+        </GeometryDrawing>
+    </DrawingGroup>
+    <DrawingGroup x:Key="WeldType_SquareGrooveSquareButt">
+        <GeometryDrawing>
+            <GeometryDrawing.Pen>
+                <Pen Thickness="2" Brush="Black" />
+            </GeometryDrawing.Pen>
+            <GeometryDrawing.Geometry>
+                <PathGeometry Figures="M0,0 V12 M5,0 V12" />
+            </GeometryDrawing.Geometry>
+        </GeometryDrawing>
+    </DrawingGroup>
+    <DrawingGroup x:Key="WeldType_BevelGrooveSingleVButt">
+        <GeometryDrawing>
+            <GeometryDrawing.Pen>
+                <Pen Thickness="2" Brush="Black" />
+            </GeometryDrawing.Pen>
+            <GeometryDrawing.Geometry>
+                <PathGeometry Figures="M0,0 L6,11 L12,0" />
+            </GeometryDrawing.Geometry>
+        </GeometryDrawing>
+    </DrawingGroup>
+    <DrawingGroup x:Key="WeldType_BevelGrooveSingleBevelButt">
+        <GeometryDrawing>
+            <GeometryDrawing.Pen>
+                <Pen Thickness="2" Brush="Black" />
+            </GeometryDrawing.Pen>
+            <GeometryDrawing.Geometry>
+                <PathGeometry Figures="M0,0 V12 L8,0" />
+            </GeometryDrawing.Geometry>
+        </GeometryDrawing>
+    </DrawingGroup>
+    <DrawingGroup x:Key="WeldType_SingleVButtWithBroadRootFace">
+        <GeometryDrawing>
+            <GeometryDrawing.Pen>
+                <Pen Thickness="2" Brush="Black" />
+            </GeometryDrawing.Pen>
+            <GeometryDrawing.Geometry>
+                <PathGeometry Figures="M0,0 L6,6 L12,0 M6,6 V12" />
+            </GeometryDrawing.Geometry>
+        </GeometryDrawing>
+    </DrawingGroup>
+    <DrawingGroup x:Key="WeldType_SingleBevelButtWithBroadRootFace">
+        <GeometryDrawing>
+            <GeometryDrawing.Pen>
+                <Pen Thickness="2" Brush="Black" />
+            </GeometryDrawing.Pen>
+            <GeometryDrawing.Geometry>
+                <PathGeometry Figures="M0,0 V12 M0,8 L8,0" />
+            </GeometryDrawing.Geometry>
+        </GeometryDrawing>
+    </DrawingGroup>
+    <DrawingGroup x:Key="WeldType_UGrooveSingleUButt">
+        <GeometryDrawing>
+            <GeometryDrawing.Pen>
+                <Pen Thickness="2" Brush="Black" />
+            </GeometryDrawing.Pen>
+            <GeometryDrawing.Geometry>
+                <PathGeometry Figures="M0,0 A6,6 0 0 0 12,0 M6,6 V12" />
+            </GeometryDrawing.Geometry>
+        </GeometryDrawing>
+    </DrawingGroup>
+    <DrawingGroup x:Key="WeldType_JGrooveJButt">
+        <GeometryDrawing>
+            <GeometryDrawing.Pen>
+                <Pen Thickness="2" Brush="Black" />
+            </GeometryDrawing.Pen>
+            <GeometryDrawing.Geometry>
+                <PathGeometry Figures="M0,0 V12 M1,6 A6,6 0 0 0 7,0" />
+            </GeometryDrawing.Geometry>
+        </GeometryDrawing>
+    </DrawingGroup>
+    <DrawingGroup x:Key="WeldType_BevelBacking">
+        <GeometryDrawing>
+            <GeometryDrawing.Pen>
+                <Pen Thickness="2" Brush="Black" />
+            </GeometryDrawing.Pen>
+            <GeometryDrawing.Geometry>
+                <PathGeometry Figures="M0,0 A6,6 0 0 0 12,0 Z" />
+            </GeometryDrawing.Geometry>
+        </GeometryDrawing>
+    </DrawingGroup>
+    <DrawingGroup x:Key="WeldType_Fillet">
+        <GeometryDrawing>
+            <GeometryDrawing.Pen>
+                <Pen Thickness="2" Brush="Black" />
+            </GeometryDrawing.Pen>
+            <GeometryDrawing.Geometry>
+                <PathGeometry Figures="M0,0 V9 H9 Z" />
+            </GeometryDrawing.Geometry>
+        </GeometryDrawing>
+    </DrawingGroup>
+    <DrawingGroup x:Key="WeldType_Plug">
+        <GeometryDrawing>
+            <GeometryDrawing.Pen>
+                <Pen Thickness="2" Brush="Black" />
+            </GeometryDrawing.Pen>
+            <GeometryDrawing.Geometry>
+                <PathGeometry Figures="M0,6 V0 H12 V6" />
+            </GeometryDrawing.Geometry>
+        </GeometryDrawing>
+    </DrawingGroup>
+    <DrawingGroup x:Key="WeldType_Spot">
+        <GeometryDrawing>
+            <GeometryDrawing.Pen>
+                <Pen Thickness="2" Brush="Black" />
+            </GeometryDrawing.Pen>
+            <GeometryDrawing.Geometry>
+                <PathGeometry Figures="M0,5 A5,5 0 0 0 10,5 A5,5 0 0 0 0,5" />
+            </GeometryDrawing.Geometry>
+        </GeometryDrawing>
+    </DrawingGroup>
+    <DrawingGroup x:Key="WeldType_Seam">
+        <GeometryDrawing>
+            <GeometryDrawing.Pen>
+                <Pen Thickness="2" Brush="Black" />
+            </GeometryDrawing.Pen>
+            <GeometryDrawing.Geometry>
+                <PathGeometry Figures="M0,5 A5,5 0 0 0 10,5 A5,5 0 0 0 0,5 M-3,3.2 H13 M-3,6.8 H13" />
+            </GeometryDrawing.Geometry>
+        </GeometryDrawing>
+    </DrawingGroup>
+    <DrawingGroup x:Key="WeldType_Slot">
+        <GeometryDrawing>
+            <GeometryDrawing.Pen>
+                <Pen Thickness="2" Brush="Black" />
+            </GeometryDrawing.Pen>
+            <GeometryDrawing.Geometry>
+                <RectangleGeometry Rect="0,0,12,6" />
+            </GeometryDrawing.Geometry>
+        </GeometryDrawing>
+    </DrawingGroup>
+    <DrawingGroup x:Key="WeldType_FlareBevelGroove">
+        <GeometryDrawing>
+            <GeometryDrawing.Pen>
+                <Pen Thickness="2" Brush="Black" />
+            </GeometryDrawing.Pen>
+            <GeometryDrawing.Geometry>
+                <PathGeometry Figures="M3,0 V12 M10,0 A5,8 0 0 0 7,8 V12" />
+            </GeometryDrawing.Geometry>
+        </GeometryDrawing>
+    </DrawingGroup>
+    <DrawingGroup x:Key="WeldType_FlareVGroove">
+        <GeometryDrawing>
+            <GeometryDrawing.Pen>
+                <Pen Thickness="2" Brush="Black" />
+            </GeometryDrawing.Pen>
+            <GeometryDrawing.Geometry>
+                <PathGeometry Figures="M0,0 A5,8 0 0 1 3,8 V12 M10,0 A5,8 0 0 0 7,8 V12" />
+            </GeometryDrawing.Geometry>
+        </GeometryDrawing>
+    </DrawingGroup>
+    <DrawingGroup x:Key="WeldType_CornerFlange">
+        <GeometryDrawing>
+            <GeometryDrawing.Pen>
+                <Pen Thickness="2" Brush="Black" />
+            </GeometryDrawing.Pen>
+            <GeometryDrawing.Geometry>
+                <PathGeometry Figures="M3,0 V12M7,0 V4 A5,8 0 0 0 10,12" />
+            </GeometryDrawing.Geometry>
+        </GeometryDrawing>
+    </DrawingGroup>
+    <DrawingGroup x:Key="WeldType_PartialPenetrationSingleBevelButtPlusFillet">
+        <GeometryDrawing>
+            <GeometryDrawing.Pen>
+                <Pen Thickness="2" Brush="Black" />
+            </GeometryDrawing.Pen>
+            <GeometryDrawing.Geometry>
+                <PathGeometry Figures="M0,0 V12 L6,0 M6,6 H12 M9,3 V9 M14,3 V11 H22 Z" />
+            </GeometryDrawing.Geometry>
+        </GeometryDrawing>
+    </DrawingGroup>
+    <DrawingGroup x:Key="WeldType_PartialPenetrationSquareGroovePlusFillet">
+        <GeometryDrawing>
+            <GeometryDrawing.Pen>
+                <Pen Thickness="2" Brush="Black" />
+            </GeometryDrawing.Pen>
+            <GeometryDrawing.Geometry>
+                <PathGeometry Figures="M0,0 V12 M4,0 V12 M6,6 H12 M9,3 V9 M14,3 V11 H22 Z" />
+            </GeometryDrawing.Geometry>
+        </GeometryDrawing>
+    </DrawingGroup>
+    <DrawingGroup x:Key="WeldType_MeltThrough">
+        <GeometryDrawing Brush="Black">
+            <GeometryDrawing.Pen>
+                <Pen Thickness="2" Brush="Black" />
+            </GeometryDrawing.Pen>
+            <GeometryDrawing.Geometry>
+                <PathGeometry Figures="M0,0 A6,6 0 0 0 12,0 Z" />
+            </GeometryDrawing.Geometry>
+        </GeometryDrawing>
+    </DrawingGroup>
+    <DrawingGroup x:Key="WeldType_SteepFlankedBevelGrooveSingleVButt">
+        <GeometryDrawing>
+            <GeometryDrawing.Pen>
+                <Pen Thickness="2" Brush="Black" />
+            </GeometryDrawing.Pen>
+            <GeometryDrawing.Geometry>
+                <PathGeometry Figures="M0,11 H12 M0,0 L4,11 M8,11 L12,0" />
+            </GeometryDrawing.Geometry>
+        </GeometryDrawing>
+    </DrawingGroup>
+    <DrawingGroup x:Key="WeldType_SteepFlankedBevelGrooveSingleBevelButt">
+        <GeometryDrawing>
+            <GeometryDrawing.Pen>
+                <Pen Thickness="2" Brush="Black" />
+            </GeometryDrawing.Pen>
+            <GeometryDrawing.Geometry>
+                <PathGeometry Figures="M0,11 H12 M4,0 V11 M8,11 L12,0" />
+            </GeometryDrawing.Geometry>
+        </GeometryDrawing>
+    </DrawingGroup>
+    <DrawingGroup x:Key="WeldType_Edge">
+        <GeometryDrawing>
+            <GeometryDrawing.Pen>
+                <Pen Thickness="2" Brush="Black" />
+            </GeometryDrawing.Pen>
+            <GeometryDrawing.Geometry>
+                <PathGeometry Figures="M0,0 V12 M4,0 V12 M8,0 V12" />
+            </GeometryDrawing.Geometry>
+        </GeometryDrawing>
+    </DrawingGroup>
+    <DrawingGroup x:Key="WeldType_IsoSurfacing">
+        <GeometryDrawing>
+            <GeometryDrawing.Pen>
+                <Pen Thickness="2" Brush="Black" />
+            </GeometryDrawing.Pen>
+            <GeometryDrawing.Geometry>
+                <PathGeometry Figures="M0,4 A4,4 0 0 1 8,4 M8,4 A4,4 0 0 1 16,4" />
+            </GeometryDrawing.Geometry>
+        </GeometryDrawing>
+    </DrawingGroup>
+    <DrawingGroup x:Key="WeldType_Fold">
+        <GeometryDrawing>
+            <GeometryDrawing.Pen>
+                <Pen Thickness="2" Brush="Black" />
+            </GeometryDrawing.Pen>
+            <GeometryDrawing.Geometry>
+                <PathGeometry Figures="M0,0 H9 A3,3 0 0 1 9,6 H5 M9,3 H5 A3,3 0 0 0 5,9 H14" />
+            </GeometryDrawing.Geometry>
+        </GeometryDrawing>
+    </DrawingGroup>
+    <DrawingGroup x:Key="WeldType_Inclined">
+        <GeometryDrawing>
+            <GeometryDrawing.Pen>
+                <Pen Thickness="2" Brush="Black" />
+            </GeometryDrawing.Pen>
+            <GeometryDrawing.Geometry>
+                <PathGeometry Figures="M0,11 L7,0 M6,11 L13,0" />
+            </GeometryDrawing.Geometry>
+        </GeometryDrawing>
+    </DrawingGroup>
+
+    <x:Array x:Key="AroundWeldSet" Type="templates:Symbol">
+        <templates:Symbol Name="Edge" Drawing="{StaticResource AroundWeld_Edge}" />
+        <templates:Symbol Name="Around" Drawing="{StaticResource AroundWeld_Around}" />
+    </x:Array>
+    
+    <x:Array x:Key="ShopWeldSet" Type="templates:Symbol">
+        <templates:Symbol Name="WorkShop" Drawing="{StaticResource ShopWeld_Workshop}" />
+        <templates:Symbol Name="Site" Drawing="{StaticResource ShopWeld_Site}" />
+    </x:Array>
+    
+    <x:Array x:Key="WeldContourSet" Type="templates:Symbol">
+        <templates:Symbol Name="None" Drawing="{StaticResource WeldContour_None}" />
+        <templates:Symbol Name="Flush" Drawing="{StaticResource WeldContour_Flush}" />
+        <templates:Symbol Name="Convex" Drawing="{StaticResource WeldContour_Convex}" />
+        <templates:Symbol Name="Concave" Drawing="{StaticResource WeldContour_Concave}" />
+    </x:Array>
+    
+    <x:Array x:Key="WeldIntermittentSet" Type="templates:Symbol">
+        <templates:Symbol Name="Continuous" Drawing="{StaticResource WeldIntermittent_Continuous}" />
+        <templates:Symbol Name="Chain intermittent" Drawing="{StaticResource WeldIntermittent_ChainIntermittent}" />
+        <templates:Symbol Name="Staggered intermittent" Drawing="{StaticResource WeldIntermittent_StaggeredIntermittent}" />
+    </x:Array>
+    
+    <x:Array x:Key="WeldFinishSet" Type="templates:Symbol">
+        <templates:Symbol Name="None" Drawing="{StaticResource WeldFinish_None}" />
+        <templates:Symbol Name="Grind" Drawing="{StaticResource WeldFinish_Grind}" />
+        <templates:Symbol Name="Machine" Drawing="{StaticResource WeldFinish_Machine}" />
+        <templates:Symbol Name="Chip" Drawing="{StaticResource WeldFinish_Chip}" />
+        <templates:Symbol Name="Finished weld" Drawing="{StaticResource WeldFinish_FinishedWeld}" />
+        <templates:Symbol Name="Smooth transition" Drawing="{StaticResource WeldFinish_SmoothTransition}" />
+    </x:Array>
+    
+    <x:Array x:Key="WeldTypeSet" Type="templates:Symbol">
+        <templates:Symbol Name="None" Drawing="{StaticResource WeldType_None}" />
+        <templates:Symbol Name="Edge flange" Drawing="{StaticResource WeldType_EdgeFlange}" />
+        <templates:Symbol Name="Square groove square butt" Drawing="{StaticResource WeldType_SquareGrooveSquareButt}" />
+        <templates:Symbol Name="Bevel groove single V butt" Drawing="{StaticResource WeldType_BevelGrooveSingleVButt}" />
+        <templates:Symbol Name="Bevel groove single bevel butt" Drawing="{StaticResource WeldType_BevelGrooveSingleBevelButt}" />
+        <templates:Symbol Name="Single V butt with broad root face" Drawing="{StaticResource WeldType_SingleVButtWithBroadRootFace}" />
+        <templates:Symbol Name="Single bevel butt with broad root face" Drawing="{StaticResource WeldType_SingleBevelButtWithBroadRootFace}" />
+        <templates:Symbol Name="U groove single U butt" Drawing="{StaticResource WeldType_UGrooveSingleUButt}" />
+        <templates:Symbol Name="J groove J butt" Drawing="{StaticResource WeldType_JGrooveJButt}" />
+        <templates:Symbol Name="Bevel backing" Drawing="{StaticResource WeldType_BevelBacking}" />
+        <templates:Symbol Name="Fillet" Drawing="{StaticResource WeldType_Fillet}" />
+        <templates:Symbol Name="Plug" Drawing="{StaticResource WeldType_Plug}" />
+        <templates:Symbol Name="Spot" Drawing="{StaticResource WeldType_Spot}" />
+        <templates:Symbol Name="Seam" Drawing="{StaticResource WeldType_Seam}" />
+        <templates:Symbol Name="Slot" Drawing="{StaticResource WeldType_Slot}" />
+        <templates:Symbol Name="Flare bevel groove" Drawing="{StaticResource WeldType_FlareBevelGroove}" />
+        <templates:Symbol Name="Flare V groove" Drawing="{StaticResource WeldType_FlareVGroove}" />
+        <templates:Symbol Name="Corner flange" Drawing="{StaticResource WeldType_CornerFlange}" />
+        <templates:Symbol Name="Partial penetration single bevel butt plus fillet" Drawing="{StaticResource WeldType_PartialPenetrationSingleBevelButtPlusFillet}" />
+        <templates:Symbol Name="Partial penetration square groove plus fillet" Drawing="{StaticResource WeldType_PartialPenetrationSquareGroovePlusFillet}" />
+        <templates:Symbol Name="Melt through" Drawing="{StaticResource WeldType_MeltThrough}" />
+        <templates:Symbol Name="Steep flanked bevel groove single V butt" Drawing="{StaticResource WeldType_SteepFlankedBevelGrooveSingleVButt}" />
+        <templates:Symbol Name="Steep flanked bevel groove single bevel butt" Drawing="{StaticResource WeldType_SteepFlankedBevelGrooveSingleBevelButt}" />
+        <templates:Symbol Name="Edge" Drawing="{StaticResource WeldType_Edge}" />
+        <templates:Symbol Name="ISO surfacing" Drawing="{StaticResource WeldType_IsoSurfacing}" />
+        <templates:Symbol Name="Fold" Drawing="{StaticResource WeldType_Fold}" />
+        <templates:Symbol Name="Inclined" Drawing="{StaticResource WeldType_Inclined}" />
+    </x:Array>
+</ResourceDictionary>
