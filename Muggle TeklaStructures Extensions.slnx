@@ -1,4 +1,7 @@
 <Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+  </Folder>
   <Project Path="CodingHelper/CodingHelper.csproj" />
   <Project Path="Common.WPF/Common.WPF.csproj" />
   <Project Path="Common/Common.csproj" />
