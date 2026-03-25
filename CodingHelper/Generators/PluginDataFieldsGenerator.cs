@@ -12,17 +12,19 @@
  *  PluginDataFieldsGenerator.cs: help to generate fields (with "StructuresFieldAttribute") for plugin data.
  *  written by Huang YongXing - thinkerhua@hotmail.com
  *==============================================================================*/
+
 using System;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
+using Muggle.TsExtensions.CodingHelper.Diagnosers;
 
 namespace Muggle.TsExtensions.CodingHelper.Generators {
-
     [Generator]
     internal class PluginDataFieldsGenerator : IIncrementalGenerator {
         private static readonly string[] ConcernedAttributes = [
@@ -34,6 +36,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
         ];
 
         #region Initial files
+
         /// <summary>
         /// 
         /// </summary>
@@ -570,6 +573,9 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                     _ => throw new NotSupportedException()
                 };
                 foreach (var nameOrNumber in kvp.Value) {
+                    var match = Regex.Match(nameOrNumber, InternalAttributesDiagnoser.SpecialCharacterPattern);
+                    if (match.Success) continue;
+                    
                     builder.AppendLine(template.Replace("{{nameOrNumber}}", nameOrNumber));
                 }
             }
@@ -591,7 +597,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
 
         private AppliedClassInfo? Transform(GeneratorSyntaxContext syntaxContext, CancellationToken token) {
             var classDeclarationSyntax = (ClassDeclarationSyntax)syntaxContext.Node;
-            if (!classDeclarationSyntax.Modifiers.Any(m => m.IsKind(SyntaxKind.PartialKeyword)))  return null;
+            if (!classDeclarationSyntax.Modifiers.Any(m => m.IsKind(SyntaxKind.PartialKeyword))) return null;
 
             return GeneratorHelper.GetClassInfo(syntaxContext, token, ConcernedAttributes);
         }

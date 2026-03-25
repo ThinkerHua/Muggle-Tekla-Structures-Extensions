@@ -8,7 +8,7 @@
 		<IsRoslynComponent>true</IsRoslynComponent>
 		<PackageId>Muggle.TsExtensions.CodingHelper</PackageId>
 		<Title>Tekla Structures OpenAPI development helper</Title>
-		<Version>1.0.1</Version>
+		<Version>1.1.0</Version>
 		<Authors>Huang YongXing</Authors>
 		<Description>Help to generate fields (with StructuresFieldAttribute) for plugin data and properties (with StructuresDialogAttribute) for view model which used by plugin WPF UI.</Description>
 		<Copyright>© 2026 Huang YongXing</Copyright>
@@ -18,7 +18,7 @@
 		<RepositoryUrl>https://github.com/ThinkerHua/Muggle-Tekla-Structures-Extensions.git</RepositoryUrl>
 		<PackageReadmeFile>Readme.md</PackageReadmeFile>
 		<PackageTags>Tekla Structures OpenAPI Generator</PackageTags>
-		<PackageReleaseNotes>Update Readme</PackageReleaseNotes>
+		<PackageReleaseNotes>Add diagnostics for naming conventions, and do not generate relevant code for arguments that do not comply with naming conventions.</PackageReleaseNotes>
 		<PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
 		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
 		<IncludeBuildOutput>false</IncludeBuildOutput>

@@ -9,18 +9,21 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program. If not, see <http://www.gnu.org/licenses/>.
  *==============================================================================
- *  ViewModelPropertiesGenerator.cs: help to generate properties (with "StructuresDialogAttribute") 
+ *  ViewModelPropertiesGenerator.cs: help to generate properties (with "StructuresDialogAttribute")
  *  for view model which used by plugin WPF UI.
  *  written by Huang YongXing - thinkerhua@hotmail.com
  *==============================================================================*/
+
 using System;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
+using Muggle.TsExtensions.CodingHelper.Diagnosers;
 
 namespace Muggle.TsExtensions.CodingHelper.Generators {
     [Generator]
@@ -1761,6 +1764,9 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                 };
 
                 foreach (var nameOrNumber in kvp.Value) {
+                    var match = Regex.Match(nameOrNumber, InternalAttributesDiagnoser.SpecialCharacterPattern);
+                    if (match.Success) continue;
+
                     builder.AppendLine(propertiesTemplate.Replace("{{nameOrNumber}}", nameOrNumber));
                 }
             }
@@ -1792,10 +1798,10 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
 
         private AppliedClassInfo? Transform(GeneratorSyntaxContext syntaxContext, CancellationToken token) {
             var classDeclarationSyntax = (ClassDeclarationSyntax)syntaxContext.Node;
+            if (!classDeclarationSyntax.Modifiers.Any(m => m.IsKind(SyntaxKind.PartialKeyword))) return null;
+
             var semanticModel = syntaxContext.SemanticModel;
             var classSymbol = semanticModel.GetDeclaredSymbol(classDeclarationSyntax);
-
-            if (!classDeclarationSyntax.Modifiers.Any(m => m.IsKind(SyntaxKind.PartialKeyword))) return null;
 
             if (classSymbol == null || !classSymbol.AllInterfaces.Any(i =>
                     i.ToDisplayString() == "System.ComponentModel.INotifyPropertyChanged"))
