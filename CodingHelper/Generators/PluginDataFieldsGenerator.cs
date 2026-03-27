@@ -352,10 +352,10 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                     public double Weld{{nameOrNumber}}LengthBelow;
                     
                     [StructuresField("W{{nameOrNumber}}PITA")]
-                    public double Weld{{nameOrNumber}}PicthAbove;
+                    public double Weld{{nameOrNumber}}PitchAbove;
                     
                     [StructuresField("W{{nameOrNumber}}PITB")]
-                    public double Weld{{nameOrNumber}}PicthBelow;
+                    public double Weld{{nameOrNumber}}PitchBelow;
                     
                     [StructuresField("W{{nameOrNumber}}ARND")]
                     public int Weld{{nameOrNumber}}Around;
