@@ -56,7 +56,7 @@ internal class InternalAttributesDiagnoser : DiagnosticAnalyzer {
         "A class that applied '{0}' must implement 'INotifyPropertyChanged' interface. " +
         "Simplified inherit it from 'ConnectionViewModel' or 'DetailViewModel' or 'NotificationObject' " +
         "within 'Muggle.TsExtensions.CodingHelper.Generators' namespace, " +
-        "or directly implement 'INotifyPropertyChanged' interface.",
+        "or directly implement 'INotifyPropertyChanged' interface with an 'OnPropertyChanged(string propertyName)' method.",
         Category,
         DiagnosticSeverity.Error,
         true);
