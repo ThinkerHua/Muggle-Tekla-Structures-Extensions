@@ -34,7 +34,10 @@ An abstract class inherit from NotificationObject, and has a several general pro
 
 ## Example
 
-For example, the source codes by hand:
+Click [here](https://github.com/ThinkerHua/Muggle-Tekla-Structures-Extensions/blob/master/Demo1) to get a complete demo project, 
+and the following is a quick preview example:
+
+The source codes by hand:
 
 ~~~CSharp
 // in PluginDemo.cs
