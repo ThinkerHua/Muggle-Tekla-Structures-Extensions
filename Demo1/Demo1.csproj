@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+	<PropertyGroup>
+		<TargetFramework>net48</TargetFramework>
+		<LangVersion>latest</LangVersion>
+		<UseWPF>true</UseWPF>
+		<RootNamespace>Muggle.TsExtensions.Demo1</RootNamespace>
+		<OutputPath>../TSEP/binaries</OutputPath>
+		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+		<AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+	</PropertyGroup>
+    
+	<ItemGroup>
+		<PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.142" />
+		<PackageReference Include="Tekla.Structures" Version="2021.0.0" ExcludeAssets="runtime" />
+		<PackageReference Include="Tekla.Structures.Datatype" Version="2021.0.0" ExcludeAssets="runtime" />
+		<PackageReference Include="Tekla.Structures.Dialog" Version="2021.0.0" ExcludeAssets="runtime" />
+		<PackageReference Include="Tekla.Structures.Model" Version="2021.0.0" ExcludeAssets="runtime" />
+		<PackageReference Include="Tekla.Structures.Plugins" Version="2021.0.0" ExcludeAssets="runtime" />
+	</ItemGroup>
+    
+	<ItemGroup>
+		<ProjectReference Include="..\CodingHelper\CodingHelper.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+		<ProjectReference Include="..\Common.WPF\Common.WPF.csproj" private="false" />
+		<ProjectReference Include="..\Common\Common.csproj" private="false" />
+	</ItemGroup>
+    
+	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
+		<Exec Command="xcopy &quot;$(TargetDir)$(TargetName).dll&quot; &quot;D:\Program Files\Tekla Structures\2021.0\Environments\common\extensions\MuggleTSExtensions\&quot; /Y /C /Q /R" />
+	</Target>
+</Project>
