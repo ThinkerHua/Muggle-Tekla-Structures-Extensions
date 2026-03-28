@@ -1309,52 +1309,52 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         }
                     }
                     
-                    private bool bolt{{nameOrNumber}}Hole1 = true;
-                    [StructuresDialog("B{{nameOrNumber}}HOLE1", typeof(TD.Boolean))]
-                    public bool Bolt{{nameOrNumber}}Hole1 {
+                    private int bolt{{nameOrNumber}}Hole1;
+                    [StructuresDialog("B{{nameOrNumber}}HOLE1", typeof(TD.Integer))]
+                    public int Bolt{{nameOrNumber}}Hole1 {
                         get { return bolt{{nameOrNumber}}Hole1; }
                         set {
-                            bolt{{nameOrNumber}}Hole1 = value;
+                            bolt{{nameOrNumber}}Hole1 = (value < 0 || value > 1) ? 0 : value;
                             OnPropertyChanged("Bolt{{nameOrNumber}}Hole1");
                         }
                     }
                     
-                    private bool bolt{{nameOrNumber}}Hole2 = true;
-                    [StructuresDialog("B{{nameOrNumber}}HOLE2", typeof(TD.Boolean))]
-                    public bool Bolt{{nameOrNumber}}Hole2 {
+                    private int bolt{{nameOrNumber}}Hole2;
+                    [StructuresDialog("B{{nameOrNumber}}HOLE2", typeof(TD.Integer))]
+                    public int Bolt{{nameOrNumber}}Hole2 {
                         get { return bolt{{nameOrNumber}}Hole2; }
                         set {
-                            bolt{{nameOrNumber}}Hole2 = value;
+                            bolt{{nameOrNumber}}Hole2 = (value < 0 || value > 1) ? 0 : value;
                             OnPropertyChanged("Bolt{{nameOrNumber}}Hole2");
                         }
                     }
                     
-                    private bool bolt{{nameOrNumber}}Hole3;
-                    [StructuresDialog("B{{nameOrNumber}}HOLE3", typeof(TD.Boolean))]
-                    public bool Bolt{{nameOrNumber}}Hole3 {
+                    private int bolt{{nameOrNumber}}Hole3;
+                    [StructuresDialog("B{{nameOrNumber}}HOLE3", typeof(TD.Integer))]
+                    public int Bolt{{nameOrNumber}}Hole3 {
                         get { return bolt{{nameOrNumber}}Hole3; }
                         set {
-                            bolt{{nameOrNumber}}Hole3 = value;
+                            bolt{{nameOrNumber}}Hole3 = (value < 0 || value > 1) ? 0 : value;
                             OnPropertyChanged("Bolt{{nameOrNumber}}Hole3");
                         }
                     }
                     
-                    private bool bolt{{nameOrNumber}}Hole4;
-                    [StructuresDialog("B{{nameOrNumber}}HOLE4", typeof(TD.Boolean))]
-                    public bool Bolt{{nameOrNumber}}Hole4 {
+                    private int bolt{{nameOrNumber}}Hole4;
+                    [StructuresDialog("B{{nameOrNumber}}HOLE4", typeof(TD.Integer))]
+                    public int Bolt{{nameOrNumber}}Hole4 {
                         get { return bolt{{nameOrNumber}}Hole4; }
                         set {
-                            bolt{{nameOrNumber}}Hole4 = value;
+                            bolt{{nameOrNumber}}Hole4 = (value < 0 || value > 1) ? 0 : value;
                             OnPropertyChanged("Bolt{{nameOrNumber}}Hole4");
                         }
                     }
                     
-                    private bool bolt{{nameOrNumber}}Hole5;
-                    [StructuresDialog("B{{nameOrNumber}}HOLE5", typeof(TD.Boolean))]
-                    public bool Bolt{{nameOrNumber}}Hole5 {
+                    private int bolt{{nameOrNumber}}Hole5;
+                    [StructuresDialog("B{{nameOrNumber}}HOLE5", typeof(TD.Integer))]
+                    public int Bolt{{nameOrNumber}}Hole5 {
                         get { return bolt{{nameOrNumber}}Hole5; }
                         set {
-                            bolt{{nameOrNumber}}Hole5 = value;
+                            bolt{{nameOrNumber}}Hole5 = (value < 0 || value > 1) ? 0 : value;
                             OnPropertyChanged("Bolt{{nameOrNumber}}Hole5");
                         }
                     }
@@ -1399,62 +1399,62 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         }
                     }
                     
-                    private bool bolt{{nameOrNumber}}IsBolt = true;
-                    [StructuresDialog("B{{nameOrNumber}}ISBOT", typeof(TD.Boolean))]
-                    public bool Bolt{{nameOrNumber}}IsBolt {
+                    private int bolt{{nameOrNumber}}IsBolt;
+                    [StructuresDialog("B{{nameOrNumber}}ISBOT", typeof(TD.Integer))]
+                    public int Bolt{{nameOrNumber}}IsBolt {
                         get { return bolt{{nameOrNumber}}IsBolt; }
                         set {
-                            bolt{{nameOrNumber}}IsBolt = value;
+                            bolt{{nameOrNumber}}IsBolt = (value < 0 || value > 1) ? 0 : value;
                             OnPropertyChanged("Bolt{{nameOrNumber}}IsBolt");
                         }
                     }
                     
-                    private bool bolt{{nameOrNumber}}UseNut1 = true;
-                    [StructuresDialog("B{{nameOrNumber}}NUT1", typeof(TD.Boolean))]
-                    public bool Bolt{{nameOrNumber}}UseNut1 {
+                    private int bolt{{nameOrNumber}}UseNut1;
+                    [StructuresDialog("B{{nameOrNumber}}NUT1", typeof(TD.Integer))]
+                    public int Bolt{{nameOrNumber}}UseNut1 {
                         get { return bolt{{nameOrNumber}}UseNut1; }
                         set {
-                            bolt{{nameOrNumber}}UseNut1 = value;
+                            bolt{{nameOrNumber}}UseNut1 = (value < 0 || value > 1) ? 0 : value;
                             OnPropertyChanged("Bolt{{nameOrNumber}}UseNut1");
                         }
                     }
                     
-                    private bool bolt{{nameOrNumber}}UseNut2;
-                    [StructuresDialog("B{{nameOrNumber}}NUT2", typeof(TD.Boolean))]
-                    public bool Bolt{{nameOrNumber}}UseNut2 {
+                    private int bolt{{nameOrNumber}}UseNut2;
+                    [StructuresDialog("B{{nameOrNumber}}NUT2", typeof(TD.Integer))]
+                    public int Bolt{{nameOrNumber}}UseNut2 {
                         get { return bolt{{nameOrNumber}}UseNut2; }
                         set {
-                            bolt{{nameOrNumber}}UseNut2 = value;
+                            bolt{{nameOrNumber}}UseNut2 = (value < 0 || value > 1) ? 0 : value;
                             OnPropertyChanged("Bolt{{nameOrNumber}}UseNut2");
                         }
                     }
                     
-                    private bool bolt{{nameOrNumber}}UseWasher1;
-                    [StructuresDialog("B{{nameOrNumber}}WSHR1", typeof(TD.Boolean))]
-                    public bool Bolt{{nameOrNumber}}UseWasher1 {
+                    private int bolt{{nameOrNumber}}UseWasher1;
+                    [StructuresDialog("B{{nameOrNumber}}WSHR1", typeof(TD.Integer))]
+                    public int Bolt{{nameOrNumber}}UseWasher1 {
                         get { return bolt{{nameOrNumber}}UseWasher1; }
                         set {
-                            bolt{{nameOrNumber}}UseWasher1 = value;
+                            bolt{{nameOrNumber}}UseWasher1 = (value < 0 || value > 1) ? 0 : value;
                             OnPropertyChanged("Bolt{{nameOrNumber}}UseWasher1");
                         }
                     }
                     
-                    private bool bolt{{nameOrNumber}}UseWasher2;
-                    [StructuresDialog("B{{nameOrNumber}}WSHR2", typeof(TD.Boolean))]
-                    public bool Bolt{{nameOrNumber}}UseWasher2 {
+                    private int bolt{{nameOrNumber}}UseWasher2;
+                    [StructuresDialog("B{{nameOrNumber}}WSHR2", typeof(TD.Integer))]
+                    public int Bolt{{nameOrNumber}}UseWasher2 {
                         get { return bolt{{nameOrNumber}}UseWasher2; }
                         set {
-                            bolt{{nameOrNumber}}UseWasher2 = value;
+                            bolt{{nameOrNumber}}UseWasher2 = (value < 0 || value > 1) ? 0 : value;
                             OnPropertyChanged("Bolt{{nameOrNumber}}UseWasher2");
                         }
                     }
                     
-                    private bool bolt{{nameOrNumber}}UseWasher3 = true;
-                    [StructuresDialog("B{{nameOrNumber}}WSHR3", typeof(TD.Boolean))]
-                    public bool Bolt{{nameOrNumber}}UseWasher3 {
+                    private int bolt{{nameOrNumber}}UseWasher3;
+                    [StructuresDialog("B{{nameOrNumber}}WSHR3", typeof(TD.Integer))]
+                    public int Bolt{{nameOrNumber}}UseWasher3 {
                         get { return bolt{{nameOrNumber}}UseWasher3; }
                         set {
-                            bolt{{nameOrNumber}}UseWasher3 = value;
+                            bolt{{nameOrNumber}}UseWasher3 = (value < 0 || value > 1) ? 0 : value;
                             OnPropertyChanged("Bolt{{nameOrNumber}}UseWasher3");
                         }
                     }
@@ -1573,52 +1573,52 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         }
                     }
                     
-                    private bool boltCircle{{nameOrNumber}}Hole1 = true;
-                    [StructuresDialog("BC{{nameOrNumber}}HOLE1", typeof(TD.Boolean))]
-                    public bool BoltCircle{{nameOrNumber}}Hole1 {
+                    private int boltCircle{{nameOrNumber}}Hole1;
+                    [StructuresDialog("BC{{nameOrNumber}}HOLE1", typeof(TD.Integer))]
+                    public int BoltCircle{{nameOrNumber}}Hole1 {
                         get { return boltCircle{{nameOrNumber}}Hole1; }
                         set {
-                            boltCircle{{nameOrNumber}}Hole1 = value;
+                            boltCircle{{nameOrNumber}}Hole1 = (value < 0 || value > 1) ? 0 : value;
                             OnPropertyChanged("BoltCircle{{nameOrNumber}}Hole1");
                         }
                     }
                     
-                    private bool boltCircle{{nameOrNumber}}Hole2 = true;
-                    [StructuresDialog("BC{{nameOrNumber}}HOLE2", typeof(TD.Boolean))]
-                    public bool BoltCircle{{nameOrNumber}}Hole2 {
+                    private int boltCircle{{nameOrNumber}}Hole2;
+                    [StructuresDialog("BC{{nameOrNumber}}HOLE2", typeof(TD.Integer))]
+                    public int BoltCircle{{nameOrNumber}}Hole2 {
                         get { return boltCircle{{nameOrNumber}}Hole2; }
                         set {
-                            boltCircle{{nameOrNumber}}Hole2 = value;
+                            boltCircle{{nameOrNumber}}Hole2 = (value < 0 || value > 1) ? 0 : value;
                             OnPropertyChanged("BoltCircle{{nameOrNumber}}Hole2");
                         }
                     }
                     
-                    private bool boltCircle{{nameOrNumber}}Hole3;
-                    [StructuresDialog("BC{{nameOrNumber}}HOLE3", typeof(TD.Boolean))]
-                    public bool BoltCircle{{nameOrNumber}}Hole3 {
+                    private int boltCircle{{nameOrNumber}}Hole3;
+                    [StructuresDialog("BC{{nameOrNumber}}HOLE3", typeof(TD.Integer))]
+                    public int BoltCircle{{nameOrNumber}}Hole3 {
                         get { return boltCircle{{nameOrNumber}}Hole3; }
                         set {
-                            boltCircle{{nameOrNumber}}Hole3 = value;
+                            boltCircle{{nameOrNumber}}Hole3 = (value < 0 || value > 1) ? 0 : value;
                             OnPropertyChanged("BoltCircle{{nameOrNumber}}Hole3");
                         }
                     }
                     
-                    private bool boltCircle{{nameOrNumber}}Hole4;
-                    [StructuresDialog("BC{{nameOrNumber}}HOLE4", typeof(TD.Boolean))]
-                    public bool BoltCircle{{nameOrNumber}}Hole4 {
+                    private int boltCircle{{nameOrNumber}}Hole4;
+                    [StructuresDialog("BC{{nameOrNumber}}HOLE4", typeof(TD.Integer))]
+                    public int BoltCircle{{nameOrNumber}}Hole4 {
                         get { return boltCircle{{nameOrNumber}}Hole4; }
                         set {
-                            boltCircle{{nameOrNumber}}Hole4 = value;
+                            boltCircle{{nameOrNumber}}Hole4 = (value < 0 || value > 1) ? 0 : value;
                             OnPropertyChanged("BoltCircle{{nameOrNumber}}Hole4");
                         }
                     }
                     
-                    private bool boltCircle{{nameOrNumber}}Hole5;
-                    [StructuresDialog("BC{{nameOrNumber}}HOLE5", typeof(TD.Boolean))]
-                    public bool BoltCircle{{nameOrNumber}}Hole5 {
+                    private int boltCircle{{nameOrNumber}}Hole5;
+                    [StructuresDialog("BC{{nameOrNumber}}HOLE5", typeof(TD.Integer))]
+                    public int BoltCircle{{nameOrNumber}}Hole5 {
                         get { return boltCircle{{nameOrNumber}}Hole5; }
                         set {
-                            boltCircle{{nameOrNumber}}Hole5 = value;
+                            boltCircle{{nameOrNumber}}Hole5 = (value < 0 || value > 1) ? 0 : value;
                             OnPropertyChanged("BoltCircle{{nameOrNumber}}Hole5");
                         }
                     }
@@ -1663,62 +1663,62 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         }
                     }
                     
-                    private bool boltCircle{{nameOrNumber}}IsBolt = true;
-                    [StructuresDialog("BC{{nameOrNumber}}ISBOT", typeof(TD.Boolean))]
-                    public bool BoltCircle{{nameOrNumber}}IsBolt {
+                    private int boltCircle{{nameOrNumber}}IsBolt;
+                    [StructuresDialog("BC{{nameOrNumber}}ISBOT", typeof(TD.Integer))]
+                    public int BoltCircle{{nameOrNumber}}IsBolt {
                         get { return boltCircle{{nameOrNumber}}IsBolt; }
                         set {
-                            boltCircle{{nameOrNumber}}IsBolt = value;
+                            boltCircle{{nameOrNumber}}IsBolt = (value < 0 || value > 1) ? 0 : value;
                             OnPropertyChanged("BoltCircle{{nameOrNumber}}IsBolt");
                         }
                     }
                     
-                    private bool boltCircle{{nameOrNumber}}UseNut1 = true;
-                    [StructuresDialog("BC{{nameOrNumber}}NUT1", typeof(TD.Boolean))]
-                    public bool BoltCircle{{nameOrNumber}}UseNut1 {
+                    private int boltCircle{{nameOrNumber}}UseNut1;
+                    [StructuresDialog("BC{{nameOrNumber}}NUT1", typeof(TD.Integer))]
+                    public int BoltCircle{{nameOrNumber}}UseNut1 {
                         get { return boltCircle{{nameOrNumber}}UseNut1; }
                         set {
-                            boltCircle{{nameOrNumber}}UseNut1 = value;
+                            boltCircle{{nameOrNumber}}UseNut1 = (value < 0 || value > 1) ? 0 : value;
                             OnPropertyChanged("BoltCircle{{nameOrNumber}}UseNut1");
                         }
                     }
                     
-                    private bool boltCircle{{nameOrNumber}}UseNut2;
-                    [StructuresDialog("BC{{nameOrNumber}}NUT2", typeof(TD.Boolean))]
-                    public bool BoltCircle{{nameOrNumber}}UseNut2 {
+                    private int boltCircle{{nameOrNumber}}UseNut2;
+                    [StructuresDialog("BC{{nameOrNumber}}NUT2", typeof(TD.Integer))]
+                    public int BoltCircle{{nameOrNumber}}UseNut2 {
                         get { return boltCircle{{nameOrNumber}}UseNut2; }
                         set {
-                            boltCircle{{nameOrNumber}}UseNut2 = value;
+                            boltCircle{{nameOrNumber}}UseNut2 = (value < 0 || value > 1) ? 0 : value;
                             OnPropertyChanged("BoltCircle{{nameOrNumber}}UseNut2");
                         }
                     }
                     
-                    private bool boltCircle{{nameOrNumber}}UseWasher1;
-                    [StructuresDialog("BC{{nameOrNumber}}WSHR1", typeof(TD.Boolean))]
-                    public bool BoltCircle{{nameOrNumber}}UseWasher1 {
+                    private int boltCircle{{nameOrNumber}}UseWasher1;
+                    [StructuresDialog("BC{{nameOrNumber}}WSHR1", typeof(TD.Integer))]
+                    public int BoltCircle{{nameOrNumber}}UseWasher1 {
                         get { return boltCircle{{nameOrNumber}}UseWasher1; }
                         set {
-                            boltCircle{{nameOrNumber}}UseWasher1 = value;
+                            boltCircle{{nameOrNumber}}UseWasher1 = (value < 0 || value > 1) ? 0 : value;
                             OnPropertyChanged("BoltCircle{{nameOrNumber}}UseWasher1");
                         }
                     }
                     
-                    private bool boltCircle{{nameOrNumber}}UseWasher2;
-                    [StructuresDialog("BC{{nameOrNumber}}WSHR2", typeof(TD.Boolean))]
-                    public bool BoltCircle{{nameOrNumber}}UseWasher2 {
+                    private int boltCircle{{nameOrNumber}}UseWasher2;
+                    [StructuresDialog("BC{{nameOrNumber}}WSHR2", typeof(TD.Integer))]
+                    public int BoltCircle{{nameOrNumber}}UseWasher2 {
                         get { return boltCircle{{nameOrNumber}}UseWasher2; }
                         set {
-                            boltCircle{{nameOrNumber}}UseWasher2 = value;
+                            boltCircle{{nameOrNumber}}UseWasher2 = (value < 0 || value > 1) ? 0 : value;
                             OnPropertyChanged("BoltCircle{{nameOrNumber}}UseWasher2");
                         }
                     }
                     
-                    private bool boltCircle{{nameOrNumber}}UseWasher3 = true;
-                    [StructuresDialog("BC{{nameOrNumber}}WSHR3", typeof(TD.Boolean))]
-                    public bool BoltCircle{{nameOrNumber}}UseWasher3 {
+                    private int boltCircle{{nameOrNumber}}UseWasher3;
+                    [StructuresDialog("BC{{nameOrNumber}}WSHR3", typeof(TD.Integer))]
+                    public int BoltCircle{{nameOrNumber}}UseWasher3 {
                         get { return boltCircle{{nameOrNumber}}UseWasher3; }
                         set {
-                            boltCircle{{nameOrNumber}}UseWasher3 = value;
+                            boltCircle{{nameOrNumber}}UseWasher3 = (value < 0 || value > 1) ? 0 : value;
                             OnPropertyChanged("BoltCircle{{nameOrNumber}}UseWasher3");
                         }
                     }
