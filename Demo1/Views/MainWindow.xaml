@@ -4,6 +4,7 @@
                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                       xmlns:local="clr-namespace:Muggle.TsExtensions.Demo1.Views"
                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                      xmlns:c="clr-namespace:CalcBinding;assembly=CalcBinding"
                       xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
                       xmlns:sys="clr-namespace:System;assembly=mscorlib"
                       xmlns:tsd="clr-namespace:Tekla.Structures.Dialog;assembly=Tekla.Structures.Dialog"
@@ -361,36 +362,24 @@
                     <ComboBox Grid.Row="1" Grid.Column="5" SelectedIndex="{Binding Bolt1PlainType, Mode=TwoWay}" ItemsSource="{StaticResource BoltPlainHoleTypeSet}" />
 
                     <TextBlock Grid.Row="2" Grid.Column="3" Text="Hole depth" />
-                    <tsuc:WpfFilterCheckBox Grid.Row="2" Grid.Column="4" AttributeName="B1DEPTH" />
-                    <TextBox Grid.Row="2" Grid.Column="5" Text="{Binding Bolt1BlindHoleDepth, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <tsuc:WpfFilterCheckBox Grid.Row="2" Grid.Column="4" AttributeName="B1DEPTH" IsEnabled="{c:Binding 'Bolt1PlainType == 1', Mode=OneWay}" />
+                    <TextBox Grid.Row="2" Grid.Column="5" Text="{Binding Bolt1BlindHoleDepth, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{c:Binding 'Bolt1PlainType == 1', Mode=OneWay}" />
 
                     <TextBlock Grid.Row="3" Grid.Column="3" Text="Special hole type" />
                     <tsuc:WpfFilterCheckBox Grid.Row="3" Grid.Column="4" AttributeName="B1HOLTY" />
                     <ComboBox Grid.Row="3" Grid.Column="5" SelectedIndex="{Binding Bolt1HoleType, Mode=TwoWay}" ItemsSource="{StaticResource BoltSpecialHoleTypeSet}" />
 
-                    <TextBlock Grid.Row="4" Grid.Column="3" Text="Slotted hole X">
-                        <i:Interaction.Triggers>
-                            <i:DataTrigger Binding="{Binding Bolt1HoleType}" Value="0">
-                                <i:ChangePropertyAction PropertyName="Text" Value="Oversized" />
-                            </i:DataTrigger>
-                            <i:DataTrigger Binding="{Binding Bolt1HoleType}" Value="1">
-                                <i:ChangePropertyAction PropertyName="Text" Value="Slotted hole X" />
-                            </i:DataTrigger>
-                            <i:DataTrigger Binding="{Binding Bolt1HoleType}" Value="2">
-                                <i:ChangePropertyAction PropertyName="Text" Value="Slotted hole X" />
-                            </i:DataTrigger>
-                        </i:Interaction.Triggers>
-                    </TextBlock>
-                    <tsuc:WpfFilterCheckBox Grid.Row="4" Grid.Column="4" AttributeName="B1SLOTX" />
-                    <TextBox Grid.Row="4" Grid.Column="5" Text="{Binding Bolt1SlottedHoleX, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <TextBlock Grid.Row="4" Grid.Column="3" Text="{c:Binding 'Bolt1HoleType == 0 ? &quot;Oversized&quot; : &quot;Slotted hole X&quot;'}" />
+                    <tsuc:WpfFilterCheckBox Grid.Row="4" Grid.Column="4" AttributeName="B1SLOTX" IsEnabled="{c:Binding 'Bolt1HoleType != 2'}"/>
+                    <TextBox Grid.Row="4" Grid.Column="5" Text="{Binding Bolt1SlottedHoleX, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{c:Binding 'Bolt1HoleType != 2'}" />
 
                     <TextBlock Grid.Row="5" Grid.Column="3" Text="Slotted hole Y" />
-                    <tsuc:WpfFilterCheckBox Grid.Row="5" Grid.Column="4" AttributeName="B1SLOTY" />
-                    <TextBox Grid.Row="5" Grid.Column="5" Text="{Binding Bolt1SlottedHoleY, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <tsuc:WpfFilterCheckBox Grid.Row="5" Grid.Column="4" AttributeName="B1SLOTY" IsEnabled="{c:Binding 'Bolt1HoleType == 1'}" />
+                    <TextBox Grid.Row="5" Grid.Column="5" Text="{Binding Bolt1SlottedHoleY, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{c:Binding 'Bolt1HoleType == 1'}" />
 
                     <TextBlock Grid.Row="6" Grid.Column="3" Text="Rotate slots" />
-                    <tsuc:WpfFilterCheckBox Grid.Row="6" Grid.Column="4" AttributeName="B1RSLOT" />
-                    <ComboBox Grid.Row="6" Grid.Column="5" SelectedIndex="{Binding Bolt1RotateSlots, Mode=TwoWay}" ItemsSource="{StaticResource BoltRotateSlotsSet}" />
+                    <tsuc:WpfFilterCheckBox Grid.Row="6" Grid.Column="4" AttributeName="B1RSLOT" IsEnabled="{c:Binding 'Bolt1HoleType == 1'}" />
+                    <ComboBox Grid.Row="6" Grid.Column="5" SelectedIndex="{Binding Bolt1RotateSlots, Mode=TwoWay}" ItemsSource="{StaticResource BoltRotateSlotsSet}" IsEnabled="{c:Binding 'Bolt1HoleType == 1'}" />
 
                     <TextBlock Grid.Row="8" Grid.Column="3" Text="Parts with special holes" />
                     <Grid Grid.Row="8" Grid.Column="4" Grid.ColumnSpan="2">

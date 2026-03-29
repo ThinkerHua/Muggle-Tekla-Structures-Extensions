@@ -10,7 +10,7 @@
 	</PropertyGroup>
     
 	<ItemGroup>
-		<PackageReference Include="Microsoft.Xaml.Behaviors.Wpf" Version="1.1.142" />
+		<PackageReference Include="CalcBinding" Version="2.5.2" />
 		<PackageReference Include="Tekla.Structures" Version="2021.0.0" ExcludeAssets="runtime" />
 		<PackageReference Include="Tekla.Structures.Datatype" Version="2021.0.0" ExcludeAssets="runtime" />
 		<PackageReference Include="Tekla.Structures.Dialog" Version="2021.0.0" ExcludeAssets="runtime" />
