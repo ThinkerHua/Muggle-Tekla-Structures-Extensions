@@ -338,19 +338,19 @@
                         <CheckBox Grid.Row="0" Grid.Column="1" IsChecked="{Binding Bolt1IsBolt, Mode=TwoWay}" />
 
                         <tsuc:WpfFilterCheckBox Grid.Row="1" Grid.Column="0" AttributeName="B1WSHR1" />
-                        <CheckBox Grid.Row="1" Grid.Column="1" IsChecked="{Binding Bolt1UseWasher1, Mode=TwoWay}" />
+                        <CheckBox Grid.Row="1" Grid.Column="1" IsChecked="{Binding Bolt1UseWasher1, Mode=TwoWay}" IsEnabled="{Binding Bolt1IsBolt}" />
 
                         <tsuc:WpfFilterCheckBox Grid.Row="2" Grid.Column="0" AttributeName="B1WSHR2" />
-                        <CheckBox Grid.Row="2" Grid.Column="1" IsChecked="{Binding Bolt1UseWasher2, Mode=TwoWay}" />
+                        <CheckBox Grid.Row="2" Grid.Column="1" IsChecked="{Binding Bolt1UseWasher2, Mode=TwoWay}" IsEnabled="{Binding Bolt1IsBolt}" />
 
                         <tsuc:WpfFilterCheckBox Grid.Row="3" Grid.Column="0" AttributeName="B1WSHR3" />
-                        <CheckBox Grid.Row="3" Grid.Column="1" IsChecked="{Binding Bolt1UseWasher3, Mode=TwoWay}" />
+                        <CheckBox Grid.Row="3" Grid.Column="1" IsChecked="{Binding Bolt1UseWasher3, Mode=TwoWay}" IsEnabled="{Binding Bolt1IsBolt}" />
 
                         <tsuc:WpfFilterCheckBox Grid.Row="4" Grid.Column="0" AttributeName="B1NUT1" />
-                        <CheckBox Grid.Row="4" Grid.Column="1" IsChecked="{Binding Bolt1UseNut1, Mode=TwoWay}" />
+                        <CheckBox Grid.Row="4" Grid.Column="1" IsChecked="{Binding Bolt1UseNut1, Mode=TwoWay}" IsEnabled="{Binding Bolt1IsBolt}" />
 
                         <tsuc:WpfFilterCheckBox Grid.Row="5" Grid.Column="0" AttributeName="B1NUT2" />
-                        <CheckBox Grid.Row="5" Grid.Column="1" IsChecked="{Binding Bolt1UseNut2, Mode=TwoWay}" />
+                        <CheckBox Grid.Row="5" Grid.Column="1" IsChecked="{Binding Bolt1UseNut2, Mode=TwoWay}" IsEnabled="{Binding Bolt1IsBolt}" />
                     </Grid>
 
                     <TextBlock Grid.Row="0" Grid.Column="3" Text="Tolerance" />
@@ -370,7 +370,7 @@
                     <ComboBox Grid.Row="3" Grid.Column="5" SelectedIndex="{Binding Bolt1HoleType, Mode=TwoWay}" ItemsSource="{StaticResource BoltSpecialHoleTypeSet}" />
 
                     <TextBlock Grid.Row="4" Grid.Column="3" Text="{c:Binding 'Bolt1HoleType == 0 ? &quot;Oversized&quot; : &quot;Slotted hole X&quot;'}" />
-                    <tsuc:WpfFilterCheckBox Grid.Row="4" Grid.Column="4" AttributeName="B1SLOTX" IsEnabled="{c:Binding 'Bolt1HoleType != 2'}"/>
+                    <tsuc:WpfFilterCheckBox Grid.Row="4" Grid.Column="4" AttributeName="B1SLOTX" IsEnabled="{c:Binding 'Bolt1HoleType != 2'}" />
                     <TextBox Grid.Row="4" Grid.Column="5" Text="{Binding Bolt1SlottedHoleX, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{c:Binding 'Bolt1HoleType != 2'}" />
 
                     <TextBlock Grid.Row="5" Grid.Column="3" Text="Slotted hole Y" />
@@ -379,7 +379,11 @@
 
                     <TextBlock Grid.Row="6" Grid.Column="3" Text="Rotate slots" />
                     <tsuc:WpfFilterCheckBox Grid.Row="6" Grid.Column="4" AttributeName="B1RSLOT" IsEnabled="{c:Binding 'Bolt1HoleType == 1'}" />
-                    <ComboBox Grid.Row="6" Grid.Column="5" SelectedIndex="{Binding Bolt1RotateSlots, Mode=TwoWay}" ItemsSource="{StaticResource BoltRotateSlotsSet}" IsEnabled="{c:Binding 'Bolt1HoleType == 1'}" />
+                    <ComboBox Grid.Row="6"
+                              Grid.Column="5"
+                              SelectedIndex="{Binding Bolt1RotateSlots, Mode=TwoWay}"
+                              ItemsSource="{StaticResource BoltRotateSlotsSet}"
+                              IsEnabled="{c:Binding 'Bolt1HoleType == 1'}" />
 
                     <TextBlock Grid.Row="8" Grid.Column="3" Text="Parts with special holes" />
                     <Grid Grid.Row="8" Grid.Column="4" Grid.ColumnSpan="2">
