@@ -480,25 +480,25 @@
         <templates:Symbol Name="Edge" Drawing="{StaticResource AroundWeld_Edge}" />
         <templates:Symbol Name="Around" Drawing="{StaticResource AroundWeld_Around}" />
     </x:Array>
-    
+
     <x:Array x:Key="ShopWeldSet" Type="templates:Symbol">
         <templates:Symbol Name="WorkShop" Drawing="{StaticResource ShopWeld_Workshop}" />
         <templates:Symbol Name="Site" Drawing="{StaticResource ShopWeld_Site}" />
     </x:Array>
-    
+
     <x:Array x:Key="WeldContourSet" Type="templates:Symbol">
         <templates:Symbol Name="None" Drawing="{StaticResource WeldContour_None}" />
         <templates:Symbol Name="Flush" Drawing="{StaticResource WeldContour_Flush}" />
         <templates:Symbol Name="Convex" Drawing="{StaticResource WeldContour_Convex}" />
         <templates:Symbol Name="Concave" Drawing="{StaticResource WeldContour_Concave}" />
     </x:Array>
-    
+
     <x:Array x:Key="WeldIntermittentSet" Type="templates:Symbol">
         <templates:Symbol Name="Continuous" Drawing="{StaticResource WeldIntermittent_Continuous}" />
         <templates:Symbol Name="Chain intermittent" Drawing="{StaticResource WeldIntermittent_ChainIntermittent}" />
         <templates:Symbol Name="Staggered intermittent" Drawing="{StaticResource WeldIntermittent_StaggeredIntermittent}" />
     </x:Array>
-    
+
     <x:Array x:Key="WeldFinishSet" Type="templates:Symbol">
         <templates:Symbol Name="None" Drawing="{StaticResource WeldFinish_None}" />
         <templates:Symbol Name="Grind" Drawing="{StaticResource WeldFinish_Grind}" />
@@ -507,7 +507,7 @@
         <templates:Symbol Name="Finished weld" Drawing="{StaticResource WeldFinish_FinishedWeld}" />
         <templates:Symbol Name="Smooth transition" Drawing="{StaticResource WeldFinish_SmoothTransition}" />
     </x:Array>
-    
+
     <x:Array x:Key="WeldTypeSet" Type="templates:Symbol">
         <templates:Symbol Name="None" Drawing="{StaticResource WeldType_None}" />
         <templates:Symbol Name="Edge flange" Drawing="{StaticResource WeldType_EdgeFlange}" />
