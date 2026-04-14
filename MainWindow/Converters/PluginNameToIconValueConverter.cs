@@ -27,6 +27,11 @@ namespace Muggle.TsExtensions.MainWindow.Converters {
                     .FullName;
             }
 
+            //  空白图像
+            if (!File.Exists(uriStr)) {
+                return new BitmapImage();
+            }
+
             return new BitmapImage(new Uri(uriStr, UriKind.Absolute));
         }
 
