@@ -5,7 +5,7 @@
 		<LangVersion>Latest</LangVersion>
 		<OutputType>WinExe</OutputType>
 		<UseWPF>true</UseWPF>
-		<AssemblyName>MuggleTSExtensions</AssemblyName>
+		<AssemblyName>Muggle.TsExtensions</AssemblyName>
 		<RootNamespace>Muggle.TsExtensions.MainWindow</RootNamespace>
 		<Authors>thinkerhua@hotmail.com</Authors>
 		<Copyright>Copyright © 2024 thinkerhua@hotmail.com. All rights reserved.</Copyright>
@@ -41,6 +41,6 @@
 	</ItemGroup>
 
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
-		<Exec Command="xcopy &quot;$(TargetDir)$(TargetName).exe&quot; &quot;D:\Program Files\Tekla Structures\2021.0\Environments\common\extensions\MuggleTSExtensions\&quot; /Y /C /Q /R" />
+		<Exec Command="xcopy &quot;$(TargetDir)$(TargetName).exe&quot; &quot;D:\Program Files\Tekla Structures\2021.0\Environments\common\extensions\Muggle.TsExtensions\&quot; /Y /C /Q /R" />
 	</Target>
 </Project>

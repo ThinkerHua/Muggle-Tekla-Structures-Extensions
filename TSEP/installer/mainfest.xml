@@ -2,10 +2,10 @@
 <TEP Version="1.0">
 
 	<Product
-		Id="MuggleTSExtensions"
+		Id="Muggle.TsExtensions"
 		UpgradeCode="547B1AA5-0F0D-4276-8D0C-BD54561E1D56"
 		Version="0.7" Language="1033"
-		Name="Muggle TeklaStructures Extensions"
+		Name="Muggle Tekla Structures Extensions"
 		Manufacturer="Huang YongXing (thinkerhua@hotmail.com)"
 		Description= "Extensions for Tekla Structures."
 		IconPath="%TEPDEFINITIONFILEFOLDER%\logo.png"
@@ -30,11 +30,11 @@
 		<PathVariable Id="ModelPluginsDirectory" Value="%ENVDIR%\extensions\plugins\tekla\model\"/>
 		<PathVariable Id="ModelApplicationsDirectory" Value="%ENVDIR%\extensions\applications\tekla\model\"/>
 		<PathVariable Id="ExtensionsDir" Value="%commonEnvFolder%\extensions\"/>
-		<PathVariable Id="BinariesDirectory" Value="%ExtensionsDir%\MuggleTSExtensions\"/>
+		<PathVariable Id="BinariesDirectory" Value="%ExtensionsDir%\Muggle.TsExtensions\"/>
 		<PathVariable Id="BitmapsDirectory" Value="%ENVDIR%\..\bitmaps\"/>
 		<PathVariable Id="AttributeFileDirectory" Value="%commonEnvFolder%\system\"/>
 		<PathVariable Id="CommonMacroDirectory" Value="%commonEnvFolder%\macros\modeling\"/>
-		<PathVariable Id="MessagesDirectory" Value="%ExtensionsDir%\messages\MuggleTSExtensions\"/>
+		<PathVariable Id="MessagesDirectory" Value="%ExtensionsDir%\messages\Muggle.TsExtensions\"/>
 	</TargetPathVariables>
 
 	<Component Id="Common" Guid="191F0900-2601-42FD-9334-4F0319628EBA">
@@ -94,8 +94,8 @@
 	</Component>
 
 	<Component Id="MainWindow" Guid="121610DD-75AB-479A-AEB8-D6CD4C806CB5">
-		<File Id="MuggleTSExtensions" Source="%BinariesFolder%\MuggleTSExtensions.exe" Target="%BinariesDirectory%"/>
-		<File Id="MuggleTSExtensions.config" Source="%BinariesFolder%\MuggleTSExtensions.exe.config" Target="%BinariesDirectory%"/>
+		<File Id="Muggle.TsExtensions" Source="%BinariesFolder%\Muggle.TsExtensions.exe" Target="%BinariesDirectory%"/>
+		<File Id="Muggle.TsExtensions.config" Source="%BinariesFolder%\Muggle.TsExtensions.exe.config" Target="%BinariesDirectory%"/>
 		<File Id="CommunityToolkit.Mvvm" Source="%BinariesFolder%\CommunityToolkit.Mvvm.dll" Target="%BinariesDirectory%"/>
 		<File Id="CalcBinding" Source="%BinariesFolder%\CalcBinding.dll" Target="%BinariesDirectory%"/>
 		<File Id="DynamicExpresso.Core" Source="%BinariesFolder%\DynamicExpresso.Core.dll" Target="%BinariesDirectory%"/>
@@ -111,10 +111,10 @@
 	</Component>
 
 	<Component Id="ComponentCatalog" Guid="35A87B48-AA38-4E0D-8D0F-9CEE45B09DBB">
-		<File Id="ComponentCatalog" Source="%ComponentCatalogFolder%\MuggleTSExtensions_ComponentCatalog.ac.xml" Target="%BinariesDirectory%"/>
+		<File Id="ComponentCatalog" Source="%ComponentCatalogFolder%\Muggle.TsExtensions_ComponentCatalog.ac.xml" Target="%BinariesDirectory%"/>
 	</Component>
 
-	<Feature Id="MuggleTSExtensions" Title="Muggle TeklaStructures Extensions">
+	<Feature Id="Muggle.TsExtensions" Title="Muggle Tekla Structures Extensions">
 		<ComponentRef ReferenceId="Common" />
 		<ComponentRef ReferenceId="Common.WPF" />
 		<ComponentRef ReferenceId="HJ1001" />
