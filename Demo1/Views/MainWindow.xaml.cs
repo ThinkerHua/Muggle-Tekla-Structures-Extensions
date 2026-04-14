@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Windows;
 using Muggle.TsExtensions.Demo1.ViewModels;
 using Tekla.Structures.Dialog;
@@ -42,7 +42,7 @@ namespace Muggle.TsExtensions.Demo1.Views {
         }
 
         private void Plate1MaterialSelectClicked(object sender, EventArgs e) {
-            while (sender is not WpfMaterialCatalog) {
+            while (!(sender is WpfMaterialCatalog)) {
                 sender = LogicalTreeHelper.GetParent(sender as DependencyObject);
             }
             var catalog = sender as WpfMaterialCatalog;
@@ -50,7 +50,7 @@ namespace Muggle.TsExtensions.Demo1.Views {
         }
 
         private void Plate1MaterialSelectionDone(object sender, EventArgs e) {
-            while (sender is not WpfMaterialCatalog) {
+            while (!(sender is WpfMaterialCatalog)) {
                 sender = LogicalTreeHelper.GetParent(sender as DependencyObject);
             }
             var catalog = sender as WpfMaterialCatalog;
@@ -58,7 +58,7 @@ namespace Muggle.TsExtensions.Demo1.Views {
         }
 
         private void Plate2MaterialSelectClicked(object sender, EventArgs e) {
-            while (sender is not WpfMaterialCatalog) {
+            while (!(sender is WpfMaterialCatalog)) {
                 sender = LogicalTreeHelper.GetParent(sender as DependencyObject);
             }
             var catalog = sender as WpfMaterialCatalog;
@@ -66,7 +66,7 @@ namespace Muggle.TsExtensions.Demo1.Views {
         }
 
         private void Plate2MaterialSelectionDone(object sender, EventArgs e) {
-            while (sender is not WpfMaterialCatalog) {
+            while (!(sender is WpfMaterialCatalog)) {
                 sender = LogicalTreeHelper.GetParent(sender as DependencyObject);
             }
             var catalog = sender as WpfMaterialCatalog;
