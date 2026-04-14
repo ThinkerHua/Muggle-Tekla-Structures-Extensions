@@ -1,4 +1,4 @@
-﻿/*==============================================================================
+/*==============================================================================
  *  Muggle TsExtensions - extensions for Tekla Structures
  *
  *  Copyright © 2026 Huang YongXing.
@@ -23,11 +23,14 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 using Muggle.TsExtensions.CodingHelper.Diagnosers;
+using Muggle.TsExtensions.CodingHelper.Generators.Information;
+using static Muggle.TsExtensions.CodingHelper.Generators.GeneratorHelper;
+using FieldInfo = (string Name, string AttributeName, string Type);
 
 namespace Muggle.TsExtensions.CodingHelper.Generators {
     [Generator]
     internal class PluginDataFieldsGenerator : IIncrementalGenerator {
-        private static readonly string[] ConcernedAttributes = [
+        internal static readonly string[] ConcernedAttributes = [
             "Muggle.TsExtensions.CodingHelper.Generators.PartFieldsAttribute",
             "Muggle.TsExtensions.CodingHelper.Generators.PlateFieldsAttribute",
             "Muggle.TsExtensions.CodingHelper.Generators.WeldFieldsAttribute",
@@ -35,13 +38,123 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
             "Muggle.TsExtensions.CodingHelper.Generators.BoltCircleFieldsAttribute"
         ];
 
+        internal static readonly FieldInfo[] PartFieldInfos = [
+            ("Name", "NAME", "string"),
+            ("Profile", "PRF", "string"),
+            ("Material", "MATL", "string"),
+            ("Finish", "FNSH", "string"),
+            ("Class", "CLS", "int"),
+            ("AssemblyPrefix", "ASMP", "string"),
+            ("AssemblyStartNumber", "ASMN", "int"),
+            ("PartPrefix", "PTP", "string"),
+            ("PartStartNumber", "PTN", "int")
+        ];
+
+        internal static readonly FieldInfo[] PlateFieldInfos = [
+            ("Name", "NAME", "string"),
+            ("Thickness", "T", "double"),
+            ("Breadth", "B", "double"),
+            ("Height", "H", "double"),
+            ("Material", "MATL", "string"),
+            ("Finish", "FNSH", "string"),
+            ("Class", "CLS", "int"),
+            ("AssemblyPrefix", "ASMP", "string"),
+            ("AssemblyStartNumber", "ASMN", "int"),
+            ("PartPrefix", "PTP", "string"),
+            ("PartStartNumber", "PTN", "int")
+        ];
+
+        internal static readonly FieldInfo[] WeldFieldInfos = [
+            ("SizeAbove", "SIZEA", "double"),
+            ("SizeBelow", "SIZEB", "double"),
+            ("TypeAbove", "TYPEA", "int"),
+            ("TypeBelow", "TYPEB", "int"),
+            ("AngleAbove", "ANGA", "double"),
+            ("AngleBelow", "ANGB", "double"),
+            ("ContourAbove", "CTRA", "int"),
+            ("ContourBelow", "CTRB", "int"),
+            ("FinishAbove", "FNSHA", "int"),
+            ("FinishBelow", "FNSHB", "int"),
+            ("RootFaceAbove", "FACEA", "double"),
+            ("RootFaceBelow", "FACEB", "double"),
+            ("EffectiveThroatAbove", "THROA", "double"),
+            ("EffectiveThroatBelow", "THROB", "double"),
+            ("RootOpeningAbove", "OPNGA", "double"),
+            ("RootOpeningBelow", "OPNGB", "double"),
+            ("IncrementAmountAbove", "INCRA", "int"),
+            ("IncrementAmountBelow", "INCRB", "int"),
+            ("LengthAbove", "LENA", "double"),
+            ("LengthBelow", "LENB", "double"),
+            ("PitchAbove", "PITA", "double"),
+            ("PitchBelow", "PITB", "double"),
+            ("Around", "ARND", "int"),
+            ("Shop", "SHOP", "int"),
+            ("Placement", "PLACE", "int"),
+            ("Preparation", "PREP", "int"),
+            ("Intermittent", "INTMI", "int"),
+            ("ReferenceText", "TEXT", "string")
+        ];
+
+        internal static readonly FieldInfo[] BoltFieldInfos = [
+            ("Size", "SIZE", "double"),
+            ("Standard", "STD", "string"),
+            ("DistXText", "DISTX", "string"),
+            ("DistYText", "DISTY", "string"),
+            ("Type", "TYPE", "int"),
+            ("ThreadInMaterial", "THRD", "int"),
+            ("CutLength", "CLEN", "double"),
+            ("ExtraLength", "XLEN", "double"),
+            ("Tolerance", "TOL", "double"),
+            ("PlainType", "PLAIN", "int"),
+            ("BlindHoleDepth", "DEPTH", "double"),
+            ("Hole1", "HOLE1", "int"),
+            ("Hole2", "HOLE2", "int"),
+            ("Hole3", "HOLE3", "int"),
+            ("Hole4", "HOLE4", "int"),
+            ("Hole5", "HOLE5", "int"),
+            ("HoleType", "HOLTY", "int"),
+            ("SlottedHoleX", "SLOTX", "double"),
+            ("SlottedHoleY", "SLOTY", "double"),
+            ("RotateSlots", "RSLOT", "int"),
+            ("IsBolt", "ISBOT", "int"),
+            ("UseNut1", "NUT1", "int"),
+            ("UseNut2", "NUT2", "int"),
+            ("UseWasher1", "WSHR1", "int"),
+            ("UseWasher2", "WSHR2", "int"),
+            ("UseWasher3", "WSHR3", "int"),
+        ];
+
+        internal static readonly FieldInfo[] BoltCircleFieldInfos = [
+            ("Size", "SIZE", "double"),
+            ("Standard", "STD", "string"),
+            ("NumberOfBolts", "NUM", "int"),
+            ("Diameter", "DIAM", "double"),
+            ("Type", "TYPE", "int"),
+            ("ThreadInMaterial", "THRD", "int"),
+            ("CutLength", "CLEN", "double"),
+            ("ExtraLength", "XLEN", "double"),
+            ("Tolerance", "TOL", "double"),
+            ("PlainType", "PLAIN", "int"),
+            ("BlindHoleDepth", "DEPTH", "double"),
+            ("Hole1", "HOLE1", "int"),
+            ("Hole2", "HOLE2", "int"),
+            ("Hole3", "HOLE3", "int"),
+            ("Hole4", "HOLE4", "int"),
+            ("Hole5", "HOLE5", "int"),
+            ("HoleType", "HOLTY", "int"),
+            ("SlottedHoleX", "SLOTX", "double"),
+            ("SlottedHoleY", "SLOTY", "double"),
+            ("RotateSlots", "RSLOT", "int"),
+            ("IsBolt", "ISBOT", "int"),
+            ("UseNut1", "NUT1", "int"),
+            ("UseNut2", "NUT2", "int"),
+            ("UseWasher1", "WSHR1", "int"),
+            ("UseWasher2", "WSHR2", "int"),
+            ("UseWasher3", "WSHR3", "int")
+        ];
+
         #region Initial files
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <remarks>
-        /// </remarks>
         private const string PartFieldsAttribute =
             """
             using System;
@@ -49,7 +162,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
             namespace Muggle.TsExtensions.CodingHelper.Generators {
                 
                 /// <summary>
-                /// Register the part(s) fields that need to be generated for the applied class,
+                /// Register the part fields that need to be generated for the applied class,
                 /// used by Muggle.TsExtensions.CodingHelper.Generators.PluginDataFieldsGenerator,
                 /// cannot be used independently.
                 /// </summary>
@@ -60,12 +173,12 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                 public class PartFieldsAttribute : Attribute {
                     
                     /// <summary>
-                    /// Register the part(s) fields using the given number(s).
+                    /// Register the part fields using the given numbers.
                     /// </summary>
                     public PartFieldsAttribute(params uint[] numbers) { }
                     
                     /// <summary>
-                    /// Register the part(s) fields using the given name(s).
+                    /// Register the part fields using the given names.
                     /// </summary>
                     public PartFieldsAttribute(params string[] names) { }
                     
@@ -81,7 +194,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
             namespace Muggle.TsExtensions.CodingHelper.Generators {
                 
                 /// <summary>
-                /// Register the plate(s) fields that need to be generated for the applied class,
+                /// Register the plate fields that need to be generated for the applied class,
                 /// used by Muggle.TsExtensions.CodingHelper.Generators.PluginDataFieldsGenerator,
                 /// cannot be used independently.
                 /// </summary>
@@ -92,12 +205,12 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                 public class PlateFieldsAttribute : Attribute {
                     
                     /// <summary>
-                    /// Register the plate(s) fields using the given number(s).
+                    /// Register the plate fields using the given numbers.
                     /// </summary>
                     public PlateFieldsAttribute(params uint[] numbers)  { }
                     
                     /// <summary>
-                    /// Register the plate(s) fields using the given name(s).
+                    /// Register the plate fields using the given names.
                     /// </summary>
                     public PlateFieldsAttribute(params string[] names)  { }
                     
@@ -113,7 +226,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
             namespace Muggle.TsExtensions.CodingHelper.Generators {
                 
                 /// <summary>
-                /// Register the weld(s) fields that need to be generated for the applied class,
+                /// Register the weld fields that need to be generated for the applied class,
                 /// used by Muggle.TsExtensions.CodingHelper.Generators.PluginDataFieldsGenerator,
                 /// cannot be used independently.
                 /// </summary>
@@ -124,12 +237,12 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                 public class WeldFieldsAttribute : Attribute {
                     
                     /// <summary>
-                    /// Register the weld(s) fields using the given number(s).
+                    /// Register the weld fields using the given numbers.
                     /// </summary>
                     public WeldFieldsAttribute(params uint[] numbers) { }
                     
                     /// <summary>
-                    /// Register the weld(s) fields using the given name(s).
+                    /// Register the weld fields using the given names.
                     /// </summary>
                     public WeldFieldsAttribute(params string[] names) { }
                     
@@ -145,7 +258,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
             namespace Muggle.TsExtensions.CodingHelper.Generators {
                 
                 /// <summary>
-                /// Register the bolt(s) fields that need to be generated for the applied class,
+                /// Register the bolt fields that need to be generated for the applied class,
                 /// used by Muggle.TsExtensions.CodingHelper.Generators.PluginDataFieldsGenerator,
                 /// cannot be used independently.
                 /// </summary>
@@ -156,12 +269,12 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                 public class BoltFieldsAttribute : Attribute {
                     
                     /// <summary>
-                    /// Register the bolt(s) fields using the given number(s).
+                    /// Register the bolt fields using the given numbers.
                     /// </summary>
                     public BoltFieldsAttribute(params uint[] numbers) { }
                     
                     /// <summary>
-                    /// Register the bolt(s) fields using the given name(s).
+                    /// Register the bolt fields using the given names.
                     /// </summary>
                     public BoltFieldsAttribute(params string[] names) { }
                     
@@ -177,7 +290,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
             namespace Muggle.TsExtensions.CodingHelper.Generators {
                 
                 /// <summary>
-                /// Register the bolt circle(s) fields that need to be generated for the applied class,
+                /// Register the bolt circle fields that need to be generated for the applied class,
                 /// used by Muggle.TsExtensions.CodingHelper.Generators.PluginDataFieldsGenerator,
                 /// cannot be used independently.
                 /// </summary>
@@ -188,12 +301,12 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                 public class BoltCircleFieldsAttribute : Attribute {
                     
                     /// <summary>
-                    /// Register the bolt circle(s) fields using the given number(s).
+                    /// Register the bolt circle fields using the given numbers.
                     /// </summary>
                     public BoltCircleFieldsAttribute(params uint[] numbers)  { }
                     
                     /// <summary>
-                    /// Register the bolt circle(s) fields using the given name(s).
+                    /// Register the bolt circle fields using the given names.
                     /// </summary>
                     public BoltCircleFieldsAttribute(params string[] names)  { }
                     
@@ -220,324 +333,11 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
             }
             """;
 
-        private const string PartFieldsTemplate =
+        private const string PluginDataFieldDeclareTemplate =
             """
                     
-                    [StructuresField("PT{{nameOrNumber}}NAME")]
-                    public string Part{{nameOrNumber}}Name;
-                    
-                    [StructuresField("PT{{nameOrNumber}}PRF")]
-                    public string Part{{nameOrNumber}}Profile;
-                    
-                    [StructuresField("PT{{nameOrNumber}}MATL")]
-                    public string Part{{nameOrNumber}}Material;
-                    
-                    [StructuresField("PT{{nameOrNumber}}FNSH")]
-                    public string Part{{nameOrNumber}}Finish;
-                    
-                    [StructuresField("PT{{nameOrNumber}}CLS")]
-                    public int Part{{nameOrNumber}}Class;
-                    
-                    [StructuresField("PT{{nameOrNumber}}ASMP")]
-                    public string Part{{nameOrNumber}}AssemblyPrefix;
-                    
-                    [StructuresField("PT{{nameOrNumber}}ASMN")]
-                    public int Part{{nameOrNumber}}AssemblyStartNumber;
-                    
-                    [StructuresField("PT{{nameOrNumber}}PTP")]
-                    public string Part{{nameOrNumber}}PartPrefix;
-                    
-                    [StructuresField("PT{{nameOrNumber}}PTN")]
-                    public int Part{{nameOrNumber}}PartStartNumber;
-            """;
-
-        private const string PlateFieldsTemplate =
-            """
-                    
-                    [StructuresField("PL{{nameOrNumber}}NAME")]
-                    public string Plate{{nameOrNumber}}Name;
-                    
-                    [StructuresField("PL{{nameOrNumber}}T")]
-                    public double Plate{{nameOrNumber}}Thickness;
-                    
-                    [StructuresField("PL{{nameOrNumber}}B")]
-                    public double Plate{{nameOrNumber}}Breadth;
-                    
-                    [StructuresField("PL{{nameOrNumber}}H")]
-                    public double Plate{{nameOrNumber}}Height;
-                    
-                    [StructuresField("PL{{nameOrNumber}}MATL")]
-                    public string Plate{{nameOrNumber}}Material;
-                    
-                    [StructuresField("PL{{nameOrNumber}}FNSH")]
-                    public string Plate{{nameOrNumber}}Finish;
-                    
-                    [StructuresField("PL{{nameOrNumber}}CLS")]
-                    public int Plate{{nameOrNumber}}Class;
-                    
-                    [StructuresField("PL{{nameOrNumber}}ASMP")]
-                    public string Plate{{nameOrNumber}}AssemblyPrefix;
-                    
-                    [StructuresField("PL{{nameOrNumber}}ASMN")]
-                    public int Plate{{nameOrNumber}}AssemblyStartNumber;
-                    
-                    [StructuresField("PL{{nameOrNumber}}PTP")]
-                    public string Plate{{nameOrNumber}}PartPrefix;
-                    
-                    [StructuresField("PL{{nameOrNumber}}PTN")]
-                    public int Plate{{nameOrNumber}}PartStartNumber;
-            """;
-
-        private const string WeldFieldsTemplate =
-            """
-                    
-                    [StructuresField("W{{nameOrNumber}}SIZEA")]
-                    public double Weld{{nameOrNumber}}SizeAbove;
-                    
-                    [StructuresField("W{{nameOrNumber}}SIZEB")]
-                    public double Weld{{nameOrNumber}}SizeBelow;
-                    
-                    [StructuresField("W{{nameOrNumber}}TYPEA")]
-                    public int Weld{{nameOrNumber}}TypeAbove;
-                    
-                    [StructuresField("W{{nameOrNumber}}TYPEB")]
-                    public int Weld{{nameOrNumber}}TypeBelow;
-                    
-                    [StructuresField("W{{nameOrNumber}}ANGA")]
-                    public double Weld{{nameOrNumber}}AngleAbove;
-                    
-                    [StructuresField("W{{nameOrNumber}}ANGB")]
-                    public double Weld{{nameOrNumber}}AngleBelow;
-                    
-                    [StructuresField("W{{nameOrNumber}}CTRA")]
-                    public int Weld{{nameOrNumber}}ContourAbove;
-                    
-                    [StructuresField("W{{nameOrNumber}}CTRB")]
-                    public int Weld{{nameOrNumber}}ContourBelow;
-                    
-                    [StructuresField("W{{nameOrNumber}}FNSHA")]
-                    public int Weld{{nameOrNumber}}FinishAbove;
-                    
-                    [StructuresField("W{{nameOrNumber}}FNSHB")]
-                    public int Weld{{nameOrNumber}}FinishBelow;
-                    
-                    [StructuresField("W{{nameOrNumber}}FACEA")]
-                    public double Weld{{nameOrNumber}}RootFaceAbove;
-                    
-                    [StructuresField("W{{nameOrNumber}}FACEB")]
-                    public double Weld{{nameOrNumber}}RootFaceBelow;
-                    
-                    [StructuresField("W{{nameOrNumber}}THROA")]
-                    public double Weld{{nameOrNumber}}EffectiveThroatAbove;
-                    
-                    [StructuresField("W{{nameOrNumber}}THROB")]
-                    public double Weld{{nameOrNumber}}EffectiveThroatBelow;
-                    
-                    [StructuresField("W{{nameOrNumber}}OPNGA")]
-                    public double Weld{{nameOrNumber}}RootOpeningAbove;
-                    
-                    [StructuresField("W{{nameOrNumber}}OPNGB")]
-                    public double Weld{{nameOrNumber}}RootOpeningBelow;
-                    
-                    [StructuresField("W{{nameOrNumber}}INCRA")]
-                    public int Weld{{nameOrNumber}}IncrementAmountAbove;
-                    
-                    [StructuresField("W{{nameOrNumber}}INCRB")]
-                    public int Weld{{nameOrNumber}}IncrementAmountBelow;
-                    
-                    [StructuresField("W{{nameOrNumber}}LENA")]
-                    public double Weld{{nameOrNumber}}LengthAbove;
-                    
-                    [StructuresField("W{{nameOrNumber}}LENB")]
-                    public double Weld{{nameOrNumber}}LengthBelow;
-                    
-                    [StructuresField("W{{nameOrNumber}}PITA")]
-                    public double Weld{{nameOrNumber}}PitchAbove;
-                    
-                    [StructuresField("W{{nameOrNumber}}PITB")]
-                    public double Weld{{nameOrNumber}}PitchBelow;
-                    
-                    [StructuresField("W{{nameOrNumber}}ARND")]
-                    public int Weld{{nameOrNumber}}Around;
-                    
-                    [StructuresField("W{{nameOrNumber}}SHOP")]
-                    public int Weld{{nameOrNumber}}Shop;
-                    
-                    [StructuresField("W{{nameOrNumber}}PLACE")]
-                    public int Weld{{nameOrNumber}}Placement;
-                    
-                    [StructuresField("W{{nameOrNumber}}PREP")]
-                    public int Weld{{nameOrNumber}}Preparation;
-                    
-                    [StructuresField("W{{nameOrNumber}}INTMI")]
-                    public int Weld{{nameOrNumber}}Intermittent;
-                    
-                    [StructuresField("W{{nameOrNumber}}TEXT")]
-                    public string Weld{{nameOrNumber}}ReferenceText;
-            """;
-
-        private const string BoltFieldsTemplate =
-            """
-                    
-                    [StructuresField("B{{nameOrNumber}}SIZE")]
-                    public double Bolt{{nameOrNumber}}Size;
-                    
-                    [StructuresField("B{{nameOrNumber}}STD")]
-                    public string Bolt{{nameOrNumber}}Standard;
-                    
-                    [StructuresField("B{{nameOrNumber}}DISTX")]
-                    public string Bolt{{nameOrNumber}}DistXText;
-                    
-                    [StructuresField("B{{nameOrNumber}}DISTY")]
-                    public string Bolt{{nameOrNumber}}DistYText;
-                    
-                    [StructuresField("B{{nameOrNumber}}TYPE")]
-                    public int Bolt{{nameOrNumber}}Type;
-                    
-                    [StructuresField("B{{nameOrNumber}}THRD")]
-                    public int Bolt{{nameOrNumber}}ThreadInMaterial;
-                    
-                    [StructuresField("B{{nameOrNumber}}CLEN")]
-                    public double Bolt{{nameOrNumber}}CutLength;
-                    
-                    [StructuresField("B{{nameOrNumber}}XLEN")]
-                    public double Bolt{{nameOrNumber}}ExtraLength;
-                    
-                    [StructuresField("B{{nameOrNumber}}TOL")]
-                    public double Bolt{{nameOrNumber}}Tolerance;
-                    
-                    [StructuresField("B{{nameOrNumber}}PLAIN")]
-                    public int Bolt{{nameOrNumber}}PlainType;
-                    
-                    [StructuresField("B{{nameOrNumber}}DEPTH")]
-                    public double Bolt{{nameOrNumber}}BlindHoleDepth;
-                    
-                    [StructuresField("B{{nameOrNumber}}HOLE1")]
-                    public int Bolt{{nameOrNumber}}Hole1;
-                    
-                    [StructuresField("B{{nameOrNumber}}HOLE2")]
-                    public int Bolt{{nameOrNumber}}Hole2;
-                    
-                    [StructuresField("B{{nameOrNumber}}HOLE3")]
-                    public int Bolt{{nameOrNumber}}Hole3;
-                    
-                    [StructuresField("B{{nameOrNumber}}HOLE4")]
-                    public int Bolt{{nameOrNumber}}Hole4;
-                    
-                    [StructuresField("B{{nameOrNumber}}HOLE5")]
-                    public int Bolt{{nameOrNumber}}Hole5;
-                    
-                    [StructuresField("B{{nameOrNumber}}HOLTY")]
-                    public int Bolt{{nameOrNumber}}HoleType;
-                    
-                    [StructuresField("B{{nameOrNumber}}SLOTX")]
-                    public double Bolt{{nameOrNumber}}SlottedHoleX;
-                    
-                    [StructuresField("B{{nameOrNumber}}SLOTY")]
-                    public double Bolt{{nameOrNumber}}SlottedHoleY;
-                    
-                    [StructuresField("B{{nameOrNumber}}RSLOT")]
-                    public int Bolt{{nameOrNumber}}RotateSlots;
-                    
-                    [StructuresField("B{{nameOrNumber}}ISBOT")]
-                    public int Bolt{{nameOrNumber}}IsBolt;
-                    
-                    [StructuresField("B{{nameOrNumber}}NUT1")]
-                    public int Bolt{{nameOrNumber}}UseNut1;
-                    
-                    [StructuresField("B{{nameOrNumber}}NUT2")]
-                    public int Bolt{{nameOrNumber}}UseNut2;
-                    
-                    [StructuresField("B{{nameOrNumber}}WSHR1")]
-                    public int Bolt{{nameOrNumber}}UseWasher1;
-                    
-                    [StructuresField("B{{nameOrNumber}}WSHR2")]
-                    public int Bolt{{nameOrNumber}}UseWasher2;
-                    
-                    [StructuresField("B{{nameOrNumber}}WSHR3")]
-                    public int Bolt{{nameOrNumber}}UseWasher3;
-            """;
-
-        private const string BoltCircleFieldsTemplate =
-            """
-                    
-                    [StructuresField("BC{{nameOrNumber}}SIZE")]
-                    public double BoltCircle{{nameOrNumber}}Size;
-                    
-                    [StructuresField("BC{{nameOrNumber}}STD")]
-                    public string BoltCircle{{nameOrNumber}}Standard;
-                    
-                    [StructuresField("BC{{nameOrNumber}}NUM")]
-                    public int BoltCircle{{nameOrNumber}}NumberOfBolts;
-                    
-                    [StructuresField("BC{{nameOrNumber}}DIAM")]
-                    public double BoltCircle{{nameOrNumber}}Diameter;
-                    
-                    [StructuresField("BC{{nameOrNumber}}TYPE")]
-                    public int BoltCircle{{nameOrNumber}}Type;
-                    
-                    [StructuresField("BC{{nameOrNumber}}THRD")]
-                    public int BoltCircle{{nameOrNumber}}ThreadInMaterial;
-                    
-                    [StructuresField("BC{{nameOrNumber}}CLEN")]
-                    public double BoltCircle{{nameOrNumber}}CutLength;
-                    
-                    [StructuresField("BC{{nameOrNumber}}XLEN")]
-                    public double BoltCircle{{nameOrNumber}}ExtraLength;
-                    
-                    [StructuresField("BC{{nameOrNumber}}TOL")]
-                    public double BoltCircle{{nameOrNumber}}Tolerance;
-                    
-                    [StructuresField("BC{{nameOrNumber}}PLAIN")]
-                    public int BoltCircle{{nameOrNumber}}PlainType;
-                    
-                    [StructuresField("BC{{nameOrNumber}}DEPTH")]
-                    public double BoltCircle{{nameOrNumber}}BlindHoleDepth;
-                    
-                    [StructuresField("BC{{nameOrNumber}}HOLE1")]
-                    public int BoltCircle{{nameOrNumber}}Hole1;
-                    
-                    [StructuresField("BC{{nameOrNumber}}HOLE2")]
-                    public int BoltCircle{{nameOrNumber}}Hole2;
-                    
-                    [StructuresField("BC{{nameOrNumber}}HOLE3")]
-                    public int BoltCircle{{nameOrNumber}}Hole3;
-                    
-                    [StructuresField("BC{{nameOrNumber}}HOLE4")]
-                    public int BoltCircle{{nameOrNumber}}Hole4;
-                    
-                    [StructuresField("BC{{nameOrNumber}}HOLE5")]
-                    public int BoltCircle{{nameOrNumber}}Hole5;
-                    
-                    [StructuresField("BC{{nameOrNumber}}HOLTY")]
-                    public int BoltCircle{{nameOrNumber}}HoleType;
-                    
-                    [StructuresField("BC{{nameOrNumber}}SLOTX")]
-                    public double BoltCircle{{nameOrNumber}}SlottedHoleX;
-                    
-                    [StructuresField("BC{{nameOrNumber}}SLOTY")]
-                    public double BoltCircle{{nameOrNumber}}SlottedHoleY;
-                    
-                    [StructuresField("BC{{nameOrNumber}}RSLOT")]
-                    public int BoltCircle{{nameOrNumber}}RotateSlots;
-                    
-                    [StructuresField("BC{{nameOrNumber}}ISBOT")]
-                    public int BoltCircle{{nameOrNumber}}IsBolt;
-                    
-                    [StructuresField("BC{{nameOrNumber}}NUT1")]
-                    public int BoltCircle{{nameOrNumber}}UseNut1;
-                    
-                    [StructuresField("BC{{nameOrNumber}}NUT2")]
-                    public int BoltCircle{{nameOrNumber}}UseNut2;
-                    
-                    [StructuresField("BC{{nameOrNumber}}WSHR1")]
-                    public int BoltCircle{{nameOrNumber}}UseWasher1;
-                    
-                    [StructuresField("BC{{nameOrNumber}}WSHR2")]
-                    public int BoltCircle{{nameOrNumber}}UseWasher2;
-                    
-                    [StructuresField("BC{{nameOrNumber}}WSHR3")]
-                    public int BoltCircle{{nameOrNumber}}UseWasher3;
+                    [StructuresField("{{modelObjectTypeAbbreviation}}{{nameOrNumber}}{{attributeName}}")]
+                    public {{dataType}} {{modelObjectType}}{{nameOrNumber}}{{propertyName}};
             """;
 
         #endregion
@@ -554,52 +354,9 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
 
             var provider = context.SyntaxProvider
                 .CreateSyntaxProvider(Predicate, Transform)
-                .Where(x => x != null);
+                .Where(x => x != default);
 
             context.RegisterSourceOutput(provider, Generate);
-        }
-
-        private void Generate(SourceProductionContext context, AppliedClassInfo? classInfo) {
-            if (!classInfo.HasValue) return;
-
-            var builder = new StringBuilder();
-            foreach (var kvp in classInfo.Value.AttributesInfo) {
-                var template = kvp.Key switch {
-                    "PartFieldsAttribute" => PartFieldsTemplate,
-                    "PlateFieldsAttribute" => PlateFieldsTemplate,
-                    "WeldFieldsAttribute" => WeldFieldsTemplate,
-                    "BoltFieldsAttribute" => BoltFieldsTemplate,
-                    "BoltCircleFieldsAttribute" => BoltCircleFieldsTemplate,
-                    _ => throw new NotSupportedException()
-                };
-                foreach (var nameOrNumber in kvp.Value) {
-                    var match = Regex.Match(nameOrNumber, InternalAttributesDiagnoser.SpecialCharacterPattern);
-                    if (match.Success) continue;
-                    
-                    builder.AppendLine(template.Replace("{{nameOrNumber}}", nameOrNumber));
-                }
-            }
-
-            var output = PluginDataClassTemplate
-#if DEBUG
-                .Replace("{{generatedAt}}", $" at {DateTime.Now}")
-#else
-                .Replace("{{generatedAt}}", string.Empty)
-#endif
-                .Replace("{{namespace}}", classInfo.Value.NameSpace)
-                .Replace("{{accessibility}}", classInfo.Value.Accessibility.ToString().ToLower())
-                .Replace("{{typeKind}}", classInfo.Value.IsRecord ? "record " : string.Empty)
-                .Replace("{{className}}", classInfo.Value.Name)
-                .Replace("{{fields}}", builder.ToString());
-
-            context.AddSource($"{classInfo.Value.Name}.g.cs", SourceText.From(output, Encoding.UTF8));
-        }
-
-        private AppliedClassInfo? Transform(GeneratorSyntaxContext syntaxContext, CancellationToken token) {
-            var classDeclarationSyntax = (ClassDeclarationSyntax)syntaxContext.Node;
-            if (!classDeclarationSyntax.Modifiers.Any(m => m.IsKind(SyntaxKind.PartialKeyword))) return null;
-
-            return GeneratorHelper.GetClassInfo(syntaxContext, token, ConcernedAttributes);
         }
 
         private bool Predicate(SyntaxNode node, CancellationToken token) {
@@ -611,6 +368,76 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
             }
 
             return true;
+        }
+
+        private PluginDataFieldsInfo Transform(GeneratorSyntaxContext syntaxContext, CancellationToken token) {
+            var classDeclarationSyntax = (ClassDeclarationSyntax)syntaxContext.Node;
+            if (!classDeclarationSyntax.Modifiers.Any(m => m.IsKind(SyntaxKind.PartialKeyword))) return default;
+
+            return GetClassInfo(syntaxContext, token, ConcernedAttributes);
+        }
+
+        private void Generate(SourceProductionContext context, PluginDataFieldsInfo classInfo) {
+            if (classInfo == default) return;
+
+            var builder = new StringBuilder();
+            foreach (var kvp in classInfo.Arguments) {
+                var attributeName = kvp.Key;
+
+                var modelObjectType = attributeName.Substring(0, kvp.Key.Length - 15);
+                var modelObjectAbbreviation = modelObjectType switch {
+                    "Part" => "PT",
+                    "Plate" => "PL",
+                    "Weld" => "W",
+                    "Bolt" => "B",
+                    "BoltCircle" => "BC",
+                    _ => string.Empty
+                };
+
+                var template = PluginDataFieldDeclareTemplate
+                    .Replace("{{modelObjectType}}", modelObjectType)
+                    .Replace("{{modelObjectTypeAbbreviation}}", modelObjectAbbreviation);
+
+                var infos = attributeName switch {
+                    "PartFieldsAttribute" => PartFieldInfos,
+                    "PlateFieldsAttribute" => PlateFieldInfos,
+                    "WeldFieldsAttribute" => WeldFieldInfos,
+                    "BoltFieldsAttribute" => BoltFieldInfos,
+                    "BoltCircleFieldsAttribute" => BoltCircleFieldInfos,
+                    _ => []
+                };
+
+                var templateBuilder = new StringBuilder();
+                foreach (var info in infos) {
+                    templateBuilder.AppendLine(template
+                        .Replace("{{propertyName}}", info.Name)
+                        .Replace("{{dataType}}", info.Type)
+                        .Replace("{{attributeName}}", info.AttributeName));
+                }
+
+                template = templateBuilder.ToString();
+
+                foreach (var nameOrNumber in kvp.Value) {
+                    var match = Regex.Match(nameOrNumber, InternalAttributesDiagnoser.SpecialCharacterPattern);
+                    if (match.Success) continue;
+
+                    builder.Append(template.Replace("{{nameOrNumber}}", nameOrNumber));
+                }
+            }
+
+            var output = PluginDataClassTemplate
+#if DEBUG
+                .Replace("{{generatedAt}}", $" at {DateTime.Now}")
+#else
+                .Replace("{{generatedAt}}", string.Empty)
+#endif
+                .Replace("{{namespace}}", classInfo.ClassInfo.NameSpace)
+                .Replace("{{accessibility}}", classInfo.ClassInfo.Accessibility.ToString().ToLower())
+                .Replace("{{typeKind}}", classInfo.ClassInfo.IsRecord ? "record " : string.Empty)
+                .Replace("{{className}}", classInfo.ClassInfo.Name)
+                .Replace("{{fields}}", builder.ToString());
+
+            context.AddSource($"{classInfo.ClassInfo.Name}.g.cs", SourceText.From(output, Encoding.UTF8));
         }
     }
 }

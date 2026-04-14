@@ -13,6 +13,7 @@
  *  written by Huang YongXing - thinkerhua@hotmail.com
  *==============================================================================*/
 
+using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -20,6 +21,8 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
+using Muggle.TsExtensions.CodingHelper.Generators;
+using static Muggle.TsExtensions.CodingHelper.Generators.GeneratorHelper;
 
 namespace Muggle.TsExtensions.CodingHelper.Diagnosers;
 
@@ -29,23 +32,10 @@ internal class InternalAttributesDiagnoser : DiagnosticAnalyzer {
     internal const string SpecialCharacterPattern = """[`~!@#$%\^&\*\(\)\-\+=\[\]\{}\|\\;:'",\.<>/?\s]""";
     internal const string UnsuggestedCharacterPattern = "[^0-9A-Za-z_]";
 
-    internal static readonly string[] ConcernedAttributes = [
-        "Muggle.TsExtensions.CodingHelper.Generators.PartFieldsAttribute",
-        "Muggle.TsExtensions.CodingHelper.Generators.PlateFieldsAttribute",
-        "Muggle.TsExtensions.CodingHelper.Generators.WeldFieldsAttribute",
-        "Muggle.TsExtensions.CodingHelper.Generators.BoltFieldsAttribute",
-        "Muggle.TsExtensions.CodingHelper.Generators.BoltCircleFieldsAttribute",
-        "Muggle.TsExtensions.CodingHelper.Generators.PartPropertiesAttribute",
-        "Muggle.TsExtensions.CodingHelper.Generators.PlatePropertiesAttribute",
-        "Muggle.TsExtensions.CodingHelper.Generators.WeldPropertiesAttribute",
-        "Muggle.TsExtensions.CodingHelper.Generators.BoltPropertiesAttribute",
-        "Muggle.TsExtensions.CodingHelper.Generators.BoltCirclePropertiesAttribute"
-    ];
-
     internal static DiagnosticDescriptor NotPartialDescriptor => new DiagnosticDescriptor(
         "MTSECH001",
         "Target class must be partial",
-        "Cannot generate fields or properties for '{0}' because it is not partial.",
+        "Cannot generate members for '{0}' because it is not partial.",
         Category,
         DiagnosticSeverity.Error,
         true);
@@ -88,43 +78,111 @@ internal class InternalAttributesDiagnoser : DiagnosticAnalyzer {
         DiagnosticSeverity.Info,
         true);
 
+    internal static DiagnosticDescriptor FieldsFromAttributeNotApplied => new DiagnosticDescriptor(
+        "MTSECH010",
+        "\"FieldsFromAttribute\" not applied",
+        "Must also apply \"FieldsFromAttribute\" when applied \"{0}\" on class.",
+        Category,
+        DiagnosticSeverity.Error,
+        true);
+
+    internal static DiagnosticDescriptor AppliedOnOverOnePlace => new DiagnosticDescriptor(
+        "MTSECH011",
+        "Applied on over one place",
+        "These attributes should only be applied on one place (Class, Field or Property): " +
+        "\"PartFieldDefaultValuesAttribute\", \"PlateFieldDefaultValuesAttribute\", \"WeldFieldDefaultValuesAttribute\", " +
+        "\"BoltFieldDefaultValuesAttribute\", \"BoltCircleFieldDefaultValuesAttribute\".",
+        Category,
+        DiagnosticSeverity.Error,
+        true);
+
+    internal static DiagnosticDescriptor DataTypeDoesNotContainTheseFields => new DiagnosticDescriptor(
+        "MTSECH012",
+        "Target data type doesn't contain these fields",
+        "Ensure that target data type contain these fields.",
+        Category,
+        DiagnosticSeverity.Error,
+        true);
+
+    internal static DiagnosticDescriptor SetDefaultValueMultiTimes => new DiagnosticDescriptor(
+        "MTSECH013",
+        "Set default value multi times",
+        "Should not set default value multi times.",
+        Category,
+        DiagnosticSeverity.Error,
+        true);
+
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => [
         NotPartialDescriptor, NotImplementINotifyPropertyChangedDescriptor, LengthExceedLimitationDescriptor,
-        ContainsSpecialCharacters, ContainsUnsuggestedCharacters
+        ContainsSpecialCharacters, ContainsUnsuggestedCharacters, FieldsFromAttributeNotApplied, AppliedOnOverOnePlace,
+        DataTypeDoesNotContainTheseFields, SetDefaultValueMultiTimes
     ];
 
     public override void Initialize(AnalysisContext context) {
         context.ConfigureGeneratedCodeAnalysis(GeneratedCodeAnalysisFlags.None);
         context.EnableConcurrentExecution();
 
-        context.RegisterSyntaxNodeAction(AnalyzeIfIsPartial, SyntaxKind.ClassDeclaration);
+        context.RegisterSyntaxNodeAction(AnalyzeIfIsPartial, SyntaxKind.ClassDeclaration, SyntaxKind.FieldDeclaration,
+            SyntaxKind.PropertyDeclaration);
         context.RegisterSyntaxNodeAction(AnalyzeInterface, SyntaxKind.ClassDeclaration);
         context.RegisterSyntaxNodeAction(AnalyzeArgumentLength, SyntaxKind.Attribute);
+        context.RegisterSyntaxNodeAction(AnalyzePluginFieldDefaultValuesAttributeAppliedPlaces, SyntaxKind.ClassDeclaration);
+        context.RegisterSyntaxNodeAction(AnalyzeExistingFields, SyntaxKind.ClassDeclaration,
+            SyntaxKind.FieldDeclaration,
+            SyntaxKind.PropertyDeclaration);
     }
 
     internal static void AnalyzeIfIsPartial(SyntaxNodeAnalysisContext context) {
         var semanticModel = context.SemanticModel;
-        var classDeclarationSyntax = (ClassDeclarationSyntax)context.Node;
-        var attributes = classDeclarationSyntax.AttributeLists.SelectMany(list => list.Attributes).ToArray();
 
-        var matchedAttributes = attributes.Where(att => {
-            var attTypeInfo = semanticModel.GetTypeInfo(att);
-            var attQualifiedName = attTypeInfo.Type?.ToDisplayString();
-            if (ConcernedAttributes.Contains(attQualifiedName)) return true;
-            return false;
-        }).ToArray();
+        IEnumerable<AttributeSyntax> matchedAttributes = null;
+        string className = string.Empty;
+        switch (context.Node) {
+        case ClassDeclarationSyntax classDeclarationSyntax:
+            matchedAttributes = classDeclarationSyntax.AttributeLists.SelectMany(list => list.Attributes)
+                .Where(att => {
+                    var attTypeInfo = semanticModel.GetTypeInfo(att);
+                    var attQualifiedName = attTypeInfo.Type?.ToDisplayString();
+                    return PluginDataFieldsGenerator.ConcernedAttributes.Contains(attQualifiedName) ||
+                           ViewModelPropertiesGenerator.ConcernedAttributes.Contains(attQualifiedName) ||
+                           PluginFieldsGenerator.ConcernedAttribute == attQualifiedName ||
+                           PluginFieldDefaultValuesGenerator.ConcernedAttributes.Contains(attQualifiedName);
+                }).ToArray();
 
-        if (!matchedAttributes.Any()) return;
+            if (!matchedAttributes.Any()) return;
 
-        var isPartial = classDeclarationSyntax.Modifiers.Any(m => m.IsKind(SyntaxKind.PartialKeyword));
-        if (isPartial) return;
+            var isPartial = classDeclarationSyntax.Modifiers.Any(m => m.IsKind(SyntaxKind.PartialKeyword));
+            if (isPartial) return;
+
+            className = classDeclarationSyntax.Identifier.ValueText;
+            break;
+        case FieldDeclarationSyntax:
+        case PropertyDeclarationSyntax:
+            var declarationSyntax = context.Node as MemberDeclarationSyntax;
+            matchedAttributes = declarationSyntax!.AttributeLists.SelectMany(list => list.Attributes)
+                .Where(att => {
+                    var attTypeInfo = semanticModel.GetTypeInfo(att);
+                    var attQualifiedName = attTypeInfo.Type?.ToDisplayString();
+                    return PluginFieldDefaultValuesGenerator.ConcernedAttributes.Contains(attQualifiedName);
+                }).ToArray();
+
+            if (!matchedAttributes.Any()) return;
+
+            var parentDeclarationSyntax = (ClassDeclarationSyntax)declarationSyntax.Parent;
+            if (parentDeclarationSyntax.Modifiers.Any(m => m.IsKind(SyntaxKind.PartialKeyword))) return;
+
+            className = ((ClassDeclarationSyntax)declarationSyntax.Parent!).Identifier.ValueText;
+            break;
+        default:
+            return;
+        }
 
         foreach (var attribute in matchedAttributes) {
             var location = attribute.ChildNodes().OfType<IdentifierNameSyntax>().First().Identifier.GetLocation();
 
-            context.ReportDiagnostic(Diagnostic.Create(NotPartialDescriptor, location,
-                classDeclarationSyntax.Identifier.ValueText));
+            context.ReportDiagnostic(Diagnostic.Create(NotPartialDescriptor, location, className));
         }
+
     }
 
     internal static void AnalyzeArgumentLength(SyntaxNodeAnalysisContext context) {
@@ -132,23 +190,18 @@ internal class InternalAttributesDiagnoser : DiagnosticAnalyzer {
         var attributeSyntax = (AttributeSyntax)context.Node;
         var typeInfo = semanticModel.GetTypeInfo(attributeSyntax);
         var attributeQualifiedName = typeInfo.Type?.ToDisplayString();
-        if (!ConcernedAttributes.Contains(attributeQualifiedName)) return;
+        if (!PluginDataFieldsGenerator.ConcernedAttributes.Contains(attributeQualifiedName) &&
+            !ViewModelPropertiesGenerator.ConcernedAttributes.Contains(attributeQualifiedName))
+            return;
 
-        var expressionSyntaxes = attributeSyntax.ArgumentList?.Arguments
-            .SelectMany(aas => aas.ChildNodes().OfType<ExpressionSyntax>().SelectMany(es => es switch {
-                    CollectionExpressionSyntax collectionExpressionSyntax =>
-                        collectionExpressionSyntax.Elements.SelectMany(ces =>
-                            ces.ChildNodes().OfType<LiteralExpressionSyntax>()),
-                    LiteralExpressionSyntax literalExpressionSyntax => [literalExpressionSyntax],
-                    _ => []
-                }
-            )).ToArray();
-        if (expressionSyntaxes == null || !expressionSyntaxes.Any()) return;
+        var literalExpressionSyntaxes = attributeSyntax.ArgumentList?.Arguments
+            .SelectMany(aas => aas.DescendantNodes().OfType<LiteralExpressionSyntax>()).ToArray();
+        if (literalExpressionSyntaxes == null || !literalExpressionSyntaxes.Any()) return;
 
         var attributeName = attributeQualifiedName?.Substring(attributeQualifiedName.LastIndexOf('.') + 1);
         var example = DescriptorExample(attributeName);
         var maxLength = MaxLengthOfArgument(attributeName);
-        foreach (var expressionSyntax in expressionSyntaxes) {
+        foreach (var expressionSyntax in literalExpressionSyntaxes) {
             var argument = expressionSyntax.Token.ValueText;
 
             var match = Regex.Match(argument, SpecialCharacterPattern);
@@ -171,11 +224,6 @@ internal class InternalAttributesDiagnoser : DiagnosticAnalyzer {
         }
     }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="attributeName"></param>
-    /// <returns></returns>
     internal static string DescriptorExample(string attributeName) {
         return attributeName switch {
             "PartFieldsAttribute" or "PartPropertiesAttribute" => "PT<nameOrNumber>MATL",
@@ -212,10 +260,9 @@ internal class InternalAttributesDiagnoser : DiagnosticAnalyzer {
         var semanticModel = context.SemanticModel;
 
         var attributeSyntaxes = classDeclarationSyntax.AttributeLists.SelectMany(als => als.Attributes).ToArray();
-        var concernedAttributes = ConcernedAttributes.Skip(5);
         var appliedAttributes = attributeSyntaxes
             .Select(attSyntax => semanticModel.GetTypeInfo(attSyntax).Type?.ToDisplayString())
-            .Where(name => concernedAttributes.Contains(name)).ToArray();
+            .Where(name => ViewModelPropertiesGenerator.ConcernedAttributes.Contains(name)).ToArray();
         if (!appliedAttributes.Any()) return;
 
         var classSymbol = semanticModel.GetDeclaredSymbol(classDeclarationSyntax);
@@ -229,6 +276,158 @@ internal class InternalAttributesDiagnoser : DiagnosticAnalyzer {
                 classDeclarationSyntax.Identifier.GetLocation(),
                 attribute.Substring(attribute.LastIndexOf('.') + 1)
             ));
+        }
+    }
+
+    internal static void AnalyzePluginFieldDefaultValuesAttributeAppliedPlaces(SyntaxNodeAnalysisContext context) {
+        var semanticModel = context.SemanticModel;
+        var classDeclarationSyntax = (ClassDeclarationSyntax)context.Node;
+
+        var placeCnt = 0;
+        var matchedAttributeSyntaxes = new List<AttributeSyntax>();
+        IEnumerable<AttributeSyntax> attributeSyntaxes = null;
+        if (TryGetSpecificAttributes(classDeclarationSyntax.AttributeLists, semanticModel,
+                PluginFieldDefaultValuesGenerator.ConcernedAttributes, ref attributeSyntaxes)) {
+            placeCnt++;
+            // attributeSyntaxes = attributeSyntaxes.ToArray();
+            matchedAttributeSyntaxes.AddRange(attributeSyntaxes);
+        }
+
+        _ = classDeclarationSyntax.Members.Where(member => {
+            switch (member) {
+            case FieldDeclarationSyntax:
+            case PropertyDeclarationSyntax:
+                if (!TryGetSpecificAttributes(member.AttributeLists, semanticModel,
+                        PluginFieldDefaultValuesGenerator.ConcernedAttributes, ref attributeSyntaxes)) {
+                    return false;
+                }
+
+                placeCnt++;
+                // attributeSyntaxes = attributeSyntaxes.ToArray();
+                matchedAttributeSyntaxes.AddRange(attributeSyntaxes);
+
+                return true;
+            default:
+                return false;
+            }
+        }).ToArray();
+
+        if (placeCnt <= 1) return;
+
+        foreach (var attributeSyntax in matchedAttributeSyntaxes) {
+            context.ReportDiagnostic(Diagnostic.Create(
+                AppliedOnOverOnePlace, attributeSyntax.GetLocation()));
+        }
+    }
+
+    internal static void AnalyzeExistingFields(SyntaxNodeAnalysisContext context) {
+        var semanticModel = context.SemanticModel;
+
+        IEnumerable<AttributeSyntax> attributeSyntaxes = null;
+        ITypeSymbol dataType = null;
+        switch (context.Node) {
+        case ClassDeclarationSyntax classDeclarationSyntax:
+            if (!TryGetSpecificAttributes(classDeclarationSyntax.AttributeLists, semanticModel,
+                    PluginFieldDefaultValuesGenerator.ConcernedAttributes, ref attributeSyntaxes))
+                return;
+
+            attributeSyntaxes = attributeSyntaxes.ToArray();
+            IEnumerable<AttributeSyntax> fieldsFromAttSyntax = null;
+            if (!TryGetSpecificAttributes(classDeclarationSyntax.AttributeLists, semanticModel,
+                    [PluginFieldsGenerator.ConcernedAttribute], ref fieldsFromAttSyntax)) {
+                foreach (var attributeSyntax in attributeSyntaxes) {
+                    context.ReportDiagnostic(Diagnostic.Create(
+                        FieldsFromAttributeNotApplied, attributeSyntax.GetLocation(), attributeSyntax.Name.ToString()));
+                }
+
+                return;
+            }
+
+            var expression = (TypeOfExpressionSyntax)fieldsFromAttSyntax.Single().ArgumentList.Arguments[0].Expression;
+            dataType = semanticModel.GetTypeInfo(expression.Type).Type;
+            break;
+        case FieldDeclarationSyntax fieldDeclarationSyntax:
+            if (!TryGetSpecificAttributes(fieldDeclarationSyntax.AttributeLists,
+                    semanticModel, PluginFieldDefaultValuesGenerator.ConcernedAttributes, ref attributeSyntaxes))
+                return;
+
+            attributeSyntaxes = attributeSyntaxes.ToArray();
+            dataType = semanticModel.GetTypeInfo(fieldDeclarationSyntax.Declaration.Type).Type;
+            break;
+        case PropertyDeclarationSyntax propertyDeclarationSyntax:
+            if (!TryGetSpecificAttributes(propertyDeclarationSyntax.AttributeLists,
+                    semanticModel, PluginFieldDefaultValuesGenerator.ConcernedAttributes, ref attributeSyntaxes))
+                return;
+
+            attributeSyntaxes = attributeSyntaxes.ToArray();
+            dataType = semanticModel.GetTypeInfo(propertyDeclarationSyntax.Type).Type;
+            break;
+        default:
+            return;
+        }
+
+        var dictPluginDataFields = new Dictionary<string, HashSet<string>>();
+        var pluginDataFieldsTuples = dataType!.GetAttributes()
+            .Where(a => PluginDataFieldsGenerator.ConcernedAttributes.Contains(a.AttributeClass!.ToDisplayString()))
+            .Select(a => {
+                var attName = a.AttributeClass!.ToDisplayString();
+                attName = attName.Substring(attName.LastIndexOf('.') + 1);
+
+                var hashSet = new HashSet<string>(a.ConstructorArguments
+                    .SelectMany(argArray => argArray.Values.Select(arg => arg.Value!.ToString())));
+
+                return (attName, hashSet);
+            });
+        foreach ((string attName, HashSet<string> hashSet) in pluginDataFieldsTuples) {
+            dictPluginDataFields.Add(attName, hashSet);
+        }
+
+        var dictPluginFieldDefaultValues = new Dictionary<string, HashSet<string>>();
+
+        foreach (var attributeSyntax in attributeSyntaxes) {
+            var attTypeInfo = semanticModel.GetTypeInfo(attributeSyntax);
+            var attQualifiedName = attTypeInfo.Type?.ToDisplayString() ?? string.Empty;
+            var attName = attQualifiedName.Substring(attQualifiedName.LastIndexOf('.') + 1);
+            attName = attName.Substring(0, attName.Length - 22) + "sAttribute";
+
+            if (!dictPluginDataFields.ContainsKey(attName)) {
+                context.ReportDiagnostic(Diagnostic.Create(DataTypeDoesNotContainTheseFields,
+                    attributeSyntax.GetLocation()));
+            }
+
+            if (!dictPluginFieldDefaultValues.TryGetValue(attName, out HashSet<string> nameOrNumberSet)) {
+                nameOrNumberSet = new HashSet<string>();
+                dictPluginFieldDefaultValues.Add(attName, nameOrNumberSet);
+            }
+
+            var nameOrNumberTuple = attributeSyntax.ArgumentList.Arguments.Select((a, i) => (a, i)).Select(tuple => {
+                var argSyntax = tuple.a;
+
+                var index = tuple.i;
+                var paramName = argSyntax.NameColon?.Name.Identifier.ValueText;
+
+                if (paramName == null && index == 0 ||
+                    paramName != null &&
+                    Regex.Match(paramName, "(part|plate|weld|bolt|boltCircle)N(ame|umber)").Success) {
+                    return (value: ((LiteralExpressionSyntax)argSyntax.Expression).Token.ValueText,
+                        location:
+                        argSyntax.Expression.GetLocation());
+                }
+
+                return (string.Empty, null);
+            }).Where(tuple => !string.IsNullOrEmpty(tuple.value)).Single();
+
+            if (!dictPluginDataFields[attName].Contains(nameOrNumberTuple.value)) {
+                context.ReportDiagnostic(Diagnostic.Create(
+                    DataTypeDoesNotContainTheseFields, nameOrNumberTuple.location));
+            }
+
+            if (!dictPluginFieldDefaultValues[attName].Contains(nameOrNumberTuple.value)) {
+                dictPluginFieldDefaultValues[attName].Add(nameOrNumberTuple.value);
+            } else {
+                context.ReportDiagnostic(Diagnostic.Create(
+                    SetDefaultValueMultiTimes, nameOrNumberTuple.location));
+            }
         }
     }
 }

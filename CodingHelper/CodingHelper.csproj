@@ -8,9 +8,9 @@
 		<IsRoslynComponent>true</IsRoslynComponent>
 		<PackageId>Muggle.TsExtensions.CodingHelper</PackageId>
 		<Title>Tekla Structures OpenAPI development helper</Title>
-		<Version>1.1.1</Version>
+		<Version>1.2.0</Version>
 		<Authors>Huang YongXing</Authors>
-		<Description>Help to generate fields (with StructuresFieldAttribute) for plugin data and properties (with StructuresDialogAttribute) for view model which used by plugin WPF UI.</Description>
+		<Description>Help to generate fields (with StructuresFieldAttribute) for plugin data, fields for plugin, and properties (with StructuresDialogAttribute) for view model which used by plugin WPF UI.</Description>
 		<Copyright>© 2026 Huang YongXing</Copyright>
 		<PackageIcon>Assets/logo.png</PackageIcon>
 		<PackageProjectUrl>https://github.com/ThinkerHua/Muggle-Tekla-Structures-Extensions</PackageProjectUrl>
@@ -18,11 +18,8 @@
 		<RepositoryUrl>https://github.com/ThinkerHua/Muggle-Tekla-Structures-Extensions.git</RepositoryUrl>
 		<PackageReadmeFile>Readme.md</PackageReadmeFile>
 		<PackageTags>Tekla Structures OpenAPI Generator</PackageTags>
-		<PackageReleaseNotes>
-			Supplement the complete diagnostic description for implementing the "INotifyPropertyChanged" interface;
-			Fix the spelling error in Weld.Pitch;
-			Fix the issue where multiple bool-type properties in Bolt could not be correctly converted from Data to View (bool type should not be used, now fixed to use int type);
-		</PackageReleaseNotes>
+		<PackageReleaseNotes>Add plugin fields generator;
+Add plugin field default values generator.</PackageReleaseNotes>
 		<PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
 		<PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
 		<IncludeBuildOutput>false</IncludeBuildOutput>

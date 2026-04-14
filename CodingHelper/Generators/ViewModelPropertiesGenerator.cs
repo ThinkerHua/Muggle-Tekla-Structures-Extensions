@@ -1,4 +1,4 @@
-﻿/*==============================================================================
+/*==============================================================================
  *  Muggle TsExtensions - extensions for Tekla Structures
  *
  *  Copyright © 2026 Huang YongXing.
@@ -24,11 +24,13 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 using Muggle.TsExtensions.CodingHelper.Diagnosers;
+using static Muggle.TsExtensions.CodingHelper.Generators.GeneratorHelper;
+using ViewModelPropertiesInfo = Muggle.TsExtensions.CodingHelper.Generators.Information.PluginDataFieldsInfo;
 
 namespace Muggle.TsExtensions.CodingHelper.Generators {
     [Generator]
     internal class ViewModelPropertiesGenerator : IIncrementalGenerator {
-        private static readonly string[] ConcernedAttributes = [
+        internal static readonly string[] ConcernedAttributes = [
             "Muggle.TsExtensions.CodingHelper.Generators.PartPropertiesAttribute",
             "Muggle.TsExtensions.CodingHelper.Generators.PlatePropertiesAttribute",
             "Muggle.TsExtensions.CodingHelper.Generators.WeldPropertiesAttribute",
@@ -1314,7 +1316,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                     public int Bolt{{nameOrNumber}}Hole1 {
                         get { return bolt{{nameOrNumber}}Hole1; }
                         set {
-                            bolt{{nameOrNumber}}Hole1 = (value < 0 || value > 1) ? 0 : value;
+                            bolt{{nameOrNumber}}Hole1 = (value < 0 || value > 1) ? 1 : value;
                             OnPropertyChanged("Bolt{{nameOrNumber}}Hole1");
                         }
                     }
@@ -1324,7 +1326,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                     public int Bolt{{nameOrNumber}}Hole2 {
                         get { return bolt{{nameOrNumber}}Hole2; }
                         set {
-                            bolt{{nameOrNumber}}Hole2 = (value < 0 || value > 1) ? 0 : value;
+                            bolt{{nameOrNumber}}Hole2 = (value < 0 || value > 1) ? 1 : value;
                             OnPropertyChanged("Bolt{{nameOrNumber}}Hole2");
                         }
                     }
@@ -1404,7 +1406,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                     public int Bolt{{nameOrNumber}}IsBolt {
                         get { return bolt{{nameOrNumber}}IsBolt; }
                         set {
-                            bolt{{nameOrNumber}}IsBolt = (value < 0 || value > 1) ? 0 : value;
+                            bolt{{nameOrNumber}}IsBolt = (value < 0 || value > 1) ? 1 : value;
                             OnPropertyChanged("Bolt{{nameOrNumber}}IsBolt");
                         }
                     }
@@ -1414,7 +1416,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                     public int Bolt{{nameOrNumber}}UseNut1 {
                         get { return bolt{{nameOrNumber}}UseNut1; }
                         set {
-                            bolt{{nameOrNumber}}UseNut1 = (value < 0 || value > 1) ? 0 : value;
+                            bolt{{nameOrNumber}}UseNut1 = (value < 0 || value > 1) ? 1 : value;
                             OnPropertyChanged("Bolt{{nameOrNumber}}UseNut1");
                         }
                     }
@@ -1454,7 +1456,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                     public int Bolt{{nameOrNumber}}UseWasher3 {
                         get { return bolt{{nameOrNumber}}UseWasher3; }
                         set {
-                            bolt{{nameOrNumber}}UseWasher3 = (value < 0 || value > 1) ? 0 : value;
+                            bolt{{nameOrNumber}}UseWasher3 = (value < 0 || value > 1) ? 1 : value;
                             OnPropertyChanged("Bolt{{nameOrNumber}}UseWasher3");
                         }
                     }
@@ -1488,7 +1490,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                     public int BoltCircle{{nameOrNumber}}NumberOfBolts {
                         get { return boltCircle{{nameOrNumber}}NumberOfBolts; }
                         set {
-                            boltCircle{{nameOrNumber}}NumberOfBolts = value == int.MinValue ? 0 : value;
+                            boltCircle{{nameOrNumber}}NumberOfBolts = value == int.MinValue ? 6 : value;
                             OnPropertyChanged("BoltCircle{{nameOrNumber}}NumberOfBolts");
                         }
                     }
@@ -1498,7 +1500,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                     public double BoltCircle{{nameOrNumber}}Diameter {
                         get { return boltCircle{{nameOrNumber}}Diameter; }
                         set {
-                            boltCircle{{nameOrNumber}}Diameter = value == int.MinValue ? 0.0 : value;
+                            boltCircle{{nameOrNumber}}Diameter = value == int.MinValue ? 100.0 : value;
                             OnPropertyChanged("BoltCircle{{nameOrNumber}}Diameter");
                         }
                     }
@@ -1578,7 +1580,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                     public int BoltCircle{{nameOrNumber}}Hole1 {
                         get { return boltCircle{{nameOrNumber}}Hole1; }
                         set {
-                            boltCircle{{nameOrNumber}}Hole1 = (value < 0 || value > 1) ? 0 : value;
+                            boltCircle{{nameOrNumber}}Hole1 = (value < 0 || value > 1) ? 1 : value;
                             OnPropertyChanged("BoltCircle{{nameOrNumber}}Hole1");
                         }
                     }
@@ -1588,7 +1590,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                     public int BoltCircle{{nameOrNumber}}Hole2 {
                         get { return boltCircle{{nameOrNumber}}Hole2; }
                         set {
-                            boltCircle{{nameOrNumber}}Hole2 = (value < 0 || value > 1) ? 0 : value;
+                            boltCircle{{nameOrNumber}}Hole2 = (value < 0 || value > 1) ? 1 : value;
                             OnPropertyChanged("BoltCircle{{nameOrNumber}}Hole2");
                         }
                     }
@@ -1668,7 +1670,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                     public int BoltCircle{{nameOrNumber}}IsBolt {
                         get { return boltCircle{{nameOrNumber}}IsBolt; }
                         set {
-                            boltCircle{{nameOrNumber}}IsBolt = (value < 0 || value > 1) ? 0 : value;
+                            boltCircle{{nameOrNumber}}IsBolt = (value < 0 || value > 1) ? 1 : value;
                             OnPropertyChanged("BoltCircle{{nameOrNumber}}IsBolt");
                         }
                     }
@@ -1678,7 +1680,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                     public int BoltCircle{{nameOrNumber}}UseNut1 {
                         get { return boltCircle{{nameOrNumber}}UseNut1; }
                         set {
-                            boltCircle{{nameOrNumber}}UseNut1 = (value < 0 || value > 1) ? 0 : value;
+                            boltCircle{{nameOrNumber}}UseNut1 = (value < 0 || value > 1) ? 1 : value;
                             OnPropertyChanged("BoltCircle{{nameOrNumber}}UseNut1");
                         }
                     }
@@ -1718,7 +1720,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                     public int BoltCircle{{nameOrNumber}}UseWasher3 {
                         get { return boltCircle{{nameOrNumber}}UseWasher3; }
                         set {
-                            boltCircle{{nameOrNumber}}UseWasher3 = (value < 0 || value > 1) ? 0 : value;
+                            boltCircle{{nameOrNumber}}UseWasher3 = (value < 0 || value > 1) ? 1 : value;
                             OnPropertyChanged("BoltCircle{{nameOrNumber}}UseWasher3");
                         }
                     }
@@ -1742,17 +1744,40 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
 
             var provider = context.SyntaxProvider
                 .CreateSyntaxProvider(Predicate, Transform)
-                .Where(x => x != null);
+                .Where(x => x != default);
 
             context.RegisterSourceOutput(provider, Generate);
         }
 
-        private void Generate(SourceProductionContext context, AppliedClassInfo? classInfo) {
-            if (!classInfo.HasValue) return;
-            var info = classInfo.Value;
+        private static bool Predicate(SyntaxNode syntaxNode, CancellationToken token) {
+            if (token.IsCancellationRequested) return false;
+
+            if (syntaxNode is not ClassDeclarationSyntax classDeclaration ||
+                classDeclaration.AttributeLists.Count == 0)
+                return false;
+
+            return true;
+        }
+
+        private static ViewModelPropertiesInfo Transform(GeneratorSyntaxContext syntaxContext, CancellationToken token) {
+            var classDeclarationSyntax = (ClassDeclarationSyntax)syntaxContext.Node;
+            if (!classDeclarationSyntax.Modifiers.Any(m => m.IsKind(SyntaxKind.PartialKeyword))) return default;
+
+            var semanticModel = syntaxContext.SemanticModel;
+            var classSymbol = semanticModel.GetDeclaredSymbol(classDeclarationSyntax);
+
+            if (classSymbol == null || !classSymbol.AllInterfaces.Any(i =>
+                    i.ToDisplayString() == "System.ComponentModel.INotifyPropertyChanged"))
+                return default;
+
+            return GetClassInfo(syntaxContext, token, ConcernedAttributes);
+        }
+
+        private static void Generate(SourceProductionContext context, ViewModelPropertiesInfo info) {
+            if (info == default) return;
 
             var builder = new StringBuilder();
-            foreach (var kvp in info.AttributesInfo) {
+            foreach (var kvp in info.Arguments) {
                 var attributeName = kvp.Key;
                 var propertiesTemplate = attributeName switch {
                     "PartPropertiesAttribute" => PartPropertiesTemplate,
@@ -1777,37 +1802,13 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
 #else
                 .Replace("{{generatedAt}}", string.Empty)
 #endif
-                .Replace("{{namespace}}", info.NameSpace)
-                .Replace("{{accessibility}}", info.Accessibility.ToString().ToLower())
-                .Replace("{{typeKind}}", info.IsRecord ? "record " : string.Empty)
-                .Replace("{{className}}", info.Name)
+                .Replace("{{namespace}}", info.ClassInfo.NameSpace)
+                .Replace("{{accessibility}}", info.ClassInfo.Accessibility.ToString().ToLower())
+                .Replace("{{typeKind}}", info.ClassInfo.IsRecord ? "record " : string.Empty)
+                .Replace("{{className}}", info.ClassInfo.Name)
                 .Replace("{{properties}}", builder.ToString());
 
-            context.AddSource($"{info.Name}.g.cs", SourceText.From(output, Encoding.UTF8));
-        }
-
-        private bool Predicate(SyntaxNode syntaxNode, CancellationToken token) {
-            if (token.IsCancellationRequested) return false;
-
-            if (syntaxNode is not ClassDeclarationSyntax classDeclaration ||
-                classDeclaration.AttributeLists.Count == 0)
-                return false;
-
-            return true;
-        }
-
-        private AppliedClassInfo? Transform(GeneratorSyntaxContext syntaxContext, CancellationToken token) {
-            var classDeclarationSyntax = (ClassDeclarationSyntax)syntaxContext.Node;
-            if (!classDeclarationSyntax.Modifiers.Any(m => m.IsKind(SyntaxKind.PartialKeyword))) return null;
-
-            var semanticModel = syntaxContext.SemanticModel;
-            var classSymbol = semanticModel.GetDeclaredSymbol(classDeclarationSyntax);
-
-            if (classSymbol == null || !classSymbol.AllInterfaces.Any(i =>
-                    i.ToDisplayString() == "System.ComponentModel.INotifyPropertyChanged"))
-                return null;
-
-            return GeneratorHelper.GetClassInfo(syntaxContext, token, ConcernedAttributes);
+            context.AddSource($"{info.ClassInfo.Name}.g.cs", SourceText.From(output, Encoding.UTF8));
         }
     }
 }

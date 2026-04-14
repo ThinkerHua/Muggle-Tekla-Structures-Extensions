@@ -1,0 +1,9 @@
+{
+  "$schema": "http://json.schemastore.org/launchsettings.json",
+  "profiles": {
+    "CodingHelper": {
+      "commandName": "DebugRoslynComponent",
+      "targetProject": "..\\Demo1\\Demo1.csproj"
+    }
+  }
+}

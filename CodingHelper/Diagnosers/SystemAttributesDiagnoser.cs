@@ -88,7 +88,7 @@ internal class SystemAttributesDiagnoser : DiagnosticAnalyzer {
         if (argument == null) return;
 
         var location = argumentSyntax.GetLocation();
-        
+
         if (argument.Length is 0 or > 19) {
             context.ReportDiagnostic(Diagnostic.Create(LengthExceedLimitationDescriptor, location));
         }
