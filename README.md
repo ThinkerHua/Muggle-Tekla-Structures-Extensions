@@ -10,9 +10,7 @@ Developed based on version 2021 of the Tekla Open API, other versions are untest
 
 ---
 
-## Contents
-
-## 目录
+## Contents 目录
 
 >Development Tools
 >开发工具
@@ -124,13 +122,13 @@ For example, the SelectedIndex of the UpDirection ComboBox in the general tab of
 
 ## CodingHelper
 
-When creating custom components, it is usually necessary to manually write a large amount of code for component parameters (in the PluginData class and the ViewModel class) and apply attributes, which is tedious and time-consuming.
+When creating custom components, it is usually necessary to manually write a large amount of code for component parameters (in PluginData class, Plugin class and ViewModel class) and apply attributes, which is tedious and time-consuming.
 
 This analyzer is designed to solve this problem, containing two source generators and corresponding diagnostics. It helps quickly generate code for component parameters, avoiding mismatches that may occur from manual coding, saving time, and allowing more focus on the core logic of the component.
 
-通常在制作自定义组件时，总要手动为组件参数编写大量的代码（在 PluginData 类和 ViewModel 类中）并添加上相关的特性，很繁重很浪费时间。
+通常在制作自定义组件时，总要手动为组件参数编写大量的代码（在 PluginData 类、Plugin 类和 ViewModel 类中）并添加上相关的特性，很繁重很浪费时间。
 
-此分析器用于解决此问题，包含两个源生成器和与之配套的诊断器，有助于快速生成组件参数相关的代码，避免手动编可能的失误导致不匹配，节约时间，有更多的精力关注于组件的核心逻辑。
+此分析器用于解决此问题，包含四个源生成器和与之配套的诊断器，有助于快速生成组件参数相关的代码，避免手动编可能的失误导致不匹配，节约时间，有更多的精力关注于组件的核心逻辑。
 
 How to use  [see here](CodingHelper/Readme.md).
 
