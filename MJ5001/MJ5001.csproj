@@ -12,7 +12,9 @@
 		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
 		<AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
 	</PropertyGroup>
+	
 	<ItemGroup>
+		<PackageReference Include="Muggle.TsExtensions.CodingHelper" Version="1.2.1" />
 		<PackageReference Include="Tekla.Structures" Version="2021.0.0" ExcludeAssets="runtime" />
 		<PackageReference Include="Tekla.Structures.Catalogs" Version="2021.0.0" ExcludeAssets="runtime" />
 		<PackageReference Include="Tekla.Structures.Datatype" Version="2021.0.0" ExcludeAssets="runtime" />
@@ -20,11 +22,12 @@
 		<PackageReference Include="Tekla.Structures.Model" Version="2021.0.0" ExcludeAssets="runtime" />
 		<PackageReference Include="Tekla.Structures.Plugins" Version="2021.0.0" ExcludeAssets="runtime" />
 	</ItemGroup>
+	
 	<ItemGroup>
-		<ProjectReference Include="..\CodingHelper\CodingHelper.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false"  />
 		<ProjectReference Include="..\Common.WPF\Common.WPF.csproj" />
 		<ProjectReference Include="..\Common\Common.csproj" private="false" />
 	</ItemGroup>
+	
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
 		<Exec Command="xcopy &quot;$(TargetDir)$(TargetName).dll&quot; &quot;D:\Program Files\Tekla Structures\2021.0\Environments\common\extensions\Muggle.TsExtensions\&quot; /Y /C /Q /R" />
 	</Target>
