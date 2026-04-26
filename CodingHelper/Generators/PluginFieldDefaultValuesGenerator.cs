@@ -913,7 +913,7 @@ internal class PluginFieldDefaultValuesGenerator : IIncrementalGenerator {
                     continue;
                 }
 
-                paramName ??= DefaultValues[attName].ElementAt(index).Key;
+                paramName ??= PresetValues[attName].ElementAt(index - 1).Key;
                 valueDict.Add(paramName, paramValue);
             }
 
