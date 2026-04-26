@@ -12,7 +12,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="CalcBinding" Version="2.5.2" />
-		<PackageReference Condition="'$(Configuration)' == 'Release'" Include="Muggle.TsExtensions.CodingHelper" Version="1.2.1" />
+		<PackageReference Condition="'$(Configuration)' == 'Release'" Include="Muggle.TsExtensions.CodingHelper" Version="1.*" />
 		<PackageReference Include="Tekla.Structures" Version="2021.0.0" ExcludeAssets="runtime" />
 		<PackageReference Include="Tekla.Structures.Datatype" Version="2021.0.0" ExcludeAssets="runtime" />
 		<PackageReference Include="Tekla.Structures.Dialog" Version="2021.0.0" ExcludeAssets="runtime" />
