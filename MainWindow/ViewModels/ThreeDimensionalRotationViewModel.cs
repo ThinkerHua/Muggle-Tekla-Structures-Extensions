@@ -90,79 +90,79 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
             Matrix matrix = null;
             Point origin = null, directionPoint = null;
             switch (axisEnum) {
-                case AxisEnum.ManualSelect:
-                    origin = picker.PickPoint("选择旋转轴的起点。");
-                    directionPoint = picker.PickPoint("选择旋转轴的方向。", origin);
-                    var direction = new Vector(directionPoint - origin);
-                    if (direction.IsZero()) {
-                        Operation.DisplayPrompt("旋转轴的方向不能为零向量。");
-                        return;
-                    }
+            case AxisEnum.ManualSelect:
+                origin = picker.PickPoint("选择旋转轴的起点。");
+                directionPoint = picker.PickPoint("选择旋转轴的方向。", origin);
+                var direction = new Vector(directionPoint - origin);
+                if (direction.IsZero()) {
+                    Operation.DisplayPrompt("旋转轴的方向不能为零向量。");
+                    return;
+                }
 
-                    axis = new Line(origin, direction);
+                axis = new Line(origin, direction);
+                break;
+            default:
+                selectedObjects.MoveNext();
+                modelObject = selectedObjects.Current;
+                selectedObjects.Reset();
+
+                partCS = modelObject.GetCoordinateSystem();
+                switch (axisEnum) {
+                case AxisEnum.PartCS_AxisX:
+                    axis = new Line(partCS.Origin, partCS.AxisX);
+                    break;
+                case AxisEnum.PartCS_AxisY:
+                    axis = new Line(partCS.Origin, partCS.AxisY);
+                    break;
+                case AxisEnum.PartCS_AxisZ:
+                    axis = new Line(partCS.Origin, partCS.AxisX.Cross(partCS.AxisY));
                     break;
                 default:
-                    selectedObjects.MoveNext();
-                    modelObject = selectedObjects.Current;
-                    selectedObjects.Reset();
-
-                    partCS = modelObject.GetCoordinateSystem();
-                    switch (axisEnum) {
-                        case AxisEnum.PartCS_AxisX:
-                            axis = new Line(partCS.Origin, partCS.AxisX);
-                            break;
-                        case AxisEnum.PartCS_AxisY:
-                            axis = new Line(partCS.Origin, partCS.AxisY);
-                            break;
-                        case AxisEnum.PartCS_AxisZ:
-                            axis = new Line(partCS.Origin, partCS.AxisX.Cross(partCS.AxisY));
-                            break;
-                        default:
-                            break;
-                    }
                     break;
+                }
+                break;
             }
 
             switch (angleEnum) {
-                case AngleEnum.AngleValue:
-                    matrix = MatrixFactoryExtension.Rotate(axis, degrees * Math.PI / 180.0);
-                    break;
-                case AngleEnum.ManualSelect:
-                    var pointStart = picker.PickPoint("选择旋转起始方向。", directionPoint);
-                    var directionStart = new Vector(pointStart - Projection.PointToLine(pointStart, axis));
-                    if (directionStart.IsZero()) {
-                        Operation.DisplayPrompt("旋转起始方向不能为零向量。");
+            case AngleEnum.AngleValue:
+                matrix = MatrixFactoryExtension.Rotate(axis, degrees * Math.PI / 180.0);
+                break;
+            case AngleEnum.ManualSelect:
+                var pointStart = picker.PickPoint("选择旋转起始方向。", directionPoint);
+                var directionStart = new Vector(pointStart - Projection.PointToLine(pointStart, axis));
+                if (directionStart.IsZero()) {
+                    Operation.DisplayPrompt("旋转起始方向不能为零向量。");
+                    return;
+                }
+                Vector directionEnd = null;
+
+                if (!targetDirectionIsNormalOfPlane) {
+                    var pointEnd = picker.PickPoint("选择旋转结束方向。", pointStart);
+                    directionEnd = new Vector(pointEnd - Projection.PointToLine(pointEnd, axis));
+                    if (directionEnd.IsZero()) {
+                        Operation.DisplayPrompt("旋转结束方向不能为零向量。");
                         return;
                     }
-                    Vector directionEnd = null;
+                } else {
+                    var face = picker.PickFace("选择平面。");
+                    var enumerator = face.GetEnumerator();
+                    while (enumerator.MoveNext()) {
+                        var inputItem = enumerator.Current as InputItem;
+                        if (inputItem.GetInputType() == InputItem.InputTypeEnum.INPUT_POLYGON) {
+                            var points = inputItem.GetData() as ArrayList;
+                            directionEnd = new Vector((points[2] as Point) - (points[1] as Point))
+                                .Cross(new Vector((points[0] as Point) - (points[1] as Point)));
 
-                    if (!targetDirectionIsNormalOfPlane) {
-                        var pointEnd = picker.PickPoint("选择旋转结束方向。", pointStart);
-                        directionEnd = new Vector(pointEnd - Projection.PointToLine(pointEnd, axis));
-                        if (directionEnd.IsZero()) {
-                            Operation.DisplayPrompt("旋转结束方向不能为零向量。");
-                            return;
-                        }
-                    } else {
-                        var face = picker.PickFace("选择平面。");
-                        var enumerator = face.GetEnumerator();
-                        while (enumerator.MoveNext()) {
-                            var inputItem = enumerator.Current as InputItem;
-                            if (inputItem.GetInputType() == InputItem.InputTypeEnum.INPUT_POLYGON) {
-                                var points = inputItem.GetData() as ArrayList;
-                                directionEnd = new Vector((points[2] as Point) - (points[1] as Point))
-                                    .Cross(new Vector((points[0] as Point) - (points[1] as Point)));
-
-                                break;
-                            }
+                            break;
                         }
                     }
+                }
 
-                    var radians = directionStart.GetAngleBetween_WithDirection(directionEnd, axis.Direction);
-                    matrix = MatrixFactoryExtension.Rotate(axis, radians);
-                    break;
-                default:
-                    break;
+                var radians = directionStart.GetAngleBetween_WithDirection(directionEnd, axis.Direction);
+                matrix = MatrixFactoryExtension.Rotate(axis, radians);
+                break;
+            default:
+                break;
             }
 
             foreach (ModelObject obj in selectedObjects) {

@@ -46,23 +46,23 @@ namespace Muggle.TsExtensions.Common.Geometry3d {
             situation |= line1.Direction.IsZero() ? 0b01 : 0b00;
             situation |= line2.Direction.IsZero() ? 0b10 : 0b00;
             switch (situation) {
-                case 0b00:
-                    if (n.IsZero()) {
-                        dis = Vector.Cross(v, line2.Direction).GetLength() / line2.Direction.GetLength();
-                    } else {
-                        dis = Math.Abs(Vector.Dot(v, n) / n.GetLength());
-                    }
-                    break;
-                case 0b01:
+            case 0b00:
+                if (n.IsZero()) {
                     dis = Vector.Cross(v, line2.Direction).GetLength() / line2.Direction.GetLength();
-                    break;
-                case 0b10:
-                    dis = Vector.Cross(v, line1.Direction).GetLength() / line1.Direction.GetLength();
-                    break;
-                case 0b11:
-                default:
-                    dis = v.GetLength();
-                    break;
+                } else {
+                    dis = Math.Abs(Vector.Dot(v, n) / n.GetLength());
+                }
+                break;
+            case 0b01:
+                dis = Vector.Cross(v, line2.Direction).GetLength() / line2.Direction.GetLength();
+                break;
+            case 0b10:
+                dis = Vector.Cross(v, line1.Direction).GetLength() / line1.Direction.GetLength();
+                break;
+            case 0b11:
+            default:
+                dis = v.GetLength();
+                break;
             }
 
             return dis;

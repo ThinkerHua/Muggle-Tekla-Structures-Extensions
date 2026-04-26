@@ -233,23 +233,23 @@ namespace Muggle.TsExtensions.HJ1001 {
 
             var beamType = prim.GetType();
             switch (beamType.Name) {
-                case nameof(Beam):
-                    if (primCenterline.Count == 2)
-                        isCurve = false;
-                    else
-                        isCurve = true;
-                    break;
-                case nameof(PolyBeam):
-                    var contourPoints = ((PolyBeam)prim).Contour.ContourPoints;
-                    var secondOrPenultimateIndex = dis1 < dis2 ? 1 : contourPoints.Count - 2;
-                    var chamfer = ((ContourPoint)contourPoints[secondOrPenultimateIndex]).Chamfer;
-                    if (chamfer.Type == Chamfer.ChamferTypeEnum.CHAMFER_ARC_POINT)
-                        isCurve = true;
-                    else
-                        isCurve = false;
-                    break;
-                default:
-                    break;
+            case nameof(Beam):
+                if (primCenterline.Count == 2)
+                    isCurve = false;
+                else
+                    isCurve = true;
+                break;
+            case nameof(PolyBeam):
+                var contourPoints = ((PolyBeam)prim).Contour.ContourPoints;
+                var secondOrPenultimateIndex = dis1 < dis2 ? 1 : contourPoints.Count - 2;
+                var chamfer = ((ContourPoint)contourPoints[secondOrPenultimateIndex]).Chamfer;
+                if (chamfer.Type == Chamfer.ChamferTypeEnum.CHAMFER_ARC_POINT)
+                    isCurve = true;
+                else
+                    isCurve = false;
+                break;
+            default:
+                break;
             }
 
             var origin = dis1 < dis2 ? new Point(primStartPoint) : new Point(primEndPoint);

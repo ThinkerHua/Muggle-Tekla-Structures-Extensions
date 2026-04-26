@@ -149,25 +149,25 @@ namespace Muggle.TsExtensions.Common.Operation {
             if (variations[half - 1] == 0 && variations[half] == 0) return false;
 
             switch (type) {
-                case ExtremeTypeEnum.LocalMinimum:
-                    for (int i = 0; i < half; i++) {
-                        //  左边不允许正值,右边不允许负值
-                        if (variations[i] > 0 || variations[cnt - 1 - i] < 0) return false;
-                        //  只能中间两个值有一个值相等，其余值不允许相等
-                        if ((variations[i] == 0 || variations[cnt - 1 - i] == 0) && i != half - 1) return false;
-                    }
-                    break;
-                case ExtremeTypeEnum.LocalMaximum:
-                    for (int i = 0; i < half; i++) {
-                        //  左边不允许负值,右边不允许正值
-                        if (variations[i] < 0 || variations[cnt - 1 - i] > 0) return false;
-                        //  只能中间两个值有一个值相等，其余值不允许相等
-                        if ((variations[i] == 0 || variations[cnt - 1 - i] == 0) && i != half - 1) return false;
-                    }
-                    break;
-                default:
+            case ExtremeTypeEnum.LocalMinimum:
+                for (int i = 0; i < half; i++) {
+                    //  左边不允许正值,右边不允许负值
+                    if (variations[i] > 0 || variations[cnt - 1 - i] < 0) return false;
+                    //  只能中间两个值有一个值相等，其余值不允许相等
+                    if ((variations[i] == 0 || variations[cnt - 1 - i] == 0) && i != half - 1) return false;
+                }
+                break;
+            case ExtremeTypeEnum.LocalMaximum:
+                for (int i = 0; i < half; i++) {
+                    //  左边不允许负值,右边不允许正值
+                    if (variations[i] < 0 || variations[cnt - 1 - i] > 0) return false;
+                    //  只能中间两个值有一个值相等，其余值不允许相等
+                    if ((variations[i] == 0 || variations[cnt - 1 - i] == 0) && i != half - 1) return false;
+                }
+                break;
+            default:
 
-                    break;
+                break;
             }
 
             return true;

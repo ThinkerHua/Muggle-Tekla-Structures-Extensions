@@ -75,21 +75,21 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
             var elevation = 0.0;
             foreach (ModelObject obj in mobjects) {
                 switch (ElevationType) {
-                    case ElevationTypeEnum.Top:
-                        if (!obj.GetLevel(IsAbsolutely, true, out elevation)) continue;
-                        break;
-                    case ElevationTypeEnum.Bottom:
-                        if (!obj.GetLevel(IsAbsolutely, false, out elevation)) continue;
-                        break;
-                    case ElevationTypeEnum.Middle:
-                        if (!obj.GetLevel(IsAbsolutely, true, out elevation)) continue;
-                        var bottomElevation = 0.0;
-                        if (!obj.GetLevel(IsAbsolutely, false, out bottomElevation)) continue;
+                case ElevationTypeEnum.Top:
+                    if (!obj.GetLevel(IsAbsolutely, true, out elevation)) continue;
+                    break;
+                case ElevationTypeEnum.Bottom:
+                    if (!obj.GetLevel(IsAbsolutely, false, out elevation)) continue;
+                    break;
+                case ElevationTypeEnum.Middle:
+                    if (!obj.GetLevel(IsAbsolutely, true, out elevation)) continue;
+                    var bottomElevation = 0.0;
+                    if (!obj.GetLevel(IsAbsolutely, false, out bottomElevation)) continue;
 
-                        elevation = (elevation + bottomElevation) * 0.5;
-                        break;
-                    default:
-                        break;
+                    elevation = (elevation + bottomElevation) * 0.5;
+                    break;
+                default:
+                    break;
                 }
 
                 var vector = new Vector(0.0, 0.0, TargetElevation - elevation);

@@ -86,22 +86,22 @@ namespace Muggle.TsExtensions.Common.Geometry3d {
             situation |= line1.Direction.IsZero() ? 0b01 : 0b00;
             situation |= line2.Direction.IsZero() ? 0b10 : 0b00;
             switch (situation) {
-                case 0b00:
-                    var n = Vector.Cross(line1.Direction, line2.Direction);
-                    if (n.IsZero()) return null;//  平行
+            case 0b00:
+                var n = Vector.Cross(line1.Direction, line2.Direction);
+                if (n.IsZero()) return null;//  平行
 
-                    s = Vector.Dot(Vector.Cross(v, line2.Direction), n) / Math.Pow(n.GetLength(), 2);
-                    t = Vector.Dot(new Vector(line1.Direction * s - v), line2.Direction) / Vector.Dot(line2.Direction, line2.Direction);
-                    break;
-                case 0b01:
-                    t = Vector.Dot(-1 * v, line2.Direction) / Vector.Dot(line2.Direction, line2.Direction);
-                    break;
-                case 0b10:
-                    s = Vector.Dot(v, line1.Direction) / Vector.Dot(line1.Direction, line1.Direction);
-                    break;
-                case 0b11:
-                default:
-                    break;
+                s = Vector.Dot(Vector.Cross(v, line2.Direction), n) / Math.Pow(n.GetLength(), 2);
+                t = Vector.Dot(new Vector(line1.Direction * s - v), line2.Direction) / Vector.Dot(line2.Direction, line2.Direction);
+                break;
+            case 0b01:
+                t = Vector.Dot(-1 * v, line2.Direction) / Vector.Dot(line2.Direction, line2.Direction);
+                break;
+            case 0b10:
+                s = Vector.Dot(v, line1.Direction) / Vector.Dot(line1.Direction, line1.Direction);
+                break;
+            case 0b11:
+            default:
+                break;
             }
 
             return new LineSegment(line1.Origin + s * line1.Direction, line2.Origin + t * line2.Direction);

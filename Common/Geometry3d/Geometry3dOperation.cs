@@ -441,20 +441,20 @@ namespace Muggle.TsExtensions.Common.Geometry3d {
 
             foreach (var (intersection_l1, intersection_l2) in vertices) {
                 switch (combinationEnum) {
-                    case 11:
-                        yield return (intersection_l1.X1, intersection_l2.X1);
-                        break;
-                    case 12:
-                        yield return (intersection_l1.X1, intersection_l2.X2);
-                        break;
-                    case 21:
-                        yield return (intersection_l1.X2, intersection_l2.X1);
-                        break;
-                    case 22:
-                        yield return (intersection_l1.X2, intersection_l2.X2);
-                        break;
-                    default:
-                        break;
+                case 11:
+                    yield return (intersection_l1.X1, intersection_l2.X1);
+                    break;
+                case 12:
+                    yield return (intersection_l1.X1, intersection_l2.X2);
+                    break;
+                case 21:
+                    yield return (intersection_l1.X2, intersection_l2.X1);
+                    break;
+                case 22:
+                    yield return (intersection_l1.X2, intersection_l2.X2);
+                    break;
+                default:
+                    break;
                 }
             }
         }

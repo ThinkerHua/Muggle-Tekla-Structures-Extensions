@@ -1939,32 +1939,32 @@ namespace Muggle.TsExtensions.Common.Model {
 
             var prefix = GetProfilePrefix(part.Profile.ProfileString);
             switch (prefix) {
-                case "B_WLD_F":
-                    verticesFront = verticesFront.Skip(3).Take(3)
-                        .Append(verticesFront.ElementAt(3) + verticesFront.ElementAt(5) - verticesFront.ElementAt(4));
-                    verticesBehind = verticesBehind.Skip(3).Take(3)
-                        .Append(verticesBehind.ElementAt(3) + verticesBehind.ElementAt(5) - verticesBehind.ElementAt(4));
-                    verticesFront = OrderVertices(verticesFront, partCS);
-                    verticesBehind = OrderVertices(verticesBehind, partCS);
-                    break;
-                case "B_VAR_A":
-                case "B_VAR_B":
-                case "B_VAR_C":
-                    verticesFront = verticesFront.Skip(5).Take(4);
-                    verticesBehind = verticesBehind.Skip(5).Take(4);
-                    verticesFront = OrderVertices(verticesFront, partCS);
-                    verticesBehind = OrderVertices(verticesBehind, partCS);
-                    break;
-                case "B_BUILT":
-                    verticesFront = verticesFront.Skip(13).Take(3)
-                        .Append(verticesFront.ElementAt(13) + verticesFront.ElementAt(15) - verticesFront.ElementAt(14));
-                    verticesBehind = verticesBehind.Skip(13).Take(3)
-                        .Append(verticesBehind.ElementAt(13) + verticesBehind.ElementAt(15) - verticesBehind.ElementAt(14));
-                    verticesFront = OrderVertices(verticesFront, partCS);
-                    verticesBehind = OrderVertices(verticesBehind, partCS);
-                    break;
-                default:
-                    break;
+            case "B_WLD_F":
+                verticesFront = verticesFront.Skip(3).Take(3)
+                    .Append(verticesFront.ElementAt(3) + verticesFront.ElementAt(5) - verticesFront.ElementAt(4));
+                verticesBehind = verticesBehind.Skip(3).Take(3)
+                    .Append(verticesBehind.ElementAt(3) + verticesBehind.ElementAt(5) - verticesBehind.ElementAt(4));
+                verticesFront = OrderVertices(verticesFront, partCS);
+                verticesBehind = OrderVertices(verticesBehind, partCS);
+                break;
+            case "B_VAR_A":
+            case "B_VAR_B":
+            case "B_VAR_C":
+                verticesFront = verticesFront.Skip(5).Take(4);
+                verticesBehind = verticesBehind.Skip(5).Take(4);
+                verticesFront = OrderVertices(verticesFront, partCS);
+                verticesBehind = OrderVertices(verticesBehind, partCS);
+                break;
+            case "B_BUILT":
+                verticesFront = verticesFront.Skip(13).Take(3)
+                    .Append(verticesFront.ElementAt(13) + verticesFront.ElementAt(15) - verticesFront.ElementAt(14));
+                verticesBehind = verticesBehind.Skip(13).Take(3)
+                    .Append(verticesBehind.ElementAt(13) + verticesBehind.ElementAt(15) - verticesBehind.ElementAt(14));
+                verticesFront = OrderVertices(verticesFront, partCS);
+                verticesBehind = OrderVertices(verticesBehind, partCS);
+                break;
+            default:
+                break;
             }
 
             var offset_Z = new Vector(0, 0, clearance).TransformFrom(partCS);
@@ -2153,40 +2153,40 @@ namespace Muggle.TsExtensions.Common.Model {
             var profileText = part.Profile.ProfileString;
 
             switch (profileType) {
-                case "I":
-                    return CreatStiffenersForTypeI(part, position, thickness, material, @class,
-                        rotationAroundY, rotationAroundZ, indent, clearance,
-                        chamferType, chamferSizeX, chamferSizeY);
-                case "T":
-                    return CreatStiffenersForTypeT(part, position, thickness, material, @class,
-                        rotationAroundY, rotationAroundZ, indent, indent2, clearance,
-                        chamferType, chamferSizeX, chamferSizeY);
-                case "U":
-                    return [ CreatStiffenersForTypeU(part, position, thickness, material, @class,
+            case "I":
+                return CreatStiffenersForTypeI(part, position, thickness, material, @class,
+                    rotationAroundY, rotationAroundZ, indent, clearance,
+                    chamferType, chamferSizeX, chamferSizeY);
+            case "T":
+                return CreatStiffenersForTypeT(part, position, thickness, material, @class,
+                    rotationAroundY, rotationAroundZ, indent, indent2, clearance,
+                    chamferType, chamferSizeX, chamferSizeY);
+            case "U":
+                return [ CreatStiffenersForTypeU(part, position, thickness, material, @class,
                     rotationAroundY, rotationAroundZ, indent, clearance,
                     chamferType, chamferSizeX, chamferSizeY)];
-                case "M":
-                    return [ CreatStiffenersForTypeM(part, position, thickness, material, @class,
+            case "M":
+                return [ CreatStiffenersForTypeM(part, position, thickness, material, @class,
                     rotationAroundY, rotationAroundZ, clearance,
                     chamferType, chamferSizeX, chamferSizeY)];
-                case "RO":
-                    return [ CreatStiffenersForTypeRO(part, position, thickness, material, @class,
+            case "RO":
+                return [ CreatStiffenersForTypeRO(part, position, thickness, material, @class,
                     rotationAroundY, rotationAroundZ, clearance)];
-                case "Z":
-                    var profilePrefix = GetProfilePrefix(profileText);
-                    if (profiles_I.Contains(profilePrefix)) {
-                        goto case "I";
-                    } else if (profiles_T.Contains(profilePrefix)) {
-                        goto case "T";
-                    } else if (profiles_U.Contains(profilePrefix)) {
-                        goto case "U";
-                    } else if (profiles_M.Contains(profilePrefix)) {
-                        goto case "M";
-                    } else {
-                        goto default;
-                    }
-                default:
-                    throw new Exception($"Profile \"{profileText}\" not supported yet.");
+            case "Z":
+                var profilePrefix = GetProfilePrefix(profileText);
+                if (profiles_I.Contains(profilePrefix)) {
+                    goto case "I";
+                } else if (profiles_T.Contains(profilePrefix)) {
+                    goto case "T";
+                } else if (profiles_U.Contains(profilePrefix)) {
+                    goto case "U";
+                } else if (profiles_M.Contains(profilePrefix)) {
+                    goto case "M";
+                } else {
+                    goto default;
+                }
+            default:
+                throw new Exception($"Profile \"{profileText}\" not supported yet.");
             }
         }
 

@@ -364,32 +364,32 @@ namespace Muggle.TsExtensions.KJ1001 {
             }
             if (IsDefaultValue(webPosition_distanceListStr_X)) {
                 switch (type) {
-                    case 0:
-                        webPosition_distanceListStr_X = "40 70 40";
-                        break;
-                    case 1:
-                        webPosition_distanceListStr_X = "50 3*70 110 3*70 50";
-                        break;
-                    case 2:
-                        webPosition_distanceListStr_X = "40 70 90 70 40";
-                        break;
-                    default:
-                        break;
+                case 0:
+                    webPosition_distanceListStr_X = "40 70 40";
+                    break;
+                case 1:
+                    webPosition_distanceListStr_X = "50 3*70 110 3*70 50";
+                    break;
+                case 2:
+                    webPosition_distanceListStr_X = "40 70 90 70 40";
+                    break;
+                default:
+                    break;
                 }
             }
             if (IsDefaultValue(webPosition_distanceListStr_Y)) {
                 switch (type) {
-                    case 0:
-                        webPosition_distanceListStr_Y = "61 59 8*70 59";
-                        break;
-                    case 1:
-                        webPosition_distanceListStr_Y = "77 84 11*80 84";
-                        break;
-                    case 2:
-                        webPosition_distanceListStr_Y = "55 50 7*70 50";
-                        break;
-                    default:
-                        break;
+                case 0:
+                    webPosition_distanceListStr_Y = "61 59 8*70 59";
+                    break;
+                case 1:
+                    webPosition_distanceListStr_Y = "77 84 11*80 84";
+                    break;
+                case 2:
+                    webPosition_distanceListStr_Y = "55 50 7*70 50";
+                    break;
+                default:
+                    break;
                 }
             }
             if (IsDefaultValue(shortBeamLength)) {

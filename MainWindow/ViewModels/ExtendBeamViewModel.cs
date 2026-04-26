@@ -22,7 +22,6 @@ using Muggle.TsExtensions.MainWindow.Services;
 using Tekla.Structures.Geometry3d;
 using Tekla.Structures.Model;
 using Tekla.Structures.Model.UI;
-using Tekla.Structures.RemotingHelper;
 using Task = System.Threading.Tasks.Task;
 using UiSelector = Tekla.Structures.Model.UI.ModelObjectSelector;
 

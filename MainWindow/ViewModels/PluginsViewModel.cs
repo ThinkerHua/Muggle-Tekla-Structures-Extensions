@@ -207,35 +207,35 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
             Point p1 = null, p2 = null;
             ArrayList points = null;
             switch (secondaryType) {
-                case ConnectionBase.SecondaryType.SECONDARYTYPE_ONE:
-                    secondaryPart = picker.PickObject(Picker.PickObjectEnum.PICK_ONE_PART, localization.GetText("prompt_Pick_secondary_part"));
-                    break;
-                case ConnectionBase.SecondaryType.SECONDARYTYPE_TWO:
-                    for (int i = 0; i < 2; i++) {
-                        secondaryPart = picker.PickObject(Picker.PickObjectEnum.PICK_ONE_PART, localization.GetText("prompt_Pick_secondary_parts"));
-                        secondaryParts.Add(secondaryPart);
-                    }
-                    break;
-                case ConnectionBase.SecondaryType.SECONDARYTYPE_MULTIPLE:
-                    var enumerator = picker.PickObjects(Picker.PickObjectsEnum.PICK_N_PARTS, localization.GetText("prompt_Pick_secondary_parts"));
-                    foreach (ModelObject obj in enumerator) {
-                        secondaryParts.Add(obj);
-                    }
-                    break;
-                default:
-                    break;
+            case ConnectionBase.SecondaryType.SECONDARYTYPE_ONE:
+                secondaryPart = picker.PickObject(Picker.PickObjectEnum.PICK_ONE_PART, localization.GetText("prompt_Pick_secondary_part"));
+                break;
+            case ConnectionBase.SecondaryType.SECONDARYTYPE_TWO:
+                for (int i = 0; i < 2; i++) {
+                    secondaryPart = picker.PickObject(Picker.PickObjectEnum.PICK_ONE_PART, localization.GetText("prompt_Pick_secondary_parts"));
+                    secondaryParts.Add(secondaryPart);
+                }
+                break;
+            case ConnectionBase.SecondaryType.SECONDARYTYPE_MULTIPLE:
+                var enumerator = picker.PickObjects(Picker.PickObjectsEnum.PICK_N_PARTS, localization.GetText("prompt_Pick_secondary_parts"));
+                foreach (ModelObject obj in enumerator) {
+                    secondaryParts.Add(obj);
+                }
+                break;
+            default:
+                break;
             }
 
             switch (seamInputType) {
-                case ConnectionBase.SeamInputType.INPUT_2_POINTS:
-                    p1 = picker.PickPoint(localization.GetText("prompt_Pick_first_position"));
-                    p2 = picker.PickPoint(localization.GetText("prompt_Pick_second_position"), p1);
-                    break;
-                case ConnectionBase.SeamInputType.INPUT_POLYGON:
-                    points = picker.PickPoints(Picker.PickPointEnum.PICK_POLYGON, localization.GetText("prompt_Pick_polygon"));
-                    break;
-                default:
-                    break;
+            case ConnectionBase.SeamInputType.INPUT_2_POINTS:
+                p1 = picker.PickPoint(localization.GetText("prompt_Pick_first_position"));
+                p2 = picker.PickPoint(localization.GetText("prompt_Pick_second_position"), p1);
+                break;
+            case ConnectionBase.SeamInputType.INPUT_POLYGON:
+                points = picker.PickPoints(Picker.PickPointEnum.PICK_POLYGON, localization.GetText("prompt_Pick_polygon"));
+                break;
+            default:
+                break;
             }
 
             var seam = new Seam {
@@ -249,21 +249,21 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
 
             seam.SetPrimaryObject(primPart);
             switch (secondaryType) {
-                case ConnectionBase.SecondaryType.SECONDARYTYPE_ONE:
-                    seam.SetSecondaryObject(secondaryPart);
-                    break;
-                default:
-                    seam.SetSecondaryObjects(secondaryParts);
-                    break;
+            case ConnectionBase.SecondaryType.SECONDARYTYPE_ONE:
+                seam.SetSecondaryObject(secondaryPart);
+                break;
+            default:
+                seam.SetSecondaryObjects(secondaryParts);
+                break;
             }
 
             switch (seamInputType) {
-                case ConnectionBase.SeamInputType.INPUT_2_POINTS:
-                    seam.SetInputPositions(p1, p2);
-                    break;
-                default:
-                    seam.SetInputPolygon(new Polygon { Points = points });
-                    break;
+            case ConnectionBase.SeamInputType.INPUT_2_POINTS:
+                seam.SetInputPositions(p1, p2);
+                break;
+            default:
+                seam.SetInputPolygon(new Polygon { Points = points });
+                break;
             }
 
             try {
@@ -281,22 +281,22 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
             ModelObject secondaryPart = null;
             var secondaryParts = new ArrayList();
             switch (secondaryType) {
-                case ConnectionBase.SecondaryType.SECONDARYTYPE_ONE:
-                    secondaryPart = picker.PickObject(Picker.PickObjectEnum.PICK_ONE_PART, localization.GetText("prompt_Pick_secondary_part"));
-                    break;
-                case ConnectionBase.SecondaryType.SECONDARYTYPE_TWO:
-                    for (int i = 0; i < 2; i++) {
-                        secondaryPart = picker.PickObject(Picker.PickObjectEnum.PICK_ONE_PART, localization.GetText("prompt_Pick_secondary_parts"));
-                        secondaryParts.Add(secondaryPart);
-                    }
-                    break;
-                case ConnectionBase.SecondaryType.SECONDARYTYPE_MULTIPLE:
-                default:
-                    var enumerator = picker.PickObjects(Picker.PickObjectsEnum.PICK_N_PARTS, localization.GetText("prompt_Pick_secondary_parts"));
-                    foreach (ModelObject obj in enumerator) {
-                        secondaryParts.Add(obj);
-                    }
-                    break;
+            case ConnectionBase.SecondaryType.SECONDARYTYPE_ONE:
+                secondaryPart = picker.PickObject(Picker.PickObjectEnum.PICK_ONE_PART, localization.GetText("prompt_Pick_secondary_part"));
+                break;
+            case ConnectionBase.SecondaryType.SECONDARYTYPE_TWO:
+                for (int i = 0; i < 2; i++) {
+                    secondaryPart = picker.PickObject(Picker.PickObjectEnum.PICK_ONE_PART, localization.GetText("prompt_Pick_secondary_parts"));
+                    secondaryParts.Add(secondaryPart);
+                }
+                break;
+            case ConnectionBase.SecondaryType.SECONDARYTYPE_MULTIPLE:
+            default:
+                var enumerator = picker.PickObjects(Picker.PickObjectsEnum.PICK_N_PARTS, localization.GetText("prompt_Pick_secondary_parts"));
+                foreach (ModelObject obj in enumerator) {
+                    secondaryParts.Add(obj);
+                }
+                break;
             }
 
             var connection = new Connection {
@@ -310,12 +310,12 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
 
             connection.SetPrimaryObject(primPart);
             switch (secondaryType) {
-                case ConnectionBase.SecondaryType.SECONDARYTYPE_ONE:
-                    connection.SetSecondaryObject(secondaryPart);
-                    break;
-                default:
-                    connection.SetSecondaryObjects(secondaryParts);
-                    break;
+            case ConnectionBase.SecondaryType.SECONDARYTYPE_ONE:
+                connection.SetSecondaryObject(secondaryPart);
+                break;
+            default:
+                connection.SetSecondaryObjects(secondaryParts);
+                break;
             }
 
             try {
@@ -329,15 +329,15 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
         private CustomPart CreatCustomPart(string pluginName, CustomPartBase.CustomPartInputType customPartInputType) {
             Point p1 = null, p2 = null;
             switch (customPartInputType) {
-                case CustomPartBase.CustomPartInputType.INPUT_2_POINTS:
-                    p1 = picker.PickPoint(localization.GetText("prompt_Pick_first_position"));
-                    p2 = picker.PickPoint(localization.GetText("prompt_Pick_second_position"), p1);
-                    break;
-                case CustomPartBase.CustomPartInputType.INPUT_1_POINT:
-                    p1 = picker.PickPoint(localization.GetText("prompt_Pick_position"));
-                    break;
-                default:
-                    break;
+            case CustomPartBase.CustomPartInputType.INPUT_2_POINTS:
+                p1 = picker.PickPoint(localization.GetText("prompt_Pick_first_position"));
+                p2 = picker.PickPoint(localization.GetText("prompt_Pick_second_position"), p1);
+                break;
+            case CustomPartBase.CustomPartInputType.INPUT_1_POINT:
+                p1 = picker.PickPoint(localization.GetText("prompt_Pick_position"));
+                break;
+            default:
+                break;
             }
 
             var customPart = new CustomPart {
@@ -347,12 +347,12 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
             customPart.LoadAttributesFromFile("standard");
 
             switch (customPartInputType) {
-                case CustomPartBase.CustomPartInputType.INPUT_1_POINT:
-                    customPart.SetInputPositions(p1, p1);
-                    break;
-                default:
-                    customPart.SetInputPositions(p1, p2);
-                    break;
+            case CustomPartBase.CustomPartInputType.INPUT_1_POINT:
+                customPart.SetInputPositions(p1, p1);
+                break;
+            default:
+                customPart.SetInputPositions(p1, p2);
+                break;
             }
 
             try {
@@ -377,31 +377,31 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
             var input = new ComponentInput();
             foreach (var inputDefinition in inputDefinitions) {
                 switch (inputDefinition.GetInputType()) {
-                    case PluginBase.InputDefinition.InputTypeEnum.INPUT_ONE_POINT:
-                        input.AddOneInputPosition(inputDefinition.GetInput() as Point);
-                        break;
-                    case PluginBase.InputDefinition.InputTypeEnum.INPUT_TWO_POINTS:
-                        var twoPoints = inputDefinition.GetInput() as ArrayList;
-                        input.AddTwoInputPositions(twoPoints[0] as Point, twoPoints[1] as Point);
-                        break;
-                    case PluginBase.InputDefinition.InputTypeEnum.INPUT_POLYGON:
-                        var polygon = inputDefinition.GetInput() as ArrayList;
-                        input.AddInputPolygon(new Polygon { Points = polygon });
-                        break;
-                    case PluginBase.InputDefinition.InputTypeEnum.INPUT_ONE_OBJECT:
-                        var identifer = inputDefinition.GetInput() as Identifier;
-                        input.AddInputObject(model.SelectModelObject(identifer));
-                        break;
-                    case PluginBase.InputDefinition.InputTypeEnum.INPUT_N_OBJECTS:
-                        var identifers = inputDefinition.GetInput() as ArrayList;
-                        var objects = new ArrayList();
-                        foreach (Identifier id in identifers) {
-                            objects.Add(model.SelectModelObject(id));
-                        }
-                        input.AddInputObjects(objects);
-                        break;
-                    default:
-                        break;
+                case PluginBase.InputDefinition.InputTypeEnum.INPUT_ONE_POINT:
+                    input.AddOneInputPosition(inputDefinition.GetInput() as Point);
+                    break;
+                case PluginBase.InputDefinition.InputTypeEnum.INPUT_TWO_POINTS:
+                    var twoPoints = inputDefinition.GetInput() as ArrayList;
+                    input.AddTwoInputPositions(twoPoints[0] as Point, twoPoints[1] as Point);
+                    break;
+                case PluginBase.InputDefinition.InputTypeEnum.INPUT_POLYGON:
+                    var polygon = inputDefinition.GetInput() as ArrayList;
+                    input.AddInputPolygon(new Polygon { Points = polygon });
+                    break;
+                case PluginBase.InputDefinition.InputTypeEnum.INPUT_ONE_OBJECT:
+                    var identifer = inputDefinition.GetInput() as Identifier;
+                    input.AddInputObject(model.SelectModelObject(identifer));
+                    break;
+                case PluginBase.InputDefinition.InputTypeEnum.INPUT_N_OBJECTS:
+                    var identifers = inputDefinition.GetInput() as ArrayList;
+                    var objects = new ArrayList();
+                    foreach (Identifier id in identifers) {
+                        objects.Add(model.SelectModelObject(id));
+                    }
+                    input.AddInputObjects(objects);
+                    break;
+                default:
+                    break;
                 }
             }
             var component = new Component {
