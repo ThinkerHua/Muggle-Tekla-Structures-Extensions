@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Muggle.TsExtensions.CodingHelper.Generators.Information {
@@ -6,7 +7,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators.Information {
     /// <summary>
     /// A hash set of name or number, such as ["Part1", "Part2", "Part3"].
     /// </summary>
-    internal class NameOrNumberSet : HashSet<string>, IRequiredInformation<NameOrNumberSet> {
+    internal class NameOrNumberSet : HashSet<string>, IEquatable<NameOrNumberSet> {
 
         /*private HashSet<string> _hashSet;
 

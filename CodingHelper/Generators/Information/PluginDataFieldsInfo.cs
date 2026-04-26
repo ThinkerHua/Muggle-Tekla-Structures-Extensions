@@ -1,5 +1,5 @@
 ﻿namespace Muggle.TsExtensions.CodingHelper.Generators.Information {
-    internal record struct PluginDataFieldsInfo : IRequiredInformation<PluginDataFieldsInfo> {
+    internal record struct PluginDataFieldsInfo {
 
         public ClassInfo ClassInfo;
 

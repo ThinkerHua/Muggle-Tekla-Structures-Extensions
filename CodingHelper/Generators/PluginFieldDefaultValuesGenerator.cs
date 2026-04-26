@@ -12,6 +12,7 @@
  *  PluginFieldDefaultValuesGenerator.cs: help to generate set data to default method for plugin.
  *  written by Huang YongXing - thinkerhua@hotmail.com
  *==============================================================================*/
+
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -39,451 +40,18 @@ internal class PluginFieldDefaultValuesGenerator : IIncrementalGenerator {
     ];
 
     /// <summary>
-    /// Dictionary of default values.
+    /// Dictionary of preset values.
     /// <list type="bullet">
     ///     <item>Key - attribute short name, such as "PartFieldDefaultValuesAttribute".</item>
-    ///     <item>Value - dictionary of field name and default value.
+    ///     <item>Value - dictionary of field name and preset value.
     ///         <list type="bullet">
     ///             <item>Key - field name, such as "profile".</item>
-    ///             <item>Value - default value.</item>
+    ///             <item>Value - preset value.</item>
     ///         </list>
     ///     </item>
     /// </list>
     /// </summary>
-    private ReadOnlyDictionary<string, ReadOnlyDictionary<string, string>> DefaultValues { get; }
-
-    #region Initial files
-
-    private const string PartFieldDefaultValuesAttribute =
-        """
-        using System;
-
-        namespace Muggle.TsExtensions.CodingHelper.Generators {
-
-            /// <summary>
-            /// Register default value for part fields.
-            /// </summary>
-            /// <remarks>
-            /// You need to manually call the "SetDataToDefaultIfUnset" method.
-            /// </remarks>
-            [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Class, AllowMultiple = true)]
-            public class PartFieldDefaultValuesAttribute : Attribute {
-
-                /// <summary>
-                /// Register default value by part name.
-                /// </summary>
-                /// <param name="partName">The name registered by <see cref="PartFieldsAttribute"/>.</param>
-                /// <param name="profile">The default value for the "ProfileString" property of "Part.Profile".</param>
-                /// <param name="material">The default value for the "MaterialString" property of "Part.Material".</param>
-                /// <param name="name">The default value for the "Name" property of "Part".</param>
-                /// <param name="finish">The default value for the "Finish" property of "Part".</param>
-                /// <param name="class">The default value for the "Class" property of "Part".</param>
-                /// <param name="assemblyPrefix">The default value for the "Prefix" property of "Part.AssemblyNumber".</param>
-                /// <param name="assemblyStartNumber">The default value for the "StartNumber" property of "Part.AssemblyNumber".</param>
-                /// <param name="partPrefix">The default value for the "Prefix" property of "Part.PartNumber".</param>
-                /// <param name="partStartNumber">The default value for the "StartNumber" property of "Part.PartNumber".</param>
-                public PartFieldDefaultValuesAttribute(
-                    string partName, string profile = "", string material = "", string name = "", string finish = "",
-                    int @class = 99, string assemblyPrefix = "A", int assemblyStartNumber = 1, string partPrefix = "P",
-                    int partStartNumber = 1) {
-                    
-                }
-
-                /// <summary>
-                /// Register default value by part number.
-                /// </summary>
-                /// <param name="partNumber">The number registered by <see cref="PartFieldsAttribute"/>.</param>
-                /// <param name="profile">The default value for the "ProfileString" property of "Part.Profile".</param>
-                /// <param name="material">The default value for the "MaterialString" property of "Part.Material".</param>
-                /// <param name="name">The default value for the "Name" property of "Part".</param>
-                /// <param name="finish">The default value for the "Finish" property of "Part".</param>
-                /// <param name="class">The default value for the "Class" property of "Part".</param>
-                /// <param name="assemblyPrefix">The default value for the "Prefix" property of "Part.AssemblyNumber".</param>
-                /// <param name="assemblyStartNumber">The default value for the "StartNumber" property of "Part.AssemblyNumber".</param>
-                /// <param name="partPrefix">The default value for the "Prefix" property of "Part.PartNumber".</param>
-                /// <param name="partStartNumber">The default value for the "StartNumber" property of "Part.PartNumber".</param>
-                public PartFieldDefaultValuesAttribute(
-                    int partNumber, string profile = "", string material = "", string name = "", string finish = "",
-                    int @class = 99, string assemblyPrefix = "A", int assemblyStartNumber = 1, string partPrefix = "P",
-                    int partStartNumber = 1) {
-                    
-                }
-            }
-        }
-
-        """;
-
-    private const string PlateFieldDefaultValuesAttribute =
-        """
-        using System;
-
-        namespace Muggle.TsExtensions.CodingHelper.Generators {
-            
-            /// <summary>
-            /// Register default value for plate fields.
-            /// </summary>
-            /// <remarks>
-            /// You need to manually call the "SetDataToDefaultIfUnset" method.
-            /// </remarks>
-            [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Class, AllowMultiple = true)]
-            public class PlateFieldDefaultValuesAttribute : Attribute {
-                
-                /// <summary>
-                /// Register default value by plate name.
-                /// </summary>
-                /// <param name="plateName">The name registered by <see cref="PartFieldsAttribute"/>.</param>
-                /// <param name="thickness">The default value for plate's thickness.</param>
-                /// <param name="breadth">The default value for plate's breadth.</param>
-                /// <param name="height">The default value for plate's height.</param>
-                /// <param name="material">The default value for the "MaterialString" property of "Part.Material".</param>
-                /// <param name="name">The default value for the "Name" property of "Part".</param>
-                /// <param name="finish">The default value for the "Finish" property of "Part".</param>
-                /// <param name="class">The default value for the "Class" property of "Part".</param>
-                /// <param name="assemblyPrefix">The default value for the "Prefix" property of "Part.AssemblyNumber".</param>
-                /// <param name="assemblyStartNumber">The default value for the "StartNumber" property of "Part.AssemblyNumber".</param>
-                /// <param name="partPrefix">The default value for the "Prefix" property of "Part.PartNumber".</param>
-                /// <param name="partStartNumber">The default value for the "StartNumber" property of "Part.PartNumber".</param>
-                public PlateFieldDefaultValuesAttribute(
-                    string plateName, double thickness = 0, double breadth = 0, double height = 0, string material = "",
-                    string name = "", string finish = "", int @class = 99, string assemblyPrefix = "A",
-                    int assemblyStartNumber = 1, string partPrefix = "P", int partStartNumber = 1) {
-                    
-                }
-
-                /// <summary>
-                /// Register default value by plate number.
-                /// </summary>
-                /// <param name="plateNumber">The number registered by <see cref="PartFieldsAttribute"/>.</param>
-                /// <param name="thickness">The default value for plate's thickness.</param>
-                /// <param name="breadth">The default value for plate's breadth.</param>
-                /// <param name="height">The default value for plate's height.</param>
-                /// <param name="material">The default value for the "MaterialString" property of "Part.Material".</param>
-                /// <param name="name">The default value for the "Name" property of "Part".</param>
-                /// <param name="finish">The default value for the "Finish" property of "Part".</param>
-                /// <param name="class">The default value for the "Class" property of "Part".</param>
-                /// <param name="assemblyPrefix">The default value for the "Prefix" property of "Part.AssemblyNumber".</param>
-                /// <param name="assemblyStartNumber">The default value for the "StartNumber" property of "Part.AssemblyNumber".</param>
-                /// <param name="partPrefix">The default value for the "Prefix" property of "Part.PartNumber".</param>
-                /// <param name="partStartNumber">The default value for the "StartNumber" property of "Part.PartNumber".</param>
-                public PlateFieldDefaultValuesAttribute(
-                    int plateNumber, double thickness = 0, double breadth = 0, double height = 0, string material = "",
-                    string name = "", string finish = "", int @class = 99, string assemblyPrefix = "A",
-                    int assemblyStartNumber = 1, string partPrefix = "P", int partStartNumber = 1) {
-                    
-                }
-            }
-        }
-
-        """;
-
-    private const string WeldFieldDefaultValuesAttribute =
-        """
-        using System;
-
-        namespace Muggle.TsExtensions.CodingHelper.Generators {
-            
-            /// <summary>
-            /// Register default value for weld fields.
-            /// </summary>
-            /// <remarks>
-            /// You need to manually call the "SetDataToDefaultIfUnset" method.
-            /// </remarks>
-            [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Class, AllowMultiple = true)]
-            public class WeldFieldDefaultValuesAttribute : Attribute {
-                
-                /// <summary>
-                /// Register default value by weld name.
-                /// </summary>
-                /// <param name="weldName">The name registered by <see cref="WeldFieldsAttribute"/>.</param>
-                /// <param name="typeAbove">The default value for the "TypeAbove" property of "BaseWeld".</param>
-                /// <param name="typeBelow">The default value for the "TypeBelow" property of "BaseWeld".</param>
-                /// <param name="sizeAbove">The default value for the "SizeAbove" property of "BaseWeld".</param>
-                /// <param name="sizeBelow">The default value for the "SizeBelow" property of "BaseWeld".</param>
-                /// <param name="angleAbove">The default value for the "AngleAbove" property of "BaseWeld".</param>
-                /// <param name="angleBelow">The default value for the "AngleBelow" property of "BaseWeld".</param>
-                /// <param name="contourAbove">The default value for the "ContourAbove" property of "BaseWeld".</param>
-                /// <param name="contourBelow">The default value for the "ContourBelow" property of "BaseWeld".</param>
-                /// <param name="finishAbove">The default value for the "FinishAbove" property of "BaseWeld".</param>
-                /// <param name="finishBelow">The default value for the "FinishBelow" property of "BaseWeld".</param>
-                /// <param name="rootFaceAbove">The default value for the "RootFaceAbove" property of "BaseWeld".</param>
-                /// <param name="rootFaceBelow">The default value for the "RootFaceBelow" property of "BaseWeld".</param>
-                /// <param name="effectiveThroatAbove">The default value for the "EffectiveThroatAbove" property of "BaseWeld".</param>
-                /// <param name="effectiveThroatBelow">The default value for the "EffectiveThroatBelow" property of "BaseWeld".</param>
-                /// <param name="rootOpeningAbove">The default value for the "RootOpeningAbove" property of "BaseWeld".</param>
-                /// <param name="rootOpeningBelow">The default value for the "RootOpeningBelow" property of "BaseWeld".</param>
-                /// <param name="incrementAmountAbove">The default value for the "IncrementAmountAbove" property of "BaseWeld".</param>
-                /// <param name="incrementAmountBelow">The default value for the "IncrementAmountBelow" property of "BaseWeld".</param>
-                /// <param name="lengthAbove">The default value for the "LengthAbove" property of "BaseWeld".</param>
-                /// <param name="lengthBelow">The default value for the "LengthBelow" property of "BaseWeld".</param>
-                /// <param name="pitchAbove">The default value for the "PitchAbove" property of "BaseWeld".</param>
-                /// <param name="pitchBelow">The default value for the "PitchBelow" property of "BaseWeld".</param>
-                /// <param name="around">The default value for the "AroundWeld" property of "BaseWeld".</param>
-                /// <param name="shop">The default value for the "ShopWeld" property of "BaseWeld".</param>
-                /// <param name="placement">The default value for the "Placement" property of "BaseWeld".</param>
-                /// <param name="preparation">The default value for the "Preparation" property of "BaseWeld".</param>
-                /// <param name="intermittent">The default value for the "IntermittentType" property of "BaseWeld".</param>
-                /// <param name="referenceText">The default value for the "ReferenceText" property of "BaseWeld".</param>
-                public WeldFieldDefaultValuesAttribute(
-                    string weldName, int typeAbove = 0, int typeBelow = 0, double sizeAbove = 0.0, double sizeBelow = 0.0,
-                    double angleAbove = 0.0, double angleBelow = 0.0, int contourAbove = 0, int contourBelow = 0,
-                    int finishAbove = 0, int finishBelow = 0, double rootFaceAbove = 0.0, double rootFaceBelow = 0.0,
-                    double effectiveThroatAbove = 0.0, double effectiveThroatBelow = 0.0,
-                    double rootOpeningAbove = 0.0, double rootOpeningBelow = 0.0,
-                    int incrementAmountAbove = 0, int incrementAmountBelow = 0,
-                    double lengthAbove = 0.0, double lengthBelow = 0.0, double pitchAbove = 0.0, double pitchBelow = 0.0,
-                    int around = 0, int shop = 0, int placement = 0, int preparation = 0,
-                    int intermittent = 0, string referenceText = "") {
-                    
-                }
-                
-                /// <summary>
-                /// Register default value by weld number.
-                /// </summary>
-                /// <param name="weldNumber">The number registered by <see cref="WeldFieldsAttribute"/>.</param>
-                /// <param name="typeAbove">The default value for the "TypeAbove" property of "BaseWeld".</param>
-                /// <param name="typeBelow">The default value for the "TypeBelow" property of "BaseWeld".</param>
-                /// <param name="sizeAbove">The default value for the "SizeAbove" property of "BaseWeld".</param>
-                /// <param name="sizeBelow">The default value for the "SizeBelow" property of "BaseWeld".</param>
-                /// <param name="angleAbove">The default value for the "AngleAbove" property of "BaseWeld".</param>
-                /// <param name="angleBelow">The default value for the "AngleBelow" property of "BaseWeld".</param>
-                /// <param name="contourAbove">The default value for the "ContourAbove" property of "BaseWeld".</param>
-                /// <param name="contourBelow">The default value for the "ContourBelow" property of "BaseWeld".</param>
-                /// <param name="finishAbove">The default value for the "FinishAbove" property of "BaseWeld".</param>
-                /// <param name="finishBelow">The default value for the "FinishBelow" property of "BaseWeld".</param>
-                /// <param name="rootFaceAbove">The default value for the "RootFaceAbove" property of "BaseWeld".</param>
-                /// <param name="rootFaceBelow">The default value for the "RootFaceBelow" property of "BaseWeld".</param>
-                /// <param name="effectiveThroatAbove">The default value for the "EffectiveThroatAbove" property of "BaseWeld".</param>
-                /// <param name="effectiveThroatBelow">The default value for the "EffectiveThroatBelow" property of "BaseWeld".</param>
-                /// <param name="rootOpeningAbove">The default value for the "RootOpeningAbove" property of "BaseWeld".</param>
-                /// <param name="rootOpeningBelow">The default value for the "RootOpeningBelow" property of "BaseWeld".</param>
-                /// <param name="incrementAmountAbove">The default value for the "IncrementAmountAbove" property of "BaseWeld".</param>
-                /// <param name="incrementAmountBelow">The default value for the "IncrementAmountBelow" property of "BaseWeld".</param>
-                /// <param name="lengthAbove">The default value for the "LengthAbove" property of "BaseWeld".</param>
-                /// <param name="lengthBelow">The default value for the "LengthBelow" property of "BaseWeld".</param>
-                /// <param name="pitchAbove">The default value for the "PitchAbove" property of "BaseWeld".</param>
-                /// <param name="pitchBelow">The default value for the "PitchBelow" property of "BaseWeld".</param>
-                /// <param name="around">The default value for the "AroundWeld" property of "BaseWeld".</param>
-                /// <param name="shop">The default value for the "ShopWeld" property of "BaseWeld".</param>
-                /// <param name="placement">The default value for the "Placement" property of "BaseWeld".</param>
-                /// <param name="preparation">The default value for the "Preparation" property of "BaseWeld".</param>
-                /// <param name="intermittent">The default value for the "IntermittentType" property of "BaseWeld".</param>
-                /// <param name="referenceText">The default value for the "ReferenceText" property of "BaseWeld".</param>
-                public WeldFieldDefaultValuesAttribute(
-                    int weldNumber, int typeAbove = 0, int typeBelow = 0, double sizeAbove = 0.0, double sizeBelow = 0.0,
-                    double angleAbove = 0.0, double angleBelow = 0.0, int contourAbove = 0, int contourBelow = 0,
-                    int finishAbove = 0, int finishBelow = 0, double rootFaceAbove = 0.0, double rootFaceBelow = 0.0,
-                    double effectiveThroatAbove = 0.0, double effectiveThroatBelow = 0.0,
-                    double rootOpeningAbove = 0.0, double rootOpeningBelow = 0.0,
-                    int incrementAmountAbove = 0, int incrementAmountBelow = 0,
-                    double lengthAbove = 0.0, double lengthBelow = 0.0, double pitchAbove = 0.0, double pitchBelow = 0.0,
-                    int around = 0, int shop = 0, int placement = 0, int preparation = 0,
-                    int intermittent = 0, string referenceText = "") {
-                    
-                }
-            }
-        }
-
-        """;
-
-    private const string BoltFieldDefaultValuesAttribute =
-        """
-        using System;
-
-        namespace Muggle.TsExtensions.CodingHelper.Generators {
-            
-            /// <summary>
-            /// Register default value for bolt fields.
-            /// </summary>
-            /// <remarks>
-            /// You need to manually call the "SetDataToDefaultIfUnset" method.
-            /// </remarks>
-            [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Class, AllowMultiple = true)]
-            public class BoltFieldDefaultValuesAttribute : Attribute {
-                
-                /// <summary>
-                /// Register default value by bolt name.
-                /// </summary>
-                /// <param name="boltName">The name registered by <see cref="BoltFieldsAttribute"/>.</param>
-                /// <param name="size">The default value for the "BoltSize" property of "BoltGroup".</param>
-                /// <param name="standard">The default value for the "BoltStandard" property of "BoltGroup".</param>
-                /// <param name="distXText">The default value used by the "AddBoltDistX" method of "BoltArray" or "BoltXYList".</param>
-                /// <param name="distYText">The default value used by the "AddBoltDistY" method of "BoltArray" or "BoltXYList".</param>
-                /// <param name="type">The default value for the "BoltType" property of "BoltGroup".</param>
-                /// <param name="threadInMaterial">The default value for the "ThreadInMaterial" property of "BoltGroup".</param>
-                /// <param name="cutLength">The default value for the "CutLength" property of "BoltGroup".</param>
-                /// <param name="extraLength">The default value for the "ExtraLength" property of "BoltGroup".</param>
-                /// <param name="tolerance">The default value for the "Tolerance" property of "BoltGroup".</param>
-                /// <param name="plainType">The default value for the "PlainHoleType" property of "BoltGroup".</param>
-                /// <param name="blindHoleDepth">The default value for the "BlindHoleDepth" property of "BoltGroup".</param>
-                /// <param name="hole1">The default value for the "Hole1" property of "BoltGroup".</param>
-                /// <param name="hole2">The default value for the "Hole2" property of "BoltGroup".</param>
-                /// <param name="hole3">The default value for the "Hole3" property of "BoltGroup".</param>
-                /// <param name="hole4">The default value for the "Hole4" property of "BoltGroup".</param>
-                /// <param name="hole5">The default value for the "Hole5" property of "BoltGroup".</param>
-                /// <param name="holeType">The default value for the "HoleType" property of "BoltGroup".</param>
-                /// <param name="slottedHoleX">The default value for the "SlottedHoleX" property of "BoltGroup".</param>
-                /// <param name="slottedHoleY">The default value for the "SlottedHoleY" property of "BoltGroup".</param>
-                /// <param name="rotateSlots">The default value for the "RotateSlots" property of "BoltGroup".</param>
-                /// <param name="isBolt">The default value for the "Bolt" property of "BoltGroup".</param>
-                /// <param name="useNut1">The default value for the "Nut1" property of "BoltGroup".</param>
-                /// <param name="useNut2">The default value for the "Nut2" property of "BoltGroup".</param>
-                /// <param name="useWasher1">The default value for the "Washer1" property of "BoltGroup".</param>
-                /// <param name="useWasher2">The default value for the "Washer2" property of "BoltGroup".</param>
-                /// <param name="useWasher3">The default value for the "Washer3" property of "BoltGroup".</param>
-                public BoltFieldDefaultValuesAttribute(
-                    string boltName, double size = 8.0, string standard = "A", string distXText = "", string distYText = "", 
-                    int type = 0, int threadInMaterial = 1, double cutLength = 100.0, double extraLength = 0.0, 
-                    double tolerance = 2.0, int plainType = 0, double blindHoleDepth = 0.0, int hole1 = 1, int hole2 = 1, 
-                    int hole3 = 0, int hole4 = 0, int hole5 = 0, int holeType = 0, double slottedHoleX = 0.0, 
-                    double slottedHoleY = 0.0, int rotateSlots = 2, int isBolt = 1, int useNut1 = 1, int useNut2 = 0, 
-                    int useWasher1 = 0, int useWasher2 = 0, int useWasher3 = 1) {
-                    
-                }
-                
-                /// <summary>
-                /// Register default value by bolt number.
-                /// </summary>
-                /// <param name="boltNumber">The number registered by <see cref="BoltFieldsAttribute"/>.</param>
-                /// <param name="size">The default value for the "BoltSize" property of "BoltGroup".</param>
-                /// <param name="standard">The default value for the "BoltStandard" property of "BoltGroup".</param>
-                /// <param name="distXText">The default value used by the "AddBoltDistX" method of "BoltArray" or "BoltXYList".</param>
-                /// <param name="distYText">The default value used by the "AddBoltDistY" method of "BoltArray" or "BoltXYList".</param>
-                /// <param name="type">The default value for the "BoltType" property of "BoltGroup".</param>
-                /// <param name="threadInMaterial">The default value for the "ThreadInMaterial" property of "BoltGroup".</param>
-                /// <param name="cutLength">The default value for the "CutLength" property of "BoltGroup".</param>
-                /// <param name="extraLength">The default value for the "ExtraLength" property of "BoltGroup".</param>
-                /// <param name="tolerance">The default value for the "Tolerance" property of "BoltGroup".</param>
-                /// <param name="plainType">The default value for the "PlainHoleType" property of "BoltGroup".</param>
-                /// <param name="blindHoleDepth">The default value for the "BlindHoleDepth" property of "BoltGroup".</param>
-                /// <param name="hole1">The default value for the "Hole1" property of "BoltGroup".</param>
-                /// <param name="hole2">The default value for the "Hole2" property of "BoltGroup".</param>
-                /// <param name="hole3">The default value for the "Hole3" property of "BoltGroup".</param>
-                /// <param name="hole4">The default value for the "Hole4" property of "BoltGroup".</param>
-                /// <param name="hole5">The default value for the "Hole5" property of "BoltGroup".</param>
-                /// <param name="holeType">The default value for the "HoleType" property of "BoltGroup".</param>
-                /// <param name="slottedHoleX">The default value for the "SlottedHoleX" property of "BoltGroup".</param>
-                /// <param name="slottedHoleY">The default value for the "SlottedHoleY" property of "BoltGroup".</param>
-                /// <param name="rotateSlots">The default value for the "RotateSlots" property of "BoltGroup".</param>
-                /// <param name="isBolt">The default value for the "Bolt" property of "BoltGroup".</param>
-                /// <param name="useNut1">The default value for the "Nut1" property of "BoltGroup".</param>
-                /// <param name="useNut2">The default value for the "Nut2" property of "BoltGroup".</param>
-                /// <param name="useWasher1">The default value for the "Washer1" property of "BoltGroup".</param>
-                /// <param name="useWasher2">The default value for the "Washer2" property of "BoltGroup".</param>
-                /// <param name="useWasher3">The default value for the "Washer3" property of "BoltGroup".</param>
-                public BoltFieldDefaultValuesAttribute(
-                    int boltNumber, double size = 8.0, string standard = "A", string distXText = "", string distYText = "", 
-                    int type = 0, int threadInMaterial = 1, double cutLength = 100.0, double extraLength = 0.0, 
-                    double tolerance = 2.0, int plainType = 0, double blindHoleDepth = 0.0, int hole1 = 1, int hole2 = 1, 
-                    int hole3 = 0, int hole4 = 0, int hole5 = 0, int holeType = 0, double slottedHoleX = 0.0, 
-                    double slottedHoleY = 0.0, int rotateSlots = 2, int isBolt = 1, int useNut1 = 1, int useNut2 = 0, 
-                    int useWasher1 = 0, int useWasher2 = 0, int useWasher3 = 1) {
-                    
-                }
-            }
-        }
-
-        """;
-
-    private const string BoltCircleFieldDefaultValuesAttribute =
-        """
-        using System;
-
-        namespace Muggle.TsExtensions.CodingHelper.Generators {
-            
-            /// <summary>
-            /// Register default value for bolt circle fields.
-            /// </summary>
-            /// <remarks>
-            /// You need to manually call the "SetDataToDefaultIfUnset" method.
-            /// </remarks>
-            [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Class, AllowMultiple = true)]
-            public class BoltCircleFieldDefaultValuesAttribute : Attribute {
-                
-                /// <summary>
-                /// Register default value by bolt circle name.
-                /// </summary>
-                /// <param name="boltCircleName">The name registered by <see cref="BoltCircleFieldsAttribute"/>.</param>
-                /// <param name="size">The default value for the "BoltSize" property of "BoltGroup".</param>
-                /// <param name="standard">The default value for the "BoltStandard" property of "BoltGroup".</param>
-                /// <param name="numberOfBolts">The default value for the "NumberOfBolts" property of "BoltCircle".</param>
-                /// <param name="diameter">The default value for the "Diameter" property of "BoltCircle".</param>
-                /// <param name="type">The default value for the "BoltType" property of "BoltGroup".</param>
-                /// <param name="threadInMaterial">The default value for the "ThreadInMaterial" property of "BoltGroup".</param>
-                /// <param name="cutLength">The default value for the "CutLength" property of "BoltGroup".</param>
-                /// <param name="extraLength">The default value for the "ExtraLength" property of "BoltGroup".</param>
-                /// <param name="tolerance">The default value for the "Tolerance" property of "BoltGroup".</param>
-                /// <param name="plainType">The default value for the "PlainHoleType" property of "BoltGroup".</param>
-                /// <param name="blindHoleDepth">The default value for the "BlindHoleDepth" property of "BoltGroup".</param>
-                /// <param name="hole1">The default value for the "Hole1" property of "BoltGroup".</param>
-                /// <param name="hole2">The default value for the "Hole2" property of "BoltGroup".</param>
-                /// <param name="hole3">The default value for the "Hole3" property of "BoltGroup".</param>
-                /// <param name="hole4">The default value for the "Hole4" property of "BoltGroup".</param>
-                /// <param name="hole5">The default value for the "Hole5" property of "BoltGroup".</param>
-                /// <param name="holeType">The default value for the "HoleType" property of "BoltGroup".</param>
-                /// <param name="slottedHoleX">The default value for the "SlottedHoleX" property of "BoltGroup".</param>
-                /// <param name="slottedHoleY">The default value for the "SlottedHoleY" property of "BoltGroup".</param>
-                /// <param name="rotateSlots">The default value for the "RotateSlots" property of "BoltGroup".</param>
-                /// <param name="isBolt">The default value for the "Bolt" property of "BoltGroup".</param>
-                /// <param name="useNut1">The default value for the "Nut1" property of "BoltGroup".</param>
-                /// <param name="useNut2">The default value for the "Nut2" property of "BoltGroup".</param>
-                /// <param name="useWasher1">The default value for the "Washer1" property of "BoltGroup".</param>
-                /// <param name="useWasher2">The default value for the "Washer2" property of "BoltGroup".</param>
-                /// <param name="useWasher3">The default value for the "Washer3" property of "BoltGroup".</param>
-                public BoltCircleFieldDefaultValuesAttribute(
-                    string boltCircleName, double size = 8.0, string standard = "A", int numberOfBolts = 6, 
-                    double diameter = 100.0, int type = 0, int threadInMaterial = 1, double cutLength = 100.0, 
-                    double extraLength = 0.0, double tolerance = 2.0, int plainType = 0, double blindHoleDepth = 0.0, 
-                    int hole1 = 1, int hole2 = 1, int hole3 = 0, int hole4 = 0, int hole5 = 0, int holeType = 0, 
-                    double slottedHoleX = 0.0, double slottedHoleY = 0.0, int rotateSlots = 2, int isBolt = 1, 
-                    int useNut1 = 1, int useNut2 = 0, int useWasher1 = 0, int useWasher2 = 0, int useWasher3 = 1) {
-                    
-                }
-                
-                /// <summary>
-                /// Register default value by bolt circle number.
-                /// </summary>
-                /// <param name="boltCircleNumber">The number registered by <see cref="BoltCircleFieldsAttribute"/>.</param>
-                /// <param name="size">The default value for the "BoltSize" property of "BoltGroup".</param>
-                /// <param name="standard">The default value for the "BoltStandard" property of "BoltGroup".</param>
-                /// <param name="numberOfBolts">The default value for the "NumberOfBolts" property of "BoltCircle".</param>
-                /// <param name="diameter">The default value for the "Diameter" property of "BoltCircle".</param>
-                /// <param name="type">The default value for the "BoltType" property of "BoltGroup".</param>
-                /// <param name="threadInMaterial">The default value for the "ThreadInMaterial" property of "BoltGroup".</param>
-                /// <param name="cutLength">The default value for the "CutLength" property of "BoltGroup".</param>
-                /// <param name="extraLength">The default value for the "ExtraLength" property of "BoltGroup".</param>
-                /// <param name="tolerance">The default value for the "Tolerance" property of "BoltGroup".</param>
-                /// <param name="plainType">The default value for the "PlainHoleType" property of "BoltGroup".</param>
-                /// <param name="blindHoleDepth">The default value for the "BlindHoleDepth" property of "BoltGroup".</param>
-                /// <param name="hole1">The default value for the "Hole1" property of "BoltGroup".</param>
-                /// <param name="hole2">The default value for the "Hole2" property of "BoltGroup".</param>
-                /// <param name="hole3">The default value for the "Hole3" property of "BoltGroup".</param>
-                /// <param name="hole4">The default value for the "Hole4" property of "BoltGroup".</param>
-                /// <param name="hole5">The default value for the "Hole5" property of "BoltGroup".</param>
-                /// <param name="holeType">The default value for the "HoleType" property of "BoltGroup".</param>
-                /// <param name="slottedHoleX">The default value for the "SlottedHoleX" property of "BoltGroup".</param>
-                /// <param name="slottedHoleY">The default value for the "SlottedHoleY" property of "BoltGroup".</param>
-                /// <param name="rotateSlots">The default value for the "RotateSlots" property of "BoltGroup".</param>
-                /// <param name="isBolt">The default value for the "Bolt" property of "BoltGroup".</param>
-                /// <param name="useNut1">The default value for the "Nut1" property of "BoltGroup".</param>
-                /// <param name="useNut2">The default value for the "Nut2" property of "BoltGroup".</param>
-                /// <param name="useWasher1">The default value for the "Washer1" property of "BoltGroup".</param>
-                /// <param name="useWasher2">The default value for the "Washer2" property of "BoltGroup".</param>
-                /// <param name="useWasher3">The default value for the "Washer3" property of "BoltGroup".</param>
-                public BoltCircleFieldDefaultValuesAttribute(
-                    int boltCircleNumber, double size = 8.0, string standard = "A", int numberOfBolts = 6, 
-                    double diameter = 100.0, int type = 0, int threadInMaterial = 1, double cutLength = 100.0, 
-                    double extraLength = 0.0, double tolerance = 2.0, int plainType = 0, double blindHoleDepth = 0.0, 
-                    int hole1 = 1, int hole2 = 1, int hole3 = 0, int hole4 = 0, int hole5 = 0, int holeType = 0, 
-                    double slottedHoleX = 0.0, double slottedHoleY = 0.0, int rotateSlots = 2, int isBolt = 1, 
-                    int useNut1 = 1, int useNut2 = 0, int useWasher1 = 0, int useWasher2 = 0, int useWasher3 = 1) {
-                    
-                }
-            }
-        }
-
-        """;
-
-    #endregion
+    private ReadOnlyDictionary<string, ReadOnlyDictionary<string, string>> PresetValues { get; }
 
     #region Templates
 
@@ -739,52 +307,25 @@ internal class PluginFieldDefaultValuesGenerator : IIncrementalGenerator {
     #endregion
 
     public PluginFieldDefaultValuesGenerator() {
-        var constTexts = new[] {
-            PartFieldDefaultValuesAttribute, PlateFieldDefaultValuesAttribute, WeldFieldDefaultValuesAttribute,
-            BoltFieldDefaultValuesAttribute, BoltCircleFieldDefaultValuesAttribute,
-        };
-
         var dict = new Dictionary<string, ReadOnlyDictionary<string, string>>();
-        foreach (var text in constTexts) {
+
+        foreach (var text in GetAttributeSourceTexts(ConcernedAttributes)) {
             var defaultValues =
-                GetDefaultValuesFromConst(CSharpSyntaxTree.ParseText(text), out string attributeName);
+                GetDefaultValuesFromSyntaxTree(CSharpSyntaxTree.ParseText(text), out string attributeName);
             dict.Add(attributeName, new ReadOnlyDictionary<string, string>(defaultValues));
         }
 
-        DefaultValues = new ReadOnlyDictionary<string, ReadOnlyDictionary<string, string>>(dict);
-    }
+        PresetValues = new ReadOnlyDictionary<string, ReadOnlyDictionary<string, string>>(dict);
 
-    private static Dictionary<string, string> GetDefaultValuesFromConst(
-        SyntaxTree syntaxTree, out string attributeName) {
-        attributeName = syntaxTree.GetRoot().DescendantNodes().OfType<ConstructorDeclarationSyntax>().First()
-            .Identifier.ValueText;
-
-        var dict = new Dictionary<string, string>();
-
-        var paramListSyntaxes = syntaxTree.GetRoot().DescendantNodes().OfType<ParameterListSyntax>().First();
-        for (int i = 1; i < paramListSyntaxes.Parameters.Count; i++) {
-            var parameterSyntax = paramListSyntaxes.Parameters[i];
-            var parameterId = parameterSyntax.Identifier.ValueText;
-            var parameterValue = parameterSyntax.DescendantNodes().OfType<LiteralExpressionSyntax>().FirstOrDefault()?
-                .Token.ValueText;
-            dict.Add(parameterId, parameterValue);
-        }
-
-        return dict;
     }
 
     public void Initialize(IncrementalGeneratorInitializationContext context) {
         context.RegisterPostInitializationOutput(ctx => {
-            ctx.AddSource("PartFieldDefaultValuesAttribute.g.cs",
-                SourceText.From(PartFieldDefaultValuesAttribute, Encoding.UTF8));
-            ctx.AddSource("PlateFieldDefaultValuesAttribute.g.cs",
-                SourceText.From(PlateFieldDefaultValuesAttribute, Encoding.UTF8));
-            ctx.AddSource("WeldFieldDefaultValuesAttribute.g.cs",
-                SourceText.From(WeldFieldDefaultValuesAttribute, Encoding.UTF8));
-            ctx.AddSource("BoltFieldDefaultValuesAttribute.g.cs",
-                SourceText.From(BoltFieldDefaultValuesAttribute, Encoding.UTF8));
-            ctx.AddSource("BoltCircleFieldDefaultValuesAttribute.g.cs",
-                SourceText.From(BoltCircleFieldDefaultValuesAttribute, Encoding.UTF8));
+            foreach (var attribute in ConcernedAttributes) {
+                var shortName = attribute.Substring(attribute.LastIndexOf('.') + 1);
+                ctx.AddSource($"{shortName}.g.cs",
+                    SourceText.From(GetResourceAsString($"{shortName}.cs"), Encoding.UTF8));
+            }
         });
 
         var provider = context.SyntaxProvider.CreateSyntaxProvider(Predicate, Transform)
@@ -815,17 +356,17 @@ internal class PluginFieldDefaultValuesGenerator : IIncrementalGenerator {
         var classSymbol = semanticModel.GetDeclaredSymbol(classDeclarationSyntax);
         if (classSymbol == null) return default;
 
-        IEnumerable<AttributeSyntax> attributeSyntaxes = null;
-        IEnumerable<AttributeSyntax> fieldsFromAttSyntax = null;
+        AttributeSyntax[] attributeSyntaxes = null;
+        AttributeSyntax[] fieldsFromAttSyntax = null;
         AttributeTargets appliedTarget = default;
         string targetMemberName = null;
         ITypeSymbol dataType = null;
         var placeCnt = 0;
 
-        if (TryGetSpecificAttributes(classDeclarationSyntax.AttributeLists, semanticModel,
+        if (TryGetMatchedAttributes(classDeclarationSyntax.AttributeLists, semanticModel,
                 ConcernedAttributes, ref attributeSyntaxes)) {
             //  When applied on class, the FieldsFromAttribute must also be applied
-            if (!TryGetSpecificAttributes(classDeclarationSyntax.AttributeLists, semanticModel,
+            if (!TryGetMatchedAttributes(classDeclarationSyntax.AttributeLists, semanticModel,
                     ["Muggle.TsExtensions.CodingHelper.Generators.FieldsFromAttribute"],
                     ref fieldsFromAttSyntax)) {
                 return default;
@@ -840,7 +381,7 @@ internal class PluginFieldDefaultValuesGenerator : IIncrementalGenerator {
 
         _ = classDeclarationSyntax.Members.Where(member => {
             if (member is FieldDeclarationSyntax fieldSyntax &&
-                TryGetSpecificAttributes(fieldSyntax.AttributeLists, semanticModel,
+                TryGetMatchedAttributes(fieldSyntax.AttributeLists, semanticModel,
                     ConcernedAttributes, ref attributeSyntaxes)) {
                 placeCnt++;
                 appliedTarget = AttributeTargets.Field;
@@ -852,7 +393,7 @@ internal class PluginFieldDefaultValuesGenerator : IIncrementalGenerator {
             }
 
             if (member is PropertyDeclarationSyntax propertySyntax &&
-                TryGetSpecificAttributes(propertySyntax.AttributeLists, semanticModel,
+                TryGetMatchedAttributes(propertySyntax.AttributeLists, semanticModel,
                     ConcernedAttributes, ref attributeSyntaxes)) {
                 placeCnt++;
                 appliedTarget = AttributeTargets.Property;
@@ -996,7 +537,7 @@ internal class PluginFieldDefaultValuesGenerator : IIncrementalGenerator {
                 var statements = template.Replace("{{modelObjectName}}", modelObjectName + nameOrNumber);
 
                 var paramArgPair = kvp2.Value;
-                foreach (var kvp3 in DefaultValues[attName]) {
+                foreach (var kvp3 in PresetValues[attName]) {
                     var paramName = kvp3.Key;
                     if (!paramArgPair.TryGetValue(paramName, out var argument)) {
                         argument = kvp3.Value;

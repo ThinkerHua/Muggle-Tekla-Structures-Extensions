@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Muggle.TsExtensions.CodingHelper.Generators.Information {
@@ -17,7 +18,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators.Information {
     ///     </item>
     /// </list>
     /// </remarks>
-    internal class DefaultValueDictionary : Dictionary<string, Dictionary<string, string>>, IRequiredInformation<DefaultValueDictionary> {
+    internal class DefaultValueDictionary : Dictionary<string, Dictionary<string, string>>, IEquatable<DefaultValueDictionary> {
 
         /*private Dictionary<string, Dictionary<string, string>> _dict;
 

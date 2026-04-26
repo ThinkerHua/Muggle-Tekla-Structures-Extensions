@@ -11,17 +11,13 @@ using Distance = Tekla.Structures.Datatype.Distance;
 using Win = System.Windows;
 
 namespace Muggle.TsExtensions.Demo1 {
-
     [PartFields(1)]
     [PlateFields([1, 2])]
     [BoltFields(1)]
     [BoltCircleFields(1)]
     [WeldFields(1)]
     public partial class PluginData {
-
-        [StructuresField("UselessAttribute")]
-        public int UselessAttribute;
-
+        [StructuresField("UselessAttribute")] public int UselessAttribute;
     }
 
     [Plugin("Demo1")]
@@ -30,26 +26,26 @@ namespace Muggle.TsExtensions.Demo1 {
     [PluginCoordinateSystem(CoordinateSystemType.FROM_FIRST_POINT_AND_GLOBAL)]
     [FieldsFrom(typeof(PluginData))]
     public partial class Demo1 : PluginBase {
-
         public Model Model { get; set; }
 
-        [PartFieldDefaultValues(1, name: "Part1", profile: "HM244*175*7*11", material: "Q235", finish: "", @class: 1,
-            partPrefix: "P", partStartNumber: 1, assemblyPrefix: "A", assemblyStartNumber: 1)]
-        [PlateFieldDefaultValues(1, name: "EndPlate1", breadth: 300, thickness: 14, material: "Q235",
-            finish: "", @class: 1, partPrefix: "P", partStartNumber: 1, assemblyPrefix: "A", assemblyStartNumber: 1)]
+        [PartFieldDefaultValues(1, profile: "HM244*175*7*11", "Q235", "Part1", "", 1)]
+        [PlateFieldDefaultValues(1, 14, 300, 0, "Q235", "EndPlate1", "", 1,
+            partPrefix: "P", partStartNumber: 1, assemblyPrefix: "A-", assemblyStartNumber: 1)]
         [PlateFieldDefaultValues(2, name: "EndPlate2", breadth: 200, thickness: 10, height: 200, material: "Q235",
-            finish: "", @class: 1, partPrefix: "P", partStartNumber: 1, assemblyPrefix: "A", assemblyStartNumber: 1)]
+            finish: "", @class: 1, partPrefix: "P", partStartNumber: 1, assemblyPrefix: "A-", assemblyStartNumber: 1)]
         [WeldFieldDefaultValues(1, typeAbove: 6, sizeAbove: 8, angleAbove: 15, rootFaceAbove: 2, around: 0,
             preparation: 3)]
-        [BoltFieldDefaultValues(1, size: 20, standard: "HS10.9", distXText: "3*50", distYText: "2*70")]
-        [BoltCircleFieldDefaultValues(1, size: 20, standard: "HS10.9", numberOfBolts: 6, diameter: 120)]
+        [BoltFieldDefaultValues(1, distXText: "3*50", distYText: "2*70")]
+        [BoltCircleFieldDefaultValues(1, 20, standard: "HS10.9", 6, diameter: 120)]
         public PluginData Data { get; set; }
 
         public Demo1(PluginData data) {
             Model = new Model();
             Data = data;
+
             SetDataToDefaultIfUnset();
             GetFieldValuesFrom(data);
+
         }
 
         public override List<InputDefinition> DefineInput() {

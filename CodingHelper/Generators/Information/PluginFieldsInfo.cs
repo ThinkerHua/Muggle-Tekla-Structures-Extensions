@@ -1,7 +1,7 @@
 ﻿using Microsoft.CodeAnalysis;
 
 namespace Muggle.TsExtensions.CodingHelper.Generators.Information {
-    internal record struct PluginFieldsInfo : IRequiredInformation<PluginFieldsInfo> {
+    internal record struct PluginFieldsInfo {
 
         public ClassInfo ClassInfo;
 

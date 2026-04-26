@@ -13,6 +13,8 @@
  *  written by Huang YongXing - thinkerhua@hotmail.com
  *==============================================================================*/
 
+#pragma warning disable RS2008
+
 using System.Collections.Immutable;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -30,34 +32,34 @@ internal class SystemAttributesDiagnoser : DiagnosticAnalyzer {
         "Tekla.Structures.Plugins.StructuresFieldAttribute"
     ];
 
-    internal static DiagnosticDescriptor LengthExceedLimitationDescriptor => new DiagnosticDescriptor(
+    internal static readonly DiagnosticDescriptor LengthExceedLimitationDescriptor = new DiagnosticDescriptor(
         "MTSECH006",
         "Attribute name too long",
-        "The attribute name must be 1 to 19 characters.",
+        "The attribute name must be 1 to 19 characters",
         InternalAttributesDiagnoser.Category,
         DiagnosticSeverity.Error,
         true);
 
-    internal static DiagnosticDescriptor ContainsSpecialCharacters => new DiagnosticDescriptor(
+    internal static readonly DiagnosticDescriptor ContainsSpecialCharacters = new DiagnosticDescriptor(
         "MTSECH007",
         "Attribute name contains special characters",
-        "Attribute name must not contain special characters.",
+        "Attribute name must not contain special characters",
         InternalAttributesDiagnoser.Category,
         DiagnosticSeverity.Error,
         true);
 
-    internal static DiagnosticDescriptor ContainsUnsuggestedCharacters => new DiagnosticDescriptor(
+    internal static readonly DiagnosticDescriptor ContainsUnsuggestedCharacters = new DiagnosticDescriptor(
         "MTSECH008",
         "Attribute name contains unsuggested characters",
-        "It is not recommended to use characters other than \"_\", \"A-Z\", \"a-z\", \"0-9\".",
+        "It is not recommended to use characters other than \"_\", \"A-Z\", \"a-z\", \"0-9\"",
         InternalAttributesDiagnoser.Category,
         DiagnosticSeverity.Info,
         true);
 
-    internal static DiagnosticDescriptor UseMathematicalConstant => new DiagnosticDescriptor(
+    internal static readonly DiagnosticDescriptor UseMathematicalConstant = new DiagnosticDescriptor(
         "MTSECH009",
         "Attribute name use a mathematical constant",
-        "Attribute name cannot use a mathematical constants, such as PI or e.",
+        "Attribute name cannot use a mathematical constants, such as PI or e",
         InternalAttributesDiagnoser.Category,
         DiagnosticSeverity.Error,
         true);

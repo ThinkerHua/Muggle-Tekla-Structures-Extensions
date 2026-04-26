@@ -13,6 +13,9 @@
  *  written by Huang YongXing - thinkerhua@hotmail.com
  *==============================================================================*/
 
+#pragma warning disable RS2008
+#define CompatibleWithViewModelPropertiesGenerator
+
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -32,26 +35,27 @@ internal class InternalAttributesDiagnoser : DiagnosticAnalyzer {
     internal const string SpecialCharacterPattern = """[`~!@#$%\^&\*\(\)\-\+=\[\]\{}\|\\;:'",\.<>/?\s]""";
     internal const string UnsuggestedCharacterPattern = "[^0-9A-Za-z_]";
 
-    internal static DiagnosticDescriptor NotPartialDescriptor => new DiagnosticDescriptor(
+    internal static readonly DiagnosticDescriptor NotPartialDescriptor = new DiagnosticDescriptor(
         "MTSECH001",
         "Target class must be partial",
-        "Cannot generate members for '{0}' because it is not partial.",
+        "Cannot generate members for '{0}' because it is not partial",
         Category,
         DiagnosticSeverity.Error,
         true);
 
-    internal static DiagnosticDescriptor NotImplementINotifyPropertyChangedDescriptor => new DiagnosticDescriptor(
-        "MTSECH002",
-        "INotifyPropertyChanged not implemented",
-        "A class that applied '{0}' must implement 'INotifyPropertyChanged' interface. " +
-        "Simplified inherit it from 'ConnectionViewModel' or 'DetailViewModel' or 'NotificationObject' " +
-        "within 'Muggle.TsExtensions.CodingHelper.Generators' namespace, " +
-        "or directly implement 'INotifyPropertyChanged' interface with an 'OnPropertyChanged(string propertyName)' method.",
-        Category,
-        DiagnosticSeverity.Error,
-        true);
+    internal static readonly DiagnosticDescriptor NotImplementINotifyPropertyChangedDescriptor =
+        new DiagnosticDescriptor(
+            "MTSECH002",
+            "INotifyPropertyChanged not implemented",
+            "A class that applied '{0}' must implement 'INotifyPropertyChanged' interface. " +
+            "Simplified inherit it from 'ConnectionViewModel' or 'DetailViewModel' or 'NotificationObject' " +
+            "within 'Muggle.TsExtensions.CodingHelper.Generators' namespace, " +
+            "or directly implement 'INotifyPropertyChanged' interface with an 'OnPropertyChanged(string propertyName)' method.",
+            Category,
+            DiagnosticSeverity.Error,
+            true);
 
-    internal static DiagnosticDescriptor LengthExceedLimitationDescriptor => new DiagnosticDescriptor(
+    internal static readonly DiagnosticDescriptor LengthExceedLimitationDescriptor = new DiagnosticDescriptor(
         "MTSECH003",
         "Name or number too long",
         "Due to the limitation of Tekla Structures, " +
@@ -62,60 +66,73 @@ internal class InternalAttributesDiagnoser : DiagnosticAnalyzer {
         DiagnosticSeverity.Error,
         true);
 
-    internal static DiagnosticDescriptor ContainsSpecialCharacters => new DiagnosticDescriptor(
+    internal static readonly DiagnosticDescriptor ContainsSpecialCharacters = new DiagnosticDescriptor(
         "MTSECH004",
         "Name contains special characters",
-        "Name must not contain special characters.",
+        "Name must not contain special characters",
         Category,
         DiagnosticSeverity.Error,
         true);
 
-    internal static DiagnosticDescriptor ContainsUnsuggestedCharacters => new DiagnosticDescriptor(
+    internal static readonly DiagnosticDescriptor ContainsUnsuggestedCharacters = new DiagnosticDescriptor(
         "MTSECH005",
         "Name contains unsuggested characters",
-        "It is not recommended to use characters other than \"_\", \"A-Z\", \"a-z\", \"0-9\".",
+        "It is not recommended to use characters other than \"_\", \"A-Z\", \"a-z\", \"0-9\"",
         Category,
         DiagnosticSeverity.Info,
         true);
 
-    internal static DiagnosticDescriptor FieldsFromAttributeNotApplied => new DiagnosticDescriptor(
+    internal static readonly DiagnosticDescriptor FieldsFromAttributeNotApplied = new DiagnosticDescriptor(
         "MTSECH010",
         "\"FieldsFromAttribute\" not applied",
-        "Must also apply \"FieldsFromAttribute\" when applied \"{0}\" on class.",
+        "Must also apply \"FieldsFromAttribute\" when applied \"{0}\" on class",
         Category,
         DiagnosticSeverity.Error,
         true);
 
-    internal static DiagnosticDescriptor AppliedOnOverOnePlace => new DiagnosticDescriptor(
+    internal static readonly DiagnosticDescriptor AppliedOnOverOnePlace = new DiagnosticDescriptor(
         "MTSECH011",
         "Applied on over one place",
         "These attributes should only be applied on one place (Class, Field or Property): " +
         "\"PartFieldDefaultValuesAttribute\", \"PlateFieldDefaultValuesAttribute\", \"WeldFieldDefaultValuesAttribute\", " +
-        "\"BoltFieldDefaultValuesAttribute\", \"BoltCircleFieldDefaultValuesAttribute\".",
+        "\"BoltFieldDefaultValuesAttribute\", \"BoltCircleFieldDefaultValuesAttribute\"",
         Category,
         DiagnosticSeverity.Error,
         true);
 
-    internal static DiagnosticDescriptor DataTypeDoesNotContainTheseFields => new DiagnosticDescriptor(
+    internal static readonly DiagnosticDescriptor DataTypeDoesNotContainTheseFields = new DiagnosticDescriptor(
         "MTSECH012",
         "Target data type doesn't contain these fields",
-        "Ensure that target data type contain these fields.",
+        "Ensure that target data type contain these fields",
         Category,
         DiagnosticSeverity.Error,
         true);
 
-    internal static DiagnosticDescriptor SetDefaultValueMultiTimes => new DiagnosticDescriptor(
+    internal static readonly DiagnosticDescriptor SetDefaultValueMultiTimes = new DiagnosticDescriptor(
         "MTSECH013",
         "Set default value multi times",
-        "Should not set default value multi times.",
+        "Should not set default value multi times",
         Category,
         DiagnosticSeverity.Error,
         true);
+
+#if CompatibleWithViewModelPropertiesGenerator
+    internal static readonly DiagnosticDescriptor AlreadyBeGeneratedByOldGenerator = new DiagnosticDescriptor(
+        "MTSECH014",
+        "Already be generated by old generator",
+        "'{0}' has already registered default values for the same model object, so that '{1}' will not work",
+        Category,
+        DiagnosticSeverity.Warning,
+        true);
+#endif
 
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => [
         NotPartialDescriptor, NotImplementINotifyPropertyChangedDescriptor, LengthExceedLimitationDescriptor,
         ContainsSpecialCharacters, ContainsUnsuggestedCharacters, FieldsFromAttributeNotApplied, AppliedOnOverOnePlace,
-        DataTypeDoesNotContainTheseFields, SetDefaultValueMultiTimes
+        DataTypeDoesNotContainTheseFields, SetDefaultValueMultiTimes,
+#if CompatibleWithViewModelPropertiesGenerator
+        AlreadyBeGeneratedByOldGenerator
+#endif
     ];
 
     public override void Initialize(AnalysisContext context) {
@@ -126,17 +143,19 @@ internal class InternalAttributesDiagnoser : DiagnosticAnalyzer {
             SyntaxKind.PropertyDeclaration);
         context.RegisterSyntaxNodeAction(AnalyzeInterface, SyntaxKind.ClassDeclaration);
         context.RegisterSyntaxNodeAction(AnalyzeArgumentLength, SyntaxKind.Attribute);
-        context.RegisterSyntaxNodeAction(AnalyzePluginFieldDefaultValuesAttributeAppliedPlaces, SyntaxKind.ClassDeclaration);
+        context.RegisterSyntaxNodeAction(AnalyzePluginFieldDefaultValuesAttributeAppliedPlaces,
+            SyntaxKind.ClassDeclaration);
         context.RegisterSyntaxNodeAction(AnalyzeExistingFields, SyntaxKind.ClassDeclaration,
             SyntaxKind.FieldDeclaration,
             SyntaxKind.PropertyDeclaration);
+        context.RegisterSyntaxNodeAction(AnalyzeExistingProperties, SyntaxKind.ClassDeclaration);
     }
 
     internal static void AnalyzeIfIsPartial(SyntaxNodeAnalysisContext context) {
         var semanticModel = context.SemanticModel;
 
-        IEnumerable<AttributeSyntax> matchedAttributes = null;
-        string className = string.Empty;
+        IEnumerable<AttributeSyntax> matchedAttributes;
+        string className;
         switch (context.Node) {
         case ClassDeclarationSyntax classDeclarationSyntax:
             matchedAttributes = classDeclarationSyntax.AttributeLists.SelectMany(list => list.Attributes)
@@ -146,7 +165,8 @@ internal class InternalAttributesDiagnoser : DiagnosticAnalyzer {
                     return PluginDataFieldsGenerator.ConcernedAttributes.Contains(attQualifiedName) ||
                            ViewModelPropertiesGenerator.ConcernedAttributes.Contains(attQualifiedName) ||
                            PluginFieldsGenerator.ConcernedAttribute == attQualifiedName ||
-                           PluginFieldDefaultValuesGenerator.ConcernedAttributes.Contains(attQualifiedName);
+                           PluginFieldDefaultValuesGenerator.ConcernedAttributes.Contains(attQualifiedName) ||
+                           ViewModelPropertiesWithDefaultValuesGenerator.ConcernedAttributes.Contains(attQualifiedName);
                 }).ToArray();
 
             if (!matchedAttributes.Any()) return;
@@ -169,7 +189,7 @@ internal class InternalAttributesDiagnoser : DiagnosticAnalyzer {
             if (!matchedAttributes.Any()) return;
 
             var parentDeclarationSyntax = (ClassDeclarationSyntax)declarationSyntax.Parent;
-            if (parentDeclarationSyntax.Modifiers.Any(m => m.IsKind(SyntaxKind.PartialKeyword))) return;
+            if (parentDeclarationSyntax!.Modifiers.Any(m => m.IsKind(SyntaxKind.PartialKeyword))) return;
 
             className = ((ClassDeclarationSyntax)declarationSyntax.Parent!).Identifier.ValueText;
             break;
@@ -262,7 +282,9 @@ internal class InternalAttributesDiagnoser : DiagnosticAnalyzer {
         var attributeSyntaxes = classDeclarationSyntax.AttributeLists.SelectMany(als => als.Attributes).ToArray();
         var appliedAttributes = attributeSyntaxes
             .Select(attSyntax => semanticModel.GetTypeInfo(attSyntax).Type?.ToDisplayString())
-            .Where(name => ViewModelPropertiesGenerator.ConcernedAttributes.Contains(name)).ToArray();
+            .Where(name => ViewModelPropertiesGenerator.ConcernedAttributes.Contains(name) ||
+                           ViewModelPropertiesWithDefaultValuesGenerator.ConcernedAttributes.Contains(name))
+            .ToArray();
         if (!appliedAttributes.Any()) return;
 
         var classSymbol = semanticModel.GetDeclaredSymbol(classDeclarationSyntax);
@@ -285,8 +307,8 @@ internal class InternalAttributesDiagnoser : DiagnosticAnalyzer {
 
         var placeCnt = 0;
         var matchedAttributeSyntaxes = new List<AttributeSyntax>();
-        IEnumerable<AttributeSyntax> attributeSyntaxes = null;
-        if (TryGetSpecificAttributes(classDeclarationSyntax.AttributeLists, semanticModel,
+        AttributeSyntax[] attributeSyntaxes = null;
+        if (TryGetMatchedAttributes(classDeclarationSyntax.AttributeLists, semanticModel,
                 PluginFieldDefaultValuesGenerator.ConcernedAttributes, ref attributeSyntaxes)) {
             placeCnt++;
             // attributeSyntaxes = attributeSyntaxes.ToArray();
@@ -297,7 +319,7 @@ internal class InternalAttributesDiagnoser : DiagnosticAnalyzer {
             switch (member) {
             case FieldDeclarationSyntax:
             case PropertyDeclarationSyntax:
-                if (!TryGetSpecificAttributes(member.AttributeLists, semanticModel,
+                if (!TryGetMatchedAttributes(member.AttributeLists, semanticModel,
                         PluginFieldDefaultValuesGenerator.ConcernedAttributes, ref attributeSyntaxes)) {
                     return false;
                 }
@@ -323,17 +345,17 @@ internal class InternalAttributesDiagnoser : DiagnosticAnalyzer {
     internal static void AnalyzeExistingFields(SyntaxNodeAnalysisContext context) {
         var semanticModel = context.SemanticModel;
 
-        IEnumerable<AttributeSyntax> attributeSyntaxes = null;
-        ITypeSymbol dataType = null;
+        AttributeSyntax[] attributeSyntaxes = null;
+        ITypeSymbol dataType;
         switch (context.Node) {
         case ClassDeclarationSyntax classDeclarationSyntax:
-            if (!TryGetSpecificAttributes(classDeclarationSyntax.AttributeLists, semanticModel,
+            if (!TryGetMatchedAttributes(classDeclarationSyntax.AttributeLists, semanticModel,
                     PluginFieldDefaultValuesGenerator.ConcernedAttributes, ref attributeSyntaxes))
                 return;
 
             attributeSyntaxes = attributeSyntaxes.ToArray();
-            IEnumerable<AttributeSyntax> fieldsFromAttSyntax = null;
-            if (!TryGetSpecificAttributes(classDeclarationSyntax.AttributeLists, semanticModel,
+            AttributeSyntax[] fieldsFromAttSyntax = null;
+            if (!TryGetMatchedAttributes(classDeclarationSyntax.AttributeLists, semanticModel,
                     [PluginFieldsGenerator.ConcernedAttribute], ref fieldsFromAttSyntax)) {
                 foreach (var attributeSyntax in attributeSyntaxes) {
                     context.ReportDiagnostic(Diagnostic.Create(
@@ -343,11 +365,11 @@ internal class InternalAttributesDiagnoser : DiagnosticAnalyzer {
                 return;
             }
 
-            var expression = (TypeOfExpressionSyntax)fieldsFromAttSyntax.Single().ArgumentList.Arguments[0].Expression;
+            var expression = (TypeOfExpressionSyntax)fieldsFromAttSyntax.Single().ArgumentList!.Arguments[0].Expression;
             dataType = semanticModel.GetTypeInfo(expression.Type).Type;
             break;
         case FieldDeclarationSyntax fieldDeclarationSyntax:
-            if (!TryGetSpecificAttributes(fieldDeclarationSyntax.AttributeLists,
+            if (!TryGetMatchedAttributes(fieldDeclarationSyntax.AttributeLists,
                     semanticModel, PluginFieldDefaultValuesGenerator.ConcernedAttributes, ref attributeSyntaxes))
                 return;
 
@@ -355,7 +377,7 @@ internal class InternalAttributesDiagnoser : DiagnosticAnalyzer {
             dataType = semanticModel.GetTypeInfo(fieldDeclarationSyntax.Declaration.Type).Type;
             break;
         case PropertyDeclarationSyntax propertyDeclarationSyntax:
-            if (!TryGetSpecificAttributes(propertyDeclarationSyntax.AttributeLists,
+            if (!TryGetMatchedAttributes(propertyDeclarationSyntax.AttributeLists,
                     semanticModel, PluginFieldDefaultValuesGenerator.ConcernedAttributes, ref attributeSyntaxes))
                 return;
 
@@ -400,7 +422,7 @@ internal class InternalAttributesDiagnoser : DiagnosticAnalyzer {
                 dictPluginFieldDefaultValues.Add(attName, nameOrNumberSet);
             }
 
-            var nameOrNumberTuple = attributeSyntax.ArgumentList.Arguments.Select((a, i) => (a, i)).Select(tuple => {
+            var nameOrNumberTuple = attributeSyntax.ArgumentList!.Arguments.Select((a, i) => (a, i)).Select(tuple => {
                 var argSyntax = tuple.a;
 
                 var index = tuple.i;
@@ -415,7 +437,7 @@ internal class InternalAttributesDiagnoser : DiagnosticAnalyzer {
                 }
 
                 return (string.Empty, null);
-            }).Where(tuple => !string.IsNullOrEmpty(tuple.value)).Single();
+            }).Single(tuple => !string.IsNullOrEmpty(tuple.value));
 
             if (!dictPluginDataFields[attName].Contains(nameOrNumberTuple.value)) {
                 context.ReportDiagnostic(Diagnostic.Create(
@@ -427,6 +449,84 @@ internal class InternalAttributesDiagnoser : DiagnosticAnalyzer {
             } else {
                 context.ReportDiagnostic(Diagnostic.Create(
                     SetDefaultValueMultiTimes, nameOrNumberTuple.location));
+            }
+        }
+    }
+
+    internal static void AnalyzeExistingProperties(SyntaxNodeAnalysisContext context) {
+        var classDeclarationSyntax = (ClassDeclarationSyntax)context.Node;
+        var semanticModel = context.SemanticModel;
+
+#if CompatibleWithViewModelPropertiesGenerator
+        AttributeSyntax[] oldAttributeSyntaxes = null;
+        if (!TryGetMatchedAttributes(classDeclarationSyntax.AttributeLists, semanticModel,
+                ViewModelPropertiesGenerator.ConcernedAttributes, ref oldAttributeSyntaxes))
+            return;
+
+        var oldModelObjDict = new Dictionary<string, HashSet<string>>();
+
+        foreach (var attributeSyntax in oldAttributeSyntaxes) {
+            var attTypeInfo = semanticModel.GetTypeInfo(attributeSyntax);
+            var attQualifiedName = attTypeInfo.Type?.ToDisplayString() ?? string.Empty;
+            var attName = attQualifiedName.Substring(attQualifiedName.LastIndexOf('.') + 1);
+
+            if (!oldModelObjDict.TryGetValue(attName, out HashSet<string> modelObjSet)) {
+                modelObjSet = new HashSet<string>();
+                oldModelObjDict.Add(attName, modelObjSet);
+            }
+
+            if (attributeSyntax.ArgumentList == null) continue;
+            var arguments = attributeSyntax.ArgumentList.Arguments
+                .SelectMany(argumentSyntax =>
+                    argumentSyntax.DescendantNodes().OfType<LiteralExpressionSyntax>())
+                .Select(expressionSyntax => expressionSyntax.Token.ValueText);
+
+            foreach (var argument in arguments) {
+                modelObjSet.Add(argument);
+            }
+        }
+#endif
+
+        AttributeSyntax[] attributeSyntaxes = null;
+        if (!TryGetMatchedAttributes(classDeclarationSyntax.AttributeLists, semanticModel,
+                ViewModelPropertiesWithDefaultValuesGenerator.ConcernedAttributes, ref attributeSyntaxes))
+            return;
+
+        var modelObjDict = new Dictionary<string, HashSet<string>>();
+
+        foreach (var attributeSyntax in attributeSyntaxes) {
+            var attTypeInfo = semanticModel.GetTypeInfo(attributeSyntax);
+            var attQualifiedName = attTypeInfo.Type?.ToDisplayString() ?? string.Empty;
+            var attName = attQualifiedName.Substring(attQualifiedName.LastIndexOf('.') + 1);
+            var oldAttName = attName.Replace("WithDefaultValues", "");
+
+            if (!modelObjDict.TryGetValue(attName, out HashSet<string> modelObjSet)) {
+                modelObjSet = new HashSet<string>();
+                modelObjDict.Add(attName, modelObjSet);
+            }
+
+            if (attributeSyntax.ArgumentList == null) continue;
+
+            var index = -1;
+            foreach (var argSyntax in attributeSyntax.ArgumentList.Arguments) {
+                index++;
+
+                var parameter = argSyntax.NameColon?.Name.Identifier.ValueText;
+                var argument = ((LiteralExpressionSyntax)argSyntax.Expression).Token.ValueText;
+
+                if (index == 0 && parameter == null || parameter != null &&
+                    Regex.Match(parameter, "(part|plate|weld|bolt|boltCircle)N(ame|umber)").Success) {
+                    if (!modelObjSet.Add(argument)) {
+                        context.ReportDiagnostic(Diagnostic.Create(
+                            SetDefaultValueMultiTimes, argSyntax.GetLocation()));
+                    }
+
+                    if (oldModelObjDict.ContainsKey(oldAttName) && oldModelObjDict[oldAttName].Contains(argument)) {
+                        context.ReportDiagnostic(Diagnostic.Create(
+                            AlreadyBeGeneratedByOldGenerator, argSyntax.GetLocation(),
+                            oldAttName, attName));
+                    }
+                }
             }
         }
     }

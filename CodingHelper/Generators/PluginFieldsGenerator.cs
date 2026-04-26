@@ -12,6 +12,7 @@
  *  PluginFieldsGenerator.cs: help to generate fields and get field values method for plugin.
  *  written by Huang YongXing - thinkerhua@hotmail.com
  *==============================================================================*/
+
 using System;
 using System.Linq;
 using System.Text;
@@ -28,40 +29,6 @@ namespace Muggle.TsExtensions.CodingHelper.Generators;
 [Generator]
 public class PluginFieldsGenerator : IIncrementalGenerator {
     internal const string ConcernedAttribute = "Muggle.TsExtensions.CodingHelper.Generators.FieldsFromAttribute";
-
-    #region Initial files
-
-    private const string FieldsFromAttribute =
-        """
-        using System;
-
-        namespace Muggle.TsExtensions.CodingHelper.Generators {
-            
-            /// <summary>
-            /// Generate fields that one-to-one corresponds with each field in data.
-            /// </summary>
-            /// <remarks>
-            /// <para>You need to manually call the "GetFieldValuesFrom" method at an appropriate location.</para>
-            /// <para>Only register fields that are manually written and fields registered by
-            /// <see cref="Muggle.TsExtensions.CodingHelper.Generators.PartFieldsAttribute"/>, 
-            /// <see cref="Muggle.TsExtensions.CodingHelper.Generators.PlateFieldsAttribute"/>, 
-            /// <see cref="Muggle.TsExtensions.CodingHelper.Generators.WeldFieldsAttribute"/>, 
-            /// <see cref="Muggle.TsExtensions.CodingHelper.Generators.BoltFieldsAttribute"/>, 
-            /// <see cref="Muggle.TsExtensions.CodingHelper.Generators.BoltCircleFieldsAttribute"/>.</para>
-            /// </remarks>
-            [AttributeUsage(AttributeTargets.Class)]
-            public class FieldsFromAttribute : Attribute {
-                
-                /// <summary>
-                /// Register the public fields of the data class to this class.
-                /// </summary>
-                /// <param name="dataType">The type to register fields from.</param>
-                public FieldsFromAttribute(Type dataType) { }
-            }
-        }
-        """;
-
-    #endregion
 
     #region Templates
 
@@ -101,7 +68,9 @@ public class PluginFieldsGenerator : IIncrementalGenerator {
 
     public void Initialize(IncrementalGeneratorInitializationContext context) {
         context.RegisterPostInitializationOutput(ctx => {
-            ctx.AddSource("FieldsFromAttribute", SourceText.From(FieldsFromAttribute, Encoding.UTF8));
+            var shortName = ConcernedAttribute.Substring(ConcernedAttribute.LastIndexOf('.') + 1);
+            ctx.AddSource($"{shortName}.g.cs",
+                SourceText.From(GetResourceAsString($"{shortName}.cs"), Encoding.UTF8));
         });
 
         var provider = context.SyntaxProvider.ForAttributeWithMetadataName(ConcernedAttribute, Predicate, Transform)

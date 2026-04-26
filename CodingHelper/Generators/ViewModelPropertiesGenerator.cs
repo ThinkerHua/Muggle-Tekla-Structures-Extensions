@@ -38,657 +38,6 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
             "Muggle.TsExtensions.CodingHelper.Generators.BoltCirclePropertiesAttribute"
         ];
 
-        #region Initial files
-
-        private const string NotificationObject =
-            """
-            using System.ComponentModel;
-
-            namespace Muggle.TsExtensions.CodingHelper.Generators {
-                
-                /// <summary>
-                /// A base class that can send notifications when its properties change.
-                /// </summary>
-                public abstract class NotificationObject : INotifyPropertyChanged {
-                    
-                    public event PropertyChangedEventHandler PropertyChanged;
-                    
-                    protected void OnPropertyChanged(string name) {
-                        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
-                    }
-                }
-                
-            }
-            """;
-
-        private const string ConnectionViewModel =
-            """
-            using Tekla.Structures.Dialog;
-            using TD = Tekla.Structures.Datatype;
-
-            namespace Muggle.TsExtensions.CodingHelper.Generators {
-                
-                /// <summary>
-                /// A view model base suitable for connection plugin of Tekla Structures,
-                /// include several commonly used properties.
-                /// Inherits from <see cref="NotificationObject"/>, 
-                /// so it can send notifications when its properties changed.
-                /// </summary>
-                public abstract class ConnectionViewModel : NotificationObject {
-                    
-                    private int upDirection = 7;
-                    [StructuresDialog("zsuunta", typeof(TD.Integer))]
-                    public int UpDirection {
-                        get { return upDirection; }
-                        set {
-                            upDirection = value <= 0 || value > 7 ? 7 : value;
-                            OnPropertyChanged("UpDirection");
-                        }
-                    }
-                    
-                    private double rotationAngleY = 0.0;
-                    [StructuresDialog("zang1", typeof(TD.Double))]
-                    public double RotationAngleY {
-                        get { return rotationAngleY; }
-                        set {
-                            rotationAngleY = value == int.MinValue ? 0.0 : value;
-                            OnPropertyChanged("RotationAngleY");
-                        }
-                    }
-                    
-                    private double rotationAngleX = 0.0;
-                    [StructuresDialog("zang2", typeof(TD.Double))]
-                    public double RotationAngleX {
-                        get { return rotationAngleX; }
-                        set {
-                            rotationAngleX = value == int.MinValue ? 0.0 : value;
-                            OnPropertyChanged("RotationAngleX");
-                        }
-                    }
-                    
-                    private int locked = 0;
-                    [StructuresDialog("OBJECT_LOCKED", typeof(TD.Integer))]
-                    public int Locked {
-                        get { return locked; }
-                        set {
-                            locked = value == 1 ? 1 : 0;
-                            OnPropertyChanged("Locked");
-                        }
-                    }
-                    
-                    private int @class = -1;
-                    [StructuresDialog("group_no", typeof(TD.Integer))]
-                    public int Class {
-                        get { return @class; }
-                        set {
-                            @class = value == int.MinValue ? 0 : value;
-                            OnPropertyChanged("Class");
-                        }
-                    }
-                    
-                    private string connectionCode = string.Empty;
-                    [StructuresDialog("joint_code", typeof(TD.String))]
-                    public string ConnectionCode {
-                        get { return connectionCode; }
-                        set {
-                            connectionCode = value ?? string.Empty;
-                            OnPropertyChanged("ConnectionCode");
-                        }
-                    }
-                    
-                    private string autoDefaults = string.Empty;
-                    [StructuresDialog("ad_root", typeof(TD.String))]
-                    public string AutoDefaults {
-                        get { return autoDefaults; }
-                        set {
-                            autoDefaults = value ?? string.Empty;
-                            OnPropertyChanged("AutoDefaults");
-                        }
-                    }
-                    
-                    private string autoConnection = string.Empty;
-                    [StructuresDialog("ac_root", typeof(TD.String))]
-                    public string AutoConnection {
-                        get { return autoConnection; }
-                        set {
-                            autoConnection = value ?? string.Empty;
-                            OnPropertyChanged("AutoConnection");
-                        }
-                    }
-                }
-                
-            }
-            """;
-
-        private const string DetailViewModel =
-            """
-            using Tekla.Structures.Dialog;
-            using TD = Tekla.Structures.Datatype;
-
-            namespace Muggle.TsExtensions.CodingHelper.Generators {
-                
-                /// <summary>
-                /// A view model base suitable for detail plugin of Tekla Structures,
-                /// include several commonly used properties.
-                /// Inherits from <see cref="NotificationObject"/>, 
-                /// so it can send notifications when its properties changed.
-                /// </summary>
-                public abstract class DetailViewModel : NotificationObject {
-                    
-                    private int upDirection = 7;
-                    [StructuresDialog("zsuunta", typeof(TD.Integer))]
-                    public int UpDirection {
-                        get { return upDirection; }
-                        set {
-                            upDirection = value <= 0 || value > 7 ? 7 : value;
-                            OnPropertyChanged("UpDirection");
-                        }
-                    }
-                    
-                    private double rotationAngleY = 0.0;
-                    [StructuresDialog("zang1", typeof(TD.Double))]
-                    public double RotationAngleY {
-                        get { return rotationAngleY; }
-                        set {
-                            rotationAngleY = value == int.MinValue ? 0.0 : value;
-                            OnPropertyChanged("RotationAngleY");
-                        }
-                    }
-                    
-                    private double rotationAngleX = 0.0;
-                    [StructuresDialog("zang2", typeof(TD.Double))]
-                    public double RotationAngleX {
-                        get { return rotationAngleX; }
-                        set {
-                            rotationAngleX = value == int.MinValue ? 0.0 : value;
-                            OnPropertyChanged("RotationAngleX");
-                        }
-                    }
-                    
-                    private int vertical_position = 0;
-                    [StructuresDialog("vertical_position", typeof(TD.Integer))]
-                    public int VerticalPosition {
-                        get { return vertical_position; }
-                        set {
-                            vertical_position = value < -1 || value > 2 ? 0 : value;
-                            OnPropertyChanged("VerticalPosition");
-                        }
-                    }
-                    
-                    private int horizontal_position = 0;
-                    [StructuresDialog("horizontal_position", typeof(TD.Integer))]
-                    public int HorizontalPosition {
-                        get { return horizontal_position; }
-                        set {
-                            horizontal_position = value < -1 || value > 2 ? 0 : value;
-                            OnPropertyChanged("HorizontalPosition");
-                        }
-                    }
-                    
-                    private double vertical_offset = 0.0;
-                    [StructuresDialog("vertical_offset", typeof(TD.Double))]
-                    public double VerticalOffset {
-                        get { return vertical_offset; }
-                        set {
-                            vertical_offset = value == int.MinValue ? 0.0 : value;
-                            OnPropertyChanged("VerticalOffset");
-                        }
-                    }
-                    
-                    private double horizontal_offset = 0.0;
-                    [StructuresDialog("horizontal_offset", typeof(TD.Double))]
-                    public double HorizontalOffset {
-                        get { return horizontal_offset; }
-                        set {
-                            horizontal_offset = value == int.MinValue ? 0.0 : value;
-                            OnPropertyChanged("HorizontalOffset");
-                        }
-                    }
-                    
-                    private int upMiddleLeft = 0;
-                    [StructuresDialog("UpMiddleLeft", typeof(TD.Integer))]
-                    public int UpMiddleLeft {
-                        get { return upMiddleLeft; }
-                        set {
-                            upMiddleLeft = value == 1 ? 1 : 0;
-                            OnPropertyChanged("UpMiddleLeft");
-
-                            if (value == 1) {
-                                UpMiddleMiddle = 0; UpMiddleRight = 0;
-                                TopLeft = 0; TopMiddle = 0; TopRight = 0;
-                                MiddleLeft = 0; MiddleMiddle = 0; MiddleRight = 0;
-                                BottomLeft = 0; BottomMiddle = 0; BottomRight = 0;
-
-                                VerticalPosition = 2; HorizontalPosition = 1;
-                            }
-                        }
-                    }
-                    
-                    private int upMiddleMiddle = 0;
-                    [StructuresDialog("UpMiddleMiddle", typeof(TD.Integer))]
-                    public int UpMiddleMiddle {
-                        get { return upMiddleMiddle; }
-                        set {
-                            upMiddleMiddle = value == 1 ? 1 : 0;
-                            OnPropertyChanged("UpMiddleMiddle");
-
-                            if (value == 1) {
-                                UpMiddleLeft = 0; UpMiddleRight = 0;
-                                TopLeft = 0; TopMiddle = 0; TopRight = 0;
-                                MiddleLeft = 0; MiddleMiddle = 0; MiddleRight = 0;
-                                BottomLeft = 0; BottomMiddle = 0; BottomRight = 0;
-
-                                VerticalPosition = 2; HorizontalPosition = 2;
-                            }
-                        }
-                    }
-                    
-                    private int upMiddleRight = 0;
-                    [StructuresDialog("UpMiddleRight", typeof(TD.Integer))]
-                    public int UpMiddleRight {
-                        get { return upMiddleRight; }
-                        set {
-                            upMiddleRight = value == 1 ? 1 : 0;
-                            OnPropertyChanged("UpMiddleRight");
-
-                            if (value == 1) {
-                                UpMiddleLeft = 0; UpMiddleMiddle = 0;
-                                TopLeft = 0; TopMiddle = 0; TopRight = 0;
-                                MiddleLeft = 0; MiddleMiddle = 0; MiddleRight = 0;
-                                BottomLeft = 0; BottomMiddle = 0; BottomRight = 0;
-
-                                VerticalPosition = 2; HorizontalPosition = -1;
-                            }
-                        }
-                    }
-                    
-                    private int topLeft = 0;
-                    [StructuresDialog("TopLeft", typeof(TD.Integer))]
-                    public int TopLeft {
-                        get { return topLeft; }
-                        set {
-                            topLeft = value == 1 ? 1 : 0;
-                            OnPropertyChanged("TopLeft");
-
-                            if (value == 1) {
-                                UpMiddleLeft = 0; UpMiddleMiddle = 0; UpMiddleRight = 0;
-                                TopMiddle = 0; TopRight = 0;
-                                MiddleLeft = 0; MiddleMiddle = 0; MiddleRight = 0;
-                                BottomLeft = 0; BottomMiddle = 0; BottomRight = 0;
-
-                                VerticalPosition = 1; HorizontalPosition = 1;
-                            }
-                        }
-                    }
-                    
-                    private int topMiddle = 0;
-                    [StructuresDialog("TopMiddle", typeof(TD.Integer))]
-                    public int TopMiddle {
-                        get { return topMiddle; }
-                        set {
-                            topMiddle = value == 1 ? 1 : 0;
-                            OnPropertyChanged("TopMiddle");
-
-                            if (value == 1) {
-                                UpMiddleLeft = 0; UpMiddleMiddle = 0; UpMiddleRight = 0;
-                                TopLeft = 0; TopRight = 0;
-                                MiddleLeft = 0; MiddleMiddle = 0; MiddleRight = 0;
-                                BottomLeft = 0; BottomMiddle = 0; BottomRight = 0;
-
-                                VerticalPosition = 1; HorizontalPosition = 0;
-                            }
-                        }
-                    }
-                    
-                    private int topRight = 0;
-                    [StructuresDialog("TopRight", typeof(TD.Integer))]
-                    public int TopRight {
-                        get { return topRight; }
-                        set {
-                            topRight = value == 1 ? 1 : 0;
-                            OnPropertyChanged("TopRight");
-
-                            if (value == 1) {
-                                UpMiddleLeft = 0; UpMiddleMiddle = 0; UpMiddleRight = 0;
-                                TopLeft = 0; TopMiddle = 0;
-                                MiddleLeft = 0; MiddleMiddle = 0; MiddleRight = 0;
-                                BottomLeft = 0; BottomMiddle = 0; BottomRight = 0;
-
-                                VerticalPosition = 1; HorizontalPosition = -1;
-                            }
-                        }
-                    }
-                    
-                    private int middleLeft = 0;
-                    [StructuresDialog("MiddleLeft", typeof(TD.Integer))]
-                    public int MiddleLeft {
-                        get { return middleLeft; }
-                        set {
-                            middleLeft = value == 1 ? 1 : 0;
-                            OnPropertyChanged("MiddleLeft");
-
-                            if (value == 1) {
-                                UpMiddleLeft = 0; UpMiddleMiddle = 0; UpMiddleRight = 0;
-                                TopLeft = 0; TopMiddle = 0; TopRight = 0;
-                                MiddleMiddle = 0; MiddleRight = 0;
-                                BottomLeft = 0; BottomMiddle = 0; BottomRight = 0;
-
-                                VerticalPosition = 0; HorizontalPosition = 1;
-                            }
-                        }
-                    }
-                    
-                    private int middleMiddle = 1;
-                    [StructuresDialog("MiddleMiddle", typeof(TD.Integer))]
-                    public int MiddleMiddle {
-                        get { return middleMiddle; }
-                        set {
-                            middleMiddle = value == 1 ? 1 : 0;
-                            OnPropertyChanged("MiddleMiddle");
-
-                            if (value == 1) {
-                                UpMiddleLeft = 0; UpMiddleMiddle = 0; UpMiddleRight = 0;
-                                TopLeft = 0; TopMiddle = 0; TopRight = 0;
-                                MiddleLeft = 0; MiddleRight = 0;
-                                BottomLeft = 0; BottomMiddle = 0; BottomRight = 0;
-
-                                VerticalPosition = 0; HorizontalPosition = 0;
-                            }
-                        }
-                    }
-                    
-                    private int middleRight = 0;
-                    [StructuresDialog("MiddleRight", typeof(TD.Integer))]
-                    public int MiddleRight {
-                        get { return middleRight; }
-                        set {
-                            middleRight = value == 1 ? 1 : 0;
-                            OnPropertyChanged("MiddleRight");
-
-                            if (value == 1) {
-                                UpMiddleLeft = 0; UpMiddleMiddle = 0; UpMiddleRight = 0;
-                                TopLeft = 0; TopMiddle = 0; TopRight = 0;
-                                MiddleLeft = 0; MiddleMiddle = 0;
-                                BottomLeft = 0; BottomMiddle = 0; BottomRight = 0;
-
-                                VerticalPosition = 0; HorizontalPosition = -1;
-                            }
-                        }
-                    }
-                    
-                    private int bottomLeft = 0;
-                    [StructuresDialog("BottomLeft", typeof(TD.Integer))]
-                    public int BottomLeft {
-                        get { return bottomLeft; }
-                        set {
-                            bottomLeft = value == 1 ? 1 : 0;
-                            OnPropertyChanged("BottomLeft");
-
-                            if (value == 1) {
-                                UpMiddleLeft = 0; UpMiddleMiddle = 0; UpMiddleRight = 0;
-                                TopLeft = 0; TopMiddle = 0; TopRight = 0;
-                                MiddleLeft = 0; MiddleMiddle = 0; MiddleRight = 0;
-                                BottomMiddle = 0; BottomRight = 0;
-
-                                VerticalPosition = -1; HorizontalPosition = 1;
-                            }
-                        }
-                    }
-                    
-                    private int bottomMiddle = 0;
-                    [StructuresDialog("BottomMiddle", typeof(TD.Integer))]
-                    public int BottomMiddle {
-                        get { return bottomMiddle; }
-                        set {
-                            bottomMiddle = value == 1 ? 1 : 0;
-                            OnPropertyChanged("BottomMiddle");
-
-                            if (value == 1) {
-                                UpMiddleLeft = 0; UpMiddleMiddle = 0; UpMiddleRight = 0;
-                                TopLeft = 0; TopMiddle = 0; TopRight = 0;
-                                MiddleLeft = 0; MiddleMiddle = 0; MiddleRight = 0;
-                                BottomLeft = 0; BottomRight = 0;
-
-                                VerticalPosition = -1; HorizontalPosition = 0;
-                            }
-                        }
-                    }
-                    
-                    private int bottomRight = 0;
-                    [StructuresDialog("BottomRight", typeof(TD.Integer))]
-                    public int BottomRight {
-                        get { return bottomRight; }
-                        set {
-                            bottomRight = value == 1 ? 1 : 0;
-                            OnPropertyChanged("BottomRight");
-
-                            if (value == 1) {
-                                UpMiddleLeft = 0; UpMiddleMiddle = 0; UpMiddleRight = 0;
-                                TopLeft = 0; TopMiddle = 0; TopRight = 0;
-                                MiddleLeft = 0; MiddleMiddle = 0; MiddleRight = 0;
-                                BottomLeft = 0; BottomMiddle = 0;
-
-                                VerticalPosition = -1; HorizontalPosition = -1;
-                            }
-                        }
-                    }
-                    
-                    private int detail_type = 0;
-                    [StructuresDialog("detail_type", typeof(TD.Integer))]
-                    public int DetailType {
-                        get { return detail_type; }
-                        set {
-                            detail_type = value < 0 || value > 2 ? 0 : value;
-                            OnPropertyChanged("DetailType");
-                        }
-                    }
-                    
-                    private int locked = 0;
-                    [StructuresDialog("OBJECT_LOCKED", typeof(TD.Integer))]
-                    public int Locked {
-                        get { return locked; }
-                        set {
-                            locked = value == 1 ? 1 : 0;
-                            OnPropertyChanged("Locked");
-                        }
-                    }
-                    
-                    private int @class = -1;
-                    [StructuresDialog("group_no", typeof(TD.Integer))]
-                    public int Class {
-                        get { return @class; }
-                        set {
-                            @class = value == int.MinValue ? 0 : value;
-                            OnPropertyChanged("Class");
-                        }
-                    }
-                    
-                    private string connectionCode = string.Empty;
-                    [StructuresDialog("joint_code", typeof(TD.String))]
-                    public string ConnectionCode {
-                        get { return connectionCode; }
-                        set {
-                            connectionCode = value ?? string.Empty;
-                            OnPropertyChanged("ConnectionCode");
-                        }
-                    }
-                    
-                    private string autoDefaults = string.Empty;
-                    [StructuresDialog("ad_root", typeof(TD.String))]
-                    public string AutoDefaults {
-                        get { return autoDefaults; }
-                        set {
-                            autoDefaults = value ?? string.Empty;
-                            OnPropertyChanged("AutoDefaults");
-                        }
-                    }
-                }
-                
-            }
-            """;
-
-        private const string PartPropertiesAttribute =
-            """
-            using System;
-
-            namespace Muggle.TsExtensions.CodingHelper.Generators {
-                
-                /// <summary>
-                /// Register the part(s) properties that need to be generated for the applied class,
-                /// used by Muggle.TsExtensions.CodingHelper.Generators.ViewModelPropertiesGenerator,
-                /// cannot be used independently.
-                /// </summary>
-                /// <remarks>Mapping relationship between properties and attribute name pattern 
-                /// <a href="https://github.com/ThinkerHua/Muggle-Tekla-Structures-Extensions/blob/master/CodingHelper/AttributeNameReference.md">
-                /// see here</a>.</remarks>
-                [AttributeUsage(AttributeTargets.Class)]
-                public class PartPropertiesAttribute : Attribute {
-                    
-                    /// <summary>
-                    /// Register the part(s) properties using the given number(s).
-                    /// </summary>
-                    public PartPropertiesAttribute(params uint[] numbers) { }
-                    
-                    /// <summary>
-                    /// Register the part(s) properties using the given name(s).
-                    /// </summary>
-                    public PartPropertiesAttribute(params string[] names) { }
-                    
-                }
-                
-            }
-            """;
-
-        private const string PlatePropertiesAttribute =
-            """
-            using System;
-
-            namespace Muggle.TsExtensions.CodingHelper.Generators {
-                
-                /// <summary>
-                /// Register the plate(s) properties that need to be generated for the applied class,
-                /// used by Muggle.TsExtensions.CodingHelper.Generators.ViewModelPropertiesGenerator,
-                /// cannot be used independently.
-                /// </summary>
-                /// <remarks>Mapping relationship between properties and attribute name pattern 
-                /// <a href="https://github.com/ThinkerHua/Muggle-Tekla-Structures-Extensions/blob/master/CodingHelper/AttributeNameReference.md">
-                /// see here</a>.</remarks>
-                [AttributeUsage(AttributeTargets.Class)]
-                public class PlatePropertiesAttribute : Attribute {
-                    
-                    /// <summary>
-                    /// Register the plate(s) properties using the given number(s).
-                    /// </summary>
-                    public PlatePropertiesAttribute(params uint[] numbers)  { }
-                    
-                    /// <summary>
-                    /// Register the plate(s) properties using the given name(s).
-                    /// </summary>
-                    public PlatePropertiesAttribute(params string[] names)  { }
-                    
-                }
-                
-            }
-            """;
-
-        private const string WeldPropertiesAttribute =
-            """
-            using System;
-
-            namespace Muggle.TsExtensions.CodingHelper.Generators {
-                
-                /// <summary>
-                /// Register the weld(s) properties that need to be generated for the applied class,
-                /// used by Muggle.TsExtensions.CodingHelper.Generators.ViewModelPropertiesGenerator,
-                /// cannot be used independently.
-                /// </summary>
-                /// <remarks>Mapping relationship between properties and attribute name pattern 
-                /// <a href="https://github.com/ThinkerHua/Muggle-Tekla-Structures-Extensions/blob/master/CodingHelper/AttributeNameReference.md">
-                /// see here</a>.</remarks>
-                [AttributeUsage(AttributeTargets.Class)]
-                public class WeldPropertiesAttribute : Attribute {
-                    
-                    /// <summary>
-                    /// Register the weld(s) properties using the given number(s).
-                    /// </summary>
-                    public WeldPropertiesAttribute(params uint[] numbers) { }
-                    
-                    /// <summary>
-                    /// Register the weld(s) properties using the given name(s).
-                    /// </summary>
-                    public WeldPropertiesAttribute(params string[] names) { }
-                    
-                }
-                
-            }
-            """;
-
-        private const string BoltPropertiesAttribute =
-            """
-            using System;
-
-            namespace Muggle.TsExtensions.CodingHelper.Generators {
-                
-                /// <summary>
-                /// Register the bolt(s) properties that need to be generated for the applied class,
-                /// used by Muggle.TsExtensions.CodingHelper.Generators.ViewModelPropertiesGenerator,
-                /// cannot be used independently.
-                /// </summary>
-                /// <remarks>Mapping relationship between properties and attribute name pattern 
-                /// <a href="https://github.com/ThinkerHua/Muggle-Tekla-Structures-Extensions/blob/master/CodingHelper/AttributeNameReference.md">
-                /// see here</a>.</remarks>
-                [AttributeUsage(AttributeTargets.Class)]
-                public class BoltPropertiesAttribute : Attribute {
-                    
-                    /// <summary>
-                    /// Register the bolt(s) properties using the given number(s).
-                    /// </summary>
-                    public BoltPropertiesAttribute(params uint[] numbers) { }
-                    
-                    /// <summary>
-                    /// Register the bolt(s) properties using the given name(s).
-                    /// </summary>
-                    public BoltPropertiesAttribute(params string[] names) { }
-                    
-                }
-                
-            }
-            """;
-
-        private const string BoltCirclePropertiesAttribute =
-            """
-            using System;
-
-            namespace Muggle.TsExtensions.CodingHelper.Generators {
-                
-                /// <summary>
-                /// Register the bolt circle(s) properties that need to be generated for the applied class,
-                /// used by Muggle.TsExtensions.CodingHelper.Generators.ViewModelPropertiesGenerator,
-                /// cannot be used independently.
-                /// </summary>
-                /// <remarks>Mapping relationship between properties and attribute name pattern 
-                /// <a href="https://github.com/ThinkerHua/Muggle-Tekla-Structures-Extensions/blob/master/CodingHelper/AttributeNameReference.md">
-                /// see here</a>.</remarks>
-                [AttributeUsage(AttributeTargets.Class)]
-                public class BoltCirclePropertiesAttribute : Attribute {
-                    
-                    /// <summary>
-                    /// Register the bolt circle(s) properties using the given number(s).
-                    /// </summary>
-                    public BoltCirclePropertiesAttribute(params uint[] numbers)  { }
-                    
-                    /// <summary>
-                    /// Register the bolt circle(s) properties using the given name(s).
-                    /// </summary>
-                    public BoltCirclePropertiesAttribute(params string[] names)  { }
-                    
-                }
-                
-            }
-            """;
-
-        #endregion
-
         #region Templates
 
         private const string ViewModelClassTemplate =
@@ -715,7 +64,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return part{{nameOrNumber}}Name; }
                         set {
                             part{{nameOrNumber}}Name = value;
-                            OnPropertyChanged("Part{{nameOrNumber}}Name");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -725,7 +74,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return part{{nameOrNumber}}Profile; }
                         set {
                             part{{nameOrNumber}}Profile = value;
-                            OnPropertyChanged("Part{{nameOrNumber}}Profile");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -735,7 +84,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return part{{nameOrNumber}}Material; }
                         set {
                             part{{nameOrNumber}}Material = value;
-                            OnPropertyChanged("Part{{nameOrNumber}}Material");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -745,7 +94,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return part{{nameOrNumber}}Finish; }
                         set {
                             part{{nameOrNumber}}Finish = value;
-                            OnPropertyChanged("Part{{nameOrNumber}}Finish");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -755,7 +104,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return part{{nameOrNumber}}Class; }
                         set {
                             part{{nameOrNumber}}Class = value == int.MinValue ? 99 : value;
-                            OnPropertyChanged("Part{{nameOrNumber}}Class");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -765,7 +114,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return part{{nameOrNumber}}AssemblyPrefix; }
                         set {
                             part{{nameOrNumber}}AssemblyPrefix = value;
-                            OnPropertyChanged("Part{{nameOrNumber}}AssemblyPrefix");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -775,7 +124,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return part{{nameOrNumber}}AssemblyStartNumber; }
                         set {
                             part{{nameOrNumber}}AssemblyStartNumber = value == int.MinValue ? 1 : value;
-                            OnPropertyChanged("Part{{nameOrNumber}}AssemblyStartNumber");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -785,7 +134,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return part{{nameOrNumber}}PartPrefix; }
                         set {
                             part{{nameOrNumber}}PartPrefix = value;
-                            OnPropertyChanged("Part{{nameOrNumber}}PartPrefix");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -795,7 +144,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return part{{nameOrNumber}}PartStartNumber; }
                         set {
                             part{{nameOrNumber}}PartStartNumber = value == int.MinValue ? 1 : value;
-                            OnPropertyChanged("Part{{nameOrNumber}}PartStartNumber");
+                            OnPropertyChanged();
                         }
                     }
             """;
@@ -809,7 +158,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return plate{{nameOrNumber}}Name; }
                         set {
                             plate{{nameOrNumber}}Name = value;
-                            OnPropertyChanged("Plate{{nameOrNumber}}Name");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -819,7 +168,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return plate{{nameOrNumber}}Thickness; }
                         set {
                             plate{{nameOrNumber}}Thickness = value == int.MinValue ? 0.0 : value;
-                            OnPropertyChanged("Plate{{nameOrNumber}}Thickness");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -829,7 +178,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return plate{{nameOrNumber}}Breadth; }
                         set {
                             plate{{nameOrNumber}}Breadth = value == int.MinValue ? 0.0 : value;
-                            OnPropertyChanged("Plate{{nameOrNumber}}Breadth");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -839,7 +188,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return plate{{nameOrNumber}}Height; }
                         set {
                             plate{{nameOrNumber}}Height = value == int.MinValue ? 0.0 : value;
-                            OnPropertyChanged("Plate{{nameOrNumber}}Height");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -849,7 +198,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return plate{{nameOrNumber}}Material; }
                         set {
                             plate{{nameOrNumber}}Material = value;
-                            OnPropertyChanged("Plate{{nameOrNumber}}Material");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -859,7 +208,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return plate{{nameOrNumber}}Finish; }
                         set {
                             plate{{nameOrNumber}}Finish = value;
-                            OnPropertyChanged("Plate{{nameOrNumber}}Finish");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -869,7 +218,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return plate{{nameOrNumber}}Class; }
                         set {
                             plate{{nameOrNumber}}Class = value == int.MinValue ? 99 : value;
-                            OnPropertyChanged("Plate{{nameOrNumber}}Class");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -879,7 +228,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return plate{{nameOrNumber}}AssemblyPrefix; }
                         set {
                             plate{{nameOrNumber}}AssemblyPrefix = value;
-                            OnPropertyChanged("Plate{{nameOrNumber}}AssemblyPrefix");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -889,7 +238,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return plate{{nameOrNumber}}AssemblyStartNumber; }
                         set {
                             plate{{nameOrNumber}}AssemblyStartNumber = value == int.MinValue ? 1 : value;
-                            OnPropertyChanged("Plate{{nameOrNumber}}AssemblyStartNumber");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -899,7 +248,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return plate{{nameOrNumber}}PartPrefix; }
                         set {
                             plate{{nameOrNumber}}PartPrefix = value;
-                            OnPropertyChanged("Plate{{nameOrNumber}}PartPrefix");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -909,7 +258,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return plate{{nameOrNumber}}PartStartNumber; }
                         set {
                             plate{{nameOrNumber}}PartStartNumber = value == int.MinValue ? 1 : value;
-                            OnPropertyChanged("Plate{{nameOrNumber}}PartStartNumber");
+                            OnPropertyChanged();
                         }
                     }
             """;
@@ -923,7 +272,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return weld{{nameOrNumber}}SizeAbove; }
                         set {
                             weld{{nameOrNumber}}SizeAbove = value == int.MinValue ? 0.0 : value;
-                            OnPropertyChanged("Weld{{nameOrNumber}}SizeAbove");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -933,7 +282,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return weld{{nameOrNumber}}SizeBelow; }
                         set {
                             weld{{nameOrNumber}}SizeBelow = value == int.MinValue ? 0.0 : value;
-                            OnPropertyChanged("Weld{{nameOrNumber}}SizeBelow");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -943,7 +292,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return weld{{nameOrNumber}}TypeAbove; }
                         set {
                             weld{{nameOrNumber}}TypeAbove = (value < 0 || value > 26) ? 0 : value;
-                            OnPropertyChanged("Weld{{nameOrNumber}}TypeAbove");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -953,7 +302,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return weld{{nameOrNumber}}TypeBelow; }
                         set {
                             weld{{nameOrNumber}}TypeBelow = (value < 0 || value > 26) ? 0 : value;
-                            OnPropertyChanged("Weld{{nameOrNumber}}TypeBelow");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -963,7 +312,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return weld{{nameOrNumber}}AngleAbove; }
                         set {
                             weld{{nameOrNumber}}AngleAbove = value == int.MinValue ? 0.0 : value;
-                            OnPropertyChanged("Weld{{nameOrNumber}}AngleAbove");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -973,7 +322,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return weld{{nameOrNumber}}AngleBelow; }
                         set {
                             weld{{nameOrNumber}}AngleBelow = value == int.MinValue ? 0.0 : value;
-                            OnPropertyChanged("Weld{{nameOrNumber}}AngleBelow");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -983,7 +332,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return weld{{nameOrNumber}}ContourAbove; }
                         set {
                             weld{{nameOrNumber}}ContourAbove = (value < 0 || value > 3) ? 0 : value;
-                            OnPropertyChanged("Weld{{nameOrNumber}}ContourAbove");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -993,7 +342,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return weld{{nameOrNumber}}ContourBelow; }
                         set {
                             weld{{nameOrNumber}}ContourBelow = (value < 0 || value > 3) ? 0 : value;
-                            OnPropertyChanged("Weld{{nameOrNumber}}ContourBelow");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -1003,7 +352,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return weld{{nameOrNumber}}FinishAbove; }
                         set {
                             weld{{nameOrNumber}}FinishAbove = (value < 0 || value > 5) ? 0 : value;
-                            OnPropertyChanged("Weld{{nameOrNumber}}FinishAbove");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -1013,7 +362,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return weld{{nameOrNumber}}FinishBelow; }
                         set {
                             weld{{nameOrNumber}}FinishBelow = (value < 0 || value > 5) ? 0 : value;
-                            OnPropertyChanged("Weld{{nameOrNumber}}FinishBelow");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -1023,7 +372,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return weld{{nameOrNumber}}RootFaceAbove; }
                         set {
                             weld{{nameOrNumber}}RootFaceAbove = value == int.MinValue ? 0.0 : value;
-                            OnPropertyChanged("Weld{{nameOrNumber}}RootFaceAbove");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -1033,7 +382,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return weld{{nameOrNumber}}RootFaceBelow; }
                         set {
                             weld{{nameOrNumber}}RootFaceBelow = value == int.MinValue ? 0.0 : value;
-                            OnPropertyChanged("Weld{{nameOrNumber}}RootFaceBelow");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -1043,7 +392,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return weld{{nameOrNumber}}EffectiveThroatAbove; }
                         set {
                             weld{{nameOrNumber}}EffectiveThroatAbove = value == int.MinValue ? 0.0 : value;
-                            OnPropertyChanged("Weld{{nameOrNumber}}EffectiveThroatAbove");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -1053,7 +402,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return weld{{nameOrNumber}}EffectiveThroatBelow; }
                         set {
                             weld{{nameOrNumber}}EffectiveThroatBelow = value == int.MinValue ? 0.0 : value;
-                            OnPropertyChanged("Weld{{nameOrNumber}}EffectiveThroatBelow");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -1063,7 +412,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return weld{{nameOrNumber}}RootOpeningAbove; }
                         set {
                             weld{{nameOrNumber}}RootOpeningAbove = value == int.MinValue ? 0.0 : value;
-                            OnPropertyChanged("Weld{{nameOrNumber}}RootOpeningAbove");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -1073,7 +422,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return weld{{nameOrNumber}}RootOpeningBelow; }
                         set {
                             weld{{nameOrNumber}}RootOpeningBelow = value == int.MinValue ? 0.0 : value;
-                            OnPropertyChanged("Weld{{nameOrNumber}}RootOpeningBelow");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -1083,7 +432,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return weld{{nameOrNumber}}IncrementAmountAbove; }
                         set {
                             weld{{nameOrNumber}}IncrementAmountAbove = value == int.MinValue ? 0 : value;
-                            OnPropertyChanged("Weld{{nameOrNumber}}IncrementAmountAbove");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -1093,7 +442,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return weld{{nameOrNumber}}IncrementAmountBelow; }
                         set {
                             weld{{nameOrNumber}}IncrementAmountBelow = value == int.MinValue ? 0 : value;
-                            OnPropertyChanged("Weld{{nameOrNumber}}IncrementAmountBelow");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -1103,7 +452,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return weld{{nameOrNumber}}LengthAbove; }
                         set {
                             weld{{nameOrNumber}}LengthAbove = value == int.MinValue ? 0.0 : value;
-                            OnPropertyChanged("Weld{{nameOrNumber}}LengthAbove");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -1113,7 +462,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return weld{{nameOrNumber}}LengthBelow; }
                         set {
                             weld{{nameOrNumber}}LengthBelow = value == int.MinValue ? 0.0 : value;
-                            OnPropertyChanged("Weld{{nameOrNumber}}LengthBelow");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -1123,7 +472,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return weld{{nameOrNumber}}PitchAbove; }
                         set {
                             weld{{nameOrNumber}}PitchAbove = value == int.MinValue ? 0.0 : value;
-                            OnPropertyChanged("Weld{{nameOrNumber}}PitchAbove");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -1133,7 +482,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return weld{{nameOrNumber}}PitchBelow; }
                         set {
                             weld{{nameOrNumber}}PitchBelow = value == int.MinValue ? 0.0 : value;
-                            OnPropertyChanged("Weld{{nameOrNumber}}PitchBelow");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -1143,7 +492,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return weld{{nameOrNumber}}Around; }
                         set {
                             weld{{nameOrNumber}}Around = (value < 0 || value > 1) ? 1 : value;
-                            OnPropertyChanged("Weld{{nameOrNumber}}Around");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -1153,7 +502,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return weld{{nameOrNumber}}Shop; }
                         set {
                             weld{{nameOrNumber}}Shop = (value < 0 || value > 1) ? 1 : value;
-                            OnPropertyChanged("Weld{{nameOrNumber}}Shop");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -1163,7 +512,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return weld{{nameOrNumber}}Placement; }
                         set {
                             weld{{nameOrNumber}}Placement = (value < 0 || value > 2) ? 0 : value;
-                            OnPropertyChanged("Weld{{nameOrNumber}}Placement");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -1173,7 +522,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return weld{{nameOrNumber}}Preparation; }
                         set {
                             weld{{nameOrNumber}}Preparation = (value < 0 || value > 3) ? 0 : value;
-                            OnPropertyChanged("Weld{{nameOrNumber}}Preparation");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -1183,7 +532,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return weld{{nameOrNumber}}Intermittent; }
                         set {
                             weld{{nameOrNumber}}Intermittent = (value < 0 || value > 2) ? 0 : value;
-                            OnPropertyChanged("Weld{{nameOrNumber}}Intermittent");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -1193,7 +542,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return weld{{nameOrNumber}}ReferenceText; }
                         set {
                             weld{{nameOrNumber}}ReferenceText = value;
-                            OnPropertyChanged("Weld{{nameOrNumber}}ReferenceText");
+                            OnPropertyChanged();
                         }
                     }
             """;
@@ -1207,7 +556,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return bolt{{nameOrNumber}}Size; }
                         set {
                             bolt{{nameOrNumber}}Size = value;
-                            OnPropertyChanged("Bolt{{nameOrNumber}}Size");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -1217,7 +566,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return bolt{{nameOrNumber}}Standard; }
                         set {
                             bolt{{nameOrNumber}}Standard = string.IsNullOrEmpty(value) ? "HS10.9" : value;
-                            OnPropertyChanged("Bolt{{nameOrNumber}}Standard");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -1227,7 +576,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return bolt{{nameOrNumber}}DistX; }
                         set {
                             bolt{{nameOrNumber}}DistX = value;
-                            OnPropertyChanged("Bolt{{nameOrNumber}}DistX");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -1237,7 +586,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return bolt{{nameOrNumber}}DistY; }
                         set {
                             bolt{{nameOrNumber}}DistY = value;
-                            OnPropertyChanged("Bolt{{nameOrNumber}}DistY");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -1247,7 +596,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return bolt{{nameOrNumber}}Type; }
                         set {
                             bolt{{nameOrNumber}}Type = (value < 0 || value > 1) ? 0 : value;
-                            OnPropertyChanged("Bolt{{nameOrNumber}}Type");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -1257,7 +606,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return bolt{{nameOrNumber}}ThreadInMaterial; }
                         set {
                             bolt{{nameOrNumber}}ThreadInMaterial = (value < 0 || value > 1) ? 1 : value;
-                            OnPropertyChanged("Bolt{{nameOrNumber}}ThreadInMaterial");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -1267,7 +616,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return bolt{{nameOrNumber}}CutLength; }
                         set {
                             bolt{{nameOrNumber}}CutLength = value == int.MinValue ? 100.0 : value;
-                            OnPropertyChanged("Bolt{{nameOrNumber}}CutLength");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -1277,7 +626,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return bolt{{nameOrNumber}}ExtraLength; }
                         set {
                             bolt{{nameOrNumber}}ExtraLength = value == int.MinValue ? 0.0 : value;
-                            OnPropertyChanged("Bolt{{nameOrNumber}}ExtraLength");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -1287,7 +636,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return bolt{{nameOrNumber}}Tolerance; }
                         set {
                             bolt{{nameOrNumber}}Tolerance = value == int.MinValue ? 2.0 : value;
-                            OnPropertyChanged("Bolt{{nameOrNumber}}Tolerance");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -1297,7 +646,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return bolt{{nameOrNumber}}PlainType; }
                         set {
                             bolt{{nameOrNumber}}PlainType = (value < 0 || value > 1) ? 0 : value;
-                            OnPropertyChanged("Bolt{{nameOrNumber}}PlainType");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -1307,7 +656,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return bolt{{nameOrNumber}}BlindHoleDepth; }
                         set {
                             bolt{{nameOrNumber}}BlindHoleDepth = value == int.MinValue ? 0.0 : value;
-                            OnPropertyChanged("Bolt{{nameOrNumber}}BlindHoleDepth");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -1317,7 +666,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return bolt{{nameOrNumber}}Hole1; }
                         set {
                             bolt{{nameOrNumber}}Hole1 = (value < 0 || value > 1) ? 1 : value;
-                            OnPropertyChanged("Bolt{{nameOrNumber}}Hole1");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -1327,7 +676,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return bolt{{nameOrNumber}}Hole2; }
                         set {
                             bolt{{nameOrNumber}}Hole2 = (value < 0 || value > 1) ? 1 : value;
-                            OnPropertyChanged("Bolt{{nameOrNumber}}Hole2");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -1337,7 +686,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return bolt{{nameOrNumber}}Hole3; }
                         set {
                             bolt{{nameOrNumber}}Hole3 = (value < 0 || value > 1) ? 0 : value;
-                            OnPropertyChanged("Bolt{{nameOrNumber}}Hole3");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -1347,7 +696,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return bolt{{nameOrNumber}}Hole4; }
                         set {
                             bolt{{nameOrNumber}}Hole4 = (value < 0 || value > 1) ? 0 : value;
-                            OnPropertyChanged("Bolt{{nameOrNumber}}Hole4");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -1357,7 +706,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return bolt{{nameOrNumber}}Hole5; }
                         set {
                             bolt{{nameOrNumber}}Hole5 = (value < 0 || value > 1) ? 0 : value;
-                            OnPropertyChanged("Bolt{{nameOrNumber}}Hole5");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -1367,7 +716,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return bolt{{nameOrNumber}}HoleType; }
                         set {
                             bolt{{nameOrNumber}}HoleType = (value < 0 || value > 2) ? 0 : value;
-                            OnPropertyChanged("Bolt{{nameOrNumber}}HoleType");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -1377,7 +726,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return bolt{{nameOrNumber}}SlottedHoleX; }
                         set {
                             bolt{{nameOrNumber}}SlottedHoleX = value == int.MinValue ? 0.0 : value;
-                            OnPropertyChanged("Bolt{{nameOrNumber}}SlottedHoleX");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -1387,7 +736,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return bolt{{nameOrNumber}}SlottedHoleY; }
                         set {
                             bolt{{nameOrNumber}}SlottedHoleY = value == int.MinValue ? 0.0 : value;
-                            OnPropertyChanged("Bolt{{nameOrNumber}}SlottedHoleY");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -1397,7 +746,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return bolt{{nameOrNumber}}RotateSlots; }
                         set {
                             bolt{{nameOrNumber}}RotateSlots = (value < 0 || value > 2) ? 2 : value;
-                            OnPropertyChanged("Bolt{{nameOrNumber}}RotateSlots");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -1407,7 +756,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return bolt{{nameOrNumber}}IsBolt; }
                         set {
                             bolt{{nameOrNumber}}IsBolt = (value < 0 || value > 1) ? 1 : value;
-                            OnPropertyChanged("Bolt{{nameOrNumber}}IsBolt");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -1417,7 +766,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return bolt{{nameOrNumber}}UseNut1; }
                         set {
                             bolt{{nameOrNumber}}UseNut1 = (value < 0 || value > 1) ? 1 : value;
-                            OnPropertyChanged("Bolt{{nameOrNumber}}UseNut1");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -1427,7 +776,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return bolt{{nameOrNumber}}UseNut2; }
                         set {
                             bolt{{nameOrNumber}}UseNut2 = (value < 0 || value > 1) ? 0 : value;
-                            OnPropertyChanged("Bolt{{nameOrNumber}}UseNut2");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -1437,7 +786,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return bolt{{nameOrNumber}}UseWasher1; }
                         set {
                             bolt{{nameOrNumber}}UseWasher1 = (value < 0 || value > 1) ? 0 : value;
-                            OnPropertyChanged("Bolt{{nameOrNumber}}UseWasher1");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -1447,7 +796,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return bolt{{nameOrNumber}}UseWasher2; }
                         set {
                             bolt{{nameOrNumber}}UseWasher2 = (value < 0 || value > 1) ? 0 : value;
-                            OnPropertyChanged("Bolt{{nameOrNumber}}UseWasher2");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -1457,7 +806,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return bolt{{nameOrNumber}}UseWasher3; }
                         set {
                             bolt{{nameOrNumber}}UseWasher3 = (value < 0 || value > 1) ? 1 : value;
-                            OnPropertyChanged("Bolt{{nameOrNumber}}UseWasher3");
+                            OnPropertyChanged();
                         }
                     }
             """;
@@ -1471,7 +820,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return boltCircle{{nameOrNumber}}Size; }
                         set {
                             boltCircle{{nameOrNumber}}Size = value;
-                            OnPropertyChanged("BoltCircle{{nameOrNumber}}Size");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -1481,7 +830,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return boltCircle{{nameOrNumber}}Standard; }
                         set {
                             boltCircle{{nameOrNumber}}Standard = string.IsNullOrEmpty(value) ? "HS10.9" : value;
-                            OnPropertyChanged("BoltCircle{{nameOrNumber}}Standard");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -1491,7 +840,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return boltCircle{{nameOrNumber}}NumberOfBolts; }
                         set {
                             boltCircle{{nameOrNumber}}NumberOfBolts = value == int.MinValue ? 6 : value;
-                            OnPropertyChanged("BoltCircle{{nameOrNumber}}NumberOfBolts");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -1501,7 +850,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return boltCircle{{nameOrNumber}}Diameter; }
                         set {
                             boltCircle{{nameOrNumber}}Diameter = value == int.MinValue ? 100.0 : value;
-                            OnPropertyChanged("BoltCircle{{nameOrNumber}}Diameter");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -1511,7 +860,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return boltCircle{{nameOrNumber}}Type; }
                         set {
                             boltCircle{{nameOrNumber}}Type = (value < 0 || value > 1) ? 0 : value;
-                            OnPropertyChanged("BoltCircle{{nameOrNumber}}Type");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -1521,7 +870,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return boltCircle{{nameOrNumber}}ThreadInMaterial; }
                         set {
                             boltCircle{{nameOrNumber}}ThreadInMaterial = (value < 0 || value > 1) ? 1 : value;
-                            OnPropertyChanged("BoltCircle{{nameOrNumber}}ThreadInMaterial");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -1531,7 +880,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return boltCircle{{nameOrNumber}}CutLength; }
                         set {
                             boltCircle{{nameOrNumber}}CutLength = value == int.MinValue ? 100.0 : value;
-                            OnPropertyChanged("BoltCircle{{nameOrNumber}}CutLength");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -1541,7 +890,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return boltCircle{{nameOrNumber}}ExtraLength; }
                         set {
                             boltCircle{{nameOrNumber}}ExtraLength = value == int.MinValue ? 0.0 : value;
-                            OnPropertyChanged("BoltCircle{{nameOrNumber}}ExtraLength");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -1551,7 +900,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return boltCircle{{nameOrNumber}}Tolerance; }
                         set {
                             boltCircle{{nameOrNumber}}Tolerance = value == int.MinValue ? 2.0 : value;
-                            OnPropertyChanged("BoltCircle{{nameOrNumber}}Tolerance");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -1561,7 +910,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return boltCircle{{nameOrNumber}}PlainType; }
                         set {
                             boltCircle{{nameOrNumber}}PlainType = (value < 0 || value > 1) ? 0 : value;
-                            OnPropertyChanged("BoltCircle{{nameOrNumber}}PlainType");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -1571,7 +920,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return boltCircle{{nameOrNumber}}BlindHoleDepth; }
                         set {
                             boltCircle{{nameOrNumber}}BlindHoleDepth = value == int.MinValue ? 0.0 : value;
-                            OnPropertyChanged("BoltCircle{{nameOrNumber}}BlindHoleDepth");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -1581,7 +930,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return boltCircle{{nameOrNumber}}Hole1; }
                         set {
                             boltCircle{{nameOrNumber}}Hole1 = (value < 0 || value > 1) ? 1 : value;
-                            OnPropertyChanged("BoltCircle{{nameOrNumber}}Hole1");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -1591,7 +940,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return boltCircle{{nameOrNumber}}Hole2; }
                         set {
                             boltCircle{{nameOrNumber}}Hole2 = (value < 0 || value > 1) ? 1 : value;
-                            OnPropertyChanged("BoltCircle{{nameOrNumber}}Hole2");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -1601,7 +950,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return boltCircle{{nameOrNumber}}Hole3; }
                         set {
                             boltCircle{{nameOrNumber}}Hole3 = (value < 0 || value > 1) ? 0 : value;
-                            OnPropertyChanged("BoltCircle{{nameOrNumber}}Hole3");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -1611,7 +960,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return boltCircle{{nameOrNumber}}Hole4; }
                         set {
                             boltCircle{{nameOrNumber}}Hole4 = (value < 0 || value > 1) ? 0 : value;
-                            OnPropertyChanged("BoltCircle{{nameOrNumber}}Hole4");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -1621,7 +970,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return boltCircle{{nameOrNumber}}Hole5; }
                         set {
                             boltCircle{{nameOrNumber}}Hole5 = (value < 0 || value > 1) ? 0 : value;
-                            OnPropertyChanged("BoltCircle{{nameOrNumber}}Hole5");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -1631,7 +980,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return boltCircle{{nameOrNumber}}HoleType; }
                         set {
                             boltCircle{{nameOrNumber}}HoleType = (value < 0 || value > 2) ? 0 : value;
-                            OnPropertyChanged("BoltCircle{{nameOrNumber}}HoleType");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -1641,7 +990,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return boltCircle{{nameOrNumber}}SlottedHoleX; }
                         set {
                             boltCircle{{nameOrNumber}}SlottedHoleX = value == int.MinValue ? 0.0 : value;
-                            OnPropertyChanged("BoltCircle{{nameOrNumber}}SlottedHoleX");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -1651,7 +1000,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return boltCircle{{nameOrNumber}}SlottedHoleY; }
                         set {
                             boltCircle{{nameOrNumber}}SlottedHoleY = value == int.MinValue ? 0.0 : value;
-                            OnPropertyChanged("BoltCircle{{nameOrNumber}}SlottedHoleY");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -1661,7 +1010,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return boltCircle{{nameOrNumber}}RotateSlots; }
                         set {
                             boltCircle{{nameOrNumber}}RotateSlots = (value < 0 || value > 2) ? 2 : value;
-                            OnPropertyChanged("BoltCircle{{nameOrNumber}}RotateSlots");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -1671,7 +1020,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return boltCircle{{nameOrNumber}}IsBolt; }
                         set {
                             boltCircle{{nameOrNumber}}IsBolt = (value < 0 || value > 1) ? 1 : value;
-                            OnPropertyChanged("BoltCircle{{nameOrNumber}}IsBolt");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -1681,7 +1030,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return boltCircle{{nameOrNumber}}UseNut1; }
                         set {
                             boltCircle{{nameOrNumber}}UseNut1 = (value < 0 || value > 1) ? 1 : value;
-                            OnPropertyChanged("BoltCircle{{nameOrNumber}}UseNut1");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -1691,7 +1040,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return boltCircle{{nameOrNumber}}UseNut2; }
                         set {
                             boltCircle{{nameOrNumber}}UseNut2 = (value < 0 || value > 1) ? 0 : value;
-                            OnPropertyChanged("BoltCircle{{nameOrNumber}}UseNut2");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -1701,7 +1050,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return boltCircle{{nameOrNumber}}UseWasher1; }
                         set {
                             boltCircle{{nameOrNumber}}UseWasher1 = (value < 0 || value > 1) ? 0 : value;
-                            OnPropertyChanged("BoltCircle{{nameOrNumber}}UseWasher1");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -1711,7 +1060,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return boltCircle{{nameOrNumber}}UseWasher2; }
                         set {
                             boltCircle{{nameOrNumber}}UseWasher2 = (value < 0 || value > 1) ? 0 : value;
-                            OnPropertyChanged("BoltCircle{{nameOrNumber}}UseWasher2");
+                            OnPropertyChanged();
                         }
                     }
                     
@@ -1721,7 +1070,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return boltCircle{{nameOrNumber}}UseWasher3; }
                         set {
                             boltCircle{{nameOrNumber}}UseWasher3 = (value < 0 || value > 1) ? 1 : value;
-                            OnPropertyChanged("BoltCircle{{nameOrNumber}}UseWasher3");
+                            OnPropertyChanged();
                         }
                     }
             """;
@@ -1730,16 +1079,18 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
 
         public void Initialize(IncrementalGeneratorInitializationContext context) {
             context.RegisterPostInitializationOutput(ctx => {
-                ctx.AddSource("NotificationObject.g.cs", SourceText.From(NotificationObject, Encoding.UTF8));
-                ctx.AddSource("ConnectionViewModel.g.cs", SourceText.From(ConnectionViewModel, Encoding.UTF8));
-                ctx.AddSource("DetailViewModel.g.cs", SourceText.From(DetailViewModel, Encoding.UTF8));
-                ctx.AddSource("PartPropertiesAttribute.g.cs", SourceText.From(PartPropertiesAttribute, Encoding.UTF8));
-                ctx.AddSource("PlatePropertiesAttribute.g.cs",
-                    SourceText.From(PlatePropertiesAttribute, Encoding.UTF8));
-                ctx.AddSource("WeldPropertiesAttribute.g.cs", SourceText.From(WeldPropertiesAttribute, Encoding.UTF8));
-                ctx.AddSource("BoltPropertiesAttribute.g.cs", SourceText.From(BoltPropertiesAttribute, Encoding.UTF8));
-                ctx.AddSource("BoltCirclePropertiesAttribute.g.cs",
-                    SourceText.From(BoltCirclePropertiesAttribute, Encoding.UTF8));
+                ctx.AddSource("NotificationObject.g.cs",
+                    SourceText.From(GetResourceAsString("NotificationObject.cs"), Encoding.UTF8));
+                ctx.AddSource("ConnectionViewModel.g.cs",
+                    SourceText.From(GetResourceAsString("ConnectionViewModel.cs"), Encoding.UTF8));
+                ctx.AddSource("DetailViewModel.g.cs",
+                    SourceText.From(GetResourceAsString("DetailViewModel.cs"), Encoding.UTF8));
+
+                foreach (var attribute in ConcernedAttributes) {
+                    var shortName = attribute.Substring(attribute.LastIndexOf('.') + 1);
+                    ctx.AddSource($"{shortName}.g.cs",
+                        SourceText.From(GetResourceAsString($"{shortName}.cs"), Encoding.UTF8));
+                }
             });
 
             var provider = context.SyntaxProvider
@@ -1752,11 +1103,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
         private static bool Predicate(SyntaxNode syntaxNode, CancellationToken token) {
             if (token.IsCancellationRequested) return false;
 
-            if (syntaxNode is not ClassDeclarationSyntax classDeclaration ||
-                classDeclaration.AttributeLists.Count == 0)
-                return false;
-
-            return true;
+            return syntaxNode is ClassDeclarationSyntax { AttributeLists.Count: > 0 };
         }
 
         private static ViewModelPropertiesInfo Transform(GeneratorSyntaxContext syntaxContext, CancellationToken token) {
@@ -1770,7 +1117,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                     i.ToDisplayString() == "System.ComponentModel.INotifyPropertyChanged"))
                 return default;
 
-            return GetClassInfo(syntaxContext, token, ConcernedAttributes);
+            return GetPluginDataFieldsInfo(syntaxContext, token, ConcernedAttributes);
         }
 
         private static void Generate(SourceProductionContext context, ViewModelPropertiesInfo info) {

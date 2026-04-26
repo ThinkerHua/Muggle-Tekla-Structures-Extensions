@@ -153,170 +153,6 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
             ("UseWasher3", "WSHR3", "int")
         ];
 
-        #region Initial files
-
-        private const string PartFieldsAttribute =
-            """
-            using System;
-
-            namespace Muggle.TsExtensions.CodingHelper.Generators {
-                
-                /// <summary>
-                /// Register the part fields that need to be generated for the applied class,
-                /// used by Muggle.TsExtensions.CodingHelper.Generators.PluginDataFieldsGenerator,
-                /// cannot be used independently.
-                /// </summary>
-                /// <remarks>Mapping relationship between properties and attribute name pattern 
-                /// <a href="https://github.com/ThinkerHua/Muggle-Tekla-Structures-Extensions/blob/master/CodingHelper/AttributeNameReference.md">
-                /// see here</a>.</remarks>
-                [AttributeUsage(AttributeTargets.Class)]
-                public class PartFieldsAttribute : Attribute {
-                    
-                    /// <summary>
-                    /// Register the part fields using the given numbers.
-                    /// </summary>
-                    public PartFieldsAttribute(params uint[] numbers) { }
-                    
-                    /// <summary>
-                    /// Register the part fields using the given names.
-                    /// </summary>
-                    public PartFieldsAttribute(params string[] names) { }
-                    
-                }
-                
-            }
-            """;
-
-        private const string PlateFieldsAttribute =
-            """
-            using System;
-
-            namespace Muggle.TsExtensions.CodingHelper.Generators {
-                
-                /// <summary>
-                /// Register the plate fields that need to be generated for the applied class,
-                /// used by Muggle.TsExtensions.CodingHelper.Generators.PluginDataFieldsGenerator,
-                /// cannot be used independently.
-                /// </summary>
-                /// <remarks>Mapping relationship between properties and attribute name pattern 
-                /// <a href="https://github.com/ThinkerHua/Muggle-Tekla-Structures-Extensions/blob/master/CodingHelper/AttributeNameReference.md">
-                /// see here</a>.</remarks>
-                [AttributeUsage(AttributeTargets.Class)]
-                public class PlateFieldsAttribute : Attribute {
-                    
-                    /// <summary>
-                    /// Register the plate fields using the given numbers.
-                    /// </summary>
-                    public PlateFieldsAttribute(params uint[] numbers)  { }
-                    
-                    /// <summary>
-                    /// Register the plate fields using the given names.
-                    /// </summary>
-                    public PlateFieldsAttribute(params string[] names)  { }
-                    
-                }
-                
-            }
-            """;
-
-        private const string WeldFieldsAttribute =
-            """
-            using System;
-
-            namespace Muggle.TsExtensions.CodingHelper.Generators {
-                
-                /// <summary>
-                /// Register the weld fields that need to be generated for the applied class,
-                /// used by Muggle.TsExtensions.CodingHelper.Generators.PluginDataFieldsGenerator,
-                /// cannot be used independently.
-                /// </summary>
-                /// <remarks>Mapping relationship between properties and attribute name pattern 
-                /// <a href="https://github.com/ThinkerHua/Muggle-Tekla-Structures-Extensions/blob/master/CodingHelper/AttributeNameReference.md">
-                /// see here</a>.</remarks>
-                [AttributeUsage(AttributeTargets.Class)]
-                public class WeldFieldsAttribute : Attribute {
-                    
-                    /// <summary>
-                    /// Register the weld fields using the given numbers.
-                    /// </summary>
-                    public WeldFieldsAttribute(params uint[] numbers) { }
-                    
-                    /// <summary>
-                    /// Register the weld fields using the given names.
-                    /// </summary>
-                    public WeldFieldsAttribute(params string[] names) { }
-                    
-                }
-                
-            }
-            """;
-
-        private const string BoltFieldsAttribute =
-            """
-            using System;
-
-            namespace Muggle.TsExtensions.CodingHelper.Generators {
-                
-                /// <summary>
-                /// Register the bolt fields that need to be generated for the applied class,
-                /// used by Muggle.TsExtensions.CodingHelper.Generators.PluginDataFieldsGenerator,
-                /// cannot be used independently.
-                /// </summary>
-                /// <remarks>Mapping relationship between properties and attribute name pattern 
-                /// <a href="https://github.com/ThinkerHua/Muggle-Tekla-Structures-Extensions/blob/master/CodingHelper/AttributeNameReference.md">
-                /// see here</a>.</remarks>
-                [AttributeUsage(AttributeTargets.Class)]
-                public class BoltFieldsAttribute : Attribute {
-                    
-                    /// <summary>
-                    /// Register the bolt fields using the given numbers.
-                    /// </summary>
-                    public BoltFieldsAttribute(params uint[] numbers) { }
-                    
-                    /// <summary>
-                    /// Register the bolt fields using the given names.
-                    /// </summary>
-                    public BoltFieldsAttribute(params string[] names) { }
-                    
-                }
-                
-            }
-            """;
-
-        private const string BoltCircleFieldsAttribute =
-            """
-            using System;
-
-            namespace Muggle.TsExtensions.CodingHelper.Generators {
-                
-                /// <summary>
-                /// Register the bolt circle fields that need to be generated for the applied class,
-                /// used by Muggle.TsExtensions.CodingHelper.Generators.PluginDataFieldsGenerator,
-                /// cannot be used independently.
-                /// </summary>
-                /// <remarks>Mapping relationship between properties and attribute name pattern 
-                /// <a href="https://github.com/ThinkerHua/Muggle-Tekla-Structures-Extensions/blob/master/CodingHelper/AttributeNameReference.md">
-                /// see here</a>.</remarks>
-                [AttributeUsage(AttributeTargets.Class)]
-                public class BoltCircleFieldsAttribute : Attribute {
-                    
-                    /// <summary>
-                    /// Register the bolt circle fields using the given numbers.
-                    /// </summary>
-                    public BoltCircleFieldsAttribute(params uint[] numbers)  { }
-                    
-                    /// <summary>
-                    /// Register the bolt circle fields using the given names.
-                    /// </summary>
-                    public BoltCircleFieldsAttribute(params string[] names)  { }
-                    
-                }
-                
-            }
-            """;
-
-        #endregion
-
         #region Templates
 
         private const string PluginDataClassTemplate =
@@ -344,12 +180,11 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
 
         public void Initialize(IncrementalGeneratorInitializationContext context) {
             context.RegisterPostInitializationOutput(ctx => {
-                ctx.AddSource("PartFieldsAttribute.g.cs", SourceText.From(PartFieldsAttribute, Encoding.UTF8));
-                ctx.AddSource("PlateFieldsAttribute.g.cs", SourceText.From(PlateFieldsAttribute, Encoding.UTF8));
-                ctx.AddSource("WeldFieldsAttribute.g.cs", SourceText.From(WeldFieldsAttribute, Encoding.UTF8));
-                ctx.AddSource("BoltFieldsAttribute.g.cs", SourceText.From(BoltFieldsAttribute, Encoding.UTF8));
-                ctx.AddSource("BoltCircleFieldsAttribute.g.cs",
-                    SourceText.From(BoltCircleFieldsAttribute, Encoding.UTF8));
+                foreach (var attribute in ConcernedAttributes) {
+                    var shortName = attribute.Substring(attribute.LastIndexOf('.') + 1);
+                    ctx.AddSource($"{shortName}.g.cs",
+                        SourceText.From(GetResourceAsString($"{shortName}.cs"), Encoding.UTF8));
+                }
             });
 
             var provider = context.SyntaxProvider
@@ -374,7 +209,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
             var classDeclarationSyntax = (ClassDeclarationSyntax)syntaxContext.Node;
             if (!classDeclarationSyntax.Modifiers.Any(m => m.IsKind(SyntaxKind.PartialKeyword))) return default;
 
-            return GetClassInfo(syntaxContext, token, ConcernedAttributes);
+            return GetPluginDataFieldsInfo(syntaxContext, token, ConcernedAttributes);
         }
 
         private void Generate(SourceProductionContext context, PluginDataFieldsInfo classInfo) {

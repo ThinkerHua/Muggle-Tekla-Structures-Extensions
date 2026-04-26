@@ -13,7 +13,9 @@
  *  written by Huang YongXing - thinkerhua@hotmail.com
  *==============================================================================*/
 
+using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -24,7 +26,8 @@ using Muggle.TsExtensions.CodingHelper.Generators.Information;
 
 namespace Muggle.TsExtensions.CodingHelper.Generators {
     internal static class GeneratorHelper {
-        internal static PluginDataFieldsInfo GetClassInfo(GeneratorSyntaxContext syntaxContext, CancellationToken token,
+        internal static PluginDataFieldsInfo GetPluginDataFieldsInfo(GeneratorSyntaxContext syntaxContext,
+            CancellationToken token,
             IReadOnlyCollection<string> matchTheseAttributes) {
             if (syntaxContext.Node is not ClassDeclarationSyntax classDeclarationSyntax) return default;
 
@@ -77,27 +80,39 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
             while (name.StartsWith("_")) { name = name.Substring(1); }
 
             var match = Regex.Match(name, "^[A-Z]");
-            if (match.Success) { name = "_" + match.Groups[0].Value.ToLower() + name.Substring(1); } else {
+            if (match.Success) {
+                name = "_" + match.Groups[0].Value.ToLower() + name.Substring(1);
+            } else {
                 name = "_" + name;
             }
 
             return name;
         }
 
-        internal static bool TryGetSpecificAttributes(
+        internal static string ToPropertyNameStyle(string name) {
+            if (Regex.Match(name, "^[A-Z]").Success) return name;
+
+            while (name.StartsWith("_")) { name = name.Substring(1); }
+
+            name = name.Substring(0, 1).ToUpper() + name.Substring(1);
+
+            return name;
+        }
+
+        internal static bool TryGetMatchedAttributes(
             IEnumerable<AttributeListSyntax> attributeLists,
             SemanticModel semanticModel,
             IEnumerable<string> matchAttributes,
-            ref IEnumerable<AttributeSyntax> attributeSyntaxes) {
+            ref AttributeSyntax[] attributeSyntaxes) {
 
-            if (matchAttributes == null || !matchAttributes.Any()) return false;
+            var attributes = matchAttributes as string[] ?? matchAttributes.ToArray();
 
             var query = attributeLists
                 .SelectMany(attListSyntax => attListSyntax.Attributes)
                 .Where(attSyntax => {
                     var attTypeInfo = semanticModel.GetTypeInfo(attSyntax);
                     var attQualifiedName = attTypeInfo.Type?.ToDisplayString();
-                    return matchAttributes.Contains(attQualifiedName);
+                    return attributes.Contains(attQualifiedName);
                 }).ToArray();
 
             if (query.Any()) {
@@ -106,6 +121,55 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
             }
 
             return false;
+        }
+
+        internal static string GetResourceAsString(string resourceName) {
+            var assembly = typeof(GeneratorHelper).Assembly;
+            var manifestResourceNames = assembly.GetManifestResourceNames();
+            resourceName = manifestResourceNames.Single(x =>
+                x.Equals($"Muggle.TsExtensions.CodingHelper.Resources.{resourceName}",
+                    StringComparison.OrdinalIgnoreCase));
+
+            using var stream = assembly.GetManifestResourceStream(resourceName) ??
+                               throw new InvalidOperationException($"Resource '{resourceName}' not found.");
+            using var reader = new StreamReader(stream);
+
+            return reader.ReadToEnd();
+        }
+
+        internal static IEnumerable<string> GetAttributeSourceTexts(IEnumerable<string> attributeQualifiedNames) {
+            foreach (var name in attributeQualifiedNames) {
+                yield return GetResourceAsString($"{name.Substring(name.LastIndexOf('.') + 1)}.cs");
+            }
+        }
+
+        /// <summary>
+        /// Get default value from a constructor declaration syntax of attribute.
+        /// </summary>
+        /// <param name="syntaxTree">The syntax tree which only contains one class declaration syntax of attribute.</param>
+        /// <param name="attributeName">The declared attribute name.</param>
+        /// <returns>A dictionary of default values,
+        /// Key - parameter, which is some kine of property of model object,
+        /// Value - argument, which is the value of property.</returns>
+        internal static Dictionary<string, string> GetDefaultValuesFromSyntaxTree(
+            SyntaxTree syntaxTree, out string attributeName) {
+
+            attributeName = syntaxTree.GetRoot().DescendantNodes().OfType<ConstructorDeclarationSyntax>().First()
+                .Identifier.ValueText;
+
+            var dict = new Dictionary<string, string>();
+
+            var paramListSyntax = syntaxTree.GetRoot().DescendantNodes().OfType<ParameterListSyntax>().First();
+            for (int i = 1; i < paramListSyntax.Parameters.Count; i++) {
+                var parameterSyntax = paramListSyntax.Parameters[i];
+                var parameter = parameterSyntax.Identifier.ValueText;
+                var argument = parameterSyntax.DescendantNodes().OfType<LiteralExpressionSyntax>()
+                    .FirstOrDefault()?
+                    .Token.ValueText;
+                dict.Add(parameter, argument);
+            }
+
+            return dict;
         }
     }
 }

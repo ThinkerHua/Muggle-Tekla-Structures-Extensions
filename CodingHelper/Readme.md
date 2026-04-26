@@ -1,21 +1,24 @@
 # Muggle.TsExtensions.CodingHelper
 
 ---
+
 ## Contents
 
 - [Generate fields for plugin data class](#generate-fields-for-plugin-data-class)
     - [Example](#example)
 - [Generate fields for plugin class](#generate-fields-for-plugin-class)
-  - [Fields and get field values method](#fields-and-get-field-values-method)
-    - [Example](#example-1)
-  - [Set field default values method](#set-field-default-values-method)
-    - [Example](#example-2)
+    - [Fields and get field values method](#fields-and-get-field-values-method)
+        - [Example](#example-1)
+    - [Set field default values method](#set-field-default-values-method)
+        - [Example](#example-2)
 - [Generate properties for view model class](#generate-properties-for-view-model-class)
-  - [General properties](#general-properties)
-  - [Specific properties](#specific-properties)
-  - [Example](#example-3)
+    - [General properties](#general-properties)
+    - [Specific properties](#specific-properties)
+        - [Example](#example-3)
 - [Demo](#demo)
+
 ---
+
 ## Generate fields for plugin data class
 
 Apply these attributes to plugin data class to auto generate fields (with StructuresFieldAttribute):
@@ -26,7 +29,7 @@ Apply these attributes to plugin data class to auto generate fields (with Struct
 - BoltFieldsAttribute
 - BoltCircleFieldsAttribute
 
-> ***Note***: Mapping relationship between model object properties and plugin attribute name [see here](https://github.com/ThinkerHua/Muggle-Tekla-Structures-Extensions/blob/master/CodingHelper/AttributeNameReference.md).
+> ***Note***: Mapping relationship between model object properties and plugin attribute names [see here](https://github.com/ThinkerHua/Muggle-Tekla-Structures-Extensions/blob/master/CodingHelper/AttributeNameReference.md).
 
 ### Example
 
@@ -37,7 +40,7 @@ The source codes by hand:
 
 using Muggle.TsExtensions.CodingHelper.Generators;
 
-[PlateFields("EndPlate")]
+[PlateFields("Stiffener")]
 public partial class PluginData { }
 ~~~
 
@@ -48,47 +51,48 @@ Then it will auto generate codes behind like this:
 
 public partial class PluginData {
         
-        [StructuresField("PLEndPlateNAME")]
-        public string PlateEndPlateName;
+        [StructuresField("PLStiffenerNAME")]
+        public string PlateStiffenerName;
         
-        [StructuresField("PLEndPlateT")]
-        public double PlateEndPlateThickness;
+        [StructuresField("PLStiffenerT")]
+        public double PlateStiffenerThickness;
         
-        [StructuresField("PLEndPlateB")]
-        public double PlateEndPlateBreadth;
+        [StructuresField("PLStiffenerB")]
+        public double PlateStiffenerBreadth;
         
-        [StructuresField("PLEndPlateH")]
-        public double PlateEndPlateHeight;
+        [StructuresField("PLStiffenerH")]
+        public double PlateStiffenerHeight;
         
-        [StructuresField("PLEndPlateMATL")]
-        public string PlateEndPlateMaterial;
+        [StructuresField("PLStiffenerMATL")]
+        public string PlateStiffenerMaterial;
         
-        [StructuresField("PLEndPlateFNSH")]
-        public string PlateEndPlateFinish;
+        [StructuresField("PLStiffenerFNSH")]
+        public string PlateStiffenerFinish;
         
-        [StructuresField("PLEndPlateCLS")]
-        public int PlateEndPlateClass;
+        [StructuresField("PLStiffenerCLS")]
+        public int PlateStiffenerClass;
         
-        [StructuresField("PLEndPlateASMP")]
-        public string PlateEndPlateAssemblyPrefix;
+        [StructuresField("PLStiffenerASMP")]
+        public string PlateStiffenerAssemblyPrefix;
         
-        [StructuresField("PLEndPlateASMN")]
-        public int PlateEndPlateAssemblyStartNumber;
+        [StructuresField("PLStiffenerASMN")]
+        public int PlateStiffenerAssemblyStartNumber;
         
-        [StructuresField("PLEndPlatePTP")]
-        public string PlateEndPlatePartPrefix;
+        [StructuresField("PLStiffenerPTP")]
+        public string PlateStiffenerPartPrefix;
         
-        [StructuresField("PLEndPlatePTN")]
-        public int PlateEndPlatePartStartNumber;
+        [StructuresField("PLStiffenerPTN")]
+        public int PlateStiffenerPartStartNumber;
 }
 ~~~
 
 ---
+
 ## Generate fields for plugin class
 
 ### Fields and get field values method
 
-Apply "**FieldsFromAttribute**" on the plugin class and pass the plugin data type, then it will auto generate private fields one-to-one corresponds with each public fields (including manually written fields and generated fields) in data type. And it will also generate a **"GetFieldValuesFrom"** method, you need to manually call this method at an appropriate location.
+Apply "**FieldsFromAttribute**" on the plugin class and input the plugin data type, then it will auto generate private fields one-to-one corresponds with each public fields (including manually written fields and generated fields) in data type. And it will also generate a **"GetFieldValuesFrom"** method, you need to manually call this method at an appropriate location.
 
 #### Example
 
@@ -99,7 +103,7 @@ The source codes by hand:
 
 using Muggle.TsExtensions.CodingHelper.Generators;
 
-[PlateFields("End")]
+[PlateFields("Stiffener")]
 public partial class PluginData { 
 
     [StructuresField("UselessAttribute")]
@@ -131,49 +135,39 @@ public partial class Plugin {
     
     private int _uselessAttribute;
     
-    private string _plateEndPlateName;
-    
-    private double _plateEndPlateThickness;
-    
-    private double _plateEndPlateBreadth;
-    
-    private double _plateEndPlateHeight;
-    
-    private string _plateEndPlateMaterial;
-    
-    private string _plateEndPlateFinish;
-    
-    private int _plateEndPlateClass;
-    
-    private string _plateEndPlateAssemblyPrefix;
-    
-    private int _plateEndPlateAssemblyStartNumber;
-    
-    private string _plateEndPlatePartPrefix;
-    
-    private int _plateEndPlatePartStartNumber;
+    private string _plateStiffenerName;
+    private double _plateStiffenerThickness;
+    private double _plateStiffenerBreadth;
+    private double _plateStiffenerHeight;
+    private string _plateStiffenerMaterial;
+    private string _plateStiffenerFinish;
+    private int _plateStiffenerClass;
+    private string _plateStiffenerAssemblyPrefix;
+    private int _plateStiffenerAssemblyStartNumber;
+    private string _plateStiffenerPartPrefix;
+    private int _plateStiffenerPartStartNumber;
 
     private void GetFieldValuesFrom(PluginData data) {
         _uselessAttribute = data.UselessAttribute;
 
-        _plateEndPlateName = data.PlateEndPlateName;
-        _plateEndPlateThickness = data.PlateEndPlateThickness;
-        _plateEndPlateBreadth = data.PlateEndPlateBreadth;
-        _plateEndPlateHeight = data.PlateEndPlateHeight;
-        _plateEndPlateMaterial = data.PlateEndPlateMaterial;
-        _plateEndPlateFinish = data.PlateEndPlateFinish;
-        _plateEndPlateClass = data.PlateEndPlateClass;
-        _plateEndPlateAssemblyPrefix = data.PlateEndPlateAssemblyPrefix;
-        _plateEndPlateAssemblyStartNumber = data.PlateEndPlateAssemblyStartNumber;
-        _plateEndPlatePartPrefix = data.PlateEndPlatePartPrefix;
-        _plateEndPlatePartStartNumber = data.PlateEndPlatePartStartNumber;
+        _plateStiffenerName = data.PlateStiffenerName;
+        _plateStiffenerThickness = data.PlateStiffenerThickness;
+        _plateStiffenerBreadth = data.PlateStiffenerBreadth;
+        _plateStiffenerHeight = data.PlateStiffenerHeight;
+        _plateStiffenerMaterial = data.PlateStiffenerMaterial;
+        _plateStiffenerFinish = data.PlateStiffenerFinish;
+        _plateStiffenerClass = data.PlateStiffenerClass;
+        _plateStiffenerAssemblyPrefix = data.PlateStiffenerAssemblyPrefix;
+        _plateStiffenerAssemblyStartNumber = data.PlateStiffenerAssemblyStartNumber;
+        _plateStiffenerPartPrefix = data.PlateStiffenerPartPrefix;
+        _plateStiffenerPartStartNumber = data.PlateStiffenerPartStartNumber;
     }
 }
 ~~~
 
 ### Set field default values method
 
-Apply these attribute on the plugin class or its data field or property, then it will auto generate a **"SetDataToDefaultIfUnset"** method to register default value:
+Apply these attributes on the plugin class or its data field or property, then it will auto generate a **"SetDataToDefaultIfUnset"** method to register default value:
 
 - PartFieldDefaultValuesAttribute
 - PlateFieldDefaultValuesAttribute
@@ -184,11 +178,12 @@ Apply these attribute on the plugin class or its data field or property, then it
 > ***Note***: When applied on class, you need to apply "FieldsFromAttribute" also.
 
 > ***Note***: You need to pay attention to the order of calling the "SetDataToDefaultIfUnset" method and the "GetFieldValuesFrom" method. Otherwise, you might not get the correct values.
-> | If applied "FieldsFromAttribute" | Place "***FieldDefaultValuesAttribute" applied on | Calling order | Way to access data |
-> | --- | --- | --- | --- |
-> | Yes | Class | GetFieldValuesFrom(data);<br>SetDataToDefaultIfUnset(); | Only fields |
-> | Yes | Data field or property | SetDataToDefaultIfUnset();<br>GetFieldValuesFrom(data); | Both fields and data field or property |
-> | No | Data field or property | SetDataToDefaultIfUnset();<br>~~//GetFieldValuesFrom(data);~~ | Only data field or property |
+>
+> | If applied "FieldsFromAttribute" | Place "***FieldDefaultValuesAttribute" applied on | Calling order                                                 | Way to access value                    |
+> |----------------------------------|---------------------------------------------------|---------------------------------------------------------------|----------------------------------------|
+> | Yes                              | Class                                             | GetFieldValuesFrom(data);<br/>SetDataToDefaultIfUnset();       | Only fields                            |
+> | Yes                              | Data field or property                            | SetDataToDefaultIfUnset();<br/>GetFieldValuesFrom(data);       | Both fields and data field or property |
+> | No                               | Data field or property                            | SetDataToDefaultIfUnset();<br/>~~//GetFieldValuesFrom(data);~~ | Only data field or property            |
 
 #### Example
 
@@ -204,7 +199,7 @@ using Muggle.TsExtensions.CodingHelper.Generators;
 [FieldsFrom(typeof(PluginData))]
 public partial class Plugin : PluginBase {
 
-    [PlateFieldDefaultValues("EndPlate", breadth: 300, thickness: 14, material: "Q235")]
+    [PlateFieldDefaultValues("Stiffener", breadth: 300, thickness: 14, material: "Q235")]
     public PluginData Data { get; set; }
 
     public Plugin(PluginData data) {
@@ -224,34 +219,34 @@ public partial class Plugin {
 
     private void SetDataToDefaultIfUnset() {
         
-        if (Data.PlateEndPlateThickness <= 0)
-            Data.PlateEndPlateThickness = 14;
-        if (Data.PlateEndPlateBreadth <= 0)
-            Data.PlateEndPlateBreadth = 300;
-        if (Data.PlateEndPlateHeight <= 0)
-            Data.PlateEndPlateHeight = 0;
-        if (IsDefaultValue(Data.PlateEndPlateMaterial))
-            Data.PlateEndPlateMaterial = "Q235";
-        if (IsDefaultValue(Data.PlateEndPlateName))
-            Data.PlateEndPlateName = "";
-        if (IsDefaultValue(Data.PlateEndPlateFinish))
-            Data.PlateEndPlateFinish = "";
-        if (IsDefaultValue(Data.PlateEndPlateClass))
-            Data.PlateEndPlateClass = 99;
-        if (IsDefaultValue(Data.PlateEndPlateAssemblyPrefix))
-            Data.PlateEndPlateAssemblyPrefix = "A";
-        if (IsDefaultValue(Data.PlateEndPlateAssemblyStartNumber))
-            Data.PlateEndPlateAssemblyStartNumber = 1;
-        if (IsDefaultValue(Data.PlateEndPlatePartPrefix))
-            Data.PlateEndPlatePartPrefix = "P";
-        if (IsDefaultValue(Data.PlateEndPlatePartStartNumber))
-            Data.PlateEndPlatePartStartNumber = 1;
+        if (Data.PlateStiffenerThickness <= 0)
+            Data.PlateStiffenerThickness = 14;
+        if (Data.PlateStiffenerBreadth <= 0)
+            Data.PlateStiffenerBreadth = 300;
+        if (Data.PlateStiffenerHeight <= 0)
+            Data.PlateStiffenerHeight = 0;
+        if (IsDefaultValue(Data.PlateStiffenerMaterial))
+            Data.PlateStiffenerMaterial = "Q235";
+        if (IsDefaultValue(Data.PlateStiffenerName))
+            Data.PlateStiffenerName = "";
+        if (IsDefaultValue(Data.PlateStiffenerFinish))
+            Data.PlateStiffenerFinish = "";
+        if (IsDefaultValue(Data.PlateStiffenerClass))
+            Data.PlateStiffenerClass = 99;
+        if (IsDefaultValue(Data.PlateStiffenerAssemblyPrefix))
+            Data.PlateStiffenerAssemblyPrefix = "A";
+        if (IsDefaultValue(Data.PlateStiffenerAssemblyStartNumber))
+            Data.PlateStiffenerAssemblyStartNumber = 1;
+        if (IsDefaultValue(Data.PlateStiffenerPartPrefix))
+            Data.PlateStiffenerPartPrefix = "P";
+        if (IsDefaultValue(Data.PlateStiffenerPartStartNumber))
+            Data.PlateStiffenerPartStartNumber = 1;
     }
 }
 ~~~
 
-
 ---
+
 ## Generate properties for view model class
 
 ### General properties
@@ -259,33 +254,32 @@ public partial class Plugin {
 Inherit view model from preset view model base to make it has ability to notify when its property changed and has some **general properties** (with StructuresDialogAttribute).
 
 - NotificationObject
-  
+
   A simple abstract class which implement INotifyPropertyChanged, inherit from it so you can use OnPropertyChanged method directly.
 
 - ConnectionViewModel
-  
-  An abstract class inherit from NotificationObject, and has a several general properties for connection type plugin. 
-  The use of properties is consistent with the Tekla Structures system connection component general tab.
+
+  An abstract class inherit from NotificationObject, and has a several general properties for connection type plugin. The usage of properties is consistent with the options in Tekla Structures system *connection* component general tab.
 
 - DetailViewModel
-  
-  An abstract class inherit from NotificationObject, and has a several general properties for detail type plugin. 
-  The use of properties is consistent with the Tekla Structures system detail component general tab.
+
+  An abstract class inherit from NotificationObject, and has a several general properties for detail type plugin. The usage of properties is consistent with the options in Tekla Structures system *detail* component general tab.
 
 ### Specific properties
 
-Apply these attributes to view model class to auto generate properties (with StructuresDialogAttribute):
+Apply these attributes to view model class to auto generate properties (with StructuresDialogAttribute) and set default values at the same time:
 
-- PartPropertiesAttribute
-- PlatePropertiesAttribute
-- WeldPropertiesAttribute
-- BoltPropertiesAttribute
-- BoltCirclePropertiesAttribute
+- PartPropertiesWithDefaultValuesAttribute
+- PlatePropertiesWithDefaultValuesAttribute
+- WeldPropertiesWithDefaultValuesAttribute
+- BoltPropertiesWithDefaultValuesAttribute
+- BoltCirclePropertiesWithDefaultValuesAttribute
 
-> ***Note***: Mapping relationship between model object properties and plugin attribute name 
-[see here](https://github.com/ThinkerHua/Muggle-Tekla-Structures-Extensions/blob/master/CodingHelper/AttributeNameReference.md).
+> ***Note***: Currently, the attributes from the previous version are retained (the same names of the above but do not include "WithDefaultValues"), but they are not recommended for use and might be removed in later versions, because the default values in the old version are hard-coded, whereas the new version allows manual specification.
 
-### Example
+> ***Note***: Mapping relationship between model object properties and plugin attribute names [see here](https://github.com/ThinkerHua/Muggle-Tekla-Structures-Extensions/blob/master/CodingHelper/AttributeNameReference.md).
+
+#### Example
 
 The source codes by hand:
 
@@ -294,7 +288,7 @@ The source codes by hand:
 
 using Muggle.TsExtensions.CodingHelper.Generators;
 
-[PlateProperties("EndPlate")]
+[PlatePropertiesWithDefaultValues("Stiffener", 10, 200.0, 300.00,)]
 public partial class MainWindowViewModel : ConnectionViewModel { 
     // ...
 }
@@ -306,128 +300,152 @@ Then it will auto generate codes behind like this:
 // in MainWindowViewModel.g.cs
 
 public partial class MainWindowViewModel {
+
+        private Tekla.Structures.Datatype.Double _plateStiffenerThickness;
+        private Tekla.Structures.Datatype.Double _plateStiffenerBreadth;
+        private Tekla.Structures.Datatype.Double _plateStiffenerHeight;
+        private Tekla.Structures.Datatype.String _plateStiffenerMaterial;
+        private Tekla.Structures.Datatype.String _plateStiffenerName;
+        private Tekla.Structures.Datatype.String _plateStiffenerFinish;
+        private Tekla.Structures.Datatype.Integer _plateStiffenerClass;
+        private Tekla.Structures.Datatype.String _plateStiffenerAssemblyPrefix;
+        private Tekla.Structures.Datatype.Integer _plateStiffenerAssemblyStartNumber;
+        private Tekla.Structures.Datatype.String _plateStiffenerPartPrefix;
+        private Tekla.Structures.Datatype.Integer _plateStiffenerPartStartNumber;
         
-        private string plateEndPlateName;
-        [StructuresDialog("PLEndPlateNAME", typeof(TD.String))]
-        public string PlateEndPlateName {
-            get { return plateEndPlateName; }
+        [Tekla.Structures.Dialog.StructuresDialog("PLStiffenerT", typeof(Tekla.Structures.Datatype.Double))]
+        public Tekla.Structures.Datatype.Double PlateStiffenerThickness {
+            get {
+                return _plateStiffenerThickness;
+            }
             set {
-                plateEndPlateName = value;
-                OnPropertyChanged("PlateEndPlateName");
+                _plateStiffenerThickness = value == int.MinValue ? 10 : value;
+                OnPropertyChanged();
             }
         }
         
-        private double plateEndPlateThickness;
-        [StructuresDialog("PLEndPlateT", typeof(TD.Double))]
-        public double PlateEndPlateThickness {
-            get { return plateEndPlateThickness; }
+        [Tekla.Structures.Dialog.StructuresDialog("PLStiffenerB", typeof(Tekla.Structures.Datatype.Double))]
+        public Tekla.Structures.Datatype.Double PlateStiffenerBreadth {
+            get {
+                return _plateStiffenerBreadth;
+            }
             set {
-                plateEndPlateThickness = value == int.MinValue ? 0.0 : value;
-                OnPropertyChanged("PlateEndPlateThickness");
+                _plateStiffenerBreadth = value == int.MinValue ? 200 : value;
+                OnPropertyChanged();
             }
         }
         
-        private double plateEndPlateBreadth;
-        [StructuresDialog("PLEndPlateB", typeof(TD.Double))]
-        public double PlateEndPlateBreadth {
-            get { return plateEndPlateBreadth; }
+        [Tekla.Structures.Dialog.StructuresDialog("PLStiffenerH", typeof(Tekla.Structures.Datatype.Double))]
+        public Tekla.Structures.Datatype.Double PlateStiffenerHeight {
+            get {
+                return _plateStiffenerHeight;
+            }
             set {
-                plateEndPlateBreadth = value == int.MinValue ? 0.0 : value;
-                OnPropertyChanged("PlateEndPlateBreadth");
+                _plateStiffenerHeight = value == int.MinValue ? 300 : value;
+                OnPropertyChanged();
             }
         }
         
-        private double plateEndPlateHeight;
-        [StructuresDialog("PLEndPlateH", typeof(TD.Double))]
-        public double PlateEndPlateHeight {
-            get { return plateEndPlateHeight; }
+        [Tekla.Structures.Dialog.StructuresDialog("PLStiffenerMATL", typeof(Tekla.Structures.Datatype.String))]
+        public Tekla.Structures.Datatype.String PlateStiffenerMaterial {
+            get {
+                return _plateStiffenerMaterial;
+            }
             set {
-                plateEndPlateHeight = value == int.MinValue ? 0.0 : value;
-                OnPropertyChanged("PlateEndPlateHeight");
+                _plateStiffenerMaterial = String.IsNullOrEmpty(value) ? "" : value;
+                OnPropertyChanged();
             }
         }
         
-        private string plateEndPlateMaterial;
-        [StructuresDialog("PLEndPlateMATL", typeof(TD.String))]
-        public string PlateEndPlateMaterial {
-            get { return plateEndPlateMaterial; }
+        [Tekla.Structures.Dialog.StructuresDialog("PLStiffenerNAME", typeof(Tekla.Structures.Datatype.String))]
+        public Tekla.Structures.Datatype.String PlateStiffenerName {
+            get {
+                return _plateStiffenerName;
+            }
             set {
-                plateEndPlateMaterial = value;
-                OnPropertyChanged("PlateEndPlateMaterial");
+                _plateStiffenerName = String.IsNullOrEmpty(value) ? "" : value;
+                OnPropertyChanged();
             }
         }
         
-        private string plateEndPlateFinish;
-        [StructuresDialog("PLEndPlateFNSH", typeof(TD.String))]
-        public string PlateEndPlateFinish {
-            get { return plateEndPlateFinish; }
+        [Tekla.Structures.Dialog.StructuresDialog("PLStiffenerFNSH", typeof(Tekla.Structures.Datatype.String))]
+        public Tekla.Structures.Datatype.String PlateStiffenerFinish {
+            get {
+                return _plateStiffenerFinish;
+            }
             set {
-                plateEndPlateFinish = value;
-                OnPropertyChanged("PlateEndPlateFinish");
+                _plateStiffenerFinish = String.IsNullOrEmpty(value) ? "" : value;
+                OnPropertyChanged();
             }
         }
         
-        private int plateEndPlateClass;
-        [StructuresDialog("PLEndPlateCLS", typeof(TD.Integer))]
-        public int PlateEndPlateClass {
-            get { return plateEndPlateClass; }
+        [Tekla.Structures.Dialog.StructuresDialog("PLStiffenerCLS", typeof(Tekla.Structures.Datatype.Integer))]
+        public Tekla.Structures.Datatype.Integer PlateStiffenerClass {
+            get {
+                return _plateStiffenerClass;
+            }
             set {
-                plateEndPlateClass = value == int.MinValue ? 99 : value;
-                OnPropertyChanged("PlateEndPlateClass");
+                _plateStiffenerClass = value == int.MinValue ? 99 : value;
+                OnPropertyChanged();
             }
         }
         
-        private string plateEndPlateAssemblyPrefix;
-        [StructuresDialog("PLEndPlateASMP", typeof(TD.String))]
-        public string PlateEndPlateAssemblyPrefix {
-            get { return plateEndPlateAssemblyPrefix; }
+        [Tekla.Structures.Dialog.StructuresDialog("PLStiffenerASMP", typeof(Tekla.Structures.Datatype.String))]
+        public Tekla.Structures.Datatype.String PlateStiffenerAssemblyPrefix {
+            get {
+                return _plateStiffenerAssemblyPrefix;
+            }
             set {
-                plateEndPlateAssemblyPrefix = value;
-                OnPropertyChanged("PlateEndPlateAssemblyPrefix");
+                _plateStiffenerAssemblyPrefix = String.IsNullOrEmpty(value) ? "A-" : value;
+                OnPropertyChanged();
             }
         }
         
-        private int plateEndPlateAssemblyStartNumber;
-        [StructuresDialog("PLEndPlateASMN", typeof(TD.Integer))]
-        public int PlateEndPlateAssemblyStartNumber {
-            get { return plateEndPlateAssemblyStartNumber; }
+        [Tekla.Structures.Dialog.StructuresDialog("PLStiffenerASMN", typeof(Tekla.Structures.Datatype.Integer))]
+        public Tekla.Structures.Datatype.Integer PlateStiffenerAssemblyStartNumber {
+            get {
+                return _plateStiffenerAssemblyStartNumber;
+            }
             set {
-                plateEndPlateAssemblyStartNumber = value == int.MinValue ? 1 : value;
-                OnPropertyChanged("PlateEndPlateAssemblyStartNumber");
+                _plateStiffenerAssemblyStartNumber = value == int.MinValue ? 1 : value;
+                OnPropertyChanged();
             }
         }
         
-        private string plateEndPlatePartPrefix;
-        [StructuresDialog("PLEndPlatePTP", typeof(TD.String))]
-        public string PlateEndPlatePartPrefix {
-            get { return plateEndPlatePartPrefix; }
+        [Tekla.Structures.Dialog.StructuresDialog("PLStiffenerPTP", typeof(Tekla.Structures.Datatype.String))]
+        public Tekla.Structures.Datatype.String PlateStiffenerPartPrefix {
+            get {
+                return _plateStiffenerPartPrefix;
+            }
             set {
-                plateEndPlatePartPrefix = value;
-                OnPropertyChanged("PlateEndPlatePartPrefix");
+                _plateStiffenerPartPrefix = String.IsNullOrEmpty(value) ? "P" : value;
+                OnPropertyChanged();
             }
         }
         
-        private int plateEndPlatePartStartNumber;
-        [StructuresDialog("PLEndPlatePTN", typeof(TD.Integer))]
-        public int PlateEndPlatePartStartNumber {
-            get { return plateEndPlatePartStartNumber; }
+        [Tekla.Structures.Dialog.StructuresDialog("PLStiffenerPTN", typeof(Tekla.Structures.Datatype.Integer))]
+        public Tekla.Structures.Datatype.Integer PlateStiffenerPartStartNumber {
+            get {
+                return _plateStiffenerPartStartNumber;
+            }
             set {
-                plateEndPlatePartStartNumber = value == int.MinValue ? 1 : value;
-                OnPropertyChanged("PlateEndPlatePartStartNumber");
+                _plateStiffenerPartStartNumber = value == int.MinValue ? 1 : value;
+                OnPropertyChanged();
             }
         }
 }
 ~~~
 
 ---
+
 ## Demo
 
 You can get a complete demo project from [here](https://github.com/ThinkerHua/Muggle-Tekla-Structures-Extensions/blob/master/Demo1).
 
-![Preview0](https://github.com/ThinkerHua/Muggle-Tekla-Structures-Extensions/blob/master/Resources/Introduction_Demo1_00.png)
+![Preview0](https://raw.githubusercontent.com/ThinkerHua/Muggle-Tekla-Structures-Extensions/master/Resources/Introduction_Demo1_00.png)
 
-![Preview1](https://github.com/ThinkerHua/Muggle-Tekla-Structures-Extensions/blob/master/Resources/Introduction_Demo1_01.png)
+![Preview1](https://raw.githubusercontent.com/ThinkerHua/Muggle-Tekla-Structures-Extensions/master/Resources/Introduction_Demo1_01.png)
 
-![Preview2](https://github.com/ThinkerHua/Muggle-Tekla-Structures-Extensions/blob/master/Resources/Introduction_Demo1_02.png)
+![Preview2](https://raw.githubusercontent.com/ThinkerHua/Muggle-Tekla-Structures-Extensions/master/Resources/Introduction_Demo1_02.png)
 
-![Preview3](https://github.com/ThinkerHua/Muggle-Tekla-Structures-Extensions/blob/master/Resources/Introduction_Demo1_03.png)
+![Preview3](https://raw.githubusercontent.com/ThinkerHua/Muggle-Tekla-Structures-Extensions/master/Resources/Introduction_Demo1_03.png)

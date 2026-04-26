@@ -1,7 +1,7 @@
 ﻿using System;
 
 namespace Muggle.TsExtensions.CodingHelper.Generators.Information {
-    internal record struct PluginFieldDefaultValuesInfo : IRequiredInformation<PluginFieldDefaultValuesInfo> {
+    internal record struct PluginFieldDefaultValuesInfo {
 
         public ClassInfo ClassInfo;
 

@@ -1,7 +1,7 @@
 ﻿using Microsoft.CodeAnalysis;
 
 namespace Muggle.TsExtensions.CodingHelper.Generators.Information {
-    internal record struct ClassInfo : IRequiredInformation<ClassInfo> {
+    internal record struct ClassInfo {
         public string Name;
 
         public string NameSpace;

@@ -14,7 +14,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators.Information {
     /// Value - attribute arguments, such as ["Base", "Main", "Sec1", "Sec2"].
     /// </remarks>
     /// <typeparam name="TValue">The type of the stored argument values. Must implement <see cref="IEquatable{T}"/>.</typeparam>
-    internal class ArgumentsDictionary<TValue> : Dictionary<string, TValue>, IRequiredInformation<ArgumentsDictionary<TValue>>
+    internal class ArgumentsDictionary<TValue> : Dictionary<string, TValue>, IEquatable<ArgumentsDictionary<TValue>>
         where TValue : IEquatable<TValue> {
 
         /*private Dictionary<string, TValue> _dict;
