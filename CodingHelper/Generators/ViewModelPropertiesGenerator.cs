@@ -1106,7 +1106,8 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
             return syntaxNode is ClassDeclarationSyntax { AttributeLists.Count: > 0 };
         }
 
-        private static ViewModelPropertiesInfo Transform(GeneratorSyntaxContext syntaxContext, CancellationToken token) {
+        private static ViewModelPropertiesInfo
+            Transform(GeneratorSyntaxContext syntaxContext, CancellationToken token) {
             var classDeclarationSyntax = (ClassDeclarationSyntax)syntaxContext.Node;
             if (!classDeclarationSyntax.Modifiers.Any(m => m.IsKind(SyntaxKind.PartialKeyword))) return default;
 
@@ -1136,8 +1137,11 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                 };
 
                 foreach (var nameOrNumber in kvp.Value) {
-                    var match = Regex.Match(nameOrNumber, InternalAttributesDiagnoser.SpecialCharacterPattern);
-                    if (match.Success) continue;
+                    if (nameOrNumber.Length == 0 ||
+                        nameOrNumber.Length > InternalAttributesDiagnoser.MaxLengthOfArgument(attributeName))
+                        continue;
+                    if (Regex.Match(nameOrNumber, InternalAttributesDiagnoser.SpecialCharacterPattern).Success)
+                        continue;
 
                     builder.AppendLine(propertiesTemplate.Replace("{{nameOrNumber}}", nameOrNumber));
                 }

@@ -26,6 +26,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
+using Muggle.TsExtensions.CodingHelper.Diagnosers;
 using Muggle.TsExtensions.CodingHelper.Generators.Information;
 using static Muggle.TsExtensions.CodingHelper.Generators.GeneratorHelper;
 using PropertyInfo = (string Name, string AttributeName, string Type, string Validation);
@@ -269,10 +270,9 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
 
                 return !oldAttributeDict.TryGetValue(attributeName.Replace("WithDefaultValues", ""), out var hashset) ||
                        !hashset.Contains(nameOrNumber);
-
             }).ToArray();
 
-        SkipCompatibleWithViewModelPropertiesGenerator:;
+            SkipCompatibleWithViewModelPropertiesGenerator: ;
 #endif
 
             var argumentsDict = new ArgumentsDictionary<DefaultValueDictionary>();
@@ -312,7 +312,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                 }
 
                 arguments.Add(nameOrNumber, defaultValues);
-            ContinueAttributeLoop:;
+                ContinueAttributeLoop: ;
             }
 
             return new ViewModelPropertiesInfo {
@@ -360,6 +360,12 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                 foreach (var modelObjDict in attDict.Value) {
                     var nameOrNumber = modelObjDict.Key;
                     var defaultValues = modelObjDict.Value;
+
+                    if (nameOrNumber.Length == 0 ||
+                        nameOrNumber.Length > InternalAttributesDiagnoser.MaxLengthOfArgument(attributeName))
+                        continue;
+                    if (Regex.Match(nameOrNumber, InternalAttributesDiagnoser.SpecialCharacterPattern).Success)
+                        continue;
 
                     for (int i = 0; i < presetValues.Count; i++) {
                         var property = presetValues.ElementAt(i).Key;

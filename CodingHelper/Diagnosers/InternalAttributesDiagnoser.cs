@@ -163,7 +163,9 @@ internal class InternalAttributesDiagnoser : DiagnosticAnalyzer {
                     var attTypeInfo = semanticModel.GetTypeInfo(att);
                     var attQualifiedName = attTypeInfo.Type?.ToDisplayString();
                     return PluginDataFieldsGenerator.ConcernedAttributes.Contains(attQualifiedName) ||
+#if CompatibleWithViewModelPropertiesGenerator
                            ViewModelPropertiesGenerator.ConcernedAttributes.Contains(attQualifiedName) ||
+#endif
                            PluginFieldsGenerator.ConcernedAttribute == attQualifiedName ||
                            PluginFieldDefaultValuesGenerator.ConcernedAttributes.Contains(attQualifiedName) ||
                            ViewModelPropertiesWithDefaultValuesGenerator.ConcernedAttributes.Contains(attQualifiedName);
@@ -202,7 +204,6 @@ internal class InternalAttributesDiagnoser : DiagnosticAnalyzer {
 
             context.ReportDiagnostic(Diagnostic.Create(NotPartialDescriptor, location, className));
         }
-
     }
 
     internal static void AnalyzeArgumentLength(SyntaxNodeAnalysisContext context) {
@@ -210,8 +211,11 @@ internal class InternalAttributesDiagnoser : DiagnosticAnalyzer {
         var attributeSyntax = (AttributeSyntax)context.Node;
         var typeInfo = semanticModel.GetTypeInfo(attributeSyntax);
         var attributeQualifiedName = typeInfo.Type?.ToDisplayString();
-        if (!PluginDataFieldsGenerator.ConcernedAttributes.Contains(attributeQualifiedName) &&
-            !ViewModelPropertiesGenerator.ConcernedAttributes.Contains(attributeQualifiedName))
+        if (!PluginDataFieldsGenerator.ConcernedAttributes.Contains(attributeQualifiedName)
+#if CompatibleWithViewModelPropertiesGenerator
+            && !ViewModelPropertiesGenerator.ConcernedAttributes.Contains(attributeQualifiedName)
+#endif
+           )
             return;
 
         var literalExpressionSyntaxes = attributeSyntax.ArgumentList?.Arguments
@@ -240,19 +244,18 @@ internal class InternalAttributesDiagnoser : DiagnosticAnalyzer {
             context.ReportDiagnostic(Diagnostic.Create(
                 LengthExceedLimitationDescriptor,
                 expressionSyntax.GetLocation(),
-                [attributeName, example, maxLength]));
+                attributeName, example, maxLength));
         }
     }
 
     internal static string DescriptorExample(string attributeName) {
-        return attributeName switch {
-            "PartFieldsAttribute" or "PartPropertiesAttribute" => "PT<nameOrNumber>MATL",
-            "PlateFieldsAttribute" or "PlatePropertiesAttribute" => "PL<nameOrNumber>MATL",
-            "WeldFieldsAttribute" or "WeldPropertiesAttribute" => "W<nameOrNumber>SIZEA",
-            "BoltFieldsAttribute" or "BoltPropertiesAttribute" => "B<nameOrNumber>DISTX",
-            "BoltCircleFieldsAttribute" or "BoltCirclePropertiesAttribute" => "BC<nameOrNumber>PLAIN",
-            _ => string.Empty
-        };
+        if (attributeName == null) return string.Empty;
+        if (attributeName.StartsWith("Part")) return "PT<nameOrNumber>MATL";
+        if (attributeName.StartsWith("Plate")) return "PL<nameOrNumber>MATL";
+        if (attributeName.StartsWith("Weld")) return "W<nameOrNumber>SIZEA";
+        if (attributeName.StartsWith("BoltCircle")) return "BC<nameOrNumber>PLAIN";
+        if (attributeName.StartsWith("Bolt")) return "B<nameOrNumber>DISTX";
+        return string.Empty;
     }
 
     /// <summary>
@@ -265,14 +268,13 @@ internal class InternalAttributesDiagnoser : DiagnosticAnalyzer {
     /// <param name="attributeName">The name of the specified attribute.</param>
     /// <returns>The character lenght of the arguments.</returns>
     internal static int MaxLengthOfArgument(string attributeName) {
-        return attributeName switch {
-            "PartFieldsAttribute" or "PartPropertiesAttribute" => 13,
-            "PlateFieldsAttribute" or "PlatePropertiesAttribute" => 13,
-            "WeldFieldsAttribute" or "WeldPropertiesAttribute" => 13,
-            "BoltFieldsAttribute" or "BoltPropertiesAttribute" => 13,
-            "BoltCircleFieldsAttribute" or "BoltCirclePropertiesAttribute" => 12,
-            _ => int.MinValue
-        };
+        if (attributeName == null) return int.MinValue;
+        if (attributeName.StartsWith("Part")) return 13;
+        if (attributeName.StartsWith("Plate")) return 13;
+        if (attributeName.StartsWith("Weld")) return 13;
+        if (attributeName.StartsWith("BoltCircle")) return 12;
+        if (attributeName.StartsWith("Bolt")) return 13;
+        return int.MinValue;
     }
 
     internal static void AnalyzeInterface(SyntaxNodeAnalysisContext context) {
@@ -282,8 +284,11 @@ internal class InternalAttributesDiagnoser : DiagnosticAnalyzer {
         var attributeSyntaxes = classDeclarationSyntax.AttributeLists.SelectMany(als => als.Attributes).ToArray();
         var appliedAttributes = attributeSyntaxes
             .Select(attSyntax => semanticModel.GetTypeInfo(attSyntax).Type?.ToDisplayString())
-            .Where(name => ViewModelPropertiesGenerator.ConcernedAttributes.Contains(name) ||
-                           ViewModelPropertiesWithDefaultValuesGenerator.ConcernedAttributes.Contains(name))
+            .Where(name =>
+#if CompatibleWithViewModelPropertiesGenerator
+                ViewModelPropertiesGenerator.ConcernedAttributes.Contains(name) ||
+#endif
+                ViewModelPropertiesWithDefaultValuesGenerator.ConcernedAttributes.Contains(name))
             .ToArray();
         if (!appliedAttributes.Any()) return;
 
@@ -463,16 +468,16 @@ internal class InternalAttributesDiagnoser : DiagnosticAnalyzer {
                 ViewModelPropertiesGenerator.ConcernedAttributes, ref oldAttributeSyntaxes))
             return;
 
-        var oldModelObjDict = new Dictionary<string, HashSet<string>>();
+        var oldAttDict = new Dictionary<string, HashSet<string>>();
 
         foreach (var attributeSyntax in oldAttributeSyntaxes) {
             var attTypeInfo = semanticModel.GetTypeInfo(attributeSyntax);
             var attQualifiedName = attTypeInfo.Type?.ToDisplayString() ?? string.Empty;
             var attName = attQualifiedName.Substring(attQualifiedName.LastIndexOf('.') + 1);
 
-            if (!oldModelObjDict.TryGetValue(attName, out HashSet<string> modelObjSet)) {
-                modelObjSet = new HashSet<string>();
-                oldModelObjDict.Add(attName, modelObjSet);
+            if (!oldAttDict.TryGetValue(attName, out HashSet<string> nameOrNumberSet)) {
+                nameOrNumberSet = new HashSet<string>();
+                oldAttDict.Add(attName, nameOrNumberSet);
             }
 
             if (attributeSyntax.ArgumentList == null) continue;
@@ -482,7 +487,7 @@ internal class InternalAttributesDiagnoser : DiagnosticAnalyzer {
                 .Select(expressionSyntax => expressionSyntax.Token.ValueText);
 
             foreach (var argument in arguments) {
-                modelObjSet.Add(argument);
+                nameOrNumberSet.Add(argument);
             }
         }
 #endif
@@ -492,7 +497,7 @@ internal class InternalAttributesDiagnoser : DiagnosticAnalyzer {
                 ViewModelPropertiesWithDefaultValuesGenerator.ConcernedAttributes, ref attributeSyntaxes))
             return;
 
-        var modelObjDict = new Dictionary<string, HashSet<string>>();
+        var attDict = new Dictionary<string, HashSet<string>>();
 
         foreach (var attributeSyntax in attributeSyntaxes) {
             var attTypeInfo = semanticModel.GetTypeInfo(attributeSyntax);
@@ -500,9 +505,9 @@ internal class InternalAttributesDiagnoser : DiagnosticAnalyzer {
             var attName = attQualifiedName.Substring(attQualifiedName.LastIndexOf('.') + 1);
             var oldAttName = attName.Replace("WithDefaultValues", "");
 
-            if (!modelObjDict.TryGetValue(attName, out HashSet<string> modelObjSet)) {
-                modelObjSet = new HashSet<string>();
-                modelObjDict.Add(attName, modelObjSet);
+            if (!attDict.TryGetValue(attName, out HashSet<string> nameOrNumberSet)) {
+                nameOrNumberSet = new HashSet<string>();
+                attDict.Add(attName, nameOrNumberSet);
             }
 
             if (attributeSyntax.ArgumentList == null) continue;
@@ -516,16 +521,36 @@ internal class InternalAttributesDiagnoser : DiagnosticAnalyzer {
 
                 if (index == 0 && parameter == null || parameter != null &&
                     Regex.Match(parameter, "(part|plate|weld|bolt|boltCircle)N(ame|umber)").Success) {
-                    if (!modelObjSet.Add(argument)) {
+                    
+                    var maxLength = MaxLengthOfArgument(attName);
+                    if (argument.Length > maxLength) {
+                        var example = DescriptorExample(attName);
+                        context.ReportDiagnostic(Diagnostic.Create(
+                            LengthExceedLimitationDescriptor, argSyntax.GetLocation(),
+                            attName, example, maxLength));
+                    }
+                    
+                    if (Regex.Match(argument, SpecialCharacterPattern).Success) {
+                        context.ReportDiagnostic(Diagnostic.Create(ContainsSpecialCharacters, argSyntax.GetLocation()));
+                    }
+
+                    if (Regex.Match(argument, UnsuggestedCharacterPattern).Success) {
+                        context.ReportDiagnostic(Diagnostic.Create(ContainsUnsuggestedCharacters,
+                            argSyntax.GetLocation()));
+                    }
+
+                    if (!nameOrNumberSet.Add(argument)) {
                         context.ReportDiagnostic(Diagnostic.Create(
                             SetDefaultValueMultiTimes, argSyntax.GetLocation()));
                     }
 
-                    if (oldModelObjDict.ContainsKey(oldAttName) && oldModelObjDict[oldAttName].Contains(argument)) {
+#if CompatibleWithViewModelPropertiesGenerator
+                    if (oldAttDict.ContainsKey(oldAttName) && oldAttDict[oldAttName].Contains(argument)) {
                         context.ReportDiagnostic(Diagnostic.Create(
                             AlreadyBeGeneratedByOldGenerator, argSyntax.GetLocation(),
                             oldAttName, attName));
                     }
+#endif
                 }
             }
         }

@@ -253,8 +253,11 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                 template = templateBuilder.ToString();
 
                 foreach (var nameOrNumber in kvp.Value) {
-                    var match = Regex.Match(nameOrNumber, InternalAttributesDiagnoser.SpecialCharacterPattern);
-                    if (match.Success) continue;
+                    if (nameOrNumber.Length == 0 || 
+                        nameOrNumber.Length > InternalAttributesDiagnoser.MaxLengthOfArgument(attributeName)) 
+                        continue;
+                    if (Regex.Match(nameOrNumber, InternalAttributesDiagnoser.SpecialCharacterPattern).Success)
+                        continue;
 
                     builder.Append(template.Replace("{{nameOrNumber}}", nameOrNumber));
                 }
