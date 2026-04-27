@@ -8,7 +8,7 @@
         <IsRoslynComponent>true</IsRoslynComponent>
         <PackageId>Muggle.TsExtensions.CodingHelper</PackageId>
         <Title>Tekla Structures OpenAPI development helper</Title>
-        <Version>1.3.1</Version>
+        <Version>1.3.2</Version>
         <Authors>Huang YongXing</Authors>
         <Description>Help to generate fields (with StructuresFieldAttribute) for plugin data, fields for plugin, and properties (with StructuresDialogAttribute) for view model which used by plugin WPF UI.</Description>
         <Copyright>© 2026 Huang YongXing</Copyright>
@@ -20,7 +20,7 @@
         <PackageTags>Tekla Structures OpenAPI Generator</PackageTags>
         <PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
         <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
-        <PackageReleaseNotes>Improve diagnoser for the new properties generator.</PackageReleaseNotes>
+        <PackageReleaseNotes>Fix the issue of transitive dependency.</PackageReleaseNotes>
         <IncludeBuildOutput>false</IncludeBuildOutput>
     </PropertyGroup>
 
@@ -29,7 +29,9 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="5.0.0" />
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="5.0.0">
+            <PrivateAssets>all</PrivateAssets>
+        </PackageReference>
     </ItemGroup>
 
     <ItemGroup>
@@ -97,11 +99,6 @@
         <EmbeddedResource Include="Resources\WeldFieldsAttribute.cs" />
         <EmbeddedResource Include="Resources\WeldPropertiesAttribute.cs" />
         <EmbeddedResource Include="Resources\WeldPropertiesWithDefaultValuesAttribute.cs" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <AdditionalFiles Remove="AnalyzerReleases.Unshipped.md" />
-      <AdditionalFiles Remove="AnalyzerReleases.Shipped.md" />
     </ItemGroup>
 
 </Project>
