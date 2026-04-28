@@ -9,22 +9,24 @@
 		<RootNamespace>Muggle.TsExtensions.MainWindow</RootNamespace>
 		<Authors>thinkerhua@hotmail.com</Authors>
 		<Copyright>Copyright © 2024 thinkerhua@hotmail.com. All rights reserved.</Copyright>
-		<OutputPath>../TSEP/binaries</OutputPath>
-		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-		<AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
 		<ApplicationIcon>Resources\logo.ico</ApplicationIcon>
+		<Configurations>D2021;D2024;R2021;R2024</Configurations>
+        <Optimize Condition="$(Configuration.StartsWith('R'))">True</Optimize>
+        <DefineConstants Condition="$(Configuration.StartsWith('D'))">TRACE;DEBUG</DefineConstants>
+        <DefineConstants Condition="$(Configuration.StartsWith('R'))">TRACE;RELEASE</DefineConstants>
 	</PropertyGroup>
 	
 	<ItemGroup>
-		<PackageReference Include="CalcBinding" Version="2.5.2" />
-		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
-		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.5" />
-		<PackageReference Include="Tekla.Structures" Version="2021.0.0" ExcludeAssets="runtime" />
-		<PackageReference Include="Tekla.Structures.Catalogs" Version="2021.0.0" ExcludeAssets="runtime" />
-		<PackageReference Include="Tekla.Structures.Datatype" Version="2021.0.0" ExcludeAssets="runtime" />
-		<PackageReference Include="Tekla.Structures.Dialog" Version="2021.0.0" ExcludeAssets="runtime" />
-		<PackageReference Include="Tekla.Structures.Model" Version="2021.0.0" ExcludeAssets="runtime" />
-		<PackageReference Include="Tekla.Structures.Plugins" Version="2021.0.0" ExcludeAssets="runtime" />
+		<PackageReference Include="CalcBinding" />
+		<PackageReference Include="CommunityToolkit.Mvvm" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" />
+		<PackageReference Include="Tekla.Structures" ExcludeAssets="runtime" />
+		<PackageReference Include="Tekla.Structures.Catalogs" ExcludeAssets="runtime" />
+		<PackageReference Include="Tekla.Structures.Datatype" ExcludeAssets="runtime" />
+		<PackageReference Include="Tekla.Structures.Dialog" ExcludeAssets="runtime" />
+		<PackageReference Include="Tekla.Structures.Model" ExcludeAssets="runtime" />
+		<PackageReference Include="Tekla.Structures.Plugins" ExcludeAssets="runtime" />
+		<PackageReference Include="TSAppConfigPatcherTask" Condition="$(Configuration.EndsWith('2024'))"/>
 	</ItemGroup>
 	
 	<ItemGroup>
@@ -32,19 +34,16 @@
 	</ItemGroup>
 	
 	<ItemGroup>
-		<ProjectReference Include="..\Common.WPF\Common.WPF.csproj" private="false" />
-		<ProjectReference Include="..\Common\Common.csproj" private="false" />
+		<ProjectReference Include="..\Common.WPF\Common.WPF.csproj" />
+		<ProjectReference Include="..\Common\Common.csproj" />
 	</ItemGroup>
 
 	<ItemGroup>
 		<None Remove="Resources\logo.ico" />
-	</ItemGroup>
-	
-	<ItemGroup>
 		<Resource Include="Resources\logo.ico" />
 	</ItemGroup>
 
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
-		<Exec Command="xcopy &quot;$(TargetDir)$(TargetName).exe&quot; &quot;D:\Program Files\Tekla Structures\2021.0\Environments\common\extensions\Muggle.TsExtensions\&quot; /Y /C /Q /R" />
+		<Exec Command="xcopy &quot;$(TargetDir)$(TargetName).exe&quot; &quot;D:\Program Files\Tekla Structures\$(TeklaVersion)\Environments\common\extensions\Muggle.TsExtensions\&quot; /Y /C /Q /R" />
 	</Target>
 </Project>

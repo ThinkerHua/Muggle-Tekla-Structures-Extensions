@@ -5,28 +5,30 @@
 		<LangVersion>latest</LangVersion>
 		<UseWPF>true</UseWPF>
 		<RootNamespace>Muggle.TsExtensions.Demo1</RootNamespace>
-		<OutputPath>../TSEP/binaries</OutputPath>
-		<AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-		<AppendRuntimeIdentifierToOutputPath>false</AppendRuntimeIdentifierToOutputPath>
+		<Configurations>D2021;D2024;R2021;R2024</Configurations>
+        <Optimize Condition="$(Configuration.StartsWith('R'))">True</Optimize>
+        <DefineConstants Condition="$(Configuration.StartsWith('D'))">TRACE;DEBUG</DefineConstants>
+        <DefineConstants Condition="$(Configuration.StartsWith('R'))">TRACE;RELEASE</DefineConstants>
 	</PropertyGroup>
-
+    
 	<ItemGroup>
-		<PackageReference Include="CalcBinding" Version="2.5.2" />
-		<PackageReference Condition="'$(Configuration)' == 'Release'" Include="Muggle.TsExtensions.CodingHelper" Version="1.*" />
-		<PackageReference Include="Tekla.Structures" Version="2021.0.0" ExcludeAssets="runtime" />
-		<PackageReference Include="Tekla.Structures.Datatype" Version="2021.0.0" ExcludeAssets="runtime" />
-		<PackageReference Include="Tekla.Structures.Dialog" Version="2021.0.0" ExcludeAssets="runtime" />
-		<PackageReference Include="Tekla.Structures.Model" Version="2021.0.0" ExcludeAssets="runtime" />
-		<PackageReference Include="Tekla.Structures.Plugins" Version="2021.0.0" ExcludeAssets="runtime" />
+		<PackageReference Include="CalcBinding" />
+		<PackageReference Include="Muggle.TsExtensions.CodingHelper" Condition="$(Configuration.StartsWith('R'))" />
+		<PackageReference Include="Tekla.Structures" ExcludeAssets="runtime" />
+		<PackageReference Include="Tekla.Structures.Datatype" ExcludeAssets="runtime" />
+		<PackageReference Include="Tekla.Structures.Dialog" ExcludeAssets="runtime" />
+		<PackageReference Include="Tekla.Structures.Model" ExcludeAssets="runtime" />
+		<PackageReference Include="Tekla.Structures.Plugins" ExcludeAssets="runtime" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<ProjectReference Condition="'$(Configuration)' == 'Debug'" Include="..\CodingHelper\CodingHelper.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
-		<ProjectReference Include="..\Common.WPF\Common.WPF.csproj" private="false" />
+		<ProjectReference Include="..\CodingHelper\CodingHelper.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false"
+                          Condition="$(Configuration.StartsWith('D'))" />
+		<ProjectReference Include="..\Common.WPF\Common.WPF.csproj" />
 	</ItemGroup>
 
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
-		<Exec Command="xcopy &quot;$(TargetDir)$(TargetName).dll&quot; &quot;D:\Program Files\Tekla Structures\2021.0\Environments\common\extensions\Muggle.TsExtensions\&quot; /Y /C /Q /R" />
+		<Exec Command="xcopy &quot;$(TargetDir)$(TargetName).dll&quot; &quot;D:\Program Files\Tekla Structures\$(TeklaVersion)\Environments\common\extensions\Muggle.TsExtensions\&quot; /Y /C /Q /R" />
 	</Target>
 
 </Project>

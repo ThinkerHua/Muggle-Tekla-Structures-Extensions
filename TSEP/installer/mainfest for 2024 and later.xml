@@ -24,6 +24,8 @@
 		<SourcePathVariable Id="MessagesFolder" Value="%TEPDEFINITIONFILEFOLDER%\..\messages"/>
 		<SourcePathVariable Id="BitmapsFolder" Value="%TEPDEFINITIONFILEFOLDER%\..\bitmaps"/>
 		<SourcePathVariable Id="ComponentCatalogFolder" Value="%TEPDEFINITIONFILEFOLDER%\..\component catalog" />
+		<SourcePathVariable Id="SolutionFolder" Value="%TEPDEFINITIONFILEFOLDER%\..\.." />
+		<SourcePathVariable Id="MSBuildOutputPath" Value="bin\R2024\net48"/>
 	</SourcePathVariables>
 
 	<TargetPathVariables>
@@ -38,76 +40,76 @@
 	</TargetPathVariables>
 
 	<Component Id="Common" Guid="191F0900-2601-42FD-9334-4F0319628EBA">
-		<File Id="Common" Source="%BinariesFolder%\Common.dll" Target="%BinariesDirectory%"/>
+		<File Id="Common" Source="%SolutionFolder%\Common\%MSBuildOutputPath%\Common.dll" Target="%BinariesDirectory%"/>
 	</Component>
 
 	<Component Id="Common.WPF" Guid="E64B36A7-2004-4943-A8EC-3A97B5BF701A">
-		<File Id="Common.WPF" Source="%BinariesFolder%\Common.WPF.dll" Target="%BinariesDirectory%"/>
+		<File Id="Common.WPF" Source="%SolutionFolder%\Common.WPF\%MSBuildOutputPath%\Common.WPF.dll" Target="%BinariesDirectory%"/>
 	</Component>
 
 	<Component Id="HJ1001" Guid="13696F27-FEFD-4603-82BE-7DE7221CBCF5">
-		<File Id="HJ1001" Source="%BinariesFolder%\HJ1001.dll" Target="%BinariesDirectory%"/>
+		<File Id="HJ1001" Source="%SolutionFolder%\HJ1001\%MSBuildOutputPath%\HJ1001.dll" Target="%BinariesDirectory%"/>
 		<File Id="HJ1001.Icon" Source="%BitmapsFolder%\et_element_HJ1001.bmp" Target="%BitmapsDirectory%"/>
 		<File Id="HJ1001.Ail" Source="%MessagesFolder%\HJ1001.ail" Target="%MessagesDirectory%"/>
 	</Component>
 
 	<Component Id="KJ1001" Guid="3EDD299B-A0D9-4961-B4AA-79F4077AB0F6">
-		<File Id="KJ1001" Source="%BinariesFolder%\KJ1001.dll" Target="%BinariesDirectory%"/>
+		<File Id="KJ1001" Source="%SolutionFolder%\KJ1001\%MSBuildOutputPath%\KJ1001.dll" Target="%BinariesDirectory%"/>
 		<File Id="KJ1001.Icon" Source="%BitmapsFolder%\et_element_KJ1001.bmp" Target="%BitmapsDirectory%"/>
 		<File Id="KJ1001.Ail" Source="%MessagesFolder%\KJ1001.ail" Target="%MessagesDirectory%"/>
 	</Component>
 
 	<Component Id="KJ1002" Guid="1DA2C612-1007-4172-A9E1-96D0BFDC4CD8">
-		<File Id="KJ1002" Source="%BinariesFolder%\KJ1002.dll" Target="%BinariesDirectory%"/>
+		<File Id="KJ1002" Source="%SolutionFolder%\KJ1002\%MSBuildOutputPath%\KJ1002.dll" Target="%BinariesDirectory%"/>
 		<File Id="KJ1002.Icon" Source="%BitmapsFolder%\et_element_KJ1002.bmp" Target="%BitmapsDirectory%"/>
 		<File Id="KJ1002.Ail" Source="%MessagesFolder%\KJ1002.ail" Target="%MessagesDirectory%"/>
 	</Component>
 
 	<Component Id="KJ2001" Guid="717671A2-058E-4114-AEBF-463DF46C4D52">
-		<File Id="KJ2001" Source="%BinariesFolder%\KJ2001.dll" Target="%BinariesDirectory%"/>
+		<File Id="KJ2001" Source="%SolutionFolder%\KJ2001\%MSBuildOutputPath%\KJ2001.dll" Target="%BinariesDirectory%"/>
 		<File Id="KJ2001.Icon" Source="%BitmapsFolder%\et_element_KJ2001.bmp" Target="%BitmapsDirectory%"/>
 		<File Id="KJ2001.Ail" Source="%MessagesFolder%\KJ2001.ail" Target="%MessagesDirectory%"/>
 	</Component>
 
 	<Component Id="MG1001" Guid="A183E9EB-B32F-4FB4-B9FB-0E68A5D0AEBF">
-		<File Id="MG1001" Source="%BinariesFolder%\MG1001.dll" Target="%BinariesDirectory%"/>
+		<File Id="MG1001" Source="%SolutionFolder%\MG1001\%MSBuildOutputPath%\MG1001.dll" Target="%BinariesDirectory%"/>
 		<File Id="MG1001.Icon" Source="%BitmapsFolder%\et_element_MG1001.bmp" Target="%BitmapsDirectory%"/>
 		<File Id="MG1001.Ail" Source="%MessagesFolder%\MG1001.ail" Target="%MessagesDirectory%"/>
 	</Component>
 
 	<Component Id="MG1002" Guid="871E6AED-717B-4ECF-B7D3-877E6D806EA1">
-		<File Id="MG1002" Source="%BinariesFolder%\MG1002.dll" Target="%BinariesDirectory%"/>
+		<File Id="MG1002" Source="%SolutionFolder%\MG1002\%MSBuildOutputPath%\MG1002.dll" Target="%BinariesDirectory%"/>
 		<File Id="MG1002.Icon" Source="%BitmapsFolder%\et_element_MG1002.bmp" Target="%BitmapsDirectory%"/>
 		<File Id="MG1002.Ail" Source="%MessagesFolder%\MG1002.ail" Target="%MessagesDirectory%"/>
 	</Component>
 
 	<Component Id="MJ5001" Guid="72B5681F-B71E-4865-9B2E-69760F8A137D">
-		<File Id="MJ5001" Source="%BinariesFolder%\MJ5001.dll" Target="%BinariesDirectory%"/>
+		<File Id="MJ5001" Source="%SolutionFolder%\MJ5001\%MSBuildOutputPath%\MJ5001.dll" Target="%BinariesDirectory%"/>
 		<File Id="MJ5001.Icon" Source="%BitmapsFolder%\et_element_MJ5001.bmp" Target="%BitmapsDirectory%"/>
 		<File Id="MJ5001.Ail" Source="%MessagesFolder%\MJ5001.ail" Target="%MessagesDirectory%"/>
 	</Component>
 
 	<Component Id="WK1001" Guid="D81DFF89-80E8-44CD-A7B4-DCCA062AF5C2">
-		<File Id="WK1001" Source="%BinariesFolder%\WK1001.dll" Target="%BinariesDirectory%"/>
+		<File Id="WK1001" Source="%SolutionFolder%\WK1001\%MSBuildOutputPath%\WK1001.dll" Target="%BinariesDirectory%"/>
 		<File Id="WK1001.Icon" Source="%BitmapsFolder%\et_element_WK1001.bmp" Target="%BitmapsDirectory%"/>
 		<File Id="WK1001.Ail" Source="%MessagesFolder%\WK1001.ail" Target="%MessagesDirectory%"/>
 	</Component>
 
 	<Component Id="MainWindow" Guid="121610DD-75AB-479A-AEB8-D6CD4C806CB5">
-		<File Id="Muggle.TsExtensions" Source="%BinariesFolder%\Muggle.TsExtensions.exe" Target="%BinariesDirectory%"/>
-		<File Id="Muggle.TsExtensions.config" Source="%BinariesFolder%\Muggle.TsExtensions.exe.config" Target="%BinariesDirectory%"/>
-		<File Id="CommunityToolkit.Mvvm" Source="%BinariesFolder%\CommunityToolkit.Mvvm.dll" Target="%BinariesDirectory%"/>
-		<File Id="CalcBinding" Source="%BinariesFolder%\CalcBinding.dll" Target="%BinariesDirectory%"/>
-		<File Id="DynamicExpresso.Core" Source="%BinariesFolder%\DynamicExpresso.Core.dll" Target="%BinariesDirectory%"/>
-		<File Id="Microsoft.Bcl.AsyncInterfaces" Source="%BinariesFolder%\Microsoft.Bcl.AsyncInterfaces.dll" Target="%BinariesDirectory%"/>
-		<File Id="Microsoft.Extensions.DependencyInjection.Abstractions" Source="%BinariesFolder%\Microsoft.Extensions.DependencyInjection.Abstractions.dll" Target="%BinariesDirectory%"/>
-		<File Id="Microsoft.Extensions.DependencyInjection" Source="%BinariesFolder%\Microsoft.Extensions.DependencyInjection.dll" Target="%BinariesDirectory%"/>
-		<File Id="System.Buffers" Source="%BinariesFolder%\System.Buffers.dll" Target="%BinariesDirectory%"/>
-		<File Id="System.ComponentModel.Annotations" Source="%BinariesFolder%\System.ComponentModel.Annotations.dll" Target="%BinariesDirectory%"/>
-		<File Id="System.Memory" Source="%BinariesFolder%\System.Memory.dll" Target="%BinariesDirectory%"/>
-		<File Id="System.Numerics.Vectors" Source="%BinariesFolder%\System.Numerics.Vectors.dll" Target="%BinariesDirectory%"/>
-		<File Id="System.Runtime.CompilerServices.Unsafe" Source="%BinariesFolder%\System.Runtime.CompilerServices.Unsafe.dll" Target="%BinariesDirectory%"/>
-		<File Id="System.Threading.Tasks.Extensions" Source="%BinariesFolder%\System.Threading.Tasks.Extensions.dll" Target="%BinariesDirectory%"/>
+		<File Id="Muggle.TsExtensions" Source="%SolutionFolder%\MainWindow\%MSBuildOutputPath%\Muggle.TsExtensions.exe" Target="%BinariesDirectory%"/>
+        <File Id="Muggle.TsExtensions.config" Source="%SolutionFolder%\MainWindow\%MSBuildOutputPath%\Muggle.TsExtensions.exe.config" Target="%BinariesDirectory%"/>
+		<File Id="CommunityToolkit.Mvvm" Source="%SolutionFolder%\MainWindow\%MSBuildOutputPath%\CommunityToolkit.Mvvm.dll" Target="%BinariesDirectory%"/>
+		<File Id="CalcBinding" Source="%SolutionFolder%\MainWindow\%MSBuildOutputPath%\CalcBinding.dll" Target="%BinariesDirectory%"/>
+		<File Id="DynamicExpresso.Core" Source="%SolutionFolder%\MainWindow\%MSBuildOutputPath%\DynamicExpresso.Core.dll" Target="%BinariesDirectory%"/>
+		<File Id="Microsoft.Bcl.AsyncInterfaces" Source="%SolutionFolder%\MainWindow\%MSBuildOutputPath%\Microsoft.Bcl.AsyncInterfaces.dll" Target="%BinariesDirectory%"/>
+		<File Id="Microsoft.Extensions.DependencyInjection.Abstractions" Source="%SolutionFolder%\MainWindow\%MSBuildOutputPath%\Microsoft.Extensions.DependencyInjection.Abstractions.dll" Target="%BinariesDirectory%"/>
+		<File Id="Microsoft.Extensions.DependencyInjection" Source="%SolutionFolder%\MainWindow\%MSBuildOutputPath%\Microsoft.Extensions.DependencyInjection.dll" Target="%BinariesDirectory%"/>
+		<File Id="System.Buffers" Source="%SolutionFolder%\MainWindow\%MSBuildOutputPath%\System.Buffers.dll" Target="%BinariesDirectory%"/>
+		<File Id="System.ComponentModel.Annotations" Source="%SolutionFolder%\MainWindow\%MSBuildOutputPath%\System.ComponentModel.Annotations.dll" Target="%BinariesDirectory%"/>
+		<File Id="System.Memory" Source="%SolutionFolder%\MainWindow\%MSBuildOutputPath%\System.Memory.dll" Target="%BinariesDirectory%"/>
+		<File Id="System.Numerics.Vectors" Source="%SolutionFolder%\MainWindow\%MSBuildOutputPath%\System.Numerics.Vectors.dll" Target="%BinariesDirectory%"/>
+		<File Id="System.Runtime.CompilerServices.Unsafe" Source="%SolutionFolder%\MainWindow\%MSBuildOutputPath%\System.Runtime.CompilerServices.Unsafe.dll" Target="%BinariesDirectory%"/>
+		<File Id="System.Threading.Tasks.Extensions" Source="%SolutionFolder%\MainWindow\%MSBuildOutputPath%\System.Threading.Tasks.Extensions.dll" Target="%BinariesDirectory%"/>
 	</Component>
 
 	<Component Id="ComponentCatalog" Guid="35A87B48-AA38-4E0D-8D0F-9CEE45B09DBB">

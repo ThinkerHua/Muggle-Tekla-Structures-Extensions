@@ -1,4 +1,10 @@
 <Solution>
+    <Configurations>
+        <BuildType Name="D2021" />
+        <BuildType Name="D2024" />
+        <BuildType Name="R2021" />
+        <BuildType Name="R2024" />
+    </Configurations>
   <Folder Name="/Solution Items/">
     <File Path=".editorconfig" />
   </Folder>
