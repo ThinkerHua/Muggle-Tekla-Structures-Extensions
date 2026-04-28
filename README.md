@@ -105,9 +105,9 @@ Defines some practical types, methods, and rewrites of some officially implement
 
 - ...
 
-See  [API Reference of Common.chm](Documents/API%20Reference%20of%20Common.chm) for more.
+See  [API Reference of Common.chm](Common/Documents/API%20Reference%20of%20Common.chm) for more.
 
-更多内容参见 [API Reference of Common.chm](Documents/API%20Reference%20of%20Common.chm)。
+更多内容参见 [API Reference of Common.chm](Common/Documents/API%20Reference%20of%20Common.chm)。
 
 ## Common.WPF
 
