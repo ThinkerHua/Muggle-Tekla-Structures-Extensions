@@ -68,7 +68,7 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
                 while (true) {
                     Action(Axis, Angle, Degrees, TargetDirectionIsNormalOfPlane);
                 }
-            } catch (Exception e) when (e.Message == App.USER_INTERRUPT) {
+            } catch (Exception e) when (e.Message == App.UserInterrupt) {
 
             } catch (Exception e) {
                 messageBoxService.ShowError(e.ToString());
@@ -76,7 +76,7 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
         }
 
         private void Action(AxisEnum axisEnum, AngleEnum angleEnum, double degrees, bool targetDirectionIsNormalOfPlane) {
-            if (!model.GetConnectionStatus()) throw new InvalidOperationException(App.NOT_CONNECTED);
+            if (!model.GetConnectionStatus()) throw new InvalidOperationException(App.NotConnected);
 
             var selectedObjects = picker.PickObjects(Picker.PickObjectsEnum.PICK_N_OBJECTS, "选择要旋转的对象。");
             if (selectedObjects == null || selectedObjects.GetSize() == 0) {

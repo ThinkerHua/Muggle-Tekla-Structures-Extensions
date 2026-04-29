@@ -77,10 +77,10 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
 
             Part part;
             try {
-                if (!model.GetConnectionStatus()) throw new InvalidOperationException(App.NOT_CONNECTED);
+                if (!model.GetConnectionStatus()) throw new InvalidOperationException(App.NotConnected);
 
                 part = picker.PickObject(Picker.PickObjectEnum.PICK_ONE_PART) as Part;
-            } catch (Exception e) when (e.Message == App.USER_INTERRUPT) {
+            } catch (Exception e) when (e.Message == App.UserInterrupt) {
                 return;
             } catch (Exception e) {
                 messageBoxService.ShowError(e.ToString());

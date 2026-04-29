@@ -56,13 +56,13 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
 
         [RelayCommand]
         private void MoveToElevation() {
-            if (!model.GetConnectionStatus()) throw new InvalidOperationException(App.NOT_CONNECTED);
+            if (!model.GetConnectionStatus()) throw new InvalidOperationException(App.NotConnected);
 
             var mobjects = uiSelector.GetSelectedObjects();
             if (mobjects.GetSize() == 0) {
                 try {
                     mobjects = picker.PickObjects(Picker.PickObjectsEnum.PICK_N_OBJECTS, localLization.GetText("prompt_Pick_objects"));
-                } catch (Exception e) when (e.Message == App.USER_INTERRUPT) {
+                } catch (Exception e) when (e.Message == App.UserInterrupt) {
                     return;
                 } catch (Exception e) {
                     messageBoxService.ShowError(e.ToString());

@@ -80,7 +80,7 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
                 while (true) {
                     RunPlugin(pluginName);
                 }
-            } catch (Exception e) when (e.Message == App.USER_INTERRUPT) {
+            } catch (Exception e) when (e.Message == App.UserInterrupt) {
 
             } catch (Exception e) {
                 messageBoxService.ShowError(e.ToString());

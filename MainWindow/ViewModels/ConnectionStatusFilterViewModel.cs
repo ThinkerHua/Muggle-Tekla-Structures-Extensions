@@ -72,7 +72,7 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
         [RelayCommand]
         private void ApplyFilter() {
             try {
-                if (!model.GetConnectionStatus()) throw new InvalidOperationException(App.NOT_CONNECTED);
+                if (!model.GetConnectionStatus()) throw new InvalidOperationException(App.NotConnected);
 
                 var objectEnumerator = uiSelector.GetSelectedObjects();
                 if (objectEnumerator.GetSize() == 0) {
@@ -99,7 +99,7 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
                 }
 
                 uiSelector.Select(objects);
-            } catch (Exception e) when (e.Message == App.USER_INTERRUPT) {
+            } catch (Exception e) when (e.Message == App.UserInterrupt) {
 
             } catch (Exception e) {
                 messageBoxService.ShowError(e.Message);

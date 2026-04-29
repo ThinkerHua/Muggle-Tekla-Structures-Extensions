@@ -43,7 +43,7 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
         private void ShowModelObjectCoordinateSystem() {
             ModelObject obj;
             try {
-                if (!model.GetConnectionStatus()) throw new InvalidOperationException(App.NOT_CONNECTED);
+                if (!model.GetConnectionStatus()) throw new InvalidOperationException(App.NotConnected);
 
                 while (true) {
                     obj = picker.PickObject(Picker.PickObjectEnum.PICK_ONE_OBJECT);
@@ -56,7 +56,7 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
                         Internal.ShowCoordinateSystem(obj.GetCoordinateSystem());
                     }
                 }
-            } catch (Exception e) when (e.Message == App.USER_INTERRUPT) {
+            } catch (Exception e) when (e.Message == App.UserInterrupt) {
 
             } catch (Exception e) {
                 messageBoxService.ShowError(e.ToString());
@@ -66,7 +66,7 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
         [RelayCommand]
         private void SelectWeldedObjects() {
             try {
-                if (!model.GetConnectionStatus()) throw new InvalidOperationException(App.NOT_CONNECTED);
+                if (!model.GetConnectionStatus()) throw new InvalidOperationException(App.NotConnected);
 
                 var weld = picker.PickObject(Picker.PickObjectEnum.PICK_ONE_WELD) as BaseWeld;
                 var parts = new ArrayList {
@@ -76,7 +76,7 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
 
                 uiSelector.Select(parts, false);
                 model.CommitChanges();
-            } catch (Exception e) when (e.Message == App.USER_INTERRUPT) {
+            } catch (Exception e) when (e.Message == App.UserInterrupt) {
 
             } catch (Exception e) {
                 messageBoxService.ShowError(e.ToString());
@@ -87,10 +87,10 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
         private void ReorderContourPoints() {
             ContourPlate plate;
             try {
-                if (!model.GetConnectionStatus()) throw new InvalidOperationException(App.NOT_CONNECTED);
+                if (!model.GetConnectionStatus()) throw new InvalidOperationException(App.NotConnected);
 
                 plate = picker.PickObject(Picker.PickObjectEnum.PICK_ONE_PART, "Select a contour plate:") as ContourPlate;
-            } catch (Exception e) when (e.Message == App.USER_INTERRUPT) {
+            } catch (Exception e) when (e.Message == App.UserInterrupt) {
                 return;
             } catch (Exception e) {
                 messageBoxService.ShowError(e.ToString());
@@ -118,10 +118,10 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
         private void ShowContourOrder() {
             ContourPlate plate;
             try {
-                if (!model.GetConnectionStatus()) throw new InvalidOperationException(App.NOT_CONNECTED);
+                if (!model.GetConnectionStatus()) throw new InvalidOperationException(App.NotConnected);
 
                 plate = picker.PickObject(Picker.PickObjectEnum.PICK_ONE_PART, "Select a contour plate:") as ContourPlate;
-            } catch (Exception e) when (e.Message == App.USER_INTERRUPT) {
+            } catch (Exception e) when (e.Message == App.UserInterrupt) {
                 return;
             } catch (Exception e) {
                 messageBoxService.ShowError(e.ToString());
@@ -144,7 +144,7 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
         [RelayCommand]
         private void CopyWithDirection() {
             try {
-                if (!model.GetConnectionStatus()) throw new InvalidOperationException(App.NOT_CONNECTED);
+                if (!model.GetConnectionStatus()) throw new InvalidOperationException(App.NotConnected);
             } catch (Exception e) {
                 messageBoxService.ShowError(e.ToString());
                 return;
@@ -238,7 +238,7 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
             ModelObjectEnumerator parts;
             List<Beam> beams = [];
             try {
-                if (!model.GetConnectionStatus()) throw new InvalidOperationException(App.NOT_CONNECTED);
+                if (!model.GetConnectionStatus()) throw new InvalidOperationException(App.NotConnected);
 
                 parts = uiSelector.GetSelectedObjects();
                 if (parts == null || parts.GetSize() == 0) {
