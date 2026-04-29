@@ -2,11 +2,7 @@
 
 Tools and plugins for Tekla Structures. Please use in accordance with the [Open Source License](LICENSE).
 
-Developed based on version 2021 of the Tekla Open API, other versions are untested.
-
 用于 Tekla Structures 的工具和插件。请遵守[开源协议](LICENSE)使用。
-
-基于 2021 版本的 Tekla Open API 开发，其他版本未经测试。
 
 ---
 
@@ -29,7 +25,7 @@ Developed based on version 2021 of the Tekla Open API, other versions are untest
 - [ShowContourOrder](#showcontourorder)
 - [CopyWithDirection](#copywithdirection)
 - [3DRotation](#3drotation)
-- [MoveToElevatio](#movetoelevation)
+- [MoveToElevation](#movetoelevation)
 - [LocateToPrecisePosition](#locatetopreciseposition)
 - [ConnectionStatusFilter](#connectionstatusfilter)
 - [ExtendBeam](#extendbeam)
@@ -99,36 +95,44 @@ Defines some practical types, methods, and rewrites of some officially implement
 
 - **ModelOperation.CreatStiffeners** method
 
-  To easily create stiffeners for beams without nesting system component in your custom component (that will causing multiple symbols to appear).
+  To easily create stiffeners for beams without nesting system component in your custom component (that will cause multiple symbols to appear).
 
   可方便地为梁创建加劲板，无须在节点中嵌套使用系统节点（会导致出现多个节点符号）。
 
 - ...
 
-See  [API Reference of Common.chm](Common/Documents/API%20Reference%20of%20Common.chm) for more.
+See  [API Reference of Common\.chm](Common/Documents/API%20Reference%20of%20Common.chm) for more.
 
-更多内容参见 [API Reference of Common.chm](Common/Documents/API%20Reference%20of%20Common.chm)。
+更多内容参见 [API Reference of Common\.chm](Common/Documents/API%20Reference%20of%20Common.chm)。
 
 ## Common.WPF
 
-Contains some common assets (vector graphics), user controls and value converters.
-For example, the SelectedIndex of the UpDirection ComboBox in the general tab of the system component is opposite to its corresponding parameter "zsuunta", and **UpDirectionToSelectedIndexValueConverter** provides this conversion.
+Contains some common **assets** (vector graphics), **user controls** and **value converters**.
+For example, the SelectedIndex of the UpDirection ComboBox in the general tab of the system component is opposite to its corresponding attribute value "zsuunta", and **UpDirectionToSelectedIndexValueConverter** provides this conversion.
 
-包含一些通用的资产（矢量图形）、自定义控件和值转换器。
-例如，系统组件常规选项卡中的 UpDirection 组合框的 SelectedIndex 与其对应的组件参数 "zsuunta" 是相反的，**UpDirectionToSelectedIndexValueConverter** 提供了这种转换
+包含一些通用的**资产**（矢量图形）、**自定义控件**和**值转换器**。
+例如，系统组件常规选项卡中的 UpDirection 组合框的 SelectedIndex 与其对应的组件参数值 "zsuunta" 是相反的，**UpDirectionToSelectedIndexValueConverter** 提供了这种转换
 
-![BoltUserControls](Resources/Introduction_BoltUserControls.png)
-![UpDirection+PositionInRelationToPrimaryPart](Resources/Introduction_UpDirection+PositionInRelationToPrimaryPart.png)
+<div align="center">
+  <img src="Resources/Introduction_BoltUserControls.png" alt="Bolt user controls">
+  <p>Bolt user controls</p>
+
+  <img src="Resources/Introduction_WeldSymbols.png" alt="Weld symbols">
+  <p>Weld symbols</p>
+
+  <img src="Resources/Introduction_UpDirection+PositionInRelationToPrimaryPart.png" alt="General image">
+  <p>General image</p>
+</div>
 
 ## CodingHelper
 
 When creating custom components, it is usually necessary to manually write a large amount of code for component parameters (in PluginData class, Plugin class and ViewModel class) and apply attributes, which is tedious and time-consuming.
 
-This analyzer is designed to solve this problem, containing two source generators and corresponding diagnostics. It helps quickly generate code for component parameters, avoiding mismatches that may occur from manual coding, saving time, and allowing more focus on the core logic of the component.
+This analyzer is designed to solve this problem, containing source generators and corresponding diagnostics. It helps quickly generate code for component parameters, avoiding mismatches that may occur from manual coding, saving time, and allowing more focus on the core logic of the component.
 
 通常在制作自定义组件时，总要手动为组件参数编写大量的代码（在 PluginData 类、Plugin 类和 ViewModel 类中）并添加上相关的特性，很繁重很浪费时间。
 
-此分析器用于解决此问题，包含四个源生成器和与之配套的诊断器，有助于快速生成组件参数相关的代码，避免手动编可能的失误导致不匹配，节约时间，有更多的精力关注于组件的核心逻辑。
+此分析器用于解决此问题，包含源生成器和与之配套的诊断器，有助于快速生成组件参数相关的代码，避免手动编写可能的失误导致不匹配，节约时间，有更多的精力关注于组件的核心逻辑。
 
 How to use  [see here](CodingHelper/Readme.md).
 
