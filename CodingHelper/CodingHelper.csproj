@@ -22,10 +22,6 @@
         <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
         <PackageReleaseNotes>Fix the issue of transitive dependency.</PackageReleaseNotes>
         <IncludeBuildOutput>false</IncludeBuildOutput>
-        <Configurations>D2021;D2024;R2021;R2024</Configurations>
-        <Optimize Condition="$(Configuration.StartsWith('R'))">True</Optimize>
-        <DefineConstants Condition="$(Configuration.StartsWith('D'))">TRACE;DEBUG</DefineConstants>
-        <DefineConstants Condition="$(Configuration.StartsWith('R'))">TRACE;RELEASE</DefineConstants>
     </PropertyGroup>
 
     <ItemGroup>

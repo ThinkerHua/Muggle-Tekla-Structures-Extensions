@@ -1,24 +1,34 @@
 <Solution>
     <Configurations>
-        <BuildType Name="D2021" />
-        <BuildType Name="D2024" />
-        <BuildType Name="R2021" />
-        <BuildType Name="R2024" />
+        <BuildType Name="D2021"/>
+        <BuildType Name="D2024"/>
+        <BuildType Name="R2021"/>
+        <BuildType Name="R2024"/>
     </Configurations>
-  <Folder Name="/Solution Items/">
-    <File Path=".editorconfig" />
-  </Folder>
-  <Project Path="CodingHelper/CodingHelper.csproj" />
-  <Project Path="Common.WPF/Common.WPF.csproj" />
-  <Project Path="Common/Common.csproj" />
-  <Project Path="Demo1/Demo1.csproj" />
-  <Project Path="HJ1001/HJ1001.csproj" />
-  <Project Path="KJ1001/KJ1001.csproj" />
-  <Project Path="KJ1002/KJ1002.csproj" />
-  <Project Path="KJ2001/KJ2001.csproj" />
-  <Project Path="MainWindow/MainWindow.csproj" />
-  <Project Path="MG1001/MG1001.csproj" />
-  <Project Path="MG1002/MG1002.csproj" />
-  <Project Path="MJ5001/MJ5001.csproj" />
-  <Project Path="WK1001/WK1001.csproj" />
+    <Folder Name="/Solution Items/">
+        <File Path=".editorconfig"/>
+    </Folder>
+    <Project Path="CodingHelper/CodingHelper.csproj">
+        <BuildType Solution="D2021|*" Project="Debug"/>
+        <BuildType Solution="D2024|*" Project="Debug"/>
+        <BuildType Solution="R2021|*" Project="Release"/>
+        <BuildType Solution="R2024|*" Project="Release"/>
+    </Project>
+    <Project Path="Common/Common.csproj"/>
+    <Project Path="Common.WPF/Common.WPF.csproj">
+        <BuildType Solution="D2021|*" Project="Debug"/>
+        <BuildType Solution="D2024|*" Project="Debug"/>
+        <BuildType Solution="R2021|*" Project="Release"/>
+        <BuildType Solution="R2024|*" Project="Release"/>
+    </Project>
+    <Project Path="Demo1/Demo1.csproj"/>
+    <Project Path="HJ1001/HJ1001.csproj"/>
+    <Project Path="KJ1001/KJ1001.csproj"/>
+    <Project Path="KJ1002/KJ1002.csproj"/>
+    <Project Path="KJ2001/KJ2001.csproj"/>
+    <Project Path="MainWindow/MainWindow.csproj"/>
+    <Project Path="MG1001/MG1001.csproj"/>
+    <Project Path="MG1002/MG1002.csproj"/>
+    <Project Path="MJ5001/MJ5001.csproj"/>
+    <Project Path="WK1001/WK1001.csproj"/>
 </Solution>
