@@ -21,6 +21,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
         /// <param name="distY">The default value used by the "AddBoltDistY" method of "BoltArray" or "BoltXYList".</param>
         /// <param name="type">The default value for the "BoltType" property of "BoltGroup".</param>
         /// <param name="threadInMaterial">The default value for the "ThreadInMaterial" property of "BoltGroup".</param>
+        /// <param name="length">The default value for the "Length" property of "BoltGroup".</param>
         /// <param name="cutLength">The default value for the "CutLength" property of "BoltGroup".</param>
         /// <param name="extraLength">The default value for the "ExtraLength" property of "BoltGroup".</param>
         /// <param name="tolerance">The default value for the "Tolerance" property of "BoltGroup".</param>
@@ -43,10 +44,11 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
         /// <param name="useWasher3">The default value for the "Washer3" property of "BoltGroup".</param>
         public BoltPropertiesWithDefaultValuesAttribute(uint boltNumber,
             double size = 8.0, string standard = "A", string distX = "", string distY = "", int type = 0,
-            int threadInMaterial = 1, double cutLength = 100.0, double extraLength = 0.0, double tolerance = 2.0,
-            int plainType = 0, double blindHoleDepth = 0.0, int hole1 = 1, int hole2 = 1, int hole3 = 0, int hole4 = 0,
-            int hole5 = 0, int holeType = 0, double slottedHoleX = 0.0, double slottedHoleY = 0.0, int rotateSlots = 2,
-            int isBolt = 1, int useNut1 = 1, int useNut2 = 0, int useWasher1 = 0, int useWasher2 = 0, int useWasher3 = 1) {
+            int threadInMaterial = 1, double length = 40.0, double cutLength = 100.0, double extraLength = 0.0, 
+            double tolerance = 2.0, int plainType = 0, double blindHoleDepth = 0.0, int hole1 = 1, int hole2 = 1, 
+            int hole3 = 0, int hole4 = 0, int hole5 = 0, int holeType = 0, double slottedHoleX = 0.0, 
+            double slottedHoleY = 0.0, int rotateSlots = 2, int isBolt = 1, int useNut1 = 1, int useNut2 = 0, 
+            int useWasher1 = 0, int useWasher2 = 0, int useWasher3 = 1) {
             
         }
         
@@ -60,6 +62,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
         /// <param name="distY">The default value used by the "AddBoltDistY" method of "BoltArray" or "BoltXYList".</param>
         /// <param name="type">The default value for the "BoltType" property of "BoltGroup".</param>
         /// <param name="threadInMaterial">The default value for the "ThreadInMaterial" property of "BoltGroup".</param>
+        /// <param name="length">The default value for the "Length" property of "BoltGroup".</param>
         /// <param name="cutLength">The default value for the "CutLength" property of "BoltGroup".</param>
         /// <param name="extraLength">The default value for the "ExtraLength" property of "BoltGroup".</param>
         /// <param name="tolerance">The default value for the "Tolerance" property of "BoltGroup".</param>
@@ -82,10 +85,11 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
         /// <param name="useWasher3">The default value for the "Washer3" property of "BoltGroup".</param>
         public BoltPropertiesWithDefaultValuesAttribute(string boltName,
             double size = 8.0, string standard = "A", string distX = "", string distY = "", int type = 0,
-            int threadInMaterial = 1, double cutLength = 100.0, double extraLength = 0.0, double tolerance = 2.0,
-            int plainType = 0, double blindHoleDepth = 0.0, int hole1 = 1, int hole2 = 1, int hole3 = 0, int hole4 = 0,
-            int hole5 = 0, int holeType = 0, double slottedHoleX = 0.0, double slottedHoleY = 0.0, int rotateSlots = 2,
-            int isBolt = 1, int useNut1 = 1, int useNut2 = 0, int useWasher1 = 0, int useWasher2 = 0, int useWasher3 = 1) {
+            int threadInMaterial = 1, double length = 40.0, double cutLength = 100.0, double extraLength = 0.0, 
+            double tolerance = 2.0, int plainType = 0, double blindHoleDepth = 0.0, int hole1 = 1, int hole2 = 1, 
+            int hole3 = 0, int hole4 = 0, int hole5 = 0, int holeType = 0, double slottedHoleX = 0.0, 
+            double slottedHoleY = 0.0, int rotateSlots = 2, int isBolt = 1, int useNut1 = 1, int useNut2 = 0, 
+            int useWasher1 = 0, int useWasher2 = 0, int useWasher3 = 1) {
             
         }
         

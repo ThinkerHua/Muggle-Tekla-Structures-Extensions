@@ -1,15 +1,32 @@
 using Muggle.TsExtensions.CodingHelper.Generators;
+using Tekla.Structures.Datatype;
 
 namespace Muggle.TsExtensions.Demo1.ViewModels {
-    [PartProperties(1)]
-    [PartPropertiesWithDefaultValues(1, profile: "HM244*175*7*11")]
-    [PlatePropertiesWithDefaultValues(1, 14, breadth: 300.0, name: "Plate1", material: "Q235B")]
-    [PlatePropertiesWithDefaultValues(2, 10, 200.0, 200, "Q345", "Plate2")]
-    [PlatePropertiesWithDefaultValues("Stiffener", 10, 200.0, 200)]
-    [BoltPropertiesWithDefaultValues(1, distX: "3*50", distY: "2*70", standard: "B")]
-    [BoltCirclePropertiesWithDefaultValues(1)]
-    [WeldPropertiesWithDefaultValues(1, 4, sizeAbove: 8.0, angleAbove: 15, rootFaceAbove: 2, preparation: 3)]
+    [PartPropertiesWithDefaultValues("Primary", profile: "HW502*470*20*25", @class: 4)]
+    [PartPropertiesWithDefaultValues("Secondary", profile: "HM244*175*7*11", @class: 11)]
+    [PlatePropertiesWithDefaultValues("Stiffener", thickness: 10)]
+    [PlatePropertiesWithDefaultValues("Splice", thickness: 10, breadth: 300, height: 200)]
+    [BoltPropertiesWithDefaultValues("Connect", distX: "70", distY: "2*80")]
+    [BoltPropertiesWithDefaultValues("Stud", 10.0, "STUD", "4*90", "80")]
+    [WeldPropertiesWithDefaultValues(1, 10, 10, 6.0, 6.0)]
+    [WeldPropertiesWithDefaultValues(2, 10, sizeAbove: 6.0)]
+    [GeneralPropertiesWithDefaultValues(typeof(Boolean), "CreatStud")]
+    [GeneralPropertiesWithDefaultValues(typeof(Distance), "Gap", 15.0, "BoltOffsetX", 50, "StudOffsetX", 50)]
     public partial class MainWindowViewModel : NotificationObject {
+        /*private global::Tekla.Structures.Datatype.Boolean _creatStud;
         
+        [global::Tekla.Structures.Dialog.StructuresDialog("CreatStud", typeof(global::Tekla.Structures.Datatype.Boolean))]
+        public global::Tekla.Structures.Datatype.Boolean CreatStud {
+            get {
+                return _creatStud;
+            }
+            set {
+                _creatStud = value;
+                OnPropertyChanged();
+            }
+        }*/
+        private void DoNothing() {
+            
+        }
     }
 }

@@ -610,6 +610,16 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         }
                     }
                     
+                    private double bolt{{nameOrNumber}}Length;
+                    [StructuresDialog("B{{nameOrNumber}}LEN", typeof(TD.Double))]
+                    public double Bolt{{nameOrNumber}}Length {
+                        get { return bolt{{nameOrNumber}}Length; }
+                        set {
+                            bolt{{nameOrNumber}}Length = value == int.MinValue ? 100.0 : value;
+                            OnPropertyChanged();
+                        }
+                    }
+                    
                     private double bolt{{nameOrNumber}}CutLength;
                     [StructuresDialog("B{{nameOrNumber}}CLEN", typeof(TD.Double))]
                     public double Bolt{{nameOrNumber}}CutLength {
@@ -870,6 +880,16 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         get { return boltCircle{{nameOrNumber}}ThreadInMaterial; }
                         set {
                             boltCircle{{nameOrNumber}}ThreadInMaterial = (value < 0 || value > 1) ? 1 : value;
+                            OnPropertyChanged();
+                        }
+                    }
+                    
+                    private double boltCircle{{nameOrNumber}}Length;
+                    [StructuresDialog("BC{{nameOrNumber}}LEN", typeof(TD.Double))]
+                    public double BoltCircle{{nameOrNumber}}Length {
+                        get { return boltCircle{{nameOrNumber}}Length; }
+                        set {
+                            boltCircle{{nameOrNumber}}Length = value == int.MinValue ? 100.0 : value;
                             OnPropertyChanged();
                         }
                     }
@@ -1140,7 +1160,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                     if (nameOrNumber.Length == 0 ||
                         nameOrNumber.Length > InternalAttributesDiagnoser.MaxLengthOfArgument(attributeName))
                         continue;
-                    if (Regex.Match(nameOrNumber, InternalAttributesDiagnoser.SpecialCharacterPattern).Success)
+                    if (Regex.IsMatch(nameOrNumber, InternalAttributesDiagnoser.SpecialCharacterPattern))
                         continue;
 
                     builder.AppendLine(propertiesTemplate.Replace("{{nameOrNumber}}", nameOrNumber));

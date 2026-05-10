@@ -9,16 +9,6 @@ namespace Muggle.TsExtensions.CodingHelper.Generators.Information {
     /// </summary>
     internal class NameOrNumberSet : HashSet<string>, IEquatable<NameOrNumberSet> {
 
-        /*private HashSet<string> _hashSet;
-
-        public NameOrNumberSet(ref HashSet<string> hashSet) {
-            _hashSet = hashSet;
-        }
-
-        public NameOrNumberSet(IEnumerable<string> strings) {
-            _hashSet = new HashSet<string>(strings);
-        }*/
-
         public bool Equals(NameOrNumberSet other) {
             if (other == null) return false;
 

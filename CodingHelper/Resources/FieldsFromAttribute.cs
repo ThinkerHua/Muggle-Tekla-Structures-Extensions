@@ -8,11 +8,12 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
     /// <remarks>
     /// <para>You need to manually call the "GetFieldValuesFrom" method at an appropriate location.</para>
     /// <para>Only register fields that are manually written and fields registered by
-    /// <see cref="Muggle.TsExtensions.CodingHelper.Generators.PartFieldsAttribute"/>, 
-    /// <see cref="Muggle.TsExtensions.CodingHelper.Generators.PlateFieldsAttribute"/>, 
-    /// <see cref="Muggle.TsExtensions.CodingHelper.Generators.WeldFieldsAttribute"/>, 
-    /// <see cref="Muggle.TsExtensions.CodingHelper.Generators.BoltFieldsAttribute"/>, 
-    /// <see cref="Muggle.TsExtensions.CodingHelper.Generators.BoltCircleFieldsAttribute"/>.</para>
+    /// <see cref="PartFieldsAttribute"/>, 
+    /// <see cref="PlateFieldsAttribute"/>, 
+    /// <see cref="WeldFieldsAttribute"/>, 
+    /// <see cref="BoltFieldsAttribute"/>, 
+    /// <see cref="BoltCircleFieldsAttribute"/>,
+    /// <see cref="GeneralFieldsAttribute"/> within <see cref="Muggle.TsExtensions.CodingHelper.Generators"/>.</para>
     /// </remarks>
     [AttributeUsage(AttributeTargets.Class)]
     public class FieldsFromAttribute : Attribute {

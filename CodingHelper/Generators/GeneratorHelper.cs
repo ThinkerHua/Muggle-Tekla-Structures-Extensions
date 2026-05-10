@@ -22,6 +22,7 @@ using System.Threading;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
+using Muggle.TsExtensions.CodingHelper.Diagnosers;
 using Muggle.TsExtensions.CodingHelper.Generators.Information;
 
 namespace Muggle.TsExtensions.CodingHelper.Generators {
@@ -31,37 +32,61 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
             IReadOnlyCollection<string> matchTheseAttributes) {
             if (syntaxContext.Node is not ClassDeclarationSyntax classDeclarationSyntax) return default;
 
-            var attributesArguments = new ArgumentsDictionary<NameOrNumberSet>();
+            var semanticModel = syntaxContext.SemanticModel;
 
-            foreach (var attributeListSyntax in classDeclarationSyntax.AttributeLists) {
-                foreach (var attributeSyntax in attributeListSyntax.Attributes) {
-                    if (token.IsCancellationRequested) continue;
+            //  Key - for 'GeneralFieldsAttribute' is 'int' or 'double' or 'string'
+            //        for other attribute is attribute name
+            //  Value - name or number set
+            var attArguments = new ArgumentsDictionary<NameOrNumberSet>();
 
-                    var attributeTypeInfo = syntaxContext.SemanticModel.GetTypeInfo(attributeSyntax, token);
-                    var attributeDisplayName = attributeTypeInfo.Type?.ToDisplayString();
-                    if (!matchTheseAttributes.Contains(attributeDisplayName)) continue;
-                    var attributeName = attributeDisplayName!.Substring(attributeDisplayName!.LastIndexOf('.') + 1);
+            foreach (var attListSyntax in classDeclarationSyntax.AttributeLists) {
+                foreach (var attSyntax in attListSyntax.Attributes) {
+                    var attQualifiedName = GetAttributeQualifiedName(attSyntax, semanticModel);
+                    if (!matchTheseAttributes.Contains(attQualifiedName)) continue;
 
-                    if (!attributesArguments.TryGetValue(attributeName!, out NameOrNumberSet argumentSet)) {
-                        argumentSet = [];
-                        attributesArguments.Add(attributeName, argumentSet);
+                    var attName = GetUnqualifiedName(attQualifiedName);
+
+                    if (attSyntax.ArgumentList == null) continue;
+
+                    var dataType = attSyntax.ArgumentList.Arguments
+                        .SelectMany(argSyntax => argSyntax.DescendantNodes().OfType<TypeOfExpressionSyntax>())
+                        .FirstOrDefault()?.Type.ToString();
+
+                    // if (attName == "GeneralFieldsAttribute") attName = "int" 
+                    if (attName == matchTheseAttributes.Last() && string.IsNullOrEmpty(dataType)) {
+                        continue;
                     }
 
-                    if (attributeSyntax.ArgumentList == null) continue;
-                    var arguments = attributeSyntax.ArgumentList.Arguments
-                        .SelectMany(argumentSyntax =>
-                            argumentSyntax.DescendantNodes().OfType<LiteralExpressionSyntax>())
-                        .Select(expressionSyntax => expressionSyntax.Token.ValueText);
+                    if (!string.IsNullOrEmpty(dataType)) {
+                        attName = dataType;
+                    }
 
-                    foreach (var argument in arguments) {
-                        argumentSet.Add(argument);
+                    if (!attArguments.TryGetValue(attName!, out var nameOrNumberSet)) {
+                        nameOrNumberSet = [];
+                        attArguments.Add(attName, nameOrNumberSet);
+                    }
+
+                    var nameOrNumbers = attSyntax.ArgumentList.Arguments
+                        .SelectMany(argSyntax => argSyntax.DescendantNodes().OfType<LiteralExpressionSyntax>())
+                        .Select(exprSyntax => exprSyntax.Token.ValueText);
+
+                    foreach (var nameOrNumber in nameOrNumbers) {
+                        if (nameOrNumber.Length == 0 ||
+                            nameOrNumber.Length > InternalAttributesDiagnoser.MaxLengthOfArgument(attName) ||
+                            Regex.IsMatch(nameOrNumber, InternalAttributesDiagnoser.SpecialCharacterPattern))
+                            continue;
+                        if (!string.IsNullOrEmpty(dataType) && Regex.IsMatch(nameOrNumber, "^[0-9]")) continue;
+
+                        nameOrNumberSet.Add(nameOrNumber);
                     }
                 }
             }
 
-            if (attributesArguments.Count == 0 || attributesArguments.All(kvp => kvp.Value.Count == 0)) return default;
+            if (attArguments.Count == 0 || attArguments.All(kvp => kvp.Value.Count == 0)) return default;
 
             var classSymbol = syntaxContext.SemanticModel.GetDeclaredSymbol(classDeclarationSyntax)!;
+
+            if (token.IsCancellationRequested) return default;
 
             return new PluginDataFieldsInfo {
                 ClassInfo = new ClassInfo {
@@ -70,12 +95,27 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                     Accessibility = classSymbol.DeclaredAccessibility,
                     IsRecord = classSymbol!.IsRecord,
                 },
-                Arguments = attributesArguments
+                Arguments = attArguments
             };
         }
 
+        internal static string GetAttributeQualifiedName(AttributeSyntax attributeSyntax, SemanticModel semanticModel) {
+            var attributeTypeInfo = semanticModel.GetTypeInfo(attributeSyntax);
+            return attributeTypeInfo.Type?.ToDisplayString();
+        }
+
+        internal static string GetAttributeName(AttributeSyntax attributeSyntax, SemanticModel semanticModel) {
+            var attributeTypeInfo = semanticModel.GetTypeInfo(attributeSyntax);
+            var qualifiedName = attributeTypeInfo.Type?.ToDisplayString();
+            return qualifiedName?.Substring(qualifiedName.LastIndexOf('.') + 1);
+        }
+
+        internal static string GetUnqualifiedName(string qualifiedName) {
+            return qualifiedName?.Substring(qualifiedName.LastIndexOf('.') + 1);
+        }
+
         internal static string ToPrivateFieldNameStyle(string name) {
-            if (Regex.Match(name, "^_[a-z]").Success) return name;
+            if (Regex.IsMatch(name, "^_[a-z]")) return name;
 
             while (name.StartsWith("_")) { name = name.Substring(1); }
 
@@ -90,11 +130,21 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
         }
 
         internal static string ToPropertyNameStyle(string name) {
-            if (Regex.Match(name, "^[A-Z]").Success) return name;
+            if (Regex.IsMatch(name, "^[A-Z]")) return name;
 
             while (name.StartsWith("_")) { name = name.Substring(1); }
 
             name = name.Substring(0, 1).ToUpper() + name.Substring(1);
+
+            return name;
+        }
+
+        internal static string ToLocalVariableNameStyle(string name) {
+            if (Regex.IsMatch(name, "^[a-z]")) return name;
+
+            while (name.StartsWith("_")) { name = name.Substring(1); }
+
+            name = name.Substring(0, 1).ToLower() + name.Substring(1);
 
             return name;
         }
@@ -104,23 +154,15 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
             SemanticModel semanticModel,
             IEnumerable<string> matchAttributes,
             ref AttributeSyntax[] attributeSyntaxes) {
-
-            var attributes = matchAttributes as string[] ?? matchAttributes.ToArray();
-
             var query = attributeLists
                 .SelectMany(attListSyntax => attListSyntax.Attributes)
-                .Where(attSyntax => {
-                    var attTypeInfo = semanticModel.GetTypeInfo(attSyntax);
-                    var attQualifiedName = attTypeInfo.Type?.ToDisplayString();
-                    return attributes.Contains(attQualifiedName);
-                }).ToArray();
+                .Where(attSyntax => matchAttributes.Contains(GetAttributeQualifiedName(attSyntax, semanticModel)))
+                .ToArray();
 
-            if (query.Any()) {
-                attributeSyntaxes = query;
-                return true;
-            }
+            if (!query.Any()) return false;
 
-            return false;
+            attributeSyntaxes = query;
+            return true;
         }
 
         internal static string GetResourceAsString(string resourceName) {
@@ -137,11 +179,9 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
             return reader.ReadToEnd();
         }
 
-        internal static IEnumerable<string> GetAttributeSourceTexts(IEnumerable<string> attributeQualifiedNames) {
-            foreach (var name in attributeQualifiedNames) {
-                yield return GetResourceAsString($"{name.Substring(name.LastIndexOf('.') + 1)}.cs");
-            }
-        }
+        internal static IEnumerable<string> GetAttributeSourceTexts(IEnumerable<string> attributeQualifiedNames) =>
+            attributeQualifiedNames.Select(name =>
+                GetResourceAsString($"{name.Substring(name.LastIndexOf('.') + 1)}.cs"));
 
         /// <summary>
         /// Get default value from a constructor declaration syntax of attribute.
@@ -153,7 +193,6 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
         /// Value - argument, which is the value of property.</returns>
         internal static Dictionary<string, string> GetDefaultValuesFromSyntaxTree(
             SyntaxTree syntaxTree, out string attributeName) {
-
             attributeName = syntaxTree.GetRoot().DescendantNodes().OfType<ConstructorDeclarationSyntax>().First()
                 .Identifier.ValueText;
 

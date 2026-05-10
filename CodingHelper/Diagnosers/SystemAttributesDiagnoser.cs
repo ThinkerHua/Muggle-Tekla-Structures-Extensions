@@ -22,6 +22,7 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
+using static Muggle.TsExtensions.CodingHelper.Generators.GeneratorHelper;
 
 namespace Muggle.TsExtensions.CodingHelper.Diagnosers;
 
@@ -32,7 +33,7 @@ internal class SystemAttributesDiagnoser : DiagnosticAnalyzer {
         "Tekla.Structures.Plugins.StructuresFieldAttribute"
     ];
 
-    internal static readonly DiagnosticDescriptor LengthExceedLimitationDescriptor = new DiagnosticDescriptor(
+    internal static readonly DiagnosticDescriptor LengthExceedLimitationDescriptor = new(
         "MTSECH006",
         "Attribute name too long",
         "The attribute name must be 1 to 19 characters",
@@ -40,7 +41,7 @@ internal class SystemAttributesDiagnoser : DiagnosticAnalyzer {
         DiagnosticSeverity.Error,
         true);
 
-    internal static readonly DiagnosticDescriptor ContainsSpecialCharacters = new DiagnosticDescriptor(
+    internal static readonly DiagnosticDescriptor ContainsSpecialCharacters = new(
         "MTSECH007",
         "Attribute name contains special characters",
         "Attribute name must not contain special characters",
@@ -48,7 +49,7 @@ internal class SystemAttributesDiagnoser : DiagnosticAnalyzer {
         DiagnosticSeverity.Error,
         true);
 
-    internal static readonly DiagnosticDescriptor ContainsUnsuggestedCharacters = new DiagnosticDescriptor(
+    internal static readonly DiagnosticDescriptor ContainsUnsuggestedCharacters = new(
         "MTSECH008",
         "Attribute name contains unsuggested characters",
         "It is not recommended to use characters other than \"_\", \"A-Z\", \"a-z\", \"0-9\"",
@@ -56,7 +57,7 @@ internal class SystemAttributesDiagnoser : DiagnosticAnalyzer {
         DiagnosticSeverity.Info,
         true);
 
-    internal static readonly DiagnosticDescriptor UseMathematicalConstant = new DiagnosticDescriptor(
+    internal static readonly DiagnosticDescriptor UseMathematicalConstant = new(
         "MTSECH009",
         "Attribute name use a mathematical constant",
         "Attribute name cannot use a mathematical constants, such as PI or e",
@@ -79,8 +80,7 @@ internal class SystemAttributesDiagnoser : DiagnosticAnalyzer {
     internal static void AnalyzeArgument(SyntaxNodeAnalysisContext context) {
         var attributeSyntax = (AttributeSyntax)context.Node;
         var semanticModel = context.SemanticModel;
-        var attTypeInfo = semanticModel.GetTypeInfo(attributeSyntax);
-        if (!ConcernedAttributes.Contains(attTypeInfo.Type?.ToDisplayString())) return;
+        if (!ConcernedAttributes.Contains(GetAttributeQualifiedName(attributeSyntax, semanticModel))) return;
 
         var argumentSyntax = attributeSyntax.ArgumentList?.Arguments[0];
         if (argumentSyntax == null) return;
@@ -99,13 +99,11 @@ internal class SystemAttributesDiagnoser : DiagnosticAnalyzer {
             context.ReportDiagnostic(Diagnostic.Create(UseMathematicalConstant, location));
         }
 
-        var match = Regex.Match(argument, InternalAttributesDiagnoser.SpecialCharacterPattern);
-        if (match.Success) {
+        if (Regex.IsMatch(argument, InternalAttributesDiagnoser.SpecialCharacterPattern)) {
             context.ReportDiagnostic(Diagnostic.Create(ContainsSpecialCharacters, location));
         }
 
-        match = Regex.Match(argument, InternalAttributesDiagnoser.UnsuggestedCharacterPattern);
-        if (match.Success) {
+        if (Regex.IsMatch(argument, InternalAttributesDiagnoser.UnsuggestedCharacterPattern)) {
             context.ReportDiagnostic(Diagnostic.Create(ContainsUnsuggestedCharacters, location));
         }
     }

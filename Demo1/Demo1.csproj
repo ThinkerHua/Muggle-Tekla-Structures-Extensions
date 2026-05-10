@@ -24,6 +24,7 @@
 	<ItemGroup>
 		<ProjectReference Include="..\CodingHelper\CodingHelper.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false"
                           Condition="$(Configuration.StartsWith('D'))" />
+		<ProjectReference Include="..\Common\Common.csproj" />
 		<ProjectReference Include="..\Common.WPF\Common.WPF.csproj" />
 	</ItemGroup>
 

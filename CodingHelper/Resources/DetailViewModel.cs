@@ -1,7 +1,4 @@
-﻿using Tekla.Structures.Dialog;
-using TD = Tekla.Structures.Datatype;
-
-namespace Muggle.TsExtensions.CodingHelper.Generators {
+﻿namespace Muggle.TsExtensions.CodingHelper.Generators {
 
     /// <summary>
     /// A view model base suitable for detail plugin of Tekla Structures,
@@ -12,7 +9,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
     public abstract class DetailViewModel : NotificationObject {
 
         private int upDirection = 7;
-        [StructuresDialog("zsuunta", typeof(TD.Integer))]
+        [global::Tekla.Structures.Dialog.StructuresDialog("zsuunta", typeof(global::Tekla.Structures.Datatype.Integer))]
         public int UpDirection {
             get { return upDirection; }
             set {
@@ -22,7 +19,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
         }
 
         private double rotationAngleY = 0.0;
-        [StructuresDialog("zang1", typeof(TD.Double))]
+        [global::Tekla.Structures.Dialog.StructuresDialog("zang1", typeof(global::Tekla.Structures.Datatype.Double))]
         public double RotationAngleY {
             get { return rotationAngleY; }
             set {
@@ -32,7 +29,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
         }
 
         private double rotationAngleX = 0.0;
-        [StructuresDialog("zang2", typeof(TD.Double))]
+        [global::Tekla.Structures.Dialog.StructuresDialog("zang2", typeof(global::Tekla.Structures.Datatype.Double))]
         public double RotationAngleX {
             get { return rotationAngleX; }
             set {
@@ -42,7 +39,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
         }
 
         private int vertical_position = 0;
-        [StructuresDialog("vertical_position", typeof(TD.Integer))]
+        [global::Tekla.Structures.Dialog.StructuresDialog("vertical_position", typeof(global::Tekla.Structures.Datatype.Integer))]
         public int VerticalPosition {
             get { return vertical_position; }
             set {
@@ -52,7 +49,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
         }
 
         private int horizontal_position = 0;
-        [StructuresDialog("horizontal_position", typeof(TD.Integer))]
+        [global::Tekla.Structures.Dialog.StructuresDialog("horizontal_position", typeof(global::Tekla.Structures.Datatype.Integer))]
         public int HorizontalPosition {
             get { return horizontal_position; }
             set {
@@ -62,7 +59,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
         }
 
         private double vertical_offset = 0.0;
-        [StructuresDialog("vertical_offset", typeof(TD.Double))]
+        [global::Tekla.Structures.Dialog.StructuresDialog("vertical_offset", typeof(global::Tekla.Structures.Datatype.Double))]
         public double VerticalOffset {
             get { return vertical_offset; }
             set {
@@ -72,7 +69,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
         }
 
         private double horizontal_offset = 0.0;
-        [StructuresDialog("horizontal_offset", typeof(TD.Double))]
+        [global::Tekla.Structures.Dialog.StructuresDialog("horizontal_offset", typeof(global::Tekla.Structures.Datatype.Double))]
         public double HorizontalOffset {
             get { return horizontal_offset; }
             set {
@@ -82,7 +79,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
         }
 
         private int upMiddleLeft = 0;
-        [StructuresDialog("UpMiddleLeft", typeof(TD.Integer))]
+        [global::Tekla.Structures.Dialog.StructuresDialog("UpMiddleLeft", typeof(global::Tekla.Structures.Datatype.Integer))]
         public int UpMiddleLeft {
             get { return upMiddleLeft; }
             set {
@@ -101,7 +98,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
         }
 
         private int upMiddleMiddle = 0;
-        [StructuresDialog("UpMiddleMiddle", typeof(TD.Integer))]
+        [global::Tekla.Structures.Dialog.StructuresDialog("UpMiddleMiddle", typeof(global::Tekla.Structures.Datatype.Integer))]
         public int UpMiddleMiddle {
             get { return upMiddleMiddle; }
             set {
@@ -120,7 +117,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
         }
 
         private int upMiddleRight = 0;
-        [StructuresDialog("UpMiddleRight", typeof(TD.Integer))]
+        [global::Tekla.Structures.Dialog.StructuresDialog("UpMiddleRight", typeof(global::Tekla.Structures.Datatype.Integer))]
         public int UpMiddleRight {
             get { return upMiddleRight; }
             set {
@@ -139,7 +136,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
         }
 
         private int topLeft = 0;
-        [StructuresDialog("TopLeft", typeof(TD.Integer))]
+        [global::Tekla.Structures.Dialog.StructuresDialog("TopLeft", typeof(global::Tekla.Structures.Datatype.Integer))]
         public int TopLeft {
             get { return topLeft; }
             set {
@@ -158,7 +155,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
         }
 
         private int topMiddle = 0;
-        [StructuresDialog("TopMiddle", typeof(TD.Integer))]
+        [global::Tekla.Structures.Dialog.StructuresDialog("TopMiddle", typeof(global::Tekla.Structures.Datatype.Integer))]
         public int TopMiddle {
             get { return topMiddle; }
             set {
@@ -177,7 +174,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
         }
 
         private int topRight = 0;
-        [StructuresDialog("TopRight", typeof(TD.Integer))]
+        [global::Tekla.Structures.Dialog.StructuresDialog("TopRight", typeof(global::Tekla.Structures.Datatype.Integer))]
         public int TopRight {
             get { return topRight; }
             set {
@@ -196,7 +193,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
         }
 
         private int middleLeft = 0;
-        [StructuresDialog("MiddleLeft", typeof(TD.Integer))]
+        [global::Tekla.Structures.Dialog.StructuresDialog("MiddleLeft", typeof(global::Tekla.Structures.Datatype.Integer))]
         public int MiddleLeft {
             get { return middleLeft; }
             set {
@@ -215,7 +212,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
         }
 
         private int middleMiddle = 1;
-        [StructuresDialog("MiddleMiddle", typeof(TD.Integer))]
+        [global::Tekla.Structures.Dialog.StructuresDialog("MiddleMiddle", typeof(global::Tekla.Structures.Datatype.Integer))]
         public int MiddleMiddle {
             get { return middleMiddle; }
             set {
@@ -234,7 +231,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
         }
 
         private int middleRight = 0;
-        [StructuresDialog("MiddleRight", typeof(TD.Integer))]
+        [global::Tekla.Structures.Dialog.StructuresDialog("MiddleRight", typeof(global::Tekla.Structures.Datatype.Integer))]
         public int MiddleRight {
             get { return middleRight; }
             set {
@@ -253,7 +250,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
         }
 
         private int bottomLeft = 0;
-        [StructuresDialog("BottomLeft", typeof(TD.Integer))]
+        [global::Tekla.Structures.Dialog.StructuresDialog("BottomLeft", typeof(global::Tekla.Structures.Datatype.Integer))]
         public int BottomLeft {
             get { return bottomLeft; }
             set {
@@ -272,7 +269,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
         }
 
         private int bottomMiddle = 0;
-        [StructuresDialog("BottomMiddle", typeof(TD.Integer))]
+        [global::Tekla.Structures.Dialog.StructuresDialog("BottomMiddle", typeof(global::Tekla.Structures.Datatype.Integer))]
         public int BottomMiddle {
             get { return bottomMiddle; }
             set {
@@ -291,7 +288,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
         }
 
         private int bottomRight = 0;
-        [StructuresDialog("BottomRight", typeof(TD.Integer))]
+        [global::Tekla.Structures.Dialog.StructuresDialog("BottomRight", typeof(global::Tekla.Structures.Datatype.Integer))]
         public int BottomRight {
             get { return bottomRight; }
             set {
@@ -310,7 +307,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
         }
 
         private int detail_type = 0;
-        [StructuresDialog("detail_type", typeof(TD.Integer))]
+        [global::Tekla.Structures.Dialog.StructuresDialog("detail_type", typeof(global::Tekla.Structures.Datatype.Integer))]
         public int DetailType {
             get { return detail_type; }
             set {
@@ -320,7 +317,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
         }
 
         private int locked = 0;
-        [StructuresDialog("OBJECT_LOCKED", typeof(TD.Integer))]
+        [global::Tekla.Structures.Dialog.StructuresDialog("OBJECT_LOCKED", typeof(global::Tekla.Structures.Datatype.Integer))]
         public int Locked {
             get { return locked; }
             set {
@@ -330,7 +327,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
         }
 
         private int @class = -1;
-        [StructuresDialog("group_no", typeof(TD.Integer))]
+        [global::Tekla.Structures.Dialog.StructuresDialog("group_no", typeof(global::Tekla.Structures.Datatype.Integer))]
         public int Class {
             get { return @class; }
             set {
@@ -340,7 +337,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
         }
 
         private string connectionCode = string.Empty;
-        [StructuresDialog("joint_code", typeof(TD.String))]
+        [global::Tekla.Structures.Dialog.StructuresDialog("joint_code", typeof(global::Tekla.Structures.Datatype.String))]
         public string ConnectionCode {
             get { return connectionCode; }
             set {
@@ -350,7 +347,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
         }
 
         private string autoDefaults = string.Empty;
-        [StructuresDialog("ad_root", typeof(TD.String))]
+        [global::Tekla.Structures.Dialog.StructuresDialog("ad_root", typeof(global::Tekla.Structures.Datatype.String))]
         public string AutoDefaults {
             get { return autoDefaults; }
             set {

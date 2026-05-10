@@ -10,7 +10,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators.Information {
     /// <remarks>
     /// <list type="bullet">
     ///     <item>Key - model object name or number, such as "Brace1".</item>
-    ///     <item>Value -
+    ///     <item>Value - dictionary for property default values,
     ///         <list type="bullet">
     ///             <item>Key - property name, such as "Profile".</item>
     ///             <item>Value - property default value, such as "HM244*175*7*11".</item>
@@ -20,29 +20,19 @@ namespace Muggle.TsExtensions.CodingHelper.Generators.Information {
     /// </remarks>
     internal class DefaultValueDictionary : Dictionary<string, Dictionary<string, string>>, IEquatable<DefaultValueDictionary> {
 
-        /*private Dictionary<string, Dictionary<string, string>> _dict;
-
-        public DefaultValueDictionary(ref Dictionary<string, Dictionary<string, string>> dict) {
-            _dict = dict;
-        }
-
-        public DefaultValueDictionary(IDictionary<string, Dictionary<string, string>> dict) {
-            _dict = new Dictionary<string, Dictionary<string, string>>(dict);
-        }*/
-
         public bool Equals(DefaultValueDictionary other) {
 
             if (other == null || this.Count != other.Count) return false;
 
             foreach (var kvp in this) {
                 var nameOrNumber = kvp.Key;
-                if (!other.TryGetValue(nameOrNumber, out Dictionary<string, string> otherKvp)) return false;
+                if (!other.TryGetValue(nameOrNumber, out var otherKvp)) return false;
 
                 if (kvp.Value.Count != otherKvp.Count) return false;
 
                 foreach (var kvp2 in kvp.Value) {
                     var property = kvp2.Key;
-                    if (!otherKvp.TryGetValue(property, out string value)) return false;
+                    if (!otherKvp.TryGetValue(property, out var value)) return false;
 
                     if (kvp2.Value != value) return false;
                 }

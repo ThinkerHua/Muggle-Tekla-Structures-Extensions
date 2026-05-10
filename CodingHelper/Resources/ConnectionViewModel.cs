@@ -1,7 +1,4 @@
-﻿using Tekla.Structures.Dialog;
-using TD = Tekla.Structures.Datatype;
-
-namespace Muggle.TsExtensions.CodingHelper.Generators {
+﻿namespace Muggle.TsExtensions.CodingHelper.Generators {
     
     /// <summary>
     /// A view model base suitable for connection plugin of Tekla Structures,
@@ -12,7 +9,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
     public abstract class ConnectionViewModel : NotificationObject {
         
         private int upDirection = 7;
-        [StructuresDialog("zsuunta", typeof(TD.Integer))]
+        [global::Tekla.Structures.Dialog.StructuresDialog("zsuunta", typeof(global::Tekla.Structures.Datatype.Integer))]
         public int UpDirection {
             get { return upDirection; }
             set {
@@ -22,7 +19,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
         }
         
         private double rotationAngleY = 0.0;
-        [StructuresDialog("zang1", typeof(TD.Double))]
+        [global::Tekla.Structures.Dialog.StructuresDialog("zang1", typeof(global::Tekla.Structures.Datatype.Double))]
         public double RotationAngleY {
             get { return rotationAngleY; }
             set {
@@ -32,7 +29,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
         }
         
         private double rotationAngleX = 0.0;
-        [StructuresDialog("zang2", typeof(TD.Double))]
+        [global::Tekla.Structures.Dialog.StructuresDialog("zang2", typeof(global::Tekla.Structures.Datatype.Double))]
         public double RotationAngleX {
             get { return rotationAngleX; }
             set {
@@ -42,7 +39,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
         }
         
         private int locked = 0;
-        [StructuresDialog("OBJECT_LOCKED", typeof(TD.Integer))]
+        [global::Tekla.Structures.Dialog.StructuresDialog("OBJECT_LOCKED", typeof(global::Tekla.Structures.Datatype.Integer))]
         public int Locked {
             get { return locked; }
             set {
@@ -52,7 +49,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
         }
         
         private int @class = -1;
-        [StructuresDialog("group_no", typeof(TD.Integer))]
+        [global::Tekla.Structures.Dialog.StructuresDialog("group_no", typeof(global::Tekla.Structures.Datatype.Integer))]
         public int Class {
             get { return @class; }
             set {
@@ -62,7 +59,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
         }
         
         private string connectionCode = string.Empty;
-        [StructuresDialog("joint_code", typeof(TD.String))]
+        [global::Tekla.Structures.Dialog.StructuresDialog("joint_code", typeof(global::Tekla.Structures.Datatype.String))]
         public string ConnectionCode {
             get { return connectionCode; }
             set {
@@ -72,7 +69,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
         }
         
         private string autoDefaults = string.Empty;
-        [StructuresDialog("ad_root", typeof(TD.String))]
+        [global::Tekla.Structures.Dialog.StructuresDialog("ad_root", typeof(global::Tekla.Structures.Datatype.String))]
         public string AutoDefaults {
             get { return autoDefaults; }
             set {
@@ -82,7 +79,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
         }
         
         private string autoConnection = string.Empty;
-        [StructuresDialog("ac_root", typeof(TD.String))]
+        [global::Tekla.Structures.Dialog.StructuresDialog("ac_root", typeof(global::Tekla.Structures.Datatype.String))]
         public string AutoConnection {
             get { return autoConnection; }
             set {

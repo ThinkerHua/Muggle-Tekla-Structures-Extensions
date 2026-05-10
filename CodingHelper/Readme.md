@@ -352,7 +352,7 @@ public partial class MainWindowViewModel {
                 return _plateStiffenerMaterial;
             }
             set {
-                _plateStiffenerMaterial = String.IsNullOrEmpty(value) ? "" : value;
+                _plateStiffenerMaterial = string.IsNullOrEmpty(value) ? "" : value;
                 OnPropertyChanged();
             }
         }
@@ -363,7 +363,7 @@ public partial class MainWindowViewModel {
                 return _plateStiffenerName;
             }
             set {
-                _plateStiffenerName = String.IsNullOrEmpty(value) ? "" : value;
+                _plateStiffenerName = string.IsNullOrEmpty(value) ? "" : value;
                 OnPropertyChanged();
             }
         }
@@ -374,7 +374,7 @@ public partial class MainWindowViewModel {
                 return _plateStiffenerFinish;
             }
             set {
-                _plateStiffenerFinish = String.IsNullOrEmpty(value) ? "" : value;
+                _plateStiffenerFinish = string.IsNullOrEmpty(value) ? "" : value;
                 OnPropertyChanged();
             }
         }
@@ -396,7 +396,7 @@ public partial class MainWindowViewModel {
                 return _plateStiffenerAssemblyPrefix;
             }
             set {
-                _plateStiffenerAssemblyPrefix = String.IsNullOrEmpty(value) ? "A-" : value;
+                _plateStiffenerAssemblyPrefix = string.IsNullOrEmpty(value) ? "A-" : value;
                 OnPropertyChanged();
             }
         }
@@ -418,7 +418,7 @@ public partial class MainWindowViewModel {
                 return _plateStiffenerPartPrefix;
             }
             set {
-                _plateStiffenerPartPrefix = String.IsNullOrEmpty(value) ? "P" : value;
+                _plateStiffenerPartPrefix = string.IsNullOrEmpty(value) ? "P" : value;
                 OnPropertyChanged();
             }
         }
