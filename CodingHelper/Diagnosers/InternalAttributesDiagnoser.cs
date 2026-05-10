@@ -464,11 +464,11 @@ internal class InternalAttributesDiagnoser : DiagnosticAnalyzer {
 
 #if CompatibleWithViewModelPropertiesGenerator
         AttributeSyntax[] oldAttributeSyntaxes = null;
+        var oldAttDict = new Dictionary<string, HashSet<string>>();
+
         if (!TryGetMatchedAttributes(classDeclarationSyntax.AttributeLists, semanticModel,
                 ViewModelPropertiesGenerator.ConcernedAttributes, ref oldAttributeSyntaxes))
-            return;
-
-        var oldAttDict = new Dictionary<string, HashSet<string>>();
+            goto NoOldAttributes;
 
         foreach (var attributeSyntax in oldAttributeSyntaxes) {
             var attTypeInfo = semanticModel.GetTypeInfo(attributeSyntax);
@@ -490,6 +490,8 @@ internal class InternalAttributesDiagnoser : DiagnosticAnalyzer {
                 nameOrNumberSet.Add(argument);
             }
         }
+
+        NoOldAttributes: ;
 #endif
 
         AttributeSyntax[] attributeSyntaxes = null;

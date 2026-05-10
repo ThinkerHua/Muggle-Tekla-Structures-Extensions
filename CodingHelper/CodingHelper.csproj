@@ -8,7 +8,7 @@
         <IsRoslynComponent>true</IsRoslynComponent>
         <PackageId>Muggle.TsExtensions.CodingHelper</PackageId>
         <Title>Tekla Structures OpenAPI development helper</Title>
-        <Version>1.3.2</Version>
+        <Version>1.3.3</Version>
         <Authors>Huang YongXing</Authors>
         <Description>Help to generate fields (with StructuresFieldAttribute) for plugin data, fields for plugin, and properties (with StructuresDialogAttribute) for view model which used by plugin WPF UI.</Description>
         <Copyright>© 2026 Huang YongXing</Copyright>
@@ -20,7 +20,7 @@
         <PackageTags>Tekla Structures OpenAPI Generator</PackageTags>
         <PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
         <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
-        <PackageReleaseNotes>Fix the issue of transitive dependency.</PackageReleaseNotes>
+        <PackageReleaseNotes>Fix the issue where the diagnostic does not work when the ViewModel does not apply the old attribute.</PackageReleaseNotes>
         <IncludeBuildOutput>false</IncludeBuildOutput>
     </PropertyGroup>
 
@@ -51,54 +51,8 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Compile Remove="Resources\BoltCircleFieldDefaultValuesAttribute.cs" />
-        <Compile Remove="Resources\BoltCircleFieldsAttribute.cs" />
-        <Compile Remove="Resources\BoltCirclePropertiesAttribute.cs" />
-        <Compile Remove="Resources\BoltCirclePropertiesWithDefaultValuesAttribute.cs" />
-        <Compile Remove="Resources\BoltFieldDefaultValuesAttribute.cs" />
-        <Compile Remove="Resources\BoltFieldsAttribute.cs" />
-        <Compile Remove="Resources\BoltPropertiesAttribute.cs" />
-        <Compile Remove="Resources\BoltPropertiesWithDefaultValuesAttribute.cs" />
-        <Compile Remove="Resources\ConnectionViewModel.cs" />
-        <Compile Remove="Resources\DetailViewModel.cs" />
-        <Compile Remove="Resources\FieldsFromAttribute.cs" />
-        <Compile Remove="Resources\NotificationObject.cs" />
-        <Compile Remove="Resources\PartFieldDefaultValuesAttribute.cs" />
-        <Compile Remove="Resources\PartFieldsAttribute.cs" />
-        <Compile Remove="Resources\PartPropertiesAttribute.cs" />
-        <Compile Remove="Resources\PartPropertiesWithDefaultValuesAttribute.cs" />
-        <Compile Remove="Resources\PlateFieldDefaultValuesAttribute.cs" />
-        <Compile Remove="Resources\PlateFieldsAttribute.cs" />
-        <Compile Remove="Resources\PlatePropertiesAttribute.cs" />
-        <Compile Remove="Resources\PlatePropertiesWithDefaultValuesAttribute.cs" />
-        <Compile Remove="Resources\WeldFieldDefaultValuesAttribute.cs" />
-        <Compile Remove="Resources\WeldFieldsAttribute.cs" />
-        <Compile Remove="Resources\WeldPropertiesAttribute.cs" />
-        <Compile Remove="Resources\WeldPropertiesWithDefaultValuesAttribute.cs" />
-        <EmbeddedResource Include="Resources\BoltCircleFieldDefaultValuesAttribute.cs" />
-        <EmbeddedResource Include="Resources\BoltCircleFieldsAttribute.cs" />
-        <EmbeddedResource Include="Resources\BoltCirclePropertiesAttribute.cs" />
-        <EmbeddedResource Include="Resources\BoltCirclePropertiesWithDefaultValuesAttribute.cs" />
-        <EmbeddedResource Include="Resources\BoltFieldDefaultValuesAttribute.cs" />
-        <EmbeddedResource Include="Resources\BoltFieldsAttribute.cs" />
-        <EmbeddedResource Include="Resources\BoltPropertiesAttribute.cs" />
-        <EmbeddedResource Include="Resources\BoltPropertiesWithDefaultValuesAttribute.cs" />
-        <EmbeddedResource Include="Resources\ConnectionViewModel.cs" />
-        <EmbeddedResource Include="Resources\DetailViewModel.cs" />
-        <EmbeddedResource Include="Resources\FieldsFromAttribute.cs" />
-        <EmbeddedResource Include="Resources\NotificationObject.cs" />
-        <EmbeddedResource Include="Resources\PartFieldDefaultValuesAttribute.cs" />
-        <EmbeddedResource Include="Resources\PartFieldsAttribute.cs" />
-        <EmbeddedResource Include="Resources\PartPropertiesAttribute.cs" />
-        <EmbeddedResource Include="Resources\PartPropertiesWithDefaultValuesAttribute.cs" />
-        <EmbeddedResource Include="Resources\PlateFieldDefaultValuesAttribute.cs" />
-        <EmbeddedResource Include="Resources\PlateFieldsAttribute.cs" />
-        <EmbeddedResource Include="Resources\PlatePropertiesAttribute.cs" />
-        <EmbeddedResource Include="Resources\PlatePropertiesWithDefaultValuesAttribute.cs" />
-        <EmbeddedResource Include="Resources\WeldFieldDefaultValuesAttribute.cs" />
-        <EmbeddedResource Include="Resources\WeldFieldsAttribute.cs" />
-        <EmbeddedResource Include="Resources\WeldPropertiesAttribute.cs" />
-        <EmbeddedResource Include="Resources\WeldPropertiesWithDefaultValuesAttribute.cs" />
+        <Compile Remove="Resources\*.cs" />
+        <EmbeddedResource Include="Resources\*.cs" />
     </ItemGroup>
 
 </Project>
