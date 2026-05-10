@@ -16,10 +16,10 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 using Muggle.TsExtensions.Common.Geometry3d;
 using Tekla.Structures.Geometry3d;
 using Tekla.Structures.Model;
+using static Muggle.TsExtensions.Common.Profile.ProfileOperation;
 
 namespace Muggle.TsExtensions.Common.Model {
     /// <summary>
@@ -198,28 +198,24 @@ namespace Muggle.TsExtensions.Common.Model {
                 throw new ArgumentNullException(nameof(endPoint));
             }
 
-            if (string.IsNullOrEmpty(name)) {
-                throw new ArgumentException($"“{nameof(name)}”不能为 null 或空。", nameof(name));
+            if (name == null) {
+                throw new ArgumentNullException(nameof(name));
             }
 
             if (string.IsNullOrEmpty(profileStr)) {
-                throw new ArgumentException($"“{nameof(profileStr)}”不能为 null 或空。", nameof(profileStr));
+                profileStr = "HM244*175*7*11";
             }
 
-            if (string.IsNullOrEmpty(materialStr)) {
-                throw new ArgumentException($"“{nameof(materialStr)}”不能为 null 或空。", nameof(materialStr));
+            if (materialStr == null) {
+                throw new ArgumentNullException(nameof(materialStr));
             }
 
-            if (assemblyPrefix is null) {
-                assemblyPrefix = string.Empty;
-            }
+            assemblyPrefix ??= string.Empty;
 
-            if (partPrefix is null) {
-                partPrefix = string.Empty;
-            }
+            partPrefix ??= string.Empty;
 
             if (string.IsNullOrEmpty(@class)) {
-                throw new ArgumentException($"“{nameof(@class)}”不能为 null 或空。", nameof(@class));
+                @class = "99";
             }
 
             Beam beam = new Beam {
@@ -279,28 +275,24 @@ namespace Muggle.TsExtensions.Common.Model {
                 throw new ArgumentNullException(nameof(contour));
             }
 
-            if (string.IsNullOrEmpty(name)) {
-                throw new ArgumentException($"“{nameof(name)}”不能为 null 或空。", nameof(name));
+            if (name == null) {
+                throw new ArgumentNullException(nameof(name));
             }
 
             if (string.IsNullOrEmpty(profileStr)) {
-                throw new ArgumentException($"“{nameof(profileStr)}”不能为 null 或空。", nameof(profileStr));
+                profileStr = "HM244*175*7*11";
             }
 
-            if (string.IsNullOrEmpty(materialStr)) {
-                throw new ArgumentException($"“{nameof(materialStr)}”不能为 null 或空。", nameof(materialStr));
+            if (materialStr == null) {
+                throw new ArgumentNullException(nameof(materialStr));
             }
 
-            if (assemblyPrefix is null) {
-                assemblyPrefix = string.Empty;
-            }
+            assemblyPrefix ??= string.Empty;
 
-            if (partPrefix is null) {
-                partPrefix = string.Empty;
-            }
+            partPrefix ??= string.Empty;
 
             if (string.IsNullOrEmpty(@class)) {
-                throw new ArgumentException($"“{nameof(@class)}”不能为 null 或空。", nameof(@class));
+                @class = "99";
             }
 
             var polybeam = new PolyBeam {
@@ -359,28 +351,24 @@ namespace Muggle.TsExtensions.Common.Model {
                 throw new ArgumentNullException(nameof(points));
             }
 
-            if (string.IsNullOrEmpty(name)) {
-                throw new ArgumentException($"“{nameof(name)}”不能为 null 或空。", nameof(name));
+            if (name == null) {
+                throw new ArgumentNullException(nameof(name));
             }
 
             if (string.IsNullOrEmpty(profileStr)) {
-                throw new ArgumentException($"“{nameof(profileStr)}”不能为 null 或空。", nameof(profileStr));
+                profileStr = "HM244*175*7*11";
             }
 
-            if (string.IsNullOrEmpty(materialStr)) {
-                throw new ArgumentException($"“{nameof(materialStr)}”不能为 null 或空。", nameof(materialStr));
+            if (materialStr == null) {
+                throw new ArgumentNullException(nameof(materialStr));
             }
 
-            if (assemblyPrefix is null) {
-                assemblyPrefix = string.Empty;
-            }
+            assemblyPrefix ??= string.Empty;
 
-            if (partPrefix is null) {
-                partPrefix = string.Empty;
-            }
+            partPrefix ??= string.Empty;
 
             if (string.IsNullOrEmpty(@class)) {
-                throw new ArgumentException($"“{nameof(@class)}”不能为 null 或空。", nameof(@class));
+                @class = "99";
             }
 
             var contour = new Contour();
@@ -442,28 +430,24 @@ namespace Muggle.TsExtensions.Common.Model {
                 throw new ArgumentException($"“{nameof(contourPoints)}”元素数量不应为 0。");
             }
 
-            if (string.IsNullOrEmpty(name)) {
-                throw new ArgumentException($"“{nameof(name)}”不能为 null 或空。", nameof(name));
+            if (name == null) {
+                throw new ArgumentNullException(nameof(name));
             }
 
             if (string.IsNullOrEmpty(profileStr)) {
-                throw new ArgumentException($"“{nameof(profileStr)}”不能为 null 或空。", nameof(profileStr));
+                profileStr = "PL10";
             }
 
-            if (string.IsNullOrEmpty(materialStr)) {
-                throw new ArgumentException($"“{nameof(materialStr)}”不能为 null 或空。", nameof(materialStr));
+            if (materialStr == null) {
+                throw new ArgumentNullException(nameof(materialStr));
             }
 
-            if (assemblyPrefix is null) {
-                assemblyPrefix = string.Empty;
-            }
+            assemblyPrefix ??= string.Empty;
 
-            if (partPrefix is null) {
-                partPrefix = string.Empty;
-            }
+            partPrefix ??= string.Empty;
 
             if (string.IsNullOrEmpty(@class)) {
-                throw new ArgumentException($"“{nameof(@class)}”不能为 null 或空。", nameof(@class));
+                @class = "99";
             }
 
             ContourPlate contourPlate = new ContourPlate {
@@ -517,28 +501,24 @@ namespace Muggle.TsExtensions.Common.Model {
                 throw new ArgumentException($"“{nameof(points)}”元素数量不应为 0。", nameof(points));
             }
 
-            if (string.IsNullOrEmpty(name)) {
-                throw new ArgumentException($"“{nameof(name)}”不能为 null 或空。", nameof(name));
+            if (name == null) {
+                throw new ArgumentNullException(nameof(name));
             }
 
             if (string.IsNullOrEmpty(profileStr)) {
-                throw new ArgumentException($"“{nameof(profileStr)}”不能为 null 或空。", nameof(profileStr));
+                profileStr = "PL10";
             }
 
-            if (string.IsNullOrEmpty(materialStr)) {
-                throw new ArgumentException($"“{nameof(materialStr)}”不能为 null 或空。", nameof(materialStr));
+            if (materialStr == null) {
+                throw new ArgumentNullException(nameof(materialStr));
             }
 
-            if (assemblyPrefix is null) {
-                assemblyPrefix = string.Empty;
-            }
+            assemblyPrefix ??= string.Empty;
 
-            if (partPrefix is null) {
-                partPrefix = string.Empty;
-            }
+            partPrefix ??= string.Empty;
 
             if (string.IsNullOrEmpty(@class)) {
-                throw new ArgumentException($"“{nameof(@class)}”不能为 null 或空。", nameof(@class));
+                @class = "99";
             }
 
             var contourPoints = new ArrayList();
@@ -795,7 +775,7 @@ namespace Muggle.TsExtensions.Common.Model {
         /// <exception cref="ArgumentNullException"></exception>
         public static BoltCircle CreatBoltCircle(
             Part boltTo, Part beBolted, IEnumerable<Part> otherBeBolted, Point firstPosition, Point secondPosition,
-            int num = 8, double diameter = 200.0, Position position = default,
+            int num = 8, double diameter = 200.0, Position position = null,
             string bolt_standard = "HS10.9", double bolt_size = 20.0,
             BoltGroup.BoltTypeEnum bolttype = BoltGroup.BoltTypeEnum.BOLT_TYPE_SITE,
             double tolerance = 2.0,
@@ -813,7 +793,7 @@ namespace Muggle.TsExtensions.Common.Model {
                 throw new ArgumentNullException(nameof(secondPosition));
             }
 
-            if (position == default) position = new Position { Rotation = Position.RotationEnum.TOP };
+            if (position == null) position = new Position { Rotation = Position.RotationEnum.TOP };
 
             var boltCircle = new BoltCircle {
                 PartToBoltTo = boltTo,
@@ -1251,27 +1231,6 @@ namespace Muggle.TsExtensions.Common.Model {
         }
 
         /// <summary>
-        /// 获取截面前缀。
-        /// </summary>
-        /// <param name="profileText">截面文本</param>
-        /// <returns>截面前缀</returns>
-        /// <exception cref="ArgumentException"></exception>
-        /// <exception cref="Exception">不是有效的截面文本时引发。</exception>
-        private static string GetProfilePrefix(string profileText) {
-            if (string.IsNullOrEmpty(profileText)) {
-                throw new ArgumentException($"“{nameof(profileText)}”不能为 null 或空。", nameof(profileText));
-            }
-
-            const string pattern = @"\A(?<prefix>[^0-9]+)[0-9].+\Z";
-            var match = Regex.Match(profileText, pattern);
-            if (!match.Success) {
-                throw new Exception("Not a valid profile text.");
-            }
-
-            return match.Groups["prefix"].Value;
-        }
-
-        /// <summary>
         /// 求零件实体(<seealso cref="Solid"/>)与加劲板前后表面所在的平面的交集。
         /// </summary>
         /// <remarks>
@@ -1447,12 +1406,12 @@ namespace Muggle.TsExtensions.Common.Model {
                 throw new ArgumentNullException(nameof(position));
             }
 
-            if (string.IsNullOrEmpty(material)) {
-                throw new ArgumentException($"“{nameof(material)}”不能为 null 或空。", nameof(material));
+            if (material is null) {
+                throw new ArgumentNullException(nameof(material));
             }
 
             if (string.IsNullOrEmpty(@class)) {
-                throw new ArgumentException($"“{nameof(@class)}”不能为 null 或空。", nameof(@class));
+                @class = "99";
             }
 
             var faceEnumArr = IntersectionWithStiffenerSurfacePlane(
@@ -1594,12 +1553,12 @@ namespace Muggle.TsExtensions.Common.Model {
                 throw new ArgumentNullException(nameof(position));
             }
 
-            if (string.IsNullOrEmpty(material)) {
-                throw new ArgumentException($"“{nameof(material)}”不能为 null 或空。", nameof(material));
+            if (material is null) {
+                throw new ArgumentNullException(nameof(material));
             }
 
             if (string.IsNullOrEmpty(@class)) {
-                throw new ArgumentException($"“{nameof(@class)}”不能为 null 或空。", nameof(@class));
+                @class = "99";
             }
 
             var faceEnumArr = IntersectionWithStiffenerSurfacePlane(
@@ -1728,12 +1687,12 @@ namespace Muggle.TsExtensions.Common.Model {
                 throw new ArgumentNullException(nameof(position));
             }
 
-            if (string.IsNullOrEmpty(material)) {
-                throw new ArgumentException($"“{nameof(material)}”不能为 null 或空。", nameof(material));
+            if (material is null) {
+                throw new ArgumentNullException(nameof(material));
             }
 
             if (string.IsNullOrEmpty(@class)) {
-                throw new ArgumentException($"“{nameof(@class)}”不能为 null 或空。", nameof(@class));
+                @class = "99";
             }
 
             var faceEnumArr = IntersectionWithStiffenerSurfacePlane(
@@ -1844,12 +1803,12 @@ namespace Muggle.TsExtensions.Common.Model {
                 throw new ArgumentNullException(nameof(position));
             }
 
-            if (string.IsNullOrEmpty(material)) {
-                throw new ArgumentException($"“{nameof(material)}”不能为 null 或空。", nameof(material));
+            if (material is null) {
+                throw new ArgumentNullException(nameof(material));
             }
 
             if (string.IsNullOrEmpty(@class)) {
-                throw new ArgumentException($"“{nameof(@class)}”不能为 null 或空。", nameof(@class));
+                @class = "99";
             }
 
             var faceEnumArr = IntersectionWithStiffenerSurfacePlane(
@@ -2026,12 +1985,12 @@ namespace Muggle.TsExtensions.Common.Model {
                 throw new ArgumentNullException(nameof(position));
             }
 
-            if (string.IsNullOrEmpty(material)) {
-                throw new ArgumentException($"“{nameof(material)}”不能为 null 或空。", nameof(material));
+            if (material is null) {
+                throw new ArgumentNullException(nameof(material));
             }
 
             if (string.IsNullOrEmpty(@class)) {
-                throw new ArgumentException($"“{nameof(@class)}”不能为 null 或空。", nameof(@class));
+                @class = "99";
             }
 
             var faceEnumArr = IntersectionWithStiffenerSurfacePlane(
@@ -2131,12 +2090,12 @@ namespace Muggle.TsExtensions.Common.Model {
                 throw new ArgumentNullException(nameof(position));
             }
 
-            if (string.IsNullOrEmpty(material)) {
-                throw new ArgumentException($"“{nameof(material)}”不能为 null 或空。", nameof(material));
+            if (material is null) {
+                throw new ArgumentNullException(nameof(material));
             }
 
             if (string.IsNullOrEmpty(@class)) {
-                throw new ArgumentException($"“{nameof(@class)}”不能为 null 或空。", nameof(@class));
+                @class = "99";
             }
 
             const string PROPERTY_NAME = "PROFILE_TYPE";

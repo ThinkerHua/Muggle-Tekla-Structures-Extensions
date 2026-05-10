@@ -72,8 +72,9 @@ namespace Muggle.TsExtensions.Common.Profile {
         }
 
         /// <summary>
-        /// 为 <see cref="ProfileTextChanging"/> 事件注册 <see cref="SetFieldsValue"/> 方法。
+        /// 默认构造函数。
         /// </summary>
+        /// <remarks>为 <see cref="ProfileTextChanging"/> 事件注册 <see cref="SetFieldsValue"/> 方法。</remarks>
         protected ProfileBase() {
             _profileTextChangingEventHandler += SetFieldsValue;
         }
@@ -106,6 +107,8 @@ namespace Muggle.TsExtensions.Common.Profile {
         /// </summary>
         /// <param name="sender">事件源</param>
         /// <param name="e">事件参数</param>
+        /// <exception cref="UnAcceptableProfileException">当<paramref name="e"/> 的 
+        /// <see cref="ProfileTextChangingEventArgs.NewText"/> 是不支持的截面或不支持的截面参数时引发。</exception>
         protected abstract void SetFieldsValue(ProfileBase sender, ProfileTextChangingEventArgs e);
     }
 }

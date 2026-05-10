@@ -39,11 +39,7 @@ namespace Muggle.TsExtensions.Common.Profile {
             ProfileText = profileText;
         }
 
-        /// <summary>
         /// <inheritdoc/>
-        /// </summary>
-        /// <param name="sender"><inheritdoc path="/param[1]"/></param>
-        /// <param name="e"><inheritdoc path="/param[2]"/></param>
         protected override void SetFieldsValue(ProfileBase sender, ProfileTextChangingEventArgs e) {
             var temp = (t, b, l);
             var text = e.NewText;

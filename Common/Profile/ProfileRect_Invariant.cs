@@ -37,11 +37,7 @@ namespace Muggle.TsExtensions.Common.Profile {
         /// <param name="profileText">给定截面文本</param>
         public ProfileRect_Invariant(string profileText) : base(profileText) { }
 
-        /// <summary>
         /// <inheritdoc/>
-        /// </summary>
-        /// <param name="sender"><inheritdoc path="/param[1]"/></param>
-        /// <param name="e"><inheritdoc path="/param[2]"/></param>
         protected override void SetFieldsValue(ProfileBase sender, ProfileTextChangingEventArgs e) {
             base.SetFieldsValue(sender, e);
             if (h2 != h1 || b2 != b1)
