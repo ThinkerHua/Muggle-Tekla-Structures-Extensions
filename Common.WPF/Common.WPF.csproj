@@ -8,6 +8,10 @@
 		<RootNamespace>Muggle.TsExtensions.Common.WPF</RootNamespace>
 		<Authors>thinkerhua@hotmail.com</Authors>
 		<Copyright>Copyright © 2025 thinkerhua@hotmail.com. All rights reserved.</Copyright>
+		<Configurations>D2021;D2024;R2021;R2024</Configurations>
+		<Optimize Condition="$(Configuration.StartsWith('R'))">True</Optimize>
+		<DefineConstants Condition="$(Configuration.StartsWith('D'))">TRACE;DEBUG</DefineConstants>
+		<DefineConstants Condition="$(Configuration.StartsWith('R'))">TRACE;RELEASE</DefineConstants>
 	</PropertyGroup>
 
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">

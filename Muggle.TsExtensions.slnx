@@ -15,12 +15,7 @@
         <BuildType Solution="R2024|*" Project="Release"/>
     </Project>
     <Project Path="Common/Common.csproj"/>
-    <Project Path="Common.WPF/Common.WPF.csproj">
-        <BuildType Solution="D2021|*" Project="Debug"/>
-        <BuildType Solution="D2024|*" Project="Debug"/>
-        <BuildType Solution="R2021|*" Project="Release"/>
-        <BuildType Solution="R2024|*" Project="Release"/>
-    </Project>
+    <Project Path="Common.WPF/Common.WPF.csproj"/>
     <Project Path="Demo1/Demo1.csproj"/>
     <Project Path="HJ1001/HJ1001.csproj"/>
     <Project Path="KJ1001/KJ1001.csproj"/>
