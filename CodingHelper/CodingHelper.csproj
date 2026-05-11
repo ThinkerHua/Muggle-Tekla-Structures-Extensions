@@ -8,7 +8,7 @@
         <IsRoslynComponent>true</IsRoslynComponent>
         <PackageId>Muggle.TsExtensions.CodingHelper</PackageId>
         <Title>Tekla Structures OpenAPI development helper</Title>
-        <Version>1.3.3</Version>
+        <Version>1.4.0</Version>
         <Authors>Huang YongXing</Authors>
         <Description>Help to generate fields (with StructuresFieldAttribute) for plugin data, fields for plugin, and properties (with StructuresDialogAttribute) for view model which used by plugin WPF UI.</Description>
         <Copyright>© 2026 Huang YongXing</Copyright>
@@ -20,7 +20,7 @@
         <PackageTags>Tekla Structures OpenAPI Generator</PackageTags>
         <PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
         <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
-        <PackageReleaseNotes>Fix the issue where the diagnostic does not work when the ViewModel does not apply the old attribute.</PackageReleaseNotes>
+        <PackageReleaseNotes>Add general data type field and property generators, along with supporting diagnostics.</PackageReleaseNotes>
         <IncludeBuildOutput>false</IncludeBuildOutput>
     </PropertyGroup>
 

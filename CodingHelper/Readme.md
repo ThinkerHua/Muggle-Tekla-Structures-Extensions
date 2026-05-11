@@ -23,6 +23,7 @@
 
 Apply these attributes to plugin data class to auto generate fields (with StructuresFieldAttribute):
 
+- GeneralFieldsAttribute
 - PartFieldsAttribute
 - PlateFieldsAttribute
 - WeldFieldsAttribute
@@ -169,6 +170,7 @@ public partial class Plugin {
 
 Apply these attributes on the plugin class or its data field or property, then it will auto generate a **"SetDataToDefaultIfUnset"** method to register default value:
 
+- GeneralFieldDefaultValuesAttribute
 - PartFieldDefaultValuesAttribute
 - PlateFieldDefaultValuesAttribute
 - WeldFieldDefaultValuesAttribute
@@ -179,8 +181,8 @@ Apply these attributes on the plugin class or its data field or property, then i
 
 > ***Note***: You need to pay attention to the order of calling the "SetDataToDefaultIfUnset" method and the "GetFieldValuesFrom" method. Otherwise, you might not get the correct values.
 >
-> | If applied "FieldsFromAttribute" | Place "***FieldDefaultValuesAttribute" applied on | Calling order                                                 | Way to access value                    |
-> |----------------------------------|---------------------------------------------------|---------------------------------------------------------------|----------------------------------------|
+> | If applied "FieldsFromAttribute" | Place "***FieldDefaultValuesAttribute" applied on | Calling order                                                  | Way to access value                    |
+> |----------------------------------|---------------------------------------------------|----------------------------------------------------------------|----------------------------------------|
 > | Yes                              | Class                                             | GetFieldValuesFrom(data);<br/>SetDataToDefaultIfUnset();       | Only fields                            |
 > | Yes                              | Data field or property                            | SetDataToDefaultIfUnset();<br/>GetFieldValuesFrom(data);       | Both fields and data field or property |
 > | No                               | Data field or property                            | SetDataToDefaultIfUnset();<br/>~~//GetFieldValuesFrom(data);~~ | Only data field or property            |
@@ -269,6 +271,7 @@ Inherit view model from preset view model base to make it has ability to notify 
 
 Apply these attributes to view model class to auto generate properties (with StructuresDialogAttribute) and set default values at the same time:
 
+- GeneralPropertiesWithDefaultValuesAttribute
 - PartPropertiesWithDefaultValuesAttribute
 - PlatePropertiesWithDefaultValuesAttribute
 - WeldPropertiesWithDefaultValuesAttribute
@@ -449,3 +452,7 @@ You can get a complete demo project from [here](https://github.com/ThinkerHua/Mu
 ![Preview2](https://raw.githubusercontent.com/ThinkerHua/Muggle-Tekla-Structures-Extensions/master/Resources/Introduction_Demo1_02.png)
 
 ![Preview3](https://raw.githubusercontent.com/ThinkerHua/Muggle-Tekla-Structures-Extensions/master/Resources/Introduction_Demo1_03.png)
+
+![Preview4](https://raw.githubusercontent.com/ThinkerHua/Muggle-Tekla-Structures-Extensions/master/Resources/Introduction_Demo1_04.png)
+
+![Preview5](https://raw.githubusercontent.com/ThinkerHua/Muggle-Tekla-Structures-Extensions/master/Resources/Introduction_Demo1_05.png)
