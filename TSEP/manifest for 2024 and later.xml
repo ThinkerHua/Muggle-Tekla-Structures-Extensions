@@ -8,7 +8,7 @@
 		Name="Muggle Tekla Structures Extensions"
 		Manufacturer="Huang YongXing (thinkerhua@hotmail.com)"
 		Description= "Extensions for Tekla Structures."
-		IconPath="%TEPDEFINITIONFILEFOLDER%\logo.png"
+		IconPath="%TEPDEFINITIONFILEFOLDER%\assets\logo.png"
 		Type="Extension">
 		<TeklaVersions>
 			<TeklaVersion Name="2099.1"/>
@@ -18,13 +18,13 @@
 	</Product>
 
 	<SourcePathVariables>
-		<SourcePathVariable Id="TepOutputFolder" Value="%TEPDEFINITIONFILEFOLDER%\output" Comment="This provides the location where the package builder is to save the package."/>
-		<SourcePathVariable Id="BinariesFolder" Value="%TEPDEFINITIONFILEFOLDER%\..\binaries"/>
-		<SourcePathVariable Id="StandardFileFolder" Value="%TEPDEFINITIONFILEFOLDER%\..\standard file"/>
-		<SourcePathVariable Id="MessagesFolder" Value="%TEPDEFINITIONFILEFOLDER%\..\messages"/>
-		<SourcePathVariable Id="BitmapsFolder" Value="%TEPDEFINITIONFILEFOLDER%\..\bitmaps"/>
-		<SourcePathVariable Id="ComponentCatalogFolder" Value="%TEPDEFINITIONFILEFOLDER%\..\component catalog" />
-		<SourcePathVariable Id="SolutionFolder" Value="%TEPDEFINITIONFILEFOLDER%\..\.." />
+		<SourcePathVariable Id="TepOutputFolder" Value="%TEPDEFINITIONFILEFOLDER%\installer" Comment="This provides the location where the package builder is to save the package."/>
+		<SourcePathVariable Id="BinariesFolder" Value="%TEPDEFINITIONFILEFOLDER%\binaries"/>
+		<SourcePathVariable Id="StandardFileFolder" Value="%TEPDEFINITIONFILEFOLDER%\standard file"/>
+		<SourcePathVariable Id="MessagesFolder" Value="%TEPDEFINITIONFILEFOLDER%\messages"/>
+		<SourcePathVariable Id="BitmapsFolder" Value="%TEPDEFINITIONFILEFOLDER%\bitmaps"/>
+		<SourcePathVariable Id="ComponentCatalogFolder" Value="%TEPDEFINITIONFILEFOLDER%\component catalog" />
+		<SourcePathVariable Id="SolutionFolder" Value="%TEPDEFINITIONFILEFOLDER%\.." />
 		<SourcePathVariable Id="MSBuildOutputPath" Value="bin\R2024\net48"/>
 	</SourcePathVariables>
 

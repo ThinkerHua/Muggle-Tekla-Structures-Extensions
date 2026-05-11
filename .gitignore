@@ -366,8 +366,7 @@ FodyWeavers.xsd
 /.idea/
 
 # TSEP
-/TSEP/binaries/*
-/TSEP/installer/output/*
+/TSEP/installer/*
 
 # Test Project
 /*Test*
