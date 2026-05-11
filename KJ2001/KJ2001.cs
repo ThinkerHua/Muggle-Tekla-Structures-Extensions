@@ -373,7 +373,7 @@ namespace Muggle.TsExtensions.KJ2001 {
                 basePlate, basePlate, null,
                 basePlate.StartPoint, basePlate.EndPoint, anchorRod_distanceList_X, anchorRod_distanceList_Y,
                 new Position { Rotation = Position.RotationEnum.FRONT },
-                bolt_size: anchorRod_size, bolttype: BoltGroup.BoltTypeEnum.BOLT_TYPE_WORKSHOP,
+                boltSize: anchorRod_size, boltType: BoltGroup.BoltTypeEnum.BOLT_TYPE_WORKSHOP,
                 tolerance: anchorRod_tolerance, bolt: false);
             #endregion
 
@@ -438,7 +438,7 @@ namespace Muggle.TsExtensions.KJ2001 {
                 stud_distanceList_XZ, stud_distanceList_X,
                 position: new Position { Rotation = Position.RotationEnum.BACK },
                 startOffset: new Offset { Dx = stud_offset_XZ },
-                bolt_standard: stud_standard, bolt_size: stud_size, bolttype: BoltGroup.BoltTypeEnum.BOLT_TYPE_WORKSHOP);
+                boltStandard: stud_standard, boltSize: stud_size, boltType: BoltGroup.BoltTypeEnum.BOLT_TYPE_WORKSHOP);
             stud1.Length = stud_length;
             stud1.Modify();
 
@@ -450,7 +450,7 @@ namespace Muggle.TsExtensions.KJ2001 {
                 stud_distanceList_XZ, stud_distanceList_X,
                 position: new Position { Rotation = Position.RotationEnum.FRONT },
                 startOffset: new Offset { Dx = stud_offset_XZ },
-                bolt_standard: stud_standard, bolt_size: stud_size, bolttype: BoltGroup.BoltTypeEnum.BOLT_TYPE_WORKSHOP);
+                boltStandard: stud_standard, boltSize: stud_size, boltType: BoltGroup.BoltTypeEnum.BOLT_TYPE_WORKSHOP);
             stud2.Length = stud_length;
             stud2.Modify();
 
@@ -462,7 +462,7 @@ namespace Muggle.TsExtensions.KJ2001 {
                 stud_distanceList_YZ, stud_distanceList_Y,
                 position: new Position { Rotation = Position.RotationEnum.BELOW },
                 startOffset: new Offset { Dx = stud_offset_YZ },
-                bolt_standard: stud_standard, bolt_size: stud_size, bolttype: BoltGroup.BoltTypeEnum.BOLT_TYPE_WORKSHOP);
+                boltStandard: stud_standard, boltSize: stud_size, boltType: BoltGroup.BoltTypeEnum.BOLT_TYPE_WORKSHOP);
             stud3.Length = stud_length;
             stud3.Modify();
 
@@ -474,7 +474,7 @@ namespace Muggle.TsExtensions.KJ2001 {
                 stud_distanceList_YZ, stud_distanceList_Y,
                 position: new Position { Rotation = Position.RotationEnum.TOP },
                 startOffset: new Offset { Dx = stud_offset_YZ },
-                bolt_standard: stud_standard, bolt_size: stud_size, bolttype: BoltGroup.BoltTypeEnum.BOLT_TYPE_WORKSHOP);
+                boltStandard: stud_standard, boltSize: stud_size, boltType: BoltGroup.BoltTypeEnum.BOLT_TYPE_WORKSHOP);
             stud4.Length = stud_length;
             stud4.Modify();
             #endregion

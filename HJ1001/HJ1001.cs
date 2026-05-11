@@ -422,7 +422,7 @@ namespace Muggle.TsExtensions.HJ1001 {
             p2 = rM.Transform(p2);
             ModelOperation.CreatBoltCircle(endplate1, endplate2, null,
                 firstPosition: origin, secondPosition: p2, num: quantity, diameter: boltCircleDiameter,
-                bolt_standard: boltStandard, bolt_size: boltSize);
+                boltStandard: boltStandard, boltSize: boltSize);
         skipBolt:
             ;
             #endregion

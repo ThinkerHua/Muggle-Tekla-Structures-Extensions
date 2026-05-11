@@ -1,17 +1,18 @@
 ﻿/*==============================================================================
  *  Muggle TsExtensions - extensions for Tekla Structures
  *
- *  Copyright © 2024 Huang YongXing.                 
+ *  Copyright © 2024 Huang YongXing.
  *
- *  This library is free software, licensed under the terms of the GNU 
- *  General Public License as published by the Free Software Foundation, 
- *  either version 3 of the License, or (at your option) any later version. 
- *  You should have received a copy of the GNU General Public License 
- *  along with this program. If not, see <http://www.gnu.org/licenses/>. 
+ *  This library is free software, licensed under the terms of the GNU
+ *  General Public License as published by the Free Software Foundation,
+ *  either version 3 of the License, or (at your option) any later version.
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program. If not, see <http://www.gnu.org/licenses/>.
  *==============================================================================
  *  ModelOperation.cs: operations of model object
  *  written by Huang YongXing - thinkerhua@hotmail.com
  *==============================================================================*/
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -20,14 +21,14 @@ using Muggle.TsExtensions.Common.Geometry3d;
 using Tekla.Structures.Geometry3d;
 using Tekla.Structures.Model;
 using static Muggle.TsExtensions.Common.Profile.ProfileOperation;
+using Distance = Tekla.Structures.Datatype.Distance;
 
 namespace Muggle.TsExtensions.Common.Model {
     /// <summary>
     /// 模型操作。
     /// </summary>
     public static class ModelOperation {
-
-        private const string UNKNOWN_SECTION_TYPE = "Unknown section type.";
+        private const string UnknownSectionType = "Unknown section type.";
 
         /// <summary>
         /// 用给定轮廓点集合创建布尔操作多边形。
@@ -42,6 +43,7 @@ namespace Muggle.TsExtensions.Common.Model {
             if (contourPoints is null) {
                 throw new ArgumentNullException(nameof(contourPoints));
             }
+
             if (double.IsNaN(thickness) || thickness <= 0) {
                 throw new ArgumentOutOfRangeException($"“{nameof(thickness)}”不能是 double.NaN，也不应小于等于 0.0。");
             }
@@ -71,6 +73,7 @@ namespace Muggle.TsExtensions.Common.Model {
             if (points is null) {
                 throw new ArgumentNullException(nameof(points));
             }
+
             if (double.IsNaN(thickness) || thickness <= 0) {
                 throw new ArgumentOutOfRangeException($"“{nameof(thickness)}”不能是 double.NaN，也不应小于等于 0.0。");
             }
@@ -108,6 +111,7 @@ namespace Muggle.TsExtensions.Common.Model {
             foreach (ContourPoint cp in sourceContourPlate.Contour.ContourPoints) {
                 cps.Add(cp.Clone());
             }
+
             ContourPlate contourPlate = new ContourPlate {
                 Contour = { ContourPoints = cps },
                 Profile = { ProfileString = sourceContourPlate.Profile.ProfileString },
@@ -132,7 +136,6 @@ namespace Muggle.TsExtensions.Common.Model {
             ModelObject father,
             Part operativePart,
             BooleanPart.BooleanTypeEnum typeEnum = BooleanPart.BooleanTypeEnum.BOOLEAN_CUT) {
-
             if (father is null) {
                 throw new ArgumentNullException(nameof(father));
             }
@@ -147,10 +150,7 @@ namespace Muggle.TsExtensions.Common.Model {
                 operativePart.Class = BooleanPart.BooleanOperativeClassName;
             }
 
-            BooleanPart bp = new BooleanPart {
-                Father = father,
-                Type = typeEnum,
-            };
+            BooleanPart bp = new BooleanPart { Father = father, Type = typeEnum, };
 
             bp.SetOperativePart(operativePart);
 
@@ -184,12 +184,12 @@ namespace Muggle.TsExtensions.Common.Model {
         public static Beam CreatBeam(
             Point startPoint, Point endPoint,
             string name = "BEAM", string profileStr = "HM244*175*7*11", string materialStr = "Q345B",
-            string assemblyPrefix = "GL-", int assemblyStartNumber = 1, string partPrefix = "P", int partStartNumber = 1,
+            string assemblyPrefix = "GL-", int assemblyStartNumber = 1, string partPrefix = "P",
+            int partStartNumber = 1,
             string @class = "99",
             Position.PlaneEnum planeEnum = Position.PlaneEnum.MIDDLE, double planeOffset = 0.0,
             Position.DepthEnum depthEnum = Position.DepthEnum.MIDDLE, double depthOffset = 0.0,
             Position.RotationEnum rotationEnum = Position.RotationEnum.FRONT, double rotationOffset = 0.0) {
-
             if (startPoint is null) {
                 throw new ArgumentNullException(nameof(startPoint));
             }
@@ -228,9 +228,12 @@ namespace Muggle.TsExtensions.Common.Model {
                 PartNumber = { Prefix = partPrefix, StartNumber = partStartNumber },
                 Class = @class,
                 Position = {
-                    Plane = planeEnum, PlaneOffset = planeOffset,
-                    Depth = depthEnum, DepthOffset = depthOffset,
-                    Rotation = rotationEnum, RotationOffset = rotationOffset,
+                    Plane = planeEnum,
+                    PlaneOffset = planeOffset,
+                    Depth = depthEnum,
+                    DepthOffset = depthOffset,
+                    Rotation = rotationEnum,
+                    RotationOffset = rotationOffset,
                 }
             };
             if (!beam.Insert())
@@ -265,12 +268,12 @@ namespace Muggle.TsExtensions.Common.Model {
         public static PolyBeam CreatPolyBeam(
             Contour contour,
             string name = "BEAM", string profileStr = "HM244*175*7*11", string materialStr = "Q345B",
-            string assemblyPrefix = "GL-", int assemblyStartNumber = 1, string partPrefix = "P", int partStartNumber = 1,
+            string assemblyPrefix = "GL-", int assemblyStartNumber = 1, string partPrefix = "P",
+            int partStartNumber = 1,
             string @class = "99",
             Position.PlaneEnum planeEnum = Position.PlaneEnum.MIDDLE, double planeOffset = 0.0,
             Position.DepthEnum depthEnum = Position.DepthEnum.MIDDLE, double depthOffset = 0.0,
             Position.RotationEnum rotationEnum = Position.RotationEnum.FRONT, double rotationOffset = 0.0) {
-
             if (contour is null) {
                 throw new ArgumentNullException(nameof(contour));
             }
@@ -295,7 +298,7 @@ namespace Muggle.TsExtensions.Common.Model {
                 @class = "99";
             }
 
-            var polybeam = new PolyBeam {
+            var polyBeam = new PolyBeam {
                 Contour = contour,
                 Name = name,
                 Profile = { ProfileString = profileStr },
@@ -304,15 +307,18 @@ namespace Muggle.TsExtensions.Common.Model {
                 PartNumber = { Prefix = partPrefix, StartNumber = partStartNumber },
                 Class = @class,
                 Position = {
-                    Plane = planeEnum, PlaneOffset = planeOffset,
-                    Depth = depthEnum, DepthOffset = depthOffset,
-                    Rotation = rotationEnum, RotationOffset = rotationOffset,
+                    Plane = planeEnum,
+                    PlaneOffset = planeOffset,
+                    Depth = depthEnum,
+                    DepthOffset = depthOffset,
+                    Rotation = rotationEnum,
+                    RotationOffset = rotationOffset,
                 }
             };
-            if (!polybeam.Insert())
+            if (!polyBeam.Insert())
                 throw new Exception("Failed to insert Beam.");
 
-            return polybeam;
+            return polyBeam;
         }
 
         /// <summary>
@@ -341,12 +347,12 @@ namespace Muggle.TsExtensions.Common.Model {
         public static PolyBeam CreatPolyBeam(
             IEnumerable<Point> points,
             string name = "BEAM", string profileStr = "HM244*175*7*11", string materialStr = "Q345B",
-            string assemblyPrefix = "GL-", int assemblyStartNumber = 1, string partPrefix = "P", int partStartNumber = 1,
+            string assemblyPrefix = "GL-", int assemblyStartNumber = 1, string partPrefix = "P",
+            int partStartNumber = 1,
             string @class = "99",
             Position.PlaneEnum planeEnum = Position.PlaneEnum.MIDDLE, double planeOffset = 0.0,
             Position.DepthEnum depthEnum = Position.DepthEnum.MIDDLE, double depthOffset = 0.0,
             Position.RotationEnum rotationEnum = Position.RotationEnum.FRONT, double rotationOffset = 0.0) {
-
             if (points is null) {
                 throw new ArgumentNullException(nameof(points));
             }
@@ -376,7 +382,7 @@ namespace Muggle.TsExtensions.Common.Model {
                 contour.ContourPoints.Add(new ContourPoint(p, new Chamfer()));
             }
 
-            var polybeam = new PolyBeam {
+            var polyBeam = new PolyBeam {
                 Contour = contour,
                 Name = name,
                 Profile = { ProfileString = profileStr },
@@ -385,15 +391,18 @@ namespace Muggle.TsExtensions.Common.Model {
                 PartNumber = { Prefix = partPrefix, StartNumber = partStartNumber },
                 Class = @class,
                 Position = {
-                    Plane = planeEnum, PlaneOffset = planeOffset,
-                    Depth = depthEnum, DepthOffset = depthOffset,
-                    Rotation = rotationEnum, RotationOffset = rotationOffset,
+                    Plane = planeEnum,
+                    PlaneOffset = planeOffset,
+                    Depth = depthEnum,
+                    DepthOffset = depthOffset,
+                    Rotation = rotationEnum,
+                    RotationOffset = rotationOffset,
                 }
             };
-            if (!polybeam.Insert())
+            if (!polyBeam.Insert())
                 throw new Exception("Failed to insert Beam.");
 
-            return polybeam;
+            return polyBeam;
         }
 
         /// <summary>
@@ -418,10 +427,10 @@ namespace Muggle.TsExtensions.Common.Model {
         public static ContourPlate CreatContourPlate(
             ArrayList contourPoints,
             string name = "PLATE", string profileStr = "PL10", string materialStr = "Q345B",
-            string assemblyPrefix = "PLATE", int assemblyStartNumber = 1, string partPrefix = "P", int partStartNumber = 1,
+            string assemblyPrefix = "PLATE", int assemblyStartNumber = 1, string partPrefix = "P",
+            int partStartNumber = 1,
             string @class = "99",
             Position.DepthEnum depthEnum = Position.DepthEnum.MIDDLE, double depthOffset = 0.0) {
-
             if (contourPoints is null) {
                 throw new ArgumentNullException(nameof(contourPoints));
             }
@@ -489,15 +498,16 @@ namespace Muggle.TsExtensions.Common.Model {
         public static ContourPlate CreatContourPlate(
             IEnumerable<Point> points,
             string name = "PLATE", string profileStr = "PL10", string materialStr = "Q345B",
-            string assemblyPrefix = "PLATE", int assemblyStartNumber = 1, string partPrefix = "P", int partStartNumber = 1,
+            string assemblyPrefix = "PLATE", int assemblyStartNumber = 1, string partPrefix = "P",
+            int partStartNumber = 1,
             string @class = "99",
             Position.DepthEnum depthEnum = Position.DepthEnum.MIDDLE, double depthOffset = 0.0) {
-
             if (points is null) {
                 throw new ArgumentNullException(nameof(points));
             }
 
-            if (points.Count() == 0) {
+            var pointArr = points as IList<Point> ?? new List<Point>(points);
+            if (!pointArr.Any()) {
                 throw new ArgumentException($"“{nameof(points)}”元素数量不应为 0。", nameof(points));
             }
 
@@ -523,7 +533,7 @@ namespace Muggle.TsExtensions.Common.Model {
 
             var contourPoints = new ArrayList();
             var chamfer = new Chamfer();
-            foreach (var point in points) {
+            foreach (var point in pointArr) {
                 contourPoints.Add(new ContourPoint(point, chamfer));
             }
 
@@ -565,9 +575,10 @@ namespace Muggle.TsExtensions.Common.Model {
             bool aroundWeld = true, bool shopWeld = true,
             Weld.WeldPositionEnum position = Weld.WeldPositionEnum.WELD_POSITION_PLUS_X,
             BaseWeld.WeldPreparationTypeEnum preparation = BaseWeld.WeldPreparationTypeEnum.PREPARATION_NONE,
-            Weld.WeldTypeEnum typeAbove = BaseWeld.WeldTypeEnum.WELD_TYPE_FILLET, double sizeAbove = 6.0, double angleAbove = 0.0,
-            Weld.WeldTypeEnum typeBelow = BaseWeld.WeldTypeEnum.WELD_TYPE_NONE, double sizeBelow = 0.0, double angleBelow = 0.0) {
-
+            BaseWeld.WeldTypeEnum typeAbove = BaseWeld.WeldTypeEnum.WELD_TYPE_FILLET,
+            double sizeAbove = 6.0, double angleAbove = 0.0,
+            BaseWeld.WeldTypeEnum typeBelow = BaseWeld.WeldTypeEnum.WELD_TYPE_NONE,
+            double sizeBelow = 0.0, double angleBelow = 0.0) {
             if (mainObject is null) {
                 throw new ArgumentNullException(nameof(mainObject));
             }
@@ -616,9 +627,10 @@ namespace Muggle.TsExtensions.Common.Model {
             ModelObject mainObject, ModelObject secondaryObject, Polygon polygon,
             bool aroundWeld = false, bool shopWeld = true,
             BaseWeld.WeldPreparationTypeEnum preparation = BaseWeld.WeldPreparationTypeEnum.PREPARATION_NONE,
-            Weld.WeldTypeEnum typeAbove = BaseWeld.WeldTypeEnum.WELD_TYPE_FILLET, double sizeAbove = 6.0, double angleAbove = 0.0,
-            Weld.WeldTypeEnum typeBelow = BaseWeld.WeldTypeEnum.WELD_TYPE_NONE, double sizeBelow = 0.0, double angleBelow = 0.0) {
-
+            BaseWeld.WeldTypeEnum typeAbove = BaseWeld.WeldTypeEnum.WELD_TYPE_FILLET,
+            double sizeAbove = 6.0, double angleAbove = 0.0,
+            BaseWeld.WeldTypeEnum typeBelow = BaseWeld.WeldTypeEnum.WELD_TYPE_NONE,
+            double sizeBelow = 0.0, double angleBelow = 0.0) {
             if (mainObject is null) {
                 throw new ArgumentNullException(nameof(mainObject));
             }
@@ -659,14 +671,14 @@ namespace Muggle.TsExtensions.Common.Model {
         /// <param name="otherBeBolted">其他要栓接的零件集合</param>
         /// <param name="firstPosition">第一定位点</param>
         /// <param name="secondPosition">第二定位点</param>
-        /// <param name="bolt_dist_X">X方向距离列</param>
-        /// <param name="bolt_dist_Y">Y方向距离列</param>
+        /// <param name="boltDistX">X方向距离列</param>
+        /// <param name="boltDistY">Y方向距离列</param>
         /// <param name="position">螺栓组定位，默认值旋转定位 <see cref="Position.RotationEnum.TOP"/>，平面定位 0.0，深度定位 0.0</param>
         /// <param name="startOffset">起点偏移值，默认值 new Offset()</param>
         /// <param name="endOffset">终点偏移值，默认值 new Offset()</param>
-        /// <param name="bolt_standard">螺栓等级，默认值 "HS10.9"</param>
-        /// <param name="bolt_size">螺栓尺寸，默认值 20.0</param>
-        /// <param name="bolttype">车间(true)或现场(false)，默认值 true</param>
+        /// <param name="boltStandard">螺栓等级，默认值 "HS10.9"</param>
+        /// <param name="boltSize">螺栓尺寸，默认值 20.0</param>
+        /// <param name="boltType">车间(true)或现场(false)，默认值 true</param>
         /// <param name="tolerance">孔公差，默认值 2.0</param>
         /// <param name="bolt">螺栓(true)或孔(false)，默认值 true</param>
         /// <param name="washer1">是否使用垫圈1，默认值 true</param>
@@ -676,17 +688,18 @@ namespace Muggle.TsExtensions.Common.Model {
         /// <param name="nut2">是否使用螺母1，默认值 true</param>
         /// <returns>创建的阵列螺栓组。</returns>
         /// <exception cref="ArgumentNullException"></exception>
-        /// <exception cref="ArgumentException"><paramref name="bolt_dist_X"/> 或 <paramref name="bolt_dist_Y"/>
+        /// <exception cref="ArgumentException"><paramref name="boltDistX"/> 或 <paramref name="boltDistY"/>
         /// 中元素数量少于 1 时引发。</exception>
         public static BoltArray CreatBoltArray(
             Part boltTo, Part beBolted, IEnumerable<Part> otherBeBolted, Point firstPosition, Point secondPosition,
-            IEnumerable<Tekla.Structures.Datatype.Distance> bolt_dist_X, IEnumerable<Tekla.Structures.Datatype.Distance> bolt_dist_Y,
-            Position position = default, Offset startOffset = default, Offset endOffset = default,
-            string bolt_standard = "HS10.9", double bolt_size = 20.0,
-            BoltGroup.BoltTypeEnum bolttype = BoltGroup.BoltTypeEnum.BOLT_TYPE_SITE,
+            IEnumerable<Distance> boltDistX,
+            IEnumerable<Distance> boltDistY,
+            Position position = null, Offset startOffset = null, Offset endOffset = null,
+            string boltStandard = "HS10.9", double boltSize = 20.0,
+            BoltGroup.BoltTypeEnum boltType = BoltGroup.BoltTypeEnum.BOLT_TYPE_SITE,
             double tolerance = 2.0,
-            bool bolt = true, bool washer1 = true, bool washer2 = true, bool washer3 = true, bool nut1 = true, bool nut2 = true) {
-
+            bool bolt = true, bool washer1 = true, bool washer2 = true, bool washer3 = true, bool nut1 = true,
+            bool nut2 = true) {
             if (boltTo is null) {
                 throw new ArgumentNullException(nameof(boltTo));
             }
@@ -699,17 +712,19 @@ namespace Muggle.TsExtensions.Common.Model {
                 throw new ArgumentNullException(nameof(secondPosition));
             }
 
-            if (bolt_dist_X.Count() < 1)
-                throw new ArgumentException($"“{nameof(bolt_dist_X)}”中项目数至少需要1个。");
+            var boltDistXList = boltDistX as IList<Distance> ?? boltDistX.ToList();
+            if (!boltDistXList.Any())
+                throw new ArgumentException($"“{nameof(boltDistX)}”中项目数至少需要1个。");
 
-            if (bolt_dist_Y.Count() < 1)
-                throw new ArgumentException($"“{nameof(bolt_dist_Y)}”中项目数至少需要1个。");
+            var boltDistYList = boltDistY as IList<Distance> ?? boltDistY.ToList();
+            if (!boltDistYList.Any())
+                throw new ArgumentException($"“{nameof(boltDistY)}”中项目数至少需要1个。");
 
-            if (position == null) position = new Position { Rotation = Position.RotationEnum.TOP };
+            position ??= new Position { Rotation = Position.RotationEnum.TOP };
 
-            if (startOffset == null) startOffset = new Offset();
+            startOffset ??= new Offset();
 
-            if (endOffset == null) endOffset = new Offset();
+            endOffset ??= new Offset();
 
             BoltArray boltArray = new BoltArray {
                 PartToBoltTo = boltTo,
@@ -719,9 +734,9 @@ namespace Muggle.TsExtensions.Common.Model {
                 Position = position,
                 StartPointOffset = startOffset,
                 EndPointOffset = endOffset,
-                BoltStandard = bolt_standard,
-                BoltSize = bolt_size,
-                BoltType = bolttype,
+                BoltStandard = boltStandard,
+                BoltSize = boltSize,
+                BoltType = boltType,
                 Tolerance = tolerance,
                 Bolt = bolt,
                 Washer1 = washer1,
@@ -736,18 +751,15 @@ namespace Muggle.TsExtensions.Common.Model {
                 }
             }
 
-            foreach (var d in bolt_dist_X) {
+            foreach (var d in boltDistXList) {
                 boltArray.AddBoltDistX(d.Value);
             }
 
-            foreach (var d in bolt_dist_Y) {
+            foreach (var d in boltDistYList) {
                 boltArray.AddBoltDistY(d.Value);
             }
 
-            if (!boltArray.Insert())
-                throw new Exception("Failed to insert BoltArray.");
-
-            return boltArray;
+            return !boltArray.Insert() ? throw new Exception("Failed to insert BoltArray.") : boltArray;
         }
 
         /// <summary>
@@ -757,13 +769,13 @@ namespace Muggle.TsExtensions.Common.Model {
         /// <param name="beBolted">要栓接的零件</param>
         /// <param name="otherBeBolted">其他要栓接的零件集合</param>
         /// <param name="firstPosition">第一定位点</param>
-        /// <param name="secondPosition">第二定准点</param>
+        /// <param name="secondPosition">第二定位点</param>
         /// <param name="num">螺栓数量，默认值 8</param>
         /// <param name="diameter">环形直径，默认值 200.0</param>
         /// <param name="position">螺栓组定位，默认值旋转定位 <see cref="Position.RotationEnum.TOP"/>，平面定位 0.0，深度定位 0.0</param>
-        /// <param name="bolt_standard">螺栓等级，默认值 "HS10.9"</param>
-        /// <param name="bolt_size">螺栓尺寸，默认值 20.0</param>
-        /// <param name="bolttype">车间(true)或现场(false)，默认值 true</param>
+        /// <param name="boltStandard">螺栓等级，默认值 "HS10.9"</param>
+        /// <param name="boltSize">螺栓尺寸，默认值 20.0</param>
+        /// <param name="boltType">车间(true)或现场(false)，默认值 true</param>
         /// <param name="tolerance">孔公差，默认值 2.0</param>
         /// <param name="bolt">螺栓(true)或孔(false)，默认值 true</param>
         /// <param name="washer1">是否使用垫圈1，默认值 true</param>
@@ -776,11 +788,11 @@ namespace Muggle.TsExtensions.Common.Model {
         public static BoltCircle CreatBoltCircle(
             Part boltTo, Part beBolted, IEnumerable<Part> otherBeBolted, Point firstPosition, Point secondPosition,
             int num = 8, double diameter = 200.0, Position position = null,
-            string bolt_standard = "HS10.9", double bolt_size = 20.0,
-            BoltGroup.BoltTypeEnum bolttype = BoltGroup.BoltTypeEnum.BOLT_TYPE_SITE,
+            string boltStandard = "HS10.9", double boltSize = 20.0,
+            BoltGroup.BoltTypeEnum boltType = BoltGroup.BoltTypeEnum.BOLT_TYPE_SITE,
             double tolerance = 2.0,
-            bool bolt = true, bool washer1 = true, bool washer2 = true, bool washer3 = true, bool nut1 = true, bool nut2 = true) {
-
+            bool bolt = true, bool washer1 = true, bool washer2 = true, bool washer3 = true, bool nut1 = true,
+            bool nut2 = true) {
             if (boltTo is null) {
                 throw new ArgumentNullException(nameof(boltTo));
             }
@@ -793,7 +805,7 @@ namespace Muggle.TsExtensions.Common.Model {
                 throw new ArgumentNullException(nameof(secondPosition));
             }
 
-            if (position == null) position = new Position { Rotation = Position.RotationEnum.TOP };
+            position ??= new Position { Rotation = Position.RotationEnum.TOP };
 
             var boltCircle = new BoltCircle {
                 PartToBoltTo = boltTo,
@@ -803,9 +815,9 @@ namespace Muggle.TsExtensions.Common.Model {
                 NumberOfBolts = num,
                 Diameter = diameter,
                 Position = position,
-                BoltStandard = bolt_standard,
-                BoltSize = bolt_size,
-                BoltType = bolttype,
+                BoltStandard = boltStandard,
+                BoltSize = boltSize,
+                BoltType = boltType,
                 Tolerance = tolerance,
                 Bolt = bolt,
                 Washer1 = washer1,
@@ -835,14 +847,14 @@ namespace Muggle.TsExtensions.Common.Model {
         /// <param name="otherBeBolted">其他要栓接的零件集合</param>
         /// <param name="firstPosition">第一定位点</param>
         /// <param name="secondPosition">第二定位点</param>
-        /// <param name="bolt_dist_X">X方向距离列</param>
-        /// <param name="bolt_dist_Y">Y方向距离列</param>
+        /// <param name="boltDistX">X方向距离列</param>
+        /// <param name="boltDistY">Y方向距离列</param>
         /// <param name="position">螺栓组定位，默认值旋转定位 <see cref="Position.RotationEnum.TOP"/>，平面定位 0.0，深度定位 0.0</param>
         /// <param name="startOffset">起点偏移值，默认值 new Offset()</param>
         /// <param name="endOffset">终点偏移值，默认值 new Offset()</param>
-        /// <param name="bolt_standard">螺栓等级，默认值 "HS10.9"</param>
-        /// <param name="bolt_size">螺栓尺寸，默认值 20.0</param>
-        /// <param name="bolttype">车间(true)或现场(false)，默认值 true</param>
+        /// <param name="boltStandard">螺栓等级，默认值 "HS10.9"</param>
+        /// <param name="boltSize">螺栓尺寸，默认值 20.0</param>
+        /// <param name="boltType">车间(true)或现场(false)，默认值 true</param>
         /// <param name="tolerance">孔公差，默认值 2.0</param>
         /// <param name="bolt">螺栓(true)或孔(false)，默认值 true</param>
         /// <param name="washer1">是否使用垫圈1，默认值 true</param>
@@ -852,17 +864,18 @@ namespace Muggle.TsExtensions.Common.Model {
         /// <param name="nut2">是否使用螺母1，默认值 true</param>
         /// <returns>创建的阵列螺栓组。</returns>
         /// <exception cref="ArgumentNullException"></exception>
-        /// <exception cref="ArgumentException"><paramref name="bolt_dist_X"/> 或 <paramref name="bolt_dist_Y"/>
+        /// <exception cref="ArgumentException"><paramref name="boltDistX"/> 或 <paramref name="boltDistY"/>
         /// 中元素数量少于 1 时引发。</exception>
         public static BoltXYList CreatBoltXYList(
             Part boltTo, Part beBolted, IEnumerable<Part> otherBeBolted, Point firstPosition, Point secondPosition,
-            IEnumerable<Tekla.Structures.Datatype.Distance> bolt_dist_X, IEnumerable<Tekla.Structures.Datatype.Distance> bolt_dist_Y,
-            Position position = default, Offset startOffset = default, Offset endOffset = default,
-            string bolt_standard = "HS10.9", double bolt_size = 20.0,
-            BoltGroup.BoltTypeEnum bolttype = BoltGroup.BoltTypeEnum.BOLT_TYPE_SITE,
+            IEnumerable<Distance> boltDistX,
+            IEnumerable<Distance> boltDistY,
+            Position position = null, Offset startOffset = null, Offset endOffset = null,
+            string boltStandard = "HS10.9", double boltSize = 20.0,
+            BoltGroup.BoltTypeEnum boltType = BoltGroup.BoltTypeEnum.BOLT_TYPE_SITE,
             double tolerance = 2.0,
-            bool bolt = true, bool washer1 = true, bool washer2 = true, bool washer3 = true, bool nut1 = true, bool nut2 = true) {
-
+            bool bolt = true, bool washer1 = true, bool washer2 = true, bool washer3 = true, bool nut1 = true,
+            bool nut2 = true) {
             if (boltTo is null) {
                 throw new ArgumentNullException(nameof(boltTo));
             }
@@ -875,17 +888,19 @@ namespace Muggle.TsExtensions.Common.Model {
                 throw new ArgumentNullException(nameof(secondPosition));
             }
 
-            if (bolt_dist_X.Count() < 1)
-                throw new ArgumentException($"“{nameof(bolt_dist_X)}”中项目数至少需要1个。");
+            var boltDistXList = boltDistX as IList<Distance> ?? boltDistX.ToList();
+            if (!boltDistXList.Any())
+                throw new ArgumentException($"“{nameof(boltDistX)}”中项目数至少需要1个。");
 
-            if (bolt_dist_Y.Count() < 1)
-                throw new ArgumentException($"“{nameof(bolt_dist_Y)}”中项目数至少需要1个。");
+            var boltDistYList = boltDistX as IList<Distance> ?? boltDistY.ToList();
+            if (!boltDistYList.Any())
+                throw new ArgumentException($"“{nameof(boltDistY)}”中项目数至少需要1个。");
 
-            if (position == null) position = new Position { Rotation = Position.RotationEnum.TOP };
+            position ??= new Position { Rotation = Position.RotationEnum.TOP };
 
-            if (startOffset == null) startOffset = new Offset();
+            startOffset ??= new Offset();
 
-            if (endOffset == null) endOffset = new Offset();
+            endOffset ??= new Offset();
 
             var boltXYList = new BoltXYList {
                 PartToBoltTo = boltTo,
@@ -895,9 +910,9 @@ namespace Muggle.TsExtensions.Common.Model {
                 Position = position,
                 StartPointOffset = startOffset,
                 EndPointOffset = endOffset,
-                BoltStandard = bolt_standard,
-                BoltSize = bolt_size,
-                BoltType = bolttype,
+                BoltStandard = boltStandard,
+                BoltSize = boltSize,
+                BoltType = boltType,
                 Tolerance = tolerance,
                 Bolt = bolt,
                 Washer1 = washer1,
@@ -912,19 +927,15 @@ namespace Muggle.TsExtensions.Common.Model {
                 }
             }
 
-            foreach (var d in bolt_dist_X) {
+            foreach (var d in boltDistXList) {
                 boltXYList.AddBoltDistX(d.Value);
             }
 
-            foreach (var d in bolt_dist_Y) {
+            foreach (var d in boltDistYList) {
                 boltXYList.AddBoltDistY(d.Value);
             }
 
-            if (!boltXYList.Insert())
-                throw new Exception("Failed to insert BoltXYList.");
-
-            return boltXYList;
-
+            return !boltXYList.Insert() ? throw new Exception("Failed to insert BoltXYList.") : boltXYList;
         }
 
         /// <summary>
@@ -965,9 +976,10 @@ namespace Muggle.TsExtensions.Common.Model {
             string material = "Q235B", double size = 20.0, double tolerance = 2.0, string @class = "0",
             bool useWasherPlate = true, double washerPlateThickness = 10.0, double washerPlateWidth = 70.0,
             double washerPlatePosition = 20.0, double washerPlateHoleDiameter = 26.0,
-            bool useWasher1 = true, bool useWasher2 = true, bool useWasher3 = true, bool useNut1 = true, bool useNut2 = true, bool useNut3 = true) {
-
+            bool useWasher1 = true, bool useWasher2 = true, bool useWasher3 = true, bool useNut1 = true,
+            bool useNut2 = true, bool useNut3 = true) {
             #region 参数检查
+
             if (firstPosition is null) {
                 throw new ArgumentNullException(nameof(firstPosition));
             }
@@ -978,20 +990,21 @@ namespace Muggle.TsExtensions.Common.Model {
 
             var anchorDirection = new Vector(secondPosition - firstPosition).GetNormal();
             if (anchorDirection.IsZero()) {
-                throw new ArgumentException($"锚杆控制方向不能为零向量。");
+                throw new ArgumentException("锚杆控制方向不能为零向量。");
             }
+
             if (length4 > 0.0 || length5 > 0.0) {
                 if (hookDirection is null) {
                     throw new ArgumentNullException(nameof(hookDirection));
                 }
 
                 if (hookDirection.IsZero()) {
-                    throw new ArgumentException($"弯钩方向不能为零向量。");
+                    throw new ArgumentException("弯钩方向不能为零向量。");
                 }
 
                 var cross = anchorDirection.Cross(hookDirection);
                 if (cross.IsZero()) {
-                    throw new ArgumentException($"弯钩方向不能与锚杆控制方向平行。");
+                    throw new ArgumentException("弯钩方向不能与锚杆控制方向平行。");
                 }
 
                 hookDirection = cross.Cross(anchorDirection).GetNormal();
@@ -1004,34 +1017,44 @@ namespace Muggle.TsExtensions.Common.Model {
             if (length1 <= 0.0) {
                 throw new ArgumentException($"“{nameof(length1)}”不应小于等于 0。", nameof(length1));
             }
+
             if (length2 <= 0.0) {
                 throw new ArgumentException($"“{nameof(length2)}”不应小于等于 0。", nameof(length2));
             }
+
             if (length3 <= 0.0) {
                 throw new ArgumentException($"“{nameof(length3)}”不应小于等于 0。", nameof(length3));
             }
+
             if (length4 < 0.0) {
                 throw new ArgumentException($"“{nameof(length4)}”不应小于 0。", nameof(length4));
             }
+
             if (length5 < 0.0) {
                 throw new ArgumentException($"“{nameof(length5)}”不应小于 0。", nameof(length5));
             }
+
             if (size <= 0.0) {
                 throw new ArgumentException($"“{nameof(size)}”不应小于等于 0。", nameof(size));
             }
+
             if (tolerance < 0.0) {
                 throw new ArgumentException($"“{nameof(tolerance)}”不应小于 0。", nameof(tolerance));
             }
 
             if (useWasherPlate) {
                 if (washerPlateThickness <= 0.0) {
-                    throw new ArgumentException($"“{nameof(washerPlateThickness)}”不应小于等于 0。", nameof(washerPlateThickness));
+                    throw new ArgumentException($"“{nameof(washerPlateThickness)}”不应小于等于 0。",
+                        nameof(washerPlateThickness));
                 }
+
                 if (washerPlateWidth <= 0.0) {
                     throw new ArgumentException($"“{nameof(washerPlateWidth)}”不应小于等于 0。", nameof(washerPlateWidth));
                 }
+
                 if (washerPlateHoleDiameter <= 0.0) {
-                    throw new ArgumentException($"“{nameof(washerPlateHoleDiameter)}”不应小于等于 0。", nameof(washerPlateHoleDiameter));
+                    throw new ArgumentException($"“{nameof(washerPlateHoleDiameter)}”不应小于等于 0。",
+                        nameof(washerPlateHoleDiameter));
                 }
             }
 
@@ -1044,6 +1067,7 @@ namespace Muggle.TsExtensions.Common.Model {
                 useNut1 = true;
                 useNut2 = false;
             }
+
             #endregion
 
             if (length5 > 0.0) {
@@ -1060,9 +1084,15 @@ namespace Muggle.TsExtensions.Common.Model {
                 }
             }
 
-            Part anchorRod = null, screw = null, washerPlate = null,
-                washer1 = null, washer2 = null, washer3 = null,
-                nut1 = null, nut2 = null, nut3 = null;
+            Part anchorRod = null,
+                screw = null,
+                washerPlate = null,
+                washer1 = null,
+                washer2 = null,
+                washer3 = null,
+                nut1 = null,
+                nut2 = null,
+                nut3 = null;
 
             var point1 = firstPosition - anchorDirection * length1;
             var point2 = firstPosition + anchorDirection * length2;
@@ -1118,27 +1148,29 @@ namespace Muggle.TsExtensions.Common.Model {
             var hole = CreatBeam(
                 point1, point2, "HOLE", $"D{washerPlateHoleDiameter}", "ANTIMATERIAL",
                 partPrefix: "D", @class: BooleanPart.BooleanOperativeClassName);
-            ApplyBooleanOperation(washerPlate, hole, BooleanPart.BooleanTypeEnum.BOOLEAN_CUT);
+            ApplyBooleanOperation(washerPlate, hole);
             hole.Delete();
-        SkipWasherPlate:
+            SkipWasherPlate:
 
             if (!useWasher1)
                 goto SkipWasher1;
-            point1 = firstPosition - anchorDirection * (washerPlatePosition + (useWasherPlate ? washerPlateThickness : 0.0));
+            point1 = firstPosition -
+                     anchorDirection * (washerPlatePosition + (useWasherPlate ? washerPlateThickness : 0.0));
             point2 = point1 - anchorDirection * (size * 0.5);
             washer1 = CreatBeam(
                 point1, point2, "WASHER", $"O{size * 2 + 6}*{size * 0.5 + 3}", material,
                 partPrefix: "O", @class: @class);
-        SkipWasher1:
+            SkipWasher1:
 
             if (!useWasher2)
                 goto SkipWasher2;
-            point1 = firstPosition - anchorDirection * (washerPlatePosition + (useWasherPlate ? washerPlateThickness : 0.0) + size * 0.5);
+            point1 = firstPosition - anchorDirection *
+                (washerPlatePosition + (useWasherPlate ? washerPlateThickness : 0.0) + size * 0.5);
             point2 = point1 - anchorDirection * (size * 0.5);
             washer2 = CreatBeam(
                 point1, point2, "WASHER", $"O{size * 2 + 6}*{size * 0.5 + 3}", material,
                 partPrefix: "O", @class: @class);
-        SkipWasher2:
+            SkipWasher2:
 
             if (!useWasher3)
                 goto SkipWasher3;
@@ -1147,39 +1179,39 @@ namespace Muggle.TsExtensions.Common.Model {
             washer3 = CreatBeam(
                 point1, point2, "WASHER", $"O{size * 2 + 6}*{size * 0.5 + 3}", material,
                 partPrefix: "O", @class: @class);
-        SkipWasher3:
+            SkipWasher3:
 
             var matrix = MatrixFactoryExtension.Rotate(new Line(firstPosition, secondPosition), Math.PI / 3);
             if (!useNut1)
                 goto SkipNut1;
             point1 = firstPosition - anchorDirection *
                 (washerPlatePosition + (useWasherPlate ? washerPlateThickness : 0.0) +
-                (useWasher1 ? (useWasher2 ? size : size * 0.5) : 0.0)) + hookDirection * size;
+                 (useWasher1 ? (useWasher2 ? size : size * 0.5) : 0.0)) + hookDirection * size;
             point2 = matrix.Transform(point1);
             point3 = matrix.Transform(point2);
             point4 = matrix.Transform(point3);
             point5 = matrix.Transform(point4);
             point6 = matrix.Transform(point5);
             nut1 = CreatContourPlate(
-                new[] { point1, point2, point3, point4, point5, point6 }, "NUT", $"PL{size}", material,
+                [point1, point2, point3, point4, point5, point6], "NUT", $"PL{size}", material,
                 @class: @class, depthEnum: Position.DepthEnum.FRONT);
-        SkipNut1:
+            SkipNut1:
 
             if (!useNut2)
                 goto SkipNut2;
             point1 = firstPosition - anchorDirection *
                 (washerPlatePosition + (useWasherPlate ? washerPlateThickness : 0.0) +
-                (useWasher1 ? (useWasher2 ? size : size * 0.5) : 0.0) +
-                (useNut1 ? size : 0.0)) + hookDirection * size;
+                 (useWasher1 ? (useWasher2 ? size : size * 0.5) : 0.0) +
+                 (useNut1 ? size : 0.0)) + hookDirection * size;
             point2 = matrix.Transform(point1);
             point3 = matrix.Transform(point2);
             point4 = matrix.Transform(point3);
             point5 = matrix.Transform(point4);
             point6 = matrix.Transform(point5);
             nut2 = CreatContourPlate(
-                new[] { point1, point2, point3, point4, point5, point6 }, "NUT", $"PL{size}", material,
+                [point1, point2, point3, point4, point5, point6], "NUT", $"PL{size}", material,
                 @class: @class, depthEnum: Position.DepthEnum.FRONT);
-        SkipNut2:
+            SkipNut2:
 
             if (!useNut3)
                 goto SkipNut3;
@@ -1190,9 +1222,9 @@ namespace Muggle.TsExtensions.Common.Model {
             point5 = matrix.Transform(point4);
             point6 = matrix.Transform(point5);
             nut3 = CreatContourPlate(
-                new[] { point1, point2, point3, point4, point5, point6 }, "NUT", $"PL{size}", material,
+                [point1, point2, point3, point4, point5, point6], "NUT", $"PL{size}", material,
                 @class: @class, depthEnum: Position.DepthEnum.BEHIND);
-        SkipNut3:
+            SkipNut3:
 
             var parts = new List<Part> { anchorRod };
             if (washerPlate != null) parts.Add(washerPlate);
@@ -1202,29 +1234,35 @@ namespace Muggle.TsExtensions.Common.Model {
                 firstPosition - anchorDirection * (washerPlatePosition + washerPlateThickness + size * 3),
                 "HOLE", $"D{size}", "ANTIMATERIAL", @class: BooleanPart.BooleanOperativeClassName);
             if (washer1 != null) {
-                ApplyBooleanOperation(washer1, hole, BooleanPart.BooleanTypeEnum.BOOLEAN_CUT);
+                ApplyBooleanOperation(washer1, hole);
                 parts.Add(washer1);
             }
+
             if (washer2 != null) {
-                ApplyBooleanOperation(washer2, hole, BooleanPart.BooleanTypeEnum.BOOLEAN_CUT);
+                ApplyBooleanOperation(washer2, hole);
                 parts.Add(washer2);
             }
+
             if (washer3 != null) {
-                ApplyBooleanOperation(washer3, hole, BooleanPart.BooleanTypeEnum.BOOLEAN_CUT);
+                ApplyBooleanOperation(washer3, hole);
                 parts.Add(washer3);
             }
+
             if (nut1 != null) {
-                ApplyBooleanOperation(nut1, hole, BooleanPart.BooleanTypeEnum.BOOLEAN_CUT);
+                ApplyBooleanOperation(nut1, hole);
                 parts.Add(nut1);
             }
+
             if (nut2 != null) {
-                ApplyBooleanOperation(nut2, hole, BooleanPart.BooleanTypeEnum.BOOLEAN_CUT);
+                ApplyBooleanOperation(nut2, hole);
                 parts.Add(nut2);
             }
+
             if (nut3 != null) {
-                ApplyBooleanOperation(nut3, hole, BooleanPart.BooleanTypeEnum.BOOLEAN_CUT);
+                ApplyBooleanOperation(nut3, hole);
                 parts.Add(nut3);
             }
+
             hole.Delete();
 
             return parts;
@@ -1278,34 +1316,42 @@ namespace Muggle.TsExtensions.Common.Model {
                 throw new ArgumentNullException(nameof(position));
             }
 
-            var radiansOf85 = 85.0 / 180.0 * Math.PI;
+            const double radiansOf85 = 85.0 / 180.0 * Math.PI;
             if (Math.Abs(rotationAroundY) > radiansOf85) {
                 throw new ArgumentOutOfRangeException(
                     $"Rotation angle \"{nameof(rotationAroundY)}\" out of range, only supports in range of -85~85 degrees.",
                     nameof(rotationAroundY));
             }
+
             if (Math.Abs(rotationAroundZ) > radiansOf85) {
                 throw new ArgumentOutOfRangeException(
                     $"Rotation angle \"{nameof(rotationAroundY)}\" out of range, only supports in range of -85~85 degrees.",
                     nameof(rotationAroundZ));
             }
 
-            var centerLine = part.GetCenterLine(false).Cast<Point>();
-            var segLines = centerLine.Take(centerLine.Count() - 1).Zip(centerLine.Skip(1), (p1, p2) => new Line(p1, p2));
-            var nearestSegLine = segLines.OrderBy(line => Distance.PointToLine(position, line)).First();
+            var centerLine = part.GetCenterLine(false).Cast<Point>().ToList();
+            var segLines = centerLine.Take(centerLine.Count() - 1)
+                .Zip(centerLine.Skip(1), (p1, p2) => new Line(p1, p2));
+            var nearestSegLine = segLines
+                .OrderBy(line => Tekla.Structures.Geometry3d.Distance.PointToLine(position, line)).First();
 
-            CoordinateSystem cs;
-            if (part is Beam beam) {
-                cs = beam.GetCoordinateSystem();
-            } else if (part is PolyBeam polyBeam) {
+            CoordinateSystem coordinateSystem;
+            switch (part) {
+            case Beam beam:
+                coordinateSystem = beam.GetCoordinateSystem();
+                break;
+            case PolyBeam polyBeam: {
                 var css = polyBeam.GetPolybeamCoordinateSystems().Cast<CoordinateSystem>();
-                cs = css.First(cs => nearestSegLine.Origin.Equals(cs.Origin));
-            } else {
+                coordinateSystem = css.First(cs => nearestSegLine.Origin.Equals(cs.Origin));
+                break;
+            }
+            default:
                 throw new ArgumentException($"\"{nameof(part)}\" is neither \"Beam\" nor \"PolyBeam\".", nameof(part));
             }
-            partCS = new CoordinateSystem(Projection.PointToLine(position, nearestSegLine), cs.AxisX, cs.AxisY);
 
-            var axisX = new Vector(1000, 0, 0);
+            partCS = new CoordinateSystem(Projection.PointToLine(position, nearestSegLine),
+                coordinateSystem.AxisX, coordinateSystem.AxisY);
+
             var axisY = new Vector(0, 1000, 0);
             var axisZ = new Vector(0, 0, 1000);
             var matrixRotationY = MatrixFactory.Rotate(-rotationAroundY, axisY);
@@ -1319,19 +1365,19 @@ namespace Muggle.TsExtensions.Common.Model {
 
             var offsetVector = planeNormal * (thickness * 0.5);
 
-            var planeFront_Origin = partCS.Origin + offsetVector;
-            var planeFront_PointX = planeFront_Origin + planeAxisX;
-            var planeFront_PointY = planeFront_Origin + planeAxisY;
+            var planeFrontOrigin = partCS.Origin + offsetVector;
+            var planeFrontPointX = planeFrontOrigin + planeAxisX;
+            var planeFrontPointY = planeFrontOrigin + planeAxisY;
 
-            var planeBehind_Origin = partCS.Origin - offsetVector;
-            var planeBehind_PointX = planeBehind_Origin + planeAxisX;
-            var planeBehind_PointY = planeBehind_Origin + planeAxisY;
+            var planeBehindOrigin = partCS.Origin - offsetVector;
+            var planeBehindPointX = planeBehindOrigin + planeAxisX;
+            var planeBehindPointY = planeBehindOrigin + planeAxisY;
 
             //  Solid.SolidCreationTypeEnum.RAW 基本轮廓
             //  Solid.SolidCreationTypeEnum.HIGH_ACCURACY 高精度轮廓
             var solid = part.GetSolid(Solid.SolidCreationTypeEnum.RAW);
-            var faceEnumFront = solid.IntersectAllFaces(planeFront_Origin, planeFront_PointX, planeFront_PointY);
-            var faceEnumBehind = solid.IntersectAllFaces(planeBehind_Origin, planeBehind_PointX, planeBehind_PointY);
+            var faceEnumFront = solid.IntersectAllFaces(planeFrontOrigin, planeFrontPointX, planeFrontPointY);
+            var faceEnumBehind = solid.IntersectAllFaces(planeBehindOrigin, planeBehindPointX, planeBehindPointY);
 
             return [faceEnumFront, faceEnumBehind];
         }
@@ -1348,10 +1394,20 @@ namespace Muggle.TsExtensions.Common.Model {
         /// <param name="partCS">零件坐标系</param>
         /// <returns>排序后的顶点集合。</returns>
         private static IEnumerable<Point> OrderVertices(IEnumerable<Point> vertices, CoordinateSystem partCS) {
-            var cnt = vertices.Count();
+            if (vertices == null) {
+                throw new ArgumentNullException(nameof(vertices));
+            }
 
-            var transfomedVertices = vertices.Select(p => p.TransformTo(partCS));
-            var firstIndex = transfomedVertices
+            if (partCS == null) {
+                throw new ArgumentNullException(nameof(partCS));
+            }
+
+            var vertexList = vertices as IList<Point> ?? vertices.ToList();
+
+            var cnt = vertexList.Count();
+
+            var transformedVertices = vertexList.Select(p => p.TransformTo(partCS));
+            var firstIndex = transformedVertices
                 .Select((p, i) => (p, i))
                 .OrderBy(item => item.p.Z)
                 .ThenByDescending(item => item.p.Y)
@@ -1360,17 +1416,18 @@ namespace Muggle.TsExtensions.Common.Model {
             var preIndex = firstIndex == 0 ? cnt - 1 : firstIndex - 1;
             var nxtIndex = firstIndex == cnt - 1 ? 0 : firstIndex + 1;
             var reverse = partCS.AxisX.Dot(
-                new Vector(vertices.ElementAt(nxtIndex) - vertices.ElementAt(firstIndex))
-                .Cross(new Vector(vertices.ElementAt(preIndex) - vertices.ElementAt(firstIndex)))) < 0;
+                new Vector(vertexList.ElementAt(nxtIndex) - vertexList.ElementAt(firstIndex))
+                    .Cross(new Vector(vertexList.ElementAt(preIndex) - vertexList.ElementAt(firstIndex)))) < 0;
 
             if (reverse) {
-                vertices = vertices.Reverse();
-                vertices = vertices.Skip(cnt - 1 - firstIndex).Concat(vertices.Take(cnt - 1 - firstIndex));
+                vertexList = vertexList.Reverse().ToList();
+                vertexList = vertexList.Skip(cnt - 1 - firstIndex)
+                    .Concat(vertexList.Take(cnt - 1 - firstIndex)).ToList();
             } else {
-                vertices = vertices.Skip(firstIndex).Concat(vertices.Take(firstIndex));
+                vertexList = vertexList.Skip(firstIndex).Concat(vertexList.Take(firstIndex)).ToList();
             }
 
-            return vertices;
+            return vertexList;
         }
 
         /// <summary>
@@ -1397,7 +1454,6 @@ namespace Muggle.TsExtensions.Common.Model {
             Part part, Point position, double thickness, string material = "Q235B", string @class = "99",
             double rotationAroundY = 0.0, double rotationAroundZ = 0.0, double indent = 0.0, double clearance = 2.0,
             Chamfer.ChamferTypeEnum chamferType = 0, double chamferSizeX = 0.0, double chamferSizeY = 0.0) {
-
             if (part is null) {
                 throw new ArgumentNullException(nameof(part));
             }
@@ -1415,109 +1471,137 @@ namespace Muggle.TsExtensions.Common.Model {
             }
 
             var faceEnumArr = IntersectionWithStiffenerSurfacePlane(
-                part, position, thickness, out CoordinateSystem partCS, out GeometricPlane stifPlane, rotationAroundY, rotationAroundZ);
+                part, position, thickness, out var partCS, out var stifPlane, rotationAroundY,
+                rotationAroundZ);
             var faceEnumFront = faceEnumArr[0];
             var faceEnumBehind = faceEnumArr[1];
 
-            static IEnumerable<Point> GetVertices(IEnumerator faceEnum) {
-                var vertices = new List<Point>();
-
-                var faceCnt = 0;
-                while (faceEnum.MoveNext()) {
-                    if (++faceCnt > 1) throw new Exception(UNKNOWN_SECTION_TYPE);
-
-                    var face = faceEnum.Current as ArrayList;
-                    var loopEnum = face.GetEnumerator();
-
-                    var loopCnt = 0;
-                    while (loopEnum.MoveNext()) {
-                        if (++loopCnt > 1) throw new Exception(UNKNOWN_SECTION_TYPE);
-
-                        var loop = loopEnum.Current as ArrayList;
-                        var vertexEnum = loop.GetEnumerator();
-
-                        var verticesCnt = 0;
-                        while (vertexEnum.MoveNext()) {
-                            ++verticesCnt;
-
-                            var vertext = vertexEnum.Current as Point;
-                            vertices.Add(vertext);
-                        }
-                        //  使用 RAW 选项是 12 个顶点，使用 HIGH_ACCURACY 选项对于不同类型的截面有不同数量的顶点
-                        if (verticesCnt != 12) throw new Exception(UNKNOWN_SECTION_TYPE);
-                    }
-                }
-
-                return vertices;
-            }
             var verticesFront = GetVertices(faceEnumFront);
             var verticesBehind = GetVertices(faceEnumBehind);
-            verticesFront = OrderVertices(verticesFront, partCS);
-            verticesBehind = OrderVertices(verticesBehind, partCS);
-            verticesFront = verticesFront.Skip(2).Take(4).Concat(verticesFront.Skip(8));
-            verticesBehind = verticesBehind.Skip(2).Take(4).Concat(verticesBehind.Skip(8));
+            verticesFront = OrderVertices(verticesFront, partCS).ToList();
+            verticesBehind = OrderVertices(verticesBehind, partCS).ToList();
+            verticesFront = verticesFront.Skip(2).Take(4).Concat(verticesFront.Skip(8)).ToList();
+            verticesBehind = verticesBehind.Skip(2).Take(4).Concat(verticesBehind.Skip(8)).ToList();
 
-            var offset_Z_indent = new Vector(0, 0, indent).TransformFrom(partCS);
-            var offset_Z_clearance = new Vector(0, 0, clearance).TransformFrom(partCS);
-            var offset_Y_clearance = new Vector(0, clearance, 0).TransformFrom(partCS);
+            var offsetZIndent = new Vector(0, 0, indent).TransformFrom(partCS);
+            var offsetZClearance = new Vector(0, 0, clearance).TransformFrom(partCS);
+            var offsetYClearance = new Vector(0, clearance, 0).TransformFrom(partCS);
             var arrList = new List<Point[]> { verticesFront.ToArray(), verticesBehind.ToArray() };
             foreach (var arr in arrList) {
-                arr[0] -= offset_Z_indent; arr[3] -= offset_Z_indent; arr[4] += offset_Z_indent; arr[7] += offset_Z_indent;
-                arr[1] += offset_Z_clearance; arr[2] += offset_Z_clearance; arr[5] -= offset_Z_clearance; arr[6] -= offset_Z_clearance;
-                arr[0] -= offset_Y_clearance; arr[1] -= offset_Y_clearance; arr[2] += offset_Y_clearance; arr[3] += offset_Y_clearance;
-                arr[4] += offset_Y_clearance; arr[5] += offset_Y_clearance; arr[6] -= offset_Y_clearance; arr[7] -= offset_Y_clearance;
+                arr[0] -= offsetZIndent;
+                arr[3] -= offsetZIndent;
+                arr[4] += offsetZIndent;
+                arr[7] += offsetZIndent;
+                arr[1] += offsetZClearance;
+                arr[2] += offsetZClearance;
+                arr[5] -= offsetZClearance;
+                arr[6] -= offsetZClearance;
+                arr[0] -= offsetYClearance;
+                arr[1] -= offsetYClearance;
+                arr[2] += offsetYClearance;
+                arr[3] += offsetYClearance;
+                arr[4] += offsetYClearance;
+                arr[5] += offsetYClearance;
+                arr[6] -= offsetYClearance;
+                arr[7] -= offsetYClearance;
             }
-            var lines = arrList[0].Zip(arrList[1], (p1, p2) => new Line(p1, p2));
-            var stifFrontPlane = new GeometricPlane(stifPlane.Origin + stifPlane.Normal.GetNormal(thickness * 0.5), stifPlane.Normal);
-            var stifBehindPlane = new GeometricPlane(stifPlane.Origin - stifPlane.Normal.GetNormal(thickness * 0.5), stifPlane.Normal);
+
+            var lines = arrList[0].Zip(arrList[1], (p1, p2) => new Line(p1, p2)).ToList();
+            var stifFrontPlane = new GeometricPlane(stifPlane.Origin + stifPlane.Normal.GetNormal(thickness * 0.5),
+                stifPlane.Normal);
+            var stifBehindPlane = new GeometricPlane(stifPlane.Origin - stifPlane.Normal.GetNormal(thickness * 0.5),
+                stifPlane.Normal);
 
             var partZXPlane = new GeometricPlane(partCS.Origin, partCS.AxisY);
             var partXYPlane = new GeometricPlane(partCS.Origin, partCS.AxisX.Cross(partCS.AxisY));
             var shearAxisX = Intersection.PlaneToPlane(partZXPlane, stifPlane).Direction;
             var shearAxisY = Intersection.PlaneToPlane(partXYPlane, stifPlane).Direction;
             var shearAxisZ = shearAxisX.Cross(shearAxisY);
-            var matrix_ToStif = MatrixFactoryExtension.ToCoordinateSystem(shearAxisX, shearAxisY, shearAxisZ, stifPlane.Origin);
-            var matrix_FromStif = matrix_ToStif.Inverse();
+            var matrixToStif =
+                MatrixFactoryExtension.ToCoordinateSystem(shearAxisX, shearAxisY, shearAxisZ, stifPlane.Origin);
+            var matrixFromStif = matrixToStif.Inverse();
 
-            verticesFront = lines.Select(l => matrix_ToStif.Transform(Intersection.LineToPlane(l, stifFrontPlane)));
-            verticesBehind = lines.Select(l => matrix_ToStif.Transform(Intersection.LineToPlane(l, stifBehindPlane)));
+            verticesFront = lines.Select(l => matrixToStif.Transform(Intersection.LineToPlane(l, stifFrontPlane)))
+                .ToList();
+            verticesBehind = lines.Select(l => matrixToStif.Transform(Intersection.LineToPlane(l, stifBehindPlane)))
+                .ToList();
+            Point[] corners1 = [
+                TopLeft(verticesFront.ElementAt(0), verticesBehind.ElementAt(0)),
+                TopRight(verticesFront.ElementAt(1), verticesBehind.ElementAt(1)),
+                BottomRight(verticesFront.ElementAt(2), verticesBehind.ElementAt(2)),
+                BottomLeft(verticesFront.ElementAt(3), verticesBehind.ElementAt(3))
+            ];
+            Point[] corners2 = [
+                BottomRight(verticesFront.ElementAt(4), verticesBehind.ElementAt(4)),
+                BottomLeft(verticesFront.ElementAt(5), verticesBehind.ElementAt(5)),
+                TopLeft(verticesFront.ElementAt(6), verticesBehind.ElementAt(6)),
+                TopRight(verticesFront.ElementAt(7), verticesBehind.ElementAt(7))
+            ];
+            for (int i = 0; i < 4; i++) {
+                corners1[i] = matrixFromStif.Transform(corners1[i]);
+                corners2[i] = matrixFromStif.Transform(corners2[i]);
+            }
+
+            var contourPlates = new ContourPlate[2];
+            contourPlates[0] = CreatContourPlate(
+                new ArrayList {
+                    new ContourPoint(corners1[0], new Chamfer()),
+                    new ContourPoint(corners1[1], new Chamfer(chamferSizeX, chamferSizeY, chamferType)),
+                    new ContourPoint(corners1[2], new Chamfer(chamferSizeY, chamferSizeX, chamferType)),
+                    new ContourPoint(corners1[3], new Chamfer())
+                }, "STIFFENER", $"PL{thickness}", material, @class: @class);
+            contourPlates[1] = CreatContourPlate(
+                new ArrayList {
+                    new ContourPoint(corners2[3], new Chamfer()),
+                    new ContourPoint(corners2[2], new Chamfer(chamferSizeX, chamferSizeY, chamferType)),
+                    new ContourPoint(corners2[1], new Chamfer(chamferSizeY, chamferSizeX, chamferType)),
+                    new ContourPoint(corners2[0], new Chamfer())
+                }, "STIFFENER", $"PL{thickness}", material, @class: @class);
+
+            return contourPlates;
+
 
             static Point BottomRight(Point p1, Point p2) => new(Math.Min(p1.X, p2.X), Math.Max(p1.Y, p2.Y), 0.0);
             static Point BottomLeft(Point p1, Point p2) => new(Math.Max(p1.X, p2.X), Math.Max(p1.Y, p2.Y), 0.0);
             static Point TopLeft(Point p1, Point p2) => new(Math.Max(p1.X, p2.X), Math.Min(p1.Y, p2.Y), 0.0);
             static Point TopRight(Point p1, Point p2) => new(Math.Min(p1.X, p2.X), Math.Min(p1.Y, p2.Y), 0.0);
-            var corners1 = new Point[4] {
-                TopLeft(verticesFront.ElementAt(0), verticesBehind.ElementAt(0)),
-                TopRight(verticesFront.ElementAt(1), verticesBehind.ElementAt(1)),
-                BottomRight(verticesFront.ElementAt(2), verticesBehind.ElementAt(2)),
-                BottomLeft(verticesFront.ElementAt(3), verticesBehind.ElementAt(3)),
-            };
-            var corners2 = new Point[4] {
-                BottomRight(verticesFront.ElementAt(4), verticesBehind.ElementAt(4)),
-                BottomLeft(verticesFront.ElementAt(5), verticesBehind.ElementAt(5)),
-                TopLeft(verticesFront.ElementAt(6), verticesBehind.ElementAt(6)),
-                TopRight(verticesFront.ElementAt(7), verticesBehind.ElementAt(7)),
-            };
-            for (int i = 0; i < 4; i++) {
-                corners1[i] = matrix_FromStif.Transform(corners1[i]);
-                corners2[i] = matrix_FromStif.Transform(corners2[i]);
+
+            static List<Point> GetVertices(IEnumerator faceEnum) {
+                var vertices = new List<Point>();
+
+                var faceCnt = 0;
+                while (faceEnum.MoveNext()) {
+                    if (++faceCnt > 1) throw new Exception(UnknownSectionType);
+
+                    var face = faceEnum.Current as ArrayList;
+                    var loopEnum = face!.GetEnumerator();
+
+                    var loopCnt = 0;
+                    while (loopEnum.MoveNext()) {
+                        if (++loopCnt > 1) throw new Exception(UnknownSectionType);
+
+                        var loop = loopEnum.Current as ArrayList;
+                        var vertexEnum = loop!.GetEnumerator();
+
+                        var verticesCnt = 0;
+                        while (vertexEnum.MoveNext()) {
+                            ++verticesCnt;
+
+                            var vertex = vertexEnum.Current as Point;
+                            vertices.Add(vertex);
+                        }
+
+                        (vertexEnum as IDisposable)?.Dispose();
+
+                        //  使用 RAW 选项是 12 个顶点，使用 HIGH_ACCURACY 选项对于不同类型的截面有不同数量的顶点
+                        if (verticesCnt != 12) throw new Exception(UnknownSectionType);
+                    }
+
+                    (loopEnum as IDisposable)?.Dispose();
+                }
+
+                return vertices;
             }
-
-            var contourPlates = new ContourPlate[2];
-            contourPlates[0] = ModelOperation.CreatContourPlate(new ArrayList {
-                new ContourPoint(corners1[0], new Chamfer()),
-                new ContourPoint(corners1[1], new Chamfer(chamferSizeX, chamferSizeY, chamferType)),
-                new ContourPoint(corners1[2], new Chamfer(chamferSizeY, chamferSizeX, chamferType)),
-                new ContourPoint(corners1[3], new Chamfer())
-            }, "STIFFENER", $"PL{thickness}", material, @class: @class);
-            contourPlates[1] = ModelOperation.CreatContourPlate(new ArrayList {
-                new ContourPoint(corners2[3], new Chamfer()),
-                new ContourPoint(corners2[2], new Chamfer(chamferSizeX, chamferSizeY, chamferType)),
-                new ContourPoint(corners2[1], new Chamfer(chamferSizeY, chamferSizeX, chamferType)),
-                new ContourPoint(corners2[0], new Chamfer())
-            }, "STIFFENER", $"PL{thickness}", material, @class: @class);
-
-            return contourPlates;
         }
 
         /// <summary>
@@ -1543,7 +1627,8 @@ namespace Muggle.TsExtensions.Common.Model {
         /// <exception cref="Exception"></exception>
         private static IEnumerable<ContourPlate> CreatStiffenersForTypeT(
             Part part, Point position, double thickness, string material = "Q235B", string @class = "99",
-            double rotationAroundY = 0.0, double rotationAroundZ = 0.0, double indent = 0.0, double indent2 = 0.0, double clearance = 2.0,
+            double rotationAroundY = 0.0, double rotationAroundZ = 0.0, double indent = 0.0, double indent2 = 0.0,
+            double clearance = 2.0,
             Chamfer.ChamferTypeEnum chamferType = 0, double chamferSizeX = 0.0, double chamferSizeY = 0.0) {
             if (part is null) {
                 throw new ArgumentNullException(nameof(part));
@@ -1562,123 +1647,143 @@ namespace Muggle.TsExtensions.Common.Model {
             }
 
             var faceEnumArr = IntersectionWithStiffenerSurfacePlane(
-                part, position, thickness, out CoordinateSystem partCS, out GeometricPlane stifPlane, rotationAroundY, rotationAroundZ);
+                part, position, thickness, out var partCS, out var stifPlane, rotationAroundY,
+                rotationAroundZ);
             var faceEnumFront = faceEnumArr[0];
             var faceEnumBehind = faceEnumArr[1];
 
-            static IEnumerable<Point> GetVertices(IEnumerator faceEnum) {
-                var vertices = new List<Point>();
-
-                var faceCnt = 0;
-                while (faceEnum.MoveNext()) {
-                    if (++faceCnt > 1) throw new Exception(UNKNOWN_SECTION_TYPE);
-
-                    var face = faceEnum.Current as ArrayList;
-                    var loopEnum = face.GetEnumerator();
-
-                    var loopCnt = 0;
-                    while (loopEnum.MoveNext()) {
-                        if (++loopCnt > 1) throw new Exception(UNKNOWN_SECTION_TYPE);
-
-                        var loop = loopEnum.Current as ArrayList;
-                        var vertexEnum = loop.GetEnumerator();
-
-                        var verticesCnt = 0;
-                        while (vertexEnum.MoveNext()) {
-                            ++verticesCnt;
-
-                            var vertext = vertexEnum.Current as Point;
-                            vertices.Add(vertext);
-                        }
-                        //  使用 RAW 选项是 8 个顶点，
-                        //  使用 HIGH_ACCURACY 选项，对于 T, TN, TM, TW 类型的截面是 16 个顶点，
-                        //  对于 B_WLD_E 类型的截面是 8 个顶点
-                        if (verticesCnt != 8) throw new Exception(UNKNOWN_SECTION_TYPE);
-                    }
-                }
-
-                return vertices;
-            }
             var verticesFront = GetVertices(faceEnumFront);
             var verticesBehind = GetVertices(faceEnumBehind);
-            verticesFront = OrderVertices(verticesFront, partCS);
-            verticesBehind = OrderVertices(verticesBehind, partCS);
-            verticesFront = verticesFront.Skip(2);
-            verticesBehind = verticesBehind.Skip(2);
+            verticesFront = OrderVertices(verticesFront, partCS).ToList();
+            verticesBehind = OrderVertices(verticesBehind, partCS).ToList();
+            verticesFront = verticesFront.Skip(2).ToList();
+            verticesBehind = verticesBehind.Skip(2).ToList();
 
-            var offset_Z_indent = new Vector(0, 0, indent).TransformFrom(partCS);
-            var offset_Z_clearance = new Vector(0, 0, clearance).TransformFrom(partCS);
-            var offset_Y_indent2 = new Vector(0, indent2, 0).TransformFrom(partCS);
-            var offset_Y_clearance = new Vector(0, clearance, 0).TransformFrom(partCS);
+            var offsetZIndent = new Vector(0, 0, indent).TransformFrom(partCS);
+            var offsetZClearance = new Vector(0, 0, clearance).TransformFrom(partCS);
+            var offsetYIndent2 = new Vector(0, indent2, 0).TransformFrom(partCS);
+            var offsetYClearance = new Vector(0, clearance, 0).TransformFrom(partCS);
             var arrList = new List<Point[]> { verticesFront.ToArray(), verticesBehind.ToArray() };
             foreach (var arr in arrList) {
-                arr[0] -= offset_Z_indent; arr[5] += offset_Z_indent;
-                arr[2] += offset_Y_indent2; arr[3] += offset_Y_indent2;
-                arr[1] += offset_Z_clearance; arr[2] += offset_Z_clearance;
-                arr[3] -= offset_Z_clearance; arr[4] -= offset_Z_clearance;
-                arr[0] -= offset_Y_clearance; arr[1] -= offset_Y_clearance;
-                arr[4] -= offset_Y_clearance; arr[5] -= offset_Y_clearance;
+                arr[0] -= offsetZIndent;
+                arr[5] += offsetZIndent;
+                arr[2] += offsetYIndent2;
+                arr[3] += offsetYIndent2;
+                arr[1] += offsetZClearance;
+                arr[2] += offsetZClearance;
+                arr[3] -= offsetZClearance;
+                arr[4] -= offsetZClearance;
+                arr[0] -= offsetYClearance;
+                arr[1] -= offsetYClearance;
+                arr[4] -= offsetYClearance;
+                arr[5] -= offsetYClearance;
             }
-            var lines = arrList[0].Zip(arrList[1], (p1, p2) => new Line(p1, p2));
-            var stifFrontPlane = new GeometricPlane(stifPlane.Origin + stifPlane.Normal.GetNormal(thickness * 0.5), stifPlane.Normal);
-            var stifBehindPlane = new GeometricPlane(stifPlane.Origin - stifPlane.Normal.GetNormal(thickness * 0.5), stifPlane.Normal);
+
+            var lines = arrList[0].Zip(arrList[1], (p1, p2) => new Line(p1, p2)).ToList();
+            var stifFrontPlane = new GeometricPlane(stifPlane.Origin + stifPlane.Normal.GetNormal(thickness * 0.5),
+                stifPlane.Normal);
+            var stifBehindPlane = new GeometricPlane(stifPlane.Origin - stifPlane.Normal.GetNormal(thickness * 0.5),
+                stifPlane.Normal);
 
             var partZXPlane = new GeometricPlane(partCS.Origin, partCS.AxisY);
             var partXYPlane = new GeometricPlane(partCS.Origin, partCS.AxisX.Cross(partCS.AxisY));
             var shearAxisX = Intersection.PlaneToPlane(partZXPlane, stifPlane).Direction;
             var shearAxisY = Intersection.PlaneToPlane(partXYPlane, stifPlane).Direction;
             var shearAxisZ = shearAxisX.Cross(shearAxisY);
-            var matrix_ToStif = MatrixFactoryExtension.ToCoordinateSystem(shearAxisX, shearAxisY, shearAxisZ, stifPlane.Origin);
-            var matrix_FromStif = matrix_ToStif.Inverse();
+            var matrixToStif =
+                MatrixFactoryExtension.ToCoordinateSystem(shearAxisX, shearAxisY, shearAxisZ, stifPlane.Origin);
+            var matrixFromStif = matrixToStif.Inverse();
 
-            verticesFront = lines.Select(l => matrix_ToStif.Transform(Intersection.LineToPlane(l, stifFrontPlane)));
-            verticesBehind = lines.Select(l => matrix_ToStif.Transform(Intersection.LineToPlane(l, stifBehindPlane)));
+            verticesFront = lines.Select(l => matrixToStif.Transform(Intersection.LineToPlane(l, stifFrontPlane)))
+                .ToList();
+            verticesBehind = lines.Select(l => matrixToStif.Transform(Intersection.LineToPlane(l, stifBehindPlane)))
+                .ToList();
+
+            var corners1 = new[] {
+                TopLeft(verticesFront.ElementAt(0), verticesBehind.ElementAt(0)),
+                TopRight(verticesFront.ElementAt(1), verticesBehind.ElementAt(1)),
+                BottomRight(verticesFront.ElementAt(2), verticesBehind.ElementAt(2)), new()
+            };
+            var corners2 = new[] {
+                new(), BottomLeft(verticesFront.ElementAt(3), verticesBehind.ElementAt(3)),
+                TopLeft(verticesFront.ElementAt(4), verticesBehind.ElementAt(4)),
+                TopRight(verticesFront.ElementAt(5), verticesBehind.ElementAt(5))
+            };
+            for (int i = 0; i < 4; i++) {
+                corners1[i] = matrixFromStif.Transform(corners1[i]);
+                corners2[i] = matrixFromStif.Transform(corners2[i]);
+            }
+
+            corners1[3] = corners1[0] + corners1[2] - corners1[1];
+            corners2[0] = corners2[1] + corners2[3] - corners2[2];
+
+            var contourPlates = new ContourPlate[2];
+            contourPlates[0] = CreatContourPlate(
+                new ArrayList {
+                    new ContourPoint(corners1[0], new Chamfer()),
+                    new ContourPoint(corners1[1], new Chamfer(chamferSizeX, chamferSizeY, chamferType)),
+                    new ContourPoint(corners1[2], new Chamfer()),
+                    new ContourPoint(corners1[3], new Chamfer())
+                }, "STIFFENER", $"PL{thickness}", material, @class: @class);
+            contourPlates[1] = CreatContourPlate(
+                new ArrayList {
+                    new ContourPoint(corners2[3], new Chamfer()),
+                    new ContourPoint(corners2[2], new Chamfer(chamferSizeX, chamferSizeY, chamferType)),
+                    new ContourPoint(corners2[1], new Chamfer()),
+                    new ContourPoint(corners2[0], new Chamfer())
+                }, "STIFFENER", $"PL{thickness}", material, @class: @class);
+
+            return contourPlates;
 
             static Point BottomRight(Point p1, Point p2) => new(Math.Min(p1.X, p2.X), Math.Max(p1.Y, p2.Y), 0.0);
             static Point BottomLeft(Point p1, Point p2) => new(Math.Max(p1.X, p2.X), Math.Max(p1.Y, p2.Y), 0.0);
             static Point TopLeft(Point p1, Point p2) => new(Math.Max(p1.X, p2.X), Math.Min(p1.Y, p2.Y), 0.0);
             static Point TopRight(Point p1, Point p2) => new(Math.Min(p1.X, p2.X), Math.Min(p1.Y, p2.Y), 0.0);
-            var corners1 = new Point[4] {
-                TopLeft(verticesFront.ElementAt(0), verticesBehind.ElementAt(0)),
-                TopRight(verticesFront.ElementAt(1), verticesBehind.ElementAt(1)),
-                BottomRight(verticesFront.ElementAt(2), verticesBehind.ElementAt(2)),
-                new()
-            };
-            var corners2 = new Point[4] {
-                new(),
-                BottomLeft(verticesFront.ElementAt(3), verticesBehind.ElementAt(3)),
-                TopLeft(verticesFront.ElementAt(4), verticesBehind.ElementAt(4)),
-                TopRight(verticesFront.ElementAt(5), verticesBehind.ElementAt(5))
-            };
-            for (int i = 0; i < 4; i++) {
-                corners1[i] = matrix_FromStif.Transform(corners1[i]);
-                corners2[i] = matrix_FromStif.Transform(corners2[i]);
+
+            static List<Point> GetVertices(IEnumerator faceEnum) {
+                var vertices = new List<Point>();
+
+                var faceCnt = 0;
+                while (faceEnum.MoveNext()) {
+                    if (++faceCnt > 1) throw new Exception(UnknownSectionType);
+
+                    var face = faceEnum.Current as ArrayList;
+                    var loopEnum = face!.GetEnumerator();
+
+                    var loopCnt = 0;
+                    while (loopEnum.MoveNext()) {
+                        if (++loopCnt > 1) throw new Exception(UnknownSectionType);
+
+                        var loop = loopEnum.Current as ArrayList;
+                        var vertexEnum = loop!.GetEnumerator();
+
+                        var verticesCnt = 0;
+                        while (vertexEnum.MoveNext()) {
+                            ++verticesCnt;
+
+                            var vertex = vertexEnum.Current as Point;
+                            vertices.Add(vertex);
+                        }
+
+                        (vertexEnum as IDisposable)?.Dispose();
+
+                        //  使用 RAW 选项是 8 个顶点，
+                        //  使用 HIGH_ACCURACY 选项，对于 T, TN, TM, TW 类型的截面是 16 个顶点，
+                        //  对于 B_WLD_E 类型的截面是 8 个顶点
+                        if (verticesCnt != 8) throw new Exception(UnknownSectionType);
+                    }
+
+                    (loopEnum as IDisposable)?.Dispose();
+                }
+
+                return vertices;
             }
-            corners1[3] = corners1[0] + corners1[2] - corners1[1];
-            corners2[0] = corners2[1] + corners2[3] - corners2[2];
-
-            var contourPlates = new ContourPlate[2];
-            contourPlates[0] = ModelOperation.CreatContourPlate(new ArrayList {
-                new ContourPoint(corners1[0], new Chamfer()),
-                new ContourPoint(corners1[1], new Chamfer(chamferSizeX, chamferSizeY, chamferType)),
-                new ContourPoint(corners1[2], new Chamfer()),
-                new ContourPoint(corners1[3], new Chamfer())
-            }, "STIFFENER", $"PL{thickness}", material, @class: @class);
-            contourPlates[1] = ModelOperation.CreatContourPlate(new ArrayList {
-                new ContourPoint(corners2[3], new Chamfer()),
-                new ContourPoint(corners2[2], new Chamfer(chamferSizeX, chamferSizeY, chamferType)),
-                new ContourPoint(corners2[1], new Chamfer()),
-                new ContourPoint(corners2[0], new Chamfer())
-            }, "STIFFENER", $"PL{thickness}", material, @class: @class);
-
-            return contourPlates;
         }
 
         private static ContourPlate CreatStiffenersForTypeU(
             Part part, Point position, double thickness, string material = "Q235B", string @class = "99",
             double rotationAroundY = 0.0, double rotationAroundZ = 0.0, double indent = 0.0, double clearance = 2.0,
             Chamfer.ChamferTypeEnum chamferType = 0, double chamferSizeX = 0.0, double chamferSizeY = 0.0) {
-
             if (part is null) {
                 throw new ArgumentNullException(nameof(part));
             }
@@ -1696,99 +1801,118 @@ namespace Muggle.TsExtensions.Common.Model {
             }
 
             var faceEnumArr = IntersectionWithStiffenerSurfacePlane(
-                part, position, thickness, out CoordinateSystem partCS, out GeometricPlane stifPlane, rotationAroundY, rotationAroundZ);
+                part, position, thickness, out var partCS, out var stifPlane, rotationAroundY,
+                rotationAroundZ);
             var faceEnumFront = faceEnumArr[0];
             var faceEnumBehind = faceEnumArr[1];
 
-            static IEnumerable<Point> GetVertices(IEnumerator faceEnum) {
-                var vertices = new List<Point>();
-
-                var faceCnt = 0;
-                while (faceEnum.MoveNext()) {
-                    if (++faceCnt > 1) throw new Exception(UNKNOWN_SECTION_TYPE);
-
-                    var face = faceEnum.Current as ArrayList;
-                    var loopEnum = face.GetEnumerator();
-
-                    var loopCnt = 0;
-                    while (loopEnum.MoveNext()) {
-                        if (++loopCnt > 1) throw new Exception(UNKNOWN_SECTION_TYPE);
-
-                        var loop = loopEnum.Current as ArrayList;
-                        var vertexEnum = loop.GetEnumerator();
-
-                        var verticesCnt = 0;
-                        while (vertexEnum.MoveNext()) {
-                            ++verticesCnt;
-
-                            var vertext = vertexEnum.Current as Point;
-                            vertices.Add(vertext);
-                        }
-                        //  使用 RAW 选项是 8 个顶点；
-                        //  使用 HIGH_ACCURACY 选项，
-                        //  对于 C 前缀单参数（如 C22A ）截面是 24 个顶点，
-                        //  对于 C 前缀三参数（如 C200*100*5 ）、BLC、BLU、U 前缀截面是 16 个顶点，
-                        //  对于 B_WLD_D、C_BUILT、C_VAR_A、C_VAR_B、C_VAR_C、C_VAR_D 前缀截面是 8 个顶点
-                        if (verticesCnt != 8) throw new Exception(UNKNOWN_SECTION_TYPE);
-                    }
-                }
-
-                return vertices;
-            }
             var verticesFront = GetVertices(faceEnumFront);
             var verticesBehind = GetVertices(faceEnumBehind);
-            verticesFront = OrderVertices(verticesFront, partCS);
-            verticesBehind = OrderVertices(verticesBehind, partCS);
-            verticesFront = verticesFront.Skip(2).Take(4);
-            verticesBehind = verticesBehind.Skip(2).Take(4);
+            verticesFront = OrderVertices(verticesFront, partCS).ToList();
+            verticesBehind = OrderVertices(verticesBehind, partCS).ToList();
+            verticesFront = verticesFront.Skip(2).Take(4).ToList();
+            verticesBehind = verticesBehind.Skip(2).Take(4).ToList();
 
-            var offset_Z_indent = new Vector(0, 0, indent).TransformFrom(partCS);
-            var offset_Z_clearance = new Vector(0, 0, clearance).TransformFrom(partCS);
-            var offset_Y_clearance = new Vector(0, clearance, 0).TransformFrom(partCS);
+            var offsetZIndent = new Vector(0, 0, indent).TransformFrom(partCS);
+            var offsetZClearance = new Vector(0, 0, clearance).TransformFrom(partCS);
+            var offsetYClearance = new Vector(0, clearance, 0).TransformFrom(partCS);
             var arrList = new List<Point[]> { verticesFront.ToArray(), verticesBehind.ToArray() };
             foreach (var arr in arrList) {
-                arr[0] -= offset_Z_indent; arr[3] -= offset_Z_indent;
-                arr[1] += offset_Z_clearance; arr[2] += offset_Z_clearance;
-                arr[0] -= offset_Y_clearance; arr[1] -= offset_Y_clearance;
-                arr[2] += offset_Y_clearance; arr[3] += offset_Y_clearance;
+                arr[0] -= offsetZIndent;
+                arr[3] -= offsetZIndent;
+                arr[1] += offsetZClearance;
+                arr[2] += offsetZClearance;
+                arr[0] -= offsetYClearance;
+                arr[1] -= offsetYClearance;
+                arr[2] += offsetYClearance;
+                arr[3] += offsetYClearance;
             }
-            var lines = arrList[0].Zip(arrList[1], (p1, p2) => new Line(p1, p2));
-            var stifFrontPlane = new GeometricPlane(stifPlane.Origin + stifPlane.Normal.GetNormal(thickness * 0.5), stifPlane.Normal);
-            var stifBehindPlane = new GeometricPlane(stifPlane.Origin - stifPlane.Normal.GetNormal(thickness * 0.5), stifPlane.Normal);
+
+            var lines = arrList[0].Zip(arrList[1], (p1, p2) => new Line(p1, p2)).ToList();
+            var stifFrontPlane = new GeometricPlane(stifPlane.Origin + stifPlane.Normal.GetNormal(thickness * 0.5),
+                stifPlane.Normal);
+            var stifBehindPlane = new GeometricPlane(stifPlane.Origin - stifPlane.Normal.GetNormal(thickness * 0.5),
+                stifPlane.Normal);
 
             var partZXPlane = new GeometricPlane(partCS.Origin, partCS.AxisY);
             var partXYPlane = new GeometricPlane(partCS.Origin, partCS.AxisX.Cross(partCS.AxisY));
             var shearAxisX = Intersection.PlaneToPlane(partZXPlane, stifPlane).Direction;
             var shearAxisY = Intersection.PlaneToPlane(partXYPlane, stifPlane).Direction;
             var shearAxisZ = shearAxisX.Cross(shearAxisY);
-            var matrix_ToStif = MatrixFactoryExtension.ToCoordinateSystem(shearAxisX, shearAxisY, shearAxisZ, stifPlane.Origin);
-            var matrix_FromStif = matrix_ToStif.Inverse();
+            var matrixToStif =
+                MatrixFactoryExtension.ToCoordinateSystem(shearAxisX, shearAxisY, shearAxisZ, stifPlane.Origin);
+            var matrixFromStif = matrixToStif.Inverse();
 
-            verticesFront = lines.Select(l => matrix_ToStif.Transform(Intersection.LineToPlane(l, stifFrontPlane)));
-            verticesBehind = lines.Select(l => matrix_ToStif.Transform(Intersection.LineToPlane(l, stifBehindPlane)));
+            verticesFront = lines.Select(l => matrixToStif.Transform(Intersection.LineToPlane(l, stifFrontPlane)))
+                .ToList();
+            verticesBehind = lines.Select(l => matrixToStif.Transform(Intersection.LineToPlane(l, stifBehindPlane)))
+                .ToList();
 
-            static Point BottomRight(Point p1, Point p2) => new(Math.Min(p1.X, p2.X), Math.Max(p1.Y, p2.Y), 0.0);
-            static Point BottomLeft(Point p1, Point p2) => new(Math.Max(p1.X, p2.X), Math.Max(p1.Y, p2.Y), 0.0);
-            static Point TopLeft(Point p1, Point p2) => new(Math.Max(p1.X, p2.X), Math.Min(p1.Y, p2.Y), 0.0);
-            static Point TopRight(Point p1, Point p2) => new(Math.Min(p1.X, p2.X), Math.Min(p1.Y, p2.Y), 0.0);
-            var corners = new Point[4] {
+            var corners = new[] {
                 TopLeft(verticesFront.ElementAt(0), verticesBehind.ElementAt(0)),
                 TopRight(verticesFront.ElementAt(1), verticesBehind.ElementAt(1)),
                 BottomRight(verticesFront.ElementAt(2), verticesBehind.ElementAt(2)),
                 BottomLeft(verticesFront.ElementAt(3), verticesBehind.ElementAt(3)),
             };
             for (int i = 0; i < 4; i++) {
-                corners[i] = matrix_FromStif.Transform(corners[i]);
+                corners[i] = matrixFromStif.Transform(corners[i]);
             }
 
-            var contourPlate = ModelOperation.CreatContourPlate(new ArrayList {
-                new ContourPoint(corners[0], new Chamfer()),
-                new ContourPoint(corners[1], new Chamfer(chamferSizeX, chamferSizeY, chamferType)),
-                new ContourPoint(corners[2], new Chamfer(chamferSizeY, chamferSizeX, chamferType)),
-                new ContourPoint(corners[3], new Chamfer())
-            }, "STIFFENER", $"PL{thickness}", material, @class: @class);
+            var contourPlate = CreatContourPlate(
+                new ArrayList {
+                    new ContourPoint(corners[0], new Chamfer()),
+                    new ContourPoint(corners[1], new Chamfer(chamferSizeX, chamferSizeY, chamferType)),
+                    new ContourPoint(corners[2], new Chamfer(chamferSizeY, chamferSizeX, chamferType)),
+                    new ContourPoint(corners[3], new Chamfer())
+                }, "STIFFENER", $"PL{thickness}", material, @class: @class);
 
             return contourPlate;
+
+            static Point BottomRight(Point p1, Point p2) => new(Math.Min(p1.X, p2.X), Math.Max(p1.Y, p2.Y), 0.0);
+            static Point BottomLeft(Point p1, Point p2) => new(Math.Max(p1.X, p2.X), Math.Max(p1.Y, p2.Y), 0.0);
+            static Point TopLeft(Point p1, Point p2) => new(Math.Max(p1.X, p2.X), Math.Min(p1.Y, p2.Y), 0.0);
+            static Point TopRight(Point p1, Point p2) => new(Math.Min(p1.X, p2.X), Math.Min(p1.Y, p2.Y), 0.0);
+
+            static List<Point> GetVertices(IEnumerator faceEnum) {
+                var vertices = new List<Point>();
+
+                var faceCnt = 0;
+                while (faceEnum.MoveNext()) {
+                    if (++faceCnt > 1) throw new Exception(UnknownSectionType);
+
+                    var face = faceEnum.Current as ArrayList;
+                    var loopEnum = face!.GetEnumerator();
+
+                    var loopCnt = 0;
+                    while (loopEnum.MoveNext()) {
+                        if (++loopCnt > 1) throw new Exception(UnknownSectionType);
+
+                        var loop = loopEnum.Current as ArrayList;
+                        var vertexEnum = loop!.GetEnumerator();
+
+                        var verticesCnt = 0;
+                        while (vertexEnum.MoveNext()) {
+                            ++verticesCnt;
+
+                            var vertex = vertexEnum.Current as Point;
+                            vertices.Add(vertex);
+                        }
+
+                        (vertexEnum as IDisposable)?.Dispose();
+
+                        //  使用 RAW 选项是 8 个顶点；
+                        //  使用 HIGH_ACCURACY 选项，
+                        //  对于 C 前缀单参数（如 C22A ）截面是 24 个顶点，
+                        //  对于 C 前缀三参数（如 C200*100*5 ）、BLC、BLU、U 前缀截面是 16 个顶点，
+                        //  对于 B_WLD_D、C_BUILT、C_VAR_A、C_VAR_B、C_VAR_C、C_VAR_D 前缀截面是 8 个顶点
+                        if (verticesCnt != 8) throw new Exception(UnknownSectionType);
+                    }
+
+                    (loopEnum as IDisposable)?.Dispose();
+                }
+
+                return vertices;
+            }
         }
 
         private static ContourPlate CreatStiffenersForTypeM(
@@ -1812,16 +1936,23 @@ namespace Muggle.TsExtensions.Common.Model {
             }
 
             var faceEnumArr = IntersectionWithStiffenerSurfacePlane(
-                part, position, thickness, out CoordinateSystem partCS, out GeometricPlane stifPlane, rotationAroundY, rotationAroundZ);
+                part, position, thickness, out var partCS, out var stifPlane, rotationAroundY,
+                rotationAroundZ);
             var faceEnumFront = faceEnumArr[0];
             var faceEnumBehind = faceEnumArr[1];
 
-            /*  
-             *  顶点顺序与调用 IntersecAllFaces 方法时传入的 3 个点顺序有关
-             *  
+            var verticesFront = GetVertices(faceEnumFront);
+            var verticesBehind = GetVertices(faceEnumBehind);
+            verticesFront = OrderVertices(verticesFront, partCS).ToList();
+            verticesBehind = OrderVertices(verticesBehind, partCS).ToList();
+
+            /*
+             *  顶点顺序与调用 IntersectAllFaces 方法时传入的 3 个点顺序有关
+             *  ========================================================================================
              *  RAW 选项：
+             *  ----------------------------------------------------------------------------------------
              *  F, TUB, CFRHS, P, RHS, SHS, [], B_WLD_J 前缀截面，内外 2 个 Loop，每个 Loop 各 4 个顶点
-             *  B_WLD_F 前缀截面，1 个 Loop，10 个顶点
+             *  B_WLD_F 前缀截面，有些情况是内外 2 个 Loop，每个 Loop 各 4 个顶点，有些情况是 1 个 Loop，10 个顶点
              *      1------------------------2
              *      | 4--------------------3  8
              *  	| |       Y .           7 |
@@ -1855,123 +1986,141 @@ namespace Muggle.TsExtensions.Common.Model {
              *     13--------------------14 9-10
              *     12-------------------------11
              *
+             *  ========================================================================================
              *  HIGH_ACCURACY 选项：
+             *  ----------------------------------------------------------------------------------------
              *  B_WLD_J 前缀截面，内外 2 个 Loop，每个 Loop 各 4 个顶点
              *  F, TUB, CFRHS, P, RHS, SHS, [] 前缀截面，内外 2 个 Loop，每个 Loop 各 20 个顶点
              *  B_WLD_F 前缀截面，同 RAW 选项
              *  B_VAR_A, B_VAR_B, B_VAR_C 前缀截面，同 RAW 选项
              *  B_BUILT 前缀截面，同 RAW 选项
              */
-            static IEnumerable<Point> GetVertices(IEnumerator faceEnum) {
-                var vertices = new List<Point>();
-
-                var faceCnt = 0;
-                while (faceEnum.MoveNext()) {
-                    if (++faceCnt > 1) throw new Exception(UNKNOWN_SECTION_TYPE);
-
-                    var face = faceEnum.Current as ArrayList;
-                    var loopEnum = face.GetEnumerator();
-
-                    var loopCnt = 0;
-                    while (loopEnum.MoveNext()) {
-                        if (++loopCnt > 1) vertices.Clear();
-
-                        var loop = loopEnum.Current as ArrayList;
-                        var vertexEnum = loop.GetEnumerator();
-
-                        var verticesCnt = 0;
-                        while (vertexEnum.MoveNext()) {
-                            ++verticesCnt;
-
-                            var vertext = vertexEnum.Current as Point;
-                            vertices.Add(vertext);
-                        }
-                    }
-                }
-
-                return vertices;
-            }
-            var verticesFront = GetVertices(faceEnumFront);
-            var verticesBehind = GetVertices(faceEnumBehind);
-            verticesFront = OrderVertices(verticesFront, partCS);
-            verticesBehind = OrderVertices(verticesBehind, partCS);
 
             var prefix = GetProfilePrefix(part.Profile.ProfileString);
             switch (prefix) {
             case "B_WLD_F":
-                verticesFront = verticesFront.Skip(3).Take(3)
-                    .Append(verticesFront.ElementAt(3) + verticesFront.ElementAt(5) - verticesFront.ElementAt(4));
-                verticesBehind = verticesBehind.Skip(3).Take(3)
-                    .Append(verticesBehind.ElementAt(3) + verticesBehind.ElementAt(5) - verticesBehind.ElementAt(4));
-                verticesFront = OrderVertices(verticesFront, partCS);
-                verticesBehind = OrderVertices(verticesBehind, partCS);
+                if (verticesFront.Count > 4)
+                    verticesFront = verticesFront.Skip(3).Take(3)
+                        .Append(verticesFront.ElementAt(3) + verticesFront.ElementAt(5) - verticesFront.ElementAt(4))
+                        .ToList();
+                if (verticesBehind.Count > 4)
+                    verticesBehind = verticesBehind.Skip(3).Take(3)
+                        .Append(verticesBehind.ElementAt(3) + verticesBehind.ElementAt(5) - verticesBehind.ElementAt(4))
+                        .ToList();
+                verticesFront = OrderVertices(verticesFront, partCS).ToList();
+                verticesBehind = OrderVertices(verticesBehind, partCS).ToList();
                 break;
             case "B_VAR_A":
             case "B_VAR_B":
             case "B_VAR_C":
-                verticesFront = verticesFront.Skip(5).Take(4);
-                verticesBehind = verticesBehind.Skip(5).Take(4);
-                verticesFront = OrderVertices(verticesFront, partCS);
-                verticesBehind = OrderVertices(verticesBehind, partCS);
+                verticesFront = verticesFront.Skip(5).Take(4).ToList();
+                verticesBehind = verticesBehind.Skip(5).Take(4).ToList();
+                verticesFront = OrderVertices(verticesFront, partCS).ToList();
+                verticesBehind = OrderVertices(verticesBehind, partCS).ToList();
                 break;
             case "B_BUILT":
                 verticesFront = verticesFront.Skip(13).Take(3)
-                    .Append(verticesFront.ElementAt(13) + verticesFront.ElementAt(15) - verticesFront.ElementAt(14));
+                    .Append(verticesFront.ElementAt(13) + verticesFront.ElementAt(15) - verticesFront.ElementAt(14))
+                    .ToList();
                 verticesBehind = verticesBehind.Skip(13).Take(3)
-                    .Append(verticesBehind.ElementAt(13) + verticesBehind.ElementAt(15) - verticesBehind.ElementAt(14));
-                verticesFront = OrderVertices(verticesFront, partCS);
-                verticesBehind = OrderVertices(verticesBehind, partCS);
-                break;
-            default:
+                    .Append(verticesBehind.ElementAt(13) + verticesBehind.ElementAt(15) - verticesBehind.ElementAt(14))
+                    .ToList();
+                verticesFront = OrderVertices(verticesFront, partCS).ToList();
+                verticesBehind = OrderVertices(verticesBehind, partCS).ToList();
                 break;
             }
 
-            var offset_Z = new Vector(0, 0, clearance).TransformFrom(partCS);
-            var offset_Y = new Vector(0, clearance, 0).TransformFrom(partCS);
+            var offsetZ = new Vector(0, 0, clearance).TransformFrom(partCS);
+            var offsetY = new Vector(0, clearance, 0).TransformFrom(partCS);
             var arrList = new List<Point[]> { verticesFront.ToArray(), verticesBehind.ToArray() };
             foreach (var arr in arrList) {
-                arr[0] += offset_Z; arr[1] -= offset_Z;
-                arr[2] -= offset_Z; arr[3] += offset_Z;
-                arr[0] -= offset_Y; arr[1] -= offset_Y;
-                arr[2] += offset_Y; arr[3] += offset_Y;
+                arr[0] += offsetZ;
+                arr[1] -= offsetZ;
+                arr[2] -= offsetZ;
+                arr[3] += offsetZ;
+                arr[0] -= offsetY;
+                arr[1] -= offsetY;
+                arr[2] += offsetY;
+                arr[3] += offsetY;
             }
-            var lines = arrList[0].Zip(arrList[1], (p1, p2) => new Line(p1, p2));
-            var stifFrontPlane = new GeometricPlane(stifPlane.Origin + stifPlane.Normal.GetNormal(thickness * 0.5), stifPlane.Normal);
-            var stifBehindPlane = new GeometricPlane(stifPlane.Origin - stifPlane.Normal.GetNormal(thickness * 0.5), stifPlane.Normal);
+
+            var lines = arrList[0].Zip(arrList[1], (p1, p2) => new Line(p1, p2)).ToList();
+            var stifFrontPlane = new GeometricPlane(stifPlane.Origin + stifPlane.Normal.GetNormal(thickness * 0.5),
+                stifPlane.Normal);
+            var stifBehindPlane = new GeometricPlane(stifPlane.Origin - stifPlane.Normal.GetNormal(thickness * 0.5),
+                stifPlane.Normal);
 
             var partZXPlane = new GeometricPlane(partCS.Origin, partCS.AxisY);
             var partXYPlane = new GeometricPlane(partCS.Origin, partCS.AxisX.Cross(partCS.AxisY));
             var shearAxisX = Intersection.PlaneToPlane(partZXPlane, stifPlane).Direction;
             var shearAxisY = Intersection.PlaneToPlane(partXYPlane, stifPlane).Direction;
             var shearAxisZ = shearAxisX.Cross(shearAxisY);
-            var matrix_ToStif = MatrixFactoryExtension.ToCoordinateSystem(shearAxisX, shearAxisY, shearAxisZ, stifPlane.Origin);
-            var matrix_FromStif = matrix_ToStif.Inverse();
+            var matrixToStif =
+                MatrixFactoryExtension.ToCoordinateSystem(shearAxisX, shearAxisY, shearAxisZ, stifPlane.Origin);
+            var matrixFromStif = matrixToStif.Inverse();
 
-            verticesFront = lines.Select(l => matrix_ToStif.Transform(Intersection.LineToPlane(l, stifFrontPlane)));
-            verticesBehind = lines.Select(l => matrix_ToStif.Transform(Intersection.LineToPlane(l, stifBehindPlane)));
+            verticesFront = lines.Select(l => matrixToStif.Transform(Intersection.LineToPlane(l, stifFrontPlane)))
+                .ToList();
+            verticesBehind = lines.Select(l => matrixToStif.Transform(Intersection.LineToPlane(l, stifBehindPlane)))
+                .ToList();
 
-            static Point BottomRight(Point p1, Point p2) => new(Math.Min(p1.X, p2.X), Math.Max(p1.Y, p2.Y), 0.0);
-            static Point BottomLeft(Point p1, Point p2) => new(Math.Max(p1.X, p2.X), Math.Max(p1.Y, p2.Y), 0.0);
-            static Point TopLeft(Point p1, Point p2) => new(Math.Max(p1.X, p2.X), Math.Min(p1.Y, p2.Y), 0.0);
-            static Point TopRight(Point p1, Point p2) => new(Math.Min(p1.X, p2.X), Math.Min(p1.Y, p2.Y), 0.0);
-            var corners = new Point[4] {
+            var corners = new[] {
                 TopRight(verticesFront.ElementAt(0), verticesBehind.ElementAt(0)),
                 TopLeft(verticesFront.ElementAt(1), verticesBehind.ElementAt(1)),
                 BottomLeft(verticesFront.ElementAt(2), verticesBehind.ElementAt(2)),
                 BottomRight(verticesFront.ElementAt(3), verticesBehind.ElementAt(3)),
             };
             for (int i = 0; i < 4; i++) {
-                corners[i] = matrix_FromStif.Transform(corners[i]);
+                corners[i] = matrixFromStif.Transform(corners[i]);
             }
 
-            var contourPlate = ModelOperation.CreatContourPlate(new ArrayList {
-                new ContourPoint(corners[0], new Chamfer(chamferSizeY, chamferSizeX, chamferType)),
-                new ContourPoint(corners[1], new Chamfer(chamferSizeX, chamferSizeY, chamferType)),
-                new ContourPoint(corners[2], new Chamfer(chamferSizeY, chamferSizeX, chamferType)),
-                new ContourPoint(corners[3], new Chamfer(chamferSizeX, chamferSizeY, chamferType))
-            }, "STIFFENER", $"PL{thickness}", material, @class: @class);
+            var contourPlate = CreatContourPlate(
+                new ArrayList {
+                    new ContourPoint(corners[0], new Chamfer(chamferSizeY, chamferSizeX, chamferType)),
+                    new ContourPoint(corners[1], new Chamfer(chamferSizeX, chamferSizeY, chamferType)),
+                    new ContourPoint(corners[2], new Chamfer(chamferSizeY, chamferSizeX, chamferType)),
+                    new ContourPoint(corners[3], new Chamfer(chamferSizeX, chamferSizeY, chamferType))
+                }, "STIFFENER", $"PL{thickness}", material, @class: @class);
 
             return contourPlate;
+
+            static Point BottomRight(Point p1, Point p2) => new(Math.Min(p1.X, p2.X), Math.Max(p1.Y, p2.Y), 0.0);
+            static Point BottomLeft(Point p1, Point p2) => new(Math.Max(p1.X, p2.X), Math.Max(p1.Y, p2.Y), 0.0);
+            static Point TopLeft(Point p1, Point p2) => new(Math.Max(p1.X, p2.X), Math.Min(p1.Y, p2.Y), 0.0);
+            static Point TopRight(Point p1, Point p2) => new(Math.Min(p1.X, p2.X), Math.Min(p1.Y, p2.Y), 0.0);
+
+            static List<Point> GetVertices(IEnumerator faceEnum) {
+                var vertices = new List<Point>();
+
+                var faceCnt = 0;
+                while (faceEnum.MoveNext()) {
+                    if (++faceCnt > 1) throw new Exception(UnknownSectionType);
+
+                    var face = faceEnum.Current as ArrayList;
+                    var loopEnum = face!.GetEnumerator();
+
+                    var loopCnt = 0;
+                    while (loopEnum.MoveNext()) {
+                        if (++loopCnt > 2) throw new Exception(UnknownSectionType);
+                        //  存在内外两个 loop 时，不需要外层 loop
+                        if (loopCnt == 2) vertices.Clear();
+
+                        var loop = loopEnum.Current as ArrayList;
+                        var vertexEnum = loop!.GetEnumerator();
+
+                        while (vertexEnum.MoveNext()) {
+                            var vertex = vertexEnum.Current as Point;
+                            vertices.Add(vertex);
+                        }
+
+                        (vertexEnum as IDisposable)?.Dispose();
+                    }
+
+                    (loopEnum as IDisposable)?.Dispose();
+                }
+
+                return vertices;
+            }
         }
 
         private static ContourPlate CreatStiffenersForTypeRO(
@@ -1994,68 +2143,80 @@ namespace Muggle.TsExtensions.Common.Model {
             }
 
             var faceEnumArr = IntersectionWithStiffenerSurfacePlane(
-                part, position, thickness, out CoordinateSystem partCS, out GeometricPlane stifPlane, rotationAroundY, rotationAroundZ);
+                part, position, thickness, out var partCS, out var stifPlane, rotationAroundY,
+                rotationAroundZ);
             var faceEnumFront = faceEnumArr[0];
             var faceEnumBehind = faceEnumArr[1];
 
-            static IEnumerable<Point> GetVertices(IEnumerator faceEnum) {
-                var vertices = new List<Point>();
-
-                var faceCnt = 0;
-                while (faceEnum.MoveNext()) {
-                    if (++faceCnt > 1) throw new Exception(UNKNOWN_SECTION_TYPE);
-
-                    var face = faceEnum.Current as ArrayList;
-                    var loopEnum = face.GetEnumerator();
-
-                    var loopCnt = 0;
-                    while (loopEnum.MoveNext()) {
-                        if (++loopCnt == 1) continue;  //  跳过外层 Loop
-                        if (loopCnt > 2) throw new Exception(UNKNOWN_SECTION_TYPE);
-
-                        var loop = loopEnum.Current as ArrayList;
-                        var vertexEnum = loop.GetEnumerator();
-
-                        var verticesCnt = 0;
-                        while (vertexEnum.MoveNext()) {
-                            ++verticesCnt;
-
-                            var vertext = vertexEnum.Current as Point;
-                            vertices.Add(vertext);
-                        }
-                    }
-                }
-
-                return vertices;
-            }
             var verticesFront = GetVertices(faceEnumFront);
             var verticesBehind = GetVertices(faceEnumBehind);
-            verticesFront = OrderVertices(verticesFront, partCS);
-            verticesBehind = OrderVertices(verticesBehind, partCS);
+            verticesFront = OrderVertices(verticesFront, partCS).ToList();
+            verticesBehind = OrderVertices(verticesBehind, partCS).ToList();
 
             var centerLine = new Line(partCS.Origin, partCS.AxisX);
             var arrFront = verticesFront.ToArray();
             var arrBehind = verticesBehind.ToArray();
             for (int i = 0; i < arrFront.Length; ++i) {
-                arrFront[i] -= new Vector(arrFront[i] - Projection.PointToLine(arrFront[i], centerLine)).GetNormal(clearance);
-                arrBehind[i] -= new Vector(arrBehind[i] - Projection.PointToLine(arrBehind[i], centerLine)).GetNormal(clearance);
+                arrFront[i] -=
+                    new Vector(arrFront[i] - Projection.PointToLine(arrFront[i], centerLine)).GetNormal(clearance);
+                arrBehind[i] -=
+                    new Vector(arrBehind[i] - Projection.PointToLine(arrBehind[i], centerLine)).GetNormal(clearance);
             }
 
-            var lines = arrFront.Zip(arrBehind, (p1, p2) => new Line(p1, p2));
-            var stifFrontPlane = new GeometricPlane(stifPlane.Origin + stifPlane.Normal.GetNormal(thickness * 0.5), stifPlane.Normal);
-            var stifBehindPlane = new GeometricPlane(stifPlane.Origin - stifPlane.Normal.GetNormal(thickness * 0.5), stifPlane.Normal);
+            var lines = arrFront.Zip(arrBehind, (p1, p2) => new Line(p1, p2)).ToList();
+            var stifFrontPlane = new GeometricPlane(stifPlane.Origin + stifPlane.Normal.GetNormal(thickness * 0.5),
+                stifPlane.Normal);
+            var stifBehindPlane = new GeometricPlane(stifPlane.Origin - stifPlane.Normal.GetNormal(thickness * 0.5),
+                stifPlane.Normal);
 
-            verticesFront = lines.Select(l => Intersection.LineToPlane(l, stifFrontPlane));
-            verticesBehind = lines.Select(l => Intersection.LineToPlane(l, stifBehindPlane));
-            var center = verticesFront.Concat(verticesBehind).Aggregate((p1, p2) => p1 + p2).Multiply(verticesFront.Count() * 2);
+            verticesFront = lines.Select(l => Intersection.LineToPlane(l, stifFrontPlane)).ToList();
+            verticesBehind = lines.Select(l => Intersection.LineToPlane(l, stifBehindPlane)).ToList();
+            verticesFront.Concat(verticesBehind).Aggregate((p1, p2) => p1 + p2)
+                .Multiply(verticesFront.Count() * 2);
 
             var contourPoints = verticesFront.Select(p => Projection.PointToPlane(p, stifPlane))
                 .Zip(verticesBehind.Select(p => Projection.PointToPlane(p, stifPlane)), (p1, p2) =>
-                    Distance.PointToLine(p1, centerLine) < Distance.PointToLine(p2, centerLine) ? p1 : p2);
+                    Tekla.Structures.Geometry3d.Distance.PointToLine(p1, centerLine) <
+                    Tekla.Structures.Geometry3d.Distance.PointToLine(p2, centerLine)
+                        ? p1
+                        : p2);
 
-            var contourPlate = ModelOperation.CreatContourPlate(contourPoints, "STIFFENER", $"PL{thickness}", material, @class: @class);
+            var contourPlate = CreatContourPlate(contourPoints, "STIFFENER", $"PL{thickness}", material,
+                @class: @class);
 
             return contourPlate;
+
+            static List<Point> GetVertices(IEnumerator faceEnum) {
+                var vertices = new List<Point>();
+
+                var faceCnt = 0;
+                while (faceEnum.MoveNext()) {
+                    if (++faceCnt > 1) throw new Exception(UnknownSectionType);
+
+                    var face = faceEnum.Current as ArrayList;
+                    var loopEnum = face!.GetEnumerator();
+
+                    var loopCnt = 0;
+                    while (loopEnum.MoveNext()) {
+                        if (++loopCnt == 1) continue; //  跳过外层 Loop
+                        if (loopCnt > 2) throw new Exception(UnknownSectionType);
+
+                        var loop = loopEnum.Current as ArrayList;
+                        var vertexEnum = loop!.GetEnumerator();
+
+                        while (vertexEnum.MoveNext()) {
+                            var vertex = vertexEnum.Current as Point;
+                            vertices.Add(vertex);
+                        }
+
+                        (vertexEnum as IDisposable)?.Dispose();
+                    }
+
+                    (loopEnum as IDisposable)?.Dispose();
+                }
+
+                return vertices;
+            }
         }
 
         /// <summary>
@@ -2080,7 +2241,8 @@ namespace Muggle.TsExtensions.Common.Model {
         /// <exception cref="Exception">不支持的截面类型引发。</exception>
         public static IEnumerable<ContourPlate> CreatStiffeners(
             Part part, Point position, double thickness, string material = "Q235B", string @class = "99",
-            double rotationAroundY = 0.0, double rotationAroundZ = 0.0, double indent = 0.0, double indent2 = 0.0, double clearance = 2.0,
+            double rotationAroundY = 0.0, double rotationAroundZ = 0.0, double indent = 0.0, double indent2 = 0.0,
+            double clearance = 2.0,
             Chamfer.ChamferTypeEnum chamferType = 0, double chamferSizeX = 0.0, double chamferSizeY = 0.0) {
             if (part is null) {
                 throw new ArgumentNullException(nameof(part));
@@ -2098,15 +2260,15 @@ namespace Muggle.TsExtensions.Common.Model {
                 @class = "99";
             }
 
-            const string PROPERTY_NAME = "PROFILE_TYPE";
-            var profiles_I = new[] { "B_WLD_A", "B_WLD_H", "B_WLD_K" };
-            var profiles_T = new[] { "B_WLD_E" };
-            var profiles_U = new[] { "B_WLD_D", "C_BUILT", "C_VAR_A", "C_VAR_B", "C_VAR_C", "C_VAR_D" };
-            var profiles_M = new[] { "B_WLD_F", "B_WLD_J", "B_BUILT", "B_VAR_A", "B_VAR_B", "B_VAR_C" };
+            const string propertyName = "PROFILE_TYPE";
+            var profilesI = new[] { "B_WLD_A", "B_WLD_H", "B_WLD_K" };
+            var profilesT = new[] { "B_WLD_E" };
+            var profilesU = new[] { "B_WLD_D", "C_BUILT", "C_VAR_A", "C_VAR_B", "C_VAR_C", "C_VAR_D" };
+            var profilesM = new[] { "B_WLD_F", "B_WLD_J", "B_BUILT", "B_VAR_A", "B_VAR_B", "B_VAR_C" };
 
             var profileType = string.Empty;
-            if (!part.GetReportProperty(PROPERTY_NAME, ref profileType)) {
-                throw new Exception($"Failed to get \"{PROPERTY_NAME}\" for {part.Identifier}.");
+            if (!part.GetReportProperty(propertyName, ref profileType)) {
+                throw new Exception($"Failed to get \"{propertyName}\" for {part.Identifier}.");
             }
 
             var profileText = part.Profile.ProfileString;
@@ -2121,29 +2283,41 @@ namespace Muggle.TsExtensions.Common.Model {
                     rotationAroundY, rotationAroundZ, indent, indent2, clearance,
                     chamferType, chamferSizeX, chamferSizeY);
             case "U":
-                return [ CreatStiffenersForTypeU(part, position, thickness, material, @class,
-                    rotationAroundY, rotationAroundZ, indent, clearance,
-                    chamferType, chamferSizeX, chamferSizeY)];
+                return [
+                    CreatStiffenersForTypeU(part, position, thickness, material, @class,
+                        rotationAroundY, rotationAroundZ, indent, clearance,
+                        chamferType, chamferSizeX, chamferSizeY)
+                ];
             case "M":
-                return [ CreatStiffenersForTypeM(part, position, thickness, material, @class,
-                    rotationAroundY, rotationAroundZ, clearance,
-                    chamferType, chamferSizeX, chamferSizeY)];
+                return [
+                    CreatStiffenersForTypeM(part, position, thickness, material, @class,
+                        rotationAroundY, rotationAroundZ, clearance,
+                        chamferType, chamferSizeX, chamferSizeY)
+                ];
             case "RO":
-                return [ CreatStiffenersForTypeRO(part, position, thickness, material, @class,
-                    rotationAroundY, rotationAroundZ, clearance)];
+                return [
+                    CreatStiffenersForTypeRO(part, position, thickness, material, @class,
+                        rotationAroundY, rotationAroundZ, clearance)
+                ];
             case "Z":
                 var profilePrefix = GetProfilePrefix(profileText);
-                if (profiles_I.Contains(profilePrefix)) {
+                if (profilesI.Contains(profilePrefix)) {
                     goto case "I";
-                } else if (profiles_T.Contains(profilePrefix)) {
-                    goto case "T";
-                } else if (profiles_U.Contains(profilePrefix)) {
-                    goto case "U";
-                } else if (profiles_M.Contains(profilePrefix)) {
-                    goto case "M";
-                } else {
-                    goto default;
                 }
+
+                if (profilesT.Contains(profilePrefix)) {
+                    goto case "T";
+                }
+
+                if (profilesU.Contains(profilePrefix)) {
+                    goto case "U";
+                }
+
+                if (profilesM.Contains(profilePrefix)) {
+                    goto case "M";
+                }
+
+                goto default;
             default:
                 throw new Exception($"Profile \"{profileText}\" not supported yet.");
             }
@@ -2153,42 +2327,42 @@ namespace Muggle.TsExtensions.Common.Model {
         /// 沿给定轴线每隔给定角度旋转复制一份对象。
         /// </summary>
         /// <param name="obj">要旋转复制的对象</param>
-        /// <param name="Axis_Origin">旋转轴起点</param>
-        /// <param name="Axis_Direction">旋转轴方向</param>
+        /// <param name="axisOrigin">旋转轴起点</param>
+        /// <param name="axisDirection">旋转轴方向</param>
         /// <param name="radians">旋转角度，弧度制</param>
         /// <param name="num">要复制的数量，默认值 1</param>
         /// <returns>成功旋转复制的对象集合（不包括初始对象）。</returns>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="ArgumentException"><paramref name="num"/> &lt;= 0 时引发。</exception>
-        [Obsolete("应改为使用 Muggle.TsExtensions.Model.ModelOperation.CopyObject(ModelObject obj, Matrix matrix, int num)方法", true)]
+        [Obsolete(
+            "应改为使用 Muggle.TsExtensions.Model.ModelOperation.CopyObject(ModelObject obj, Matrix matrix, int num)方法",
+            true)]
         public static List<ModelObject> Copy_Rotate(
             ModelObject obj,
-            Point Axis_Origin,
-            Vector Axis_Direction,
+            Point axisOrigin,
+            Vector axisDirection,
             double radians,
             int num = 1) {
-
             if (obj is null) {
                 throw new ArgumentNullException(nameof(obj));
             }
 
-            if (Axis_Origin is null) {
-                throw new ArgumentNullException(nameof(Axis_Origin));
+            if (axisOrigin is null) {
+                throw new ArgumentNullException(nameof(axisOrigin));
             }
 
-            if (Axis_Direction is null) {
-                throw new ArgumentNullException(nameof(Axis_Direction));
+            if (axisDirection is null) {
+                throw new ArgumentNullException(nameof(axisDirection));
             }
 
             if (num <= 0)
                 throw new ArgumentException($"“{nameof(num)}”不应小于等于 0。");
 
             var objs = new List<ModelObject>();
-            ModelObject copy;
 
             for (int i = 1; i <= num; i++) {
-                copy = Tekla.Structures.Model.Operations.Operation.CopyObject(obj, new Vector());
-                if (Move_Rotate(copy, Axis_Origin, Axis_Direction, radians * i)) objs.Add(copy);
+                var copy = Tekla.Structures.Model.Operations.Operation.CopyObject(obj, new Vector());
+                if (Move_Rotate(copy, axisOrigin, axisDirection, radians * i)) objs.Add(copy);
             }
 
             return objs;
@@ -2198,31 +2372,30 @@ namespace Muggle.TsExtensions.Common.Model {
         /// 沿给定轴线和角度旋转移动对象。
         /// </summary>
         /// <param name="obj">要旋转移动的对象</param>
-        /// <param name="Axis_Origin">旋转轴起点</param>
-        /// <param name="Axis_Direction">旋转轴方向</param>
+        /// <param name="axisOrigin">旋转轴起点</param>
+        /// <param name="axisDirection">旋转轴方向</param>
         /// <param name="radians">旋转角度，弧度制</param>
         /// <returns>成功返回 True，失败返回 False。</returns>
         /// <exception cref="ArgumentNullException"></exception>
         [Obsolete("应改为使用 Muggle.TsExtensions.Model.ModelOperation.MoveObject(ModelObject obj, Matrix matrix)方法", true)]
         public static bool Move_Rotate(
             ModelObject obj,
-            Point Axis_Origin,
-            Vector Axis_Direction,
+            Point axisOrigin,
+            Vector axisDirection,
             double radians) {
-
             if (obj is null) {
                 throw new ArgumentNullException(nameof(obj));
             }
 
-            if (Axis_Origin is null) {
-                throw new ArgumentNullException(nameof(Axis_Origin));
+            if (axisOrigin is null) {
+                throw new ArgumentNullException(nameof(axisOrigin));
             }
 
-            if (Axis_Direction is null) {
-                throw new ArgumentNullException(nameof(Axis_Direction));
+            if (axisDirection is null) {
+                throw new ArgumentNullException(nameof(axisDirection));
             }
 
-            var matrix = MatrixFactoryExtension.Rotate(new Line(Axis_Origin, Axis_Direction), radians);
+            var matrix = MatrixFactoryExtension.Rotate(new Line(axisOrigin, axisDirection), radians);
             var currentCS = new CoordinateSystem();
             var targetCS = matrix.Transform(currentCS);
 

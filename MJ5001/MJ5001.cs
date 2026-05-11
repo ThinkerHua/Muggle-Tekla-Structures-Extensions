@@ -525,7 +525,7 @@ namespace Muggle.TsExtensions.MJ5001 {
                     bolt_disList_X, zeroDisList,
                     position: new Position { Rotation = Position.RotationEnum.FRONT },
                     startOffset: bolt_startOffset,
-                    bolt_standard: bolt_standard, bolt_size: bolt_size);
+                    boltStandard: bolt_standard, boltSize: bolt_size);
             }
             #endregion
         }

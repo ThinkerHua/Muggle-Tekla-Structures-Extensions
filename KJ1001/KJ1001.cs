@@ -787,7 +787,7 @@ namespace Muggle.TsExtensions.KJ1001 {
                     point3, point4, webPosition_distanceList_Y.Skip(2).Take(cnt - 3), new TSD.Distance[] { new TSD.Distance(0) },
                     new Position { Rotation = Position.RotationEnum.FRONT },
                     startOffset: new Offset { Dx = webPosition_distanceList_Y[1].Value },
-                    bolt_standard: webBolt_standard, bolt_size: webBolt_size);
+                    boltStandard: webBolt_standard, boltSize: webBolt_size);
             }
             #endregion
 
@@ -967,7 +967,7 @@ namespace Muggle.TsExtensions.KJ1001 {
                 webPosition_distanceList_X.Skip(1).Take(cntX - 2),
                 position: new Position { Rotation = Position.RotationEnum.FRONT },
                 startOffset: new Offset { Dx = webPosition_distanceList_Y[1].Value },
-                bolt_standard: webBolt_standard, bolt_size: webBolt_size);
+                boltStandard: webBolt_standard, boltSize: webBolt_size);
             #endregion
 
             if (type == 2) goto Type2;
@@ -1011,7 +1011,7 @@ namespace Muggle.TsExtensions.KJ1001 {
                 point1, point2, disListX, disListY,
                 position: new Position { Rotation = Position.RotationEnum.BELOW },
                 startOffset: new Offset { Dx = flangePosition_distanceList_X[0].Value },
-                bolt_standard: flangeBolt_standard, bolt_size: flangeBolt_size);
+                boltStandard: flangeBolt_standard, boltSize: flangeBolt_size);
             boltArray.CutLength = 200;
             boltArray.Modify();
 
@@ -1040,7 +1040,7 @@ namespace Muggle.TsExtensions.KJ1001 {
                 point1, point2, disListX, disListY,
                 position: new Position { Rotation = Position.RotationEnum.BELOW },
                 startOffset: new Offset { Dx = flangePosition_distanceList_X[0].Value },
-                bolt_standard: flangeBolt_standard, bolt_size: flangeBolt_size);
+                boltStandard: flangeBolt_standard, boltSize: flangeBolt_size);
             boltArray.CutLength = 200;
             boltArray.Modify();
             #endregion

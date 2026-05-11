@@ -766,7 +766,7 @@ namespace Muggle.TsExtensions.MG1002 {
             };
             ModelOperation.CreatBoltArray(
                 endPlate1, endPlate2, null, endPlate1.StartPoint, endPlate1.EndPoint, disList_bolt_X, disList_bolt_Y,
-                position: position, startOffset: bolt_startOffset, bolt_standard: bolt_Standard, bolt_size: bolt_Size);
+                position: position, startOffset: bolt_startOffset, boltStandard: bolt_Standard, boltSize: bolt_Size);
             #endregion
 
             #region 焊接
