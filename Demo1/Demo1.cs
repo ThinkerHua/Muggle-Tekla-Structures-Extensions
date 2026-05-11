@@ -177,11 +177,14 @@ public partial class Demo1 : PluginBase {
 
             if (_plateStiffenerThickness <= 0.0) _plateStiffenerThickness = secFlangeThickness;
 
-            var stiffeners = ModelOperation.CreatStiffeners(primary, new Point(0, 0, -_plateStiffenerThickness * 0.5),
-                _plateStiffenerThickness, _plateStiffenerMaterial, _plateStiffenerClass.ToString());
+            var stiffeners = ModelOperation.CreatStiffeners(primary, 
+                new Point(0, 0, -_plateStiffenerThickness * 0.5),
+                _plateStiffenerThickness, _plateStiffenerMaterial, _plateStiffenerClass.ToString(), 
+                chamferType: Chamfer.ChamferTypeEnum.CHAMFER_LINE, chamferSizeX: 20, chamferSizeY: 20);
             stiffeners = stiffeners.Concat(ModelOperation.CreatStiffeners(primary,
                 new Point(0, 0, -secHeight + _plateStiffenerThickness * 0.5),
-                _plateStiffenerThickness, _plateStiffenerMaterial, _plateStiffenerClass.ToString()));
+                _plateStiffenerThickness, _plateStiffenerMaterial, _plateStiffenerClass.ToString(),
+                chamferType: Chamfer.ChamferTypeEnum.CHAMFER_LINE, chamferSizeX: 20, chamferSizeY: 20));
 
             var primProfileType = string.Empty;
             try {

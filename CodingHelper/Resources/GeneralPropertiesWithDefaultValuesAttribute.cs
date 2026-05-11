@@ -41,11 +41,13 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
         /// <summary>
         /// Register property and default values.
         /// </summary>
-        /// <param name="type">The data type of properties. Only support 'Boolean', 'Integer', 'Double', 'Distance',
-        /// 'DistanceList', 'String' within 'Tekla.Structures.Datatype' namespace.</param>
-        /// <param name="nameValuePairs">Property name and default values, must be passed in pairs, except that
-        /// <paramref name="type"/> is 'Boolean'. The data type of default value should comply with
-        /// the following rules: 
+        /// <param name="type">The data type of properties. Only support 'Integer', 'Double', 'Distance',
+        /// 'DistanceList', 'String' within 'Tekla.Structures.Datatype' namespace.
+        /// <b>Should not use 'Boolean' type, use 'Integer' instead.</b> Although Tekla officially states support
+        /// for the 'Boolean' type, but in reality, the 'Boolean' type cannot be properly passed into the Plugin.
+        /// </param>
+        /// <param name="nameValuePairs">Property name and default values, must be passed in pairs.
+        /// The data type of default value should comply with the following rules: 
         /// <code>
         /// | The value of argument 'type' | The data type of default value |
         /// | ---------------------------- | ------------------------------ |
@@ -57,8 +59,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
         /// |          String              |             string             |
         /// </code>
         /// <example>
-        /// For 'Integer' type property: ["Param1", 8, "Param2", 10, "Param3", 12]<br/>
-        /// For 'Boolean' type property: ["Param1", "Param2", "Param3"]
+        /// For 'Integer' type property: ["Param1", 8, "Param2", 10, "Param3", 12]
         /// </example>
         /// </param>
         public GeneralPropertiesWithDefaultValuesAttribute(Type type, params object[] nameValuePairs) { }

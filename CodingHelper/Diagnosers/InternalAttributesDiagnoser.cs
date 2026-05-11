@@ -177,6 +177,14 @@ internal class InternalAttributesDiagnoser : DiagnosticAnalyzer {
         DiagnosticSeverity.Error,
         true);
 
+    internal static readonly DiagnosticDescriptor ShouldNotUseBooleanType = new(
+        "MTSECH021",
+        "Should not use 'Boolean' type",
+        "Should not use 'Boolean' type, use 'Integer' type instead",
+        Category,
+        DiagnosticSeverity.Error,
+        true);
+
     #endregion
 
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => [
@@ -187,7 +195,7 @@ internal class InternalAttributesDiagnoser : DiagnosticAnalyzer {
         AlreadyBeGeneratedByOldGenerator,
 #endif
         NameStartsWithNumber, ArgumentsMustBePassedInPairs, NotSupportedDataType, NotExpectedDataType,
-        RegisterFieldOrPropertyMultiTimes, NotPassedInPairs
+        RegisterFieldOrPropertyMultiTimes, NotPassedInPairs, ShouldNotUseBooleanType
     ];
 
     public override void Initialize(AnalysisContext context) {
@@ -700,7 +708,8 @@ internal class InternalAttributesDiagnoser : DiagnosticAnalyzer {
                 var argSyntaxes = attSyntax.ArgumentList.DescendantNodes().OfType<LiteralExpressionSyntax>().ToArray();
 
                 if (dataType is "Boolean") {
-                    foreach (var argSyntax in argSyntaxes) {
+                    //  should not use 'Boolean' type, use 'Integer' instead
+                    /*foreach (var argSyntax in argSyntaxes) {
                         if (!argSyntax.IsKind(SyntaxKind.StringLiteralExpression)) {
                             context.ReportDiagnostic(Diagnostic.Create(NotExpectedDataType, argSyntax.GetLocation(),
                                 "string"));
@@ -712,7 +721,8 @@ internal class InternalAttributesDiagnoser : DiagnosticAnalyzer {
                             context.ReportDiagnostic(Diagnostic.Create(RegisterFieldOrPropertyMultiTimes,
                                 argSyntax.GetLocation(), argSyntax.Token.ValueText));
                         }
-                    }
+                    }*/
+                    context.ReportDiagnostic(Diagnostic.Create(ShouldNotUseBooleanType, dataTypeSyntax.GetLocation()));
                 } else {
                     if (argSyntaxes.Length % 2 != 0) {
                         context.ReportDiagnostic(Diagnostic.Create(NotPassedInPairs, argSyntaxes.Last().GetLocation()));

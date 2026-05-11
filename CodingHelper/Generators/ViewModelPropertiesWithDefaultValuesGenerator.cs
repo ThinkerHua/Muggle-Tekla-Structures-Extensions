@@ -329,7 +329,8 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                         .DescendantNodes().OfType<LiteralExpressionSyntax>().ToList();
 
                     if (type is "Boolean") {
-                        foreach (var argSyntax in argSyntaxes) {
+                        //  should not use 'Boolean' type, use 'Integer' instead
+                        /*foreach (var argSyntax in argSyntaxes) {
                             if (!argSyntax.IsKind(SyntaxKind.StringLiteralExpression)) continue;
 
                             var s = argSyntax.Token.ValueText;
@@ -341,7 +342,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
 
                             if (generalPropertySet.Add(s))
                                 paramDict.Add(s, "");
-                        }
+                        }*/
                     } else {
                         for (int i = 0; i < argSyntaxes.Count / 2 * 2; i += 2) {
                             var paramSyntax = argSyntaxes[i];
@@ -479,7 +480,8 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
 
                     var defaultValue = kvp2.Value;
                     var equalsValueClause = dataType switch {
-                        "Boolean" => "value",
+                        //  should not use 'Boolean' type, use 'Integer' instead
+                        // "Boolean" => "value",
                         "Integer" or "Double" => $"{predicate} ? {defaultValue} : value",
                         "Distance" => $"{predicate} ? new {TsDatatype}.{dataType}({defaultValue}) : value",
                         "DistanceList" => $"{predicate} ? {TsDatatype}.{dataType}.Parse(\"{defaultValue}\") : value",
