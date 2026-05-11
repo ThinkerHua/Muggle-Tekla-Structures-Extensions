@@ -20,7 +20,7 @@
 		<PackageReference Include="Tekla.Structures.Model" ExcludeAssets="runtime" />
 	</ItemGroup>
     
-	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
+	<Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition="'$(TargetFramework)' == 'net48'">
 		<Exec Command="xcopy &quot;$(TargetDir)$(TargetName).dll&quot; &quot;D:\Program Files\Tekla Structures\$(TeklaVersion)\Environments\common\extensions\Muggle.TsExtensions\&quot; /Y /C /Q /R" />
 	</Target>
 </Project>
