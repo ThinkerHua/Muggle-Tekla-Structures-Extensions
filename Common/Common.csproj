@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<TargetFramework Condition="$(Configuration.EndsWith('2021'))">net48</TargetFramework>
+		<TargetFrameworks Condition="$(Configuration.EndsWith('2021'))">net48</TargetFrameworks>
 		<TargetFrameworks Condition="$(Configuration.EndsWith('2024'))">net48;netstandard2.0</TargetFrameworks>
 		<LangVersion>Latest</LangVersion>
 		<OutputType>Library</OutputType>
@@ -20,7 +20,8 @@
 		<PackageReference Include="Tekla.Structures.Model" ExcludeAssets="runtime" />
 	</ItemGroup>
     
-	<Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition="'$(TargetFramework)' == 'net48'">
-		<Exec Command="xcopy &quot;$(TargetDir)$(TargetName).dll&quot; &quot;D:\Program Files\Tekla Structures\$(TeklaVersion)\Environments\common\extensions\Muggle.TsExtensions\&quot; /Y /C /Q /R" />
+	<Target Name="PostBuild" AfterTargets="PostBuildEvent" >
+		<Exec Command="xcopy &quot;$(TargetDir)$(TargetName).dll&quot; &quot;D:\Program Files\Tekla Structures\$(TeklaVersion)\Environments\common\extensions\Muggle.TsExtensions\&quot; /Y /C /Q /R" 
+			  Condition="'$(TargetFramework)' == 'net48'"/>
 	</Target>
 </Project>
