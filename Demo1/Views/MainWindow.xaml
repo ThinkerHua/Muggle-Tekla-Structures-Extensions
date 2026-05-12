@@ -24,6 +24,7 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/Common.WPF;component/Assets/WeldSymbols.xaml" />
+                <ResourceDictionary Source="/Common.WPF;component/Assets/ChamferSymbols.xaml" />
                 <ResourceDictionary Source="/Common.WPF;component/DataTemplates/SymbolDataTemplate.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
@@ -122,9 +123,12 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="auto" />
                         <ColumnDefinition Width="22" />
-                        <ColumnDefinition Width="60" />
+                        <ColumnDefinition Width="80" />
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
                         <RowDefinition Height="auto" />
                         <RowDefinition Height="auto" />
                         <RowDefinition Height="auto" />
@@ -139,6 +143,28 @@
                     <TextBlock Grid.Row="1" Grid.Column="0" Text="Creat stud" />
                     <tsuc:WpfFilterCheckBox Grid.Row="1" Grid.Column="1" AttributeName="CreatStud" />
                     <CheckBox Grid.Row="1" Grid.Column="2" IsChecked="{Binding CreatStud, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <TextBlock Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3" Text="Stiffener chamfer" />
+
+                    <TextBlock Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="3" Text="Type" />
+                    <tsuc:WpfFilterCheckBox Grid.Row="3" Grid.Column="1" AttributeName="StifChamferType" />
+                    <ComboBox Grid.Row="3" Grid.Column="2" ItemTemplate="{StaticResource SymbolDataTemplate}" SelectedIndex="{Binding StifChamferType, Mode=TwoWay}" ItemsSource="{StaticResource ChamferTypeSet}" />
+
+                    <TextBlock Grid.Row="4" Grid.Column="0" Text="X" />
+                    <tsuc:WpfFilterCheckBox Grid.Row="4" Grid.Column="1" AttributeName="StifChamferX" IsEnabled="{c:Binding 'StifChamferType.Value >= 1 and StifChamferType.Value less=3 or StifChamferType.Value >= 5 and StifChamferType.Value less= 7'}" />
+                    <TextBox Grid.Row="4" Grid.Column="2" Text="{Binding StifChamferX, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{c:Binding 'StifChamferType.Value >= 1 and StifChamferType.Value less=3 or StifChamferType.Value >= 5 and StifChamferType.Value less= 7'}" />
+
+                    <TextBlock Grid.Row="5" Grid.Column="0" Text="Y" />
+                    <tsuc:WpfFilterCheckBox Grid.Row="5" Grid.Column="1" AttributeName="StifChamferY" IsEnabled="{c:Binding 'StifChamferType.Value == 1 or StifChamferType.Value >= 5 and StifChamferType.Value less= 7'}" />
+                    <TextBox Grid.Row="5" Grid.Column="2" Text="{Binding StifChamferY, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{c:Binding 'StifChamferType.Value == 1 or StifChamferType.Value >= 5 and StifChamferType.Value less= 7'}" />
+
+                    <TextBlock Grid.Row="6" Grid.Column="0" Text="Dz1" />
+                    <tsuc:WpfFilterCheckBox Grid.Row="6" Grid.Column="1" AttributeName="StifChamferDz1" />
+                    <TextBox Grid.Row="6" Grid.Column="2" Text="{Binding StifChamferDz1, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <TextBlock Grid.Row="7" Grid.Column="0" Text="Dz2" />
+                    <tsuc:WpfFilterCheckBox Grid.Row="7" Grid.Column="1" AttributeName="StifChamferDz2" />
+                    <TextBox Grid.Row="7" Grid.Column="2" Text="{Binding StifChamferDz2, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                 </Grid>
             </TabItem>
 
@@ -593,15 +619,15 @@
                     <TextBlock Grid.Row="4" Grid.Column="0" Text="Cut length" />
                     <tsuc:WpfFilterCheckBox Grid.Row="4" Grid.Column="1" AttributeName="BStudCLEN" />
                     <TextBox Grid.Row="4" Grid.Column="2" Text="{Binding BoltStudCutLength, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                    
+
                     <TextBlock Grid.Row="5" Grid.Column="0" Text="Start offset X" />
                     <tsuc:WpfFilterCheckBox Grid.Row="5" Grid.Column="1" AttributeName="StudOffsetX" />
                     <TextBox Grid.Row="5" Grid.Column="2" Text="{Binding StudOffsetX, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                    
+
                     <TextBlock Grid.Row="6" Grid.Column="0" Text="Distance list X" />
                     <tsuc:WpfFilterCheckBox Grid.Row="6" Grid.Column="1" AttributeName="BStudDISTX" />
                     <TextBox Grid.Row="6" Grid.Column="2" Text="{Binding BoltStudDistX, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                    
+
                     <TextBlock Grid.Row="7" Grid.Column="0" Text="Distance list Y" />
                     <tsuc:WpfFilterCheckBox Grid.Row="7" Grid.Column="1" AttributeName="BStudDISTY" />
                     <TextBox Grid.Row="7" Grid.Column="2" Text="{Binding BoltStudDistY, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
