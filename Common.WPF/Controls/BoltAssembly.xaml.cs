@@ -1,4 +1,4 @@
-﻿/*==============================================================================
+/*==============================================================================
  *  Muggle TsExtensions - extensions for Tekla Structures
  *
  *  Copyright © 2026 Huang YongXing.                 
@@ -12,9 +12,11 @@
  *  BoltAssembly.xaml.cs: code behind for BoltAssembly user control.
  *  written by Huang YongXing - thinkerhua@hotmail.com
  *==============================================================================*/
+using System;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace Muggle.TsExtensions.Common.WPF.Controls {
     /// <summary>
@@ -23,6 +25,7 @@ namespace Muggle.TsExtensions.Common.WPF.Controls {
     public partial class BoltAssembly : UserControl {
         public BoltAssembly() {
             InitializeComponent();
+            MouseLeftButtonDown += ChangeState;
         }
 
         /// <summary>
@@ -104,5 +107,19 @@ namespace Muggle.TsExtensions.Common.WPF.Controls {
             DependencyProperty.Register(nameof(Nut2), typeof(bool), typeof(BoltAssembly), new PropertyMetadata(false));
 
 
+        private void ChangeState(object sender, MouseButtonEventArgs e) {
+            var control = (BoltAssembly)sender;
+            var height = control.ActualHeight;
+
+            var proportion = e.GetPosition(control).Y / height;
+
+            if (proportion > 0 / 130.0 && proportion < 16 / 130.0) Bolt = !Bolt;
+            if (proportion > 18 / 130.0 && proportion < 36 / 130.0) Washer1 = !Washer1;
+            if (proportion > 37 / 130.0 && proportion < 55 / 130.0) Washer2 = !Washer2;
+            if (proportion > 57 / 130.0 && proportion < 79 / 130.0) Washer3 = !Washer3;
+            if (proportion > 81 / 130.0 && proportion < 97 / 130.0) Nut1 = !Nut1;
+            if (proportion > 99 / 130.0 && proportion < 115 / 130.0) Nut2 = !Nut2;
+            if (proportion > 115 / 130.0 && proportion < 130 / 130.0) Bolt = !Bolt;
+        }
     }
 }

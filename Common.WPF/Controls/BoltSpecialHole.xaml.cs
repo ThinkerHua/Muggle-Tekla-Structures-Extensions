@@ -15,6 +15,8 @@
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Documents;
+using System.Windows.Input;
 
 namespace Muggle.TsExtensions.Common.WPF.Controls {
     /// <summary>
@@ -23,6 +25,7 @@ namespace Muggle.TsExtensions.Common.WPF.Controls {
     public partial class BoltSpecialHole : UserControl {
         public BoltSpecialHole() {
             InitializeComponent();
+            MouseLeftButtonDown += ChangeState;
         }
 
         /// <summary>
@@ -91,5 +94,17 @@ namespace Muggle.TsExtensions.Common.WPF.Controls {
             DependencyProperty.Register(nameof(SpecialHole5), typeof(bool), typeof(BoltSpecialHole), new PropertyMetadata(false));
 
 
+        private void ChangeState(object sender, MouseButtonEventArgs e) {
+            var control = (BoltSpecialHole)sender;
+            var height = control.ActualHeight;
+
+            var proportion = e.GetPosition(control).Y / height;
+
+            if (proportion > 18 / 109.0 && proportion < 28 / 109.0) SpecialHole1 = !SpecialHole1;
+            if (proportion > 30 / 109.0 && proportion < 40 / 109.0) SpecialHole2 = !SpecialHole2;
+            if (proportion > 42 / 109.0 && proportion < 52 / 109.0) SpecialHole3 = !SpecialHole3;
+            if (proportion > 54 / 109.0 && proportion < 64 / 109.0) SpecialHole4 = !SpecialHole4;
+            if (proportion > 66 / 109.0 && proportion < 76 / 109.0) SpecialHole5 = !SpecialHole5;
+        }
     }
 }
