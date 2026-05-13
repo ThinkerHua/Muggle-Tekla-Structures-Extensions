@@ -56,7 +56,7 @@
             <DataTemplate x:Key="ClassDataTemplate" DataType="{x:Type sys:Int32}">
                 <Grid>
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="{Binding Path=ImageWidth, ElementName=ThisControl, Mode=OneWay}" />
                         <ColumnDefinition Width="2" />
                         <ColumnDefinition Width="auto" />
                     </Grid.ColumnDefinitions>
@@ -66,8 +66,8 @@
                             Height="{Binding Path=ImageHeight, ElementName=ThisControl, Mode=OneWay}"
                             BorderBrush="Black"
                             BorderThickness="1"
-                            d:Width="38"
-                            d:Height="12">
+                            d:Width="24"
+                            d:Height="8">
                         <Border.Background>
                             <SolidColorBrush Color="{Binding Converter={StaticResource IntToClassColorConverter}, Mode=OneWay}" />
                         </Border.Background>
@@ -170,7 +170,7 @@
                                     BorderBrush="{StaticResource ComboBox.Static.Border}"
                                     BorderThickness="{TemplateBinding BorderThickness}"
                                     SnapsToDevicePixels="true">
-                                <Border x:Name="splitBorder"
+                                <!--<Border x:Name="splitBorder"
                                         Width="{DynamicResource {x:Static SystemParameters.VerticalScrollBarWidthKey}}"
                                         Margin="0"
                                         HorizontalAlignment="Right"
@@ -183,7 +183,7 @@
                                           VerticalAlignment="Center"
                                           Data="F1 M 0,0 L 2.667,2.66665 L 5.3334,0 L 5.3334,-1.78168 L 2.6667,0.88501 L0,-1.78168 L0,0 Z"
                                           Fill="{StaticResource ComboBox.Static.Glyph}" />
-                                </Border>
+                                </Border>-->
                             </Border>
                             <ControlTemplate.Triggers>
                                 <MultiDataTrigger>
@@ -195,11 +195,11 @@
                                     </MultiDataTrigger.Conditions>
                                     <Setter TargetName="templateRoot" Property="Background" Value="{StaticResource ComboBox.Static.Editable.Background}" />
                                     <Setter TargetName="templateRoot" Property="BorderBrush" Value="{StaticResource ComboBox.Static.Editable.Border}" />
-                                    <Setter TargetName="splitBorder" Property="Background" Value="{StaticResource ComboBox.Static.Editable.Button.Background}" />
-                                    <Setter TargetName="splitBorder" Property="BorderBrush" Value="{StaticResource ComboBox.Static.Editable.Button.Border}" />
+                                    <!--<Setter TargetName="splitBorder" Property="Background" Value="{StaticResource ComboBox.Static.Editable.Button.Background}" />
+                                    <Setter TargetName="splitBorder" Property="BorderBrush" Value="{StaticResource ComboBox.Static.Editable.Button.Border}" />-->
                                 </MultiDataTrigger>
                                 <Trigger Property="IsMouseOver" Value="true">
-                                    <Setter TargetName="arrow" Property="Fill" Value="{StaticResource ComboBox.MouseOver.Glyph}" />
+                                    <!--<Setter TargetName="arrow" Property="Fill" Value="{StaticResource ComboBox.MouseOver.Glyph}" />-->
                                 </Trigger>
                                 <MultiDataTrigger>
                                     <MultiDataTrigger.Conditions>
@@ -216,11 +216,11 @@
                                     </MultiDataTrigger.Conditions>
                                     <Setter TargetName="templateRoot" Property="Background" Value="{StaticResource ComboBox.MouseOver.Editable.Background}" />
                                     <Setter TargetName="templateRoot" Property="BorderBrush" Value="{StaticResource ComboBox.MouseOver.Editable.Border}" />
-                                    <Setter TargetName="splitBorder" Property="Background" Value="{StaticResource ComboBox.MouseOver.Editable.Button.Background}" />
-                                    <Setter TargetName="splitBorder" Property="BorderBrush" Value="{StaticResource ComboBox.MouseOver.Editable.Button.Border}" />
+                                    <!--<Setter TargetName="splitBorder" Property="Background" Value="{StaticResource ComboBox.MouseOver.Editable.Button.Background}" />
+                                    <Setter TargetName="splitBorder" Property="BorderBrush" Value="{StaticResource ComboBox.MouseOver.Editable.Button.Border}" />-->
                                 </MultiDataTrigger>
                                 <Trigger Property="IsPressed" Value="true">
-                                    <Setter TargetName="arrow" Property="Fill" Value="{StaticResource ComboBox.Pressed.Glyph}" />
+                                    <!--<Setter TargetName="arrow" Property="Fill" Value="{StaticResource ComboBox.Pressed.Glyph}" />-->
                                 </Trigger>
                                 <MultiDataTrigger>
                                     <MultiDataTrigger.Conditions>
@@ -237,11 +237,11 @@
                                     </MultiDataTrigger.Conditions>
                                     <Setter TargetName="templateRoot" Property="Background" Value="{StaticResource ComboBox.Pressed.Editable.Background}" />
                                     <Setter TargetName="templateRoot" Property="BorderBrush" Value="{StaticResource ComboBox.Pressed.Editable.Border}" />
-                                    <Setter TargetName="splitBorder" Property="Background" Value="{StaticResource ComboBox.Pressed.Editable.Button.Background}" />
-                                    <Setter TargetName="splitBorder" Property="BorderBrush" Value="{StaticResource ComboBox.Pressed.Editable.Button.Border}" />
+                                    <!--<Setter TargetName="splitBorder" Property="Background" Value="{StaticResource ComboBox.Pressed.Editable.Button.Background}" />-->
+                                    <!--<Setter TargetName="splitBorder" Property="BorderBrush" Value="{StaticResource ComboBox.Pressed.Editable.Button.Border}" />-->
                                 </MultiDataTrigger>
                                 <Trigger Property="IsEnabled" Value="false">
-                                    <Setter TargetName="arrow" Property="Fill" Value="{StaticResource ComboBox.Disabled.Glyph}" />
+                                    <!--<Setter TargetName="arrow" Property="Fill" Value="{StaticResource ComboBox.Disabled.Glyph}" />-->
                                 </Trigger>
                                 <MultiDataTrigger>
                                     <MultiDataTrigger.Conditions>
@@ -258,8 +258,8 @@
                                     </MultiDataTrigger.Conditions>
                                     <Setter TargetName="templateRoot" Property="Background" Value="{StaticResource ComboBox.Disabled.Editable.Background}" />
                                     <Setter TargetName="templateRoot" Property="BorderBrush" Value="{StaticResource ComboBox.Disabled.Editable.Border}" />
-                                    <Setter TargetName="splitBorder" Property="Background" Value="{StaticResource ComboBox.Disabled.Editable.Button.Background}" />
-                                    <Setter TargetName="splitBorder" Property="BorderBrush" Value="{StaticResource ComboBox.Disabled.Editable.Button.Border}" />
+                                    <!--<Setter TargetName="splitBorder" Property="Background" Value="{StaticResource ComboBox.Disabled.Editable.Button.Background}" />-->
+                                    <!--<Setter TargetName="splitBorder" Property="BorderBrush" Value="{StaticResource ComboBox.Disabled.Editable.Button.Border}" />-->
                                 </MultiDataTrigger>
                             </ControlTemplate.Triggers>
                         </ControlTemplate>
@@ -271,7 +271,8 @@
                 <Grid x:Name="templateRoot" SnapsToDevicePixels="true">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="0" MinWidth="{DynamicResource {x:Static SystemParameters.VerticalScrollBarWidthKey}}" />
+                        <!--<ColumnDefinition Width="0" MinWidth="{DynamicResource {x:Static SystemParameters.VerticalScrollBarWidthKey}}" />-->
+                        <ColumnDefinition Width="0" />
                     </Grid.ColumnDefinitions>
                     <Popup x:Name="PART_Popup"
                            Grid.ColumnSpan="2"
@@ -297,16 +298,21 @@
                         </theme:SystemDropShadowChrome>
                     </Popup>
                     <ToggleButton x:Name="toggleButton"
+                                  Grid.Column="0"
                                   Grid.ColumnSpan="2"
                                   Background="{TemplateBinding Background}"
                                   BorderBrush="{TemplateBinding BorderBrush}"
                                   BorderThickness="{TemplateBinding BorderThickness}"
                                   IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource Mode=TemplatedParent}}"
                                   Style="{StaticResource ComboBoxToggleButton}" />
-                    <Border x:Name="border" Margin="{TemplateBinding BorderThickness}" Background="{StaticResource TextBox.Static.Background}">
+                    <Border x:Name="border"
+                            Grid.Column="0"
+                            Margin="{TemplateBinding BorderThickness}"
+                            Background="{StaticResource TextBox.Static.Background}"
+                            IsHitTestVisible="False">
                         <Grid Margin="{TemplateBinding Padding}">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="auto" />
+                                <ColumnDefinition Width="{Binding Path=ImageWidth, ElementName=ThisControl, Mode=OneWay}" />
                                 <ColumnDefinition Width="2" />
                                 <ColumnDefinition Width="*" />
                             </Grid.ColumnDefinitions>
@@ -322,9 +328,9 @@
                                     Height="{Binding Path=ImageHeight, ElementName=ThisControl, Mode=OneWay}"
                                     BorderBrush="Black"
                                     BorderThickness="1"
-                                    d:Width="38"
-                                    d:Height="12"
-                                    d:Background="BlueViolet">
+                                    d:Background="BlueViolet"
+                                    d:Width="24"
+                                    d:Height="8">
                                 <Border.Background>
                                     <SolidColorBrush Color="{Binding Path=Text, ElementName=PART_EditableTextBox, Converter={StaticResource IntToClassColorConverter}}" />
                                 </Border.Background>
@@ -365,7 +371,8 @@
                 <Grid x:Name="templateRoot" SnapsToDevicePixels="true">
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*" />
-                        <ColumnDefinition Width="0" MinWidth="{DynamicResource {x:Static SystemParameters.VerticalScrollBarWidthKey}}" />
+                        <!--<ColumnDefinition Width="0" MinWidth="{DynamicResource {x:Static SystemParameters.VerticalScrollBarWidthKey}}" />-->
+                        <ColumnDefinition Width="0" />
                     </Grid.ColumnDefinitions>
                     <Popup x:Name="PART_Popup"
                            Grid.ColumnSpan="2"
@@ -392,6 +399,7 @@
                         </theme:SystemDropShadowChrome>
                     </Popup>
                     <ToggleButton x:Name="toggleButton"
+                                  Grid.Column="0"
                                   Grid.ColumnSpan="2"
                                   Background="{TemplateBinding Background}"
                                   BorderBrush="{TemplateBinding BorderBrush}"
@@ -399,6 +407,7 @@
                                   IsChecked="{Binding IsDropDownOpen, Mode=TwoWay, RelativeSource={RelativeSource Mode=TemplatedParent}}"
                                   Style="{StaticResource ComboBoxToggleButton}" />
                     <ContentPresenter x:Name="contentPresenter"
+                                      Grid.Column="0"
                                       Margin="{TemplateBinding Padding}"
                                       HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
                                       VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
@@ -407,7 +416,8 @@
                                       Content="{TemplateBinding SelectionBoxItem}"
                                       ContentTemplateSelector="{TemplateBinding ItemTemplateSelector}"
                                       IsHitTestVisible="false"
-                                      SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                                      SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                      d:Content="99" />
                 </Grid>
 
                 <ControlTemplate.Triggers>
@@ -440,7 +450,7 @@
                 <Setter Property="BorderThickness" Value="1" />
                 <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
                 <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
-                <Setter Property="Padding" Value="6,3,5,3" />
+                <Setter Property="Padding" Value="5,3,5,3" />
                 <Setter Property="ScrollViewer.CanContentScroll" Value="true" />
                 <Setter Property="ScrollViewer.PanningMode" Value="Both" />
                 <Setter Property="Stylus.IsFlicksEnabled" Value="False" />
@@ -456,11 +466,13 @@
         </ResourceDictionary>
     </UserControl.Resources>
 
-    <ComboBox Style="{DynamicResource ClassSelector}"
+    <ComboBox x:Name="InnerComboBox"
+              Style="{DynamicResource ClassSelector}"
               ItemsSource="{StaticResource ClassArray}"
               ItemTemplate="{StaticResource ClassDataTemplate}"
               Text="{Binding Path=Value, ElementName=ThisControl, Mode=TwoWay}"
               IsReadOnly="False"
-              IsEditable="True">
+              IsEditable="True"
+              d:Text="99">
     </ComboBox>
 </UserControl>

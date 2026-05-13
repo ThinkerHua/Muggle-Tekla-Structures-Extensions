@@ -15,7 +15,6 @@
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Documents;
 using System.Windows.Input;
 
 namespace Muggle.TsExtensions.Common.WPF.Controls {

@@ -111,17 +111,11 @@ Contains some common **assets** (vector graphics), **user controls** and **value
 For example, the SelectedIndex of the UpDirection ComboBox in the general tab of the system component is opposite to its corresponding attribute value "zsuunta", and **UpDirectionToSelectedIndexValueConverter** provides this conversion.
 
 包含一些通用的**资产**（矢量图形）、**自定义控件**和**值转换器**。
-例如，系统组件常规选项卡中的 UpDirection 组合框的 SelectedIndex 与其对应的组件参数值 "zsuunta" 是相反的，**UpDirectionToSelectedIndexValueConverter** 提供了这种转换
+例如，系统组件常规选项卡中的 UpDirection 组合框的 SelectedIndex 与其对应的组件参数值 "zsuunta" 是相反的，**UpDirectionToSelectedIndexValueConverter** 提供了这种转换。
 
 <div align="center">
-  <img src="Resources/Introduction_BoltUserControls.png" alt="Bolt user controls">
-  <p>Bolt user controls</p>
-
-  <img src="Resources/Introduction_WeldSymbols.png" alt="Weld symbols">
-  <p>Weld symbols</p>
-
-  <img src="Resources/Introduction_UpDirection+PositionInRelationToPrimaryPart.png" alt="General image">
-  <p>General image</p>
+  <img src="Resources/Introduction_Gallery.gif" alt="Gallery">
+  <p>Gallery</p>
 </div>
 
 ## CodingHelper

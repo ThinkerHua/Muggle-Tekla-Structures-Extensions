@@ -12,7 +12,6 @@
  *  BoltAssembly.xaml.cs: code behind for BoltAssembly user control.
  *  written by Huang YongXing - thinkerhua@hotmail.com
  *==============================================================================*/
-using System;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;

@@ -46,7 +46,7 @@ namespace Muggle.TsExtensions.Common.WPF.Controls {
 
         // Using a DependencyProperty as the backing store for ImageWidth.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty ImageWidthProperty =
-            DependencyProperty.Register(nameof(ImageWidth), typeof(double), typeof(ClassSelector), new PropertyMetadata(38.0));
+            DependencyProperty.Register(nameof(ImageWidth), typeof(double), typeof(ClassSelector), new PropertyMetadata(24.0));
 
         /// <summary>
         /// The height of the image corresponding to the class value.
@@ -59,7 +59,7 @@ namespace Muggle.TsExtensions.Common.WPF.Controls {
 
         // Using a DependencyProperty as the backing store for ImageHeight.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty ImageHeightProperty =
-            DependencyProperty.Register(nameof(ImageHeight), typeof(double), typeof(ClassSelector), new PropertyMetadata(12.0));
+            DependencyProperty.Register(nameof(ImageHeight), typeof(double), typeof(ClassSelector), new PropertyMetadata(6.0));
 
 
         public ClassSelector() {
