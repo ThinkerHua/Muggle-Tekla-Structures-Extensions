@@ -18,4 +18,8 @@
 		<Exec Command="xcopy &quot;$(TargetDir)$(TargetName).dll&quot; &quot;D:\Program Files\Tekla Structures\$(TeklaVersion)\Environments\common\extensions\Muggle.TsExtensions\&quot; /Y /C /Q /R" />
 	</Target>
 
+	<ItemGroup>
+	  <Reference Include="PresentationFramework.Aero2" />
+	</ItemGroup>
+
 </Project>
