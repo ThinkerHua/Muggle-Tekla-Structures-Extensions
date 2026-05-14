@@ -61,6 +61,5 @@
     <Project Path="MG1001/MG1001.csproj" />
     <Project Path="MG1002/MG1002.csproj" />
     <Project Path="MJ5001/MJ5001.csproj" />
-    <Project Path="WK1001/WK1001.csproj"/>
     <Project Path="WK1001/WK1001.csproj" />
 </Solution>
