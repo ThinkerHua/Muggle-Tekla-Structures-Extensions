@@ -14,12 +14,16 @@
 		<DefineConstants Condition="$(Configuration.StartsWith('R'))">TRACE;RELEASE</DefineConstants>
 	</PropertyGroup>
 
+	<ItemGroup>
+		<PackageReference Include="Tekla.Structures.Dialog" ExcludeAssets="runtime" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Reference Include="PresentationFramework.Aero2" />
+	</ItemGroup>
+
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
 		<Exec Command="xcopy &quot;$(TargetDir)$(TargetName).dll&quot; &quot;D:\Program Files\Tekla Structures\$(TeklaVersion)\Environments\common\extensions\Muggle.TsExtensions\&quot; /Y /C /Q /R" />
 	</Target>
-
-	<ItemGroup>
-	  <Reference Include="PresentationFramework.Aero2" />
-	</ItemGroup>
 
 </Project>

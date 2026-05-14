@@ -14,6 +14,7 @@
 	</PropertyGroup>
 	
 	<ItemGroup>
+		<PackageReference Include="CalcBinding" />
 		<PackageReference Include="Muggle.TsExtensions.CodingHelper" />
 		<PackageReference Include="Tekla.Structures" ExcludeAssets="runtime" />
 		<PackageReference Include="Tekla.Structures.Catalogs" ExcludeAssets="runtime" />

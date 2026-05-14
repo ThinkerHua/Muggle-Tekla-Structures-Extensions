@@ -1,4 +1,4 @@
-﻿<!--==============================================================================
+<!--==============================================================================
  *  Muggle TsExtensions - extensions for Tekla Structures
  *
  *  Copyright © 2025 Huang YongXing.
@@ -15,24 +15,23 @@
 <tsd:PluginWindowBase x:Class="Muggle.TsExtensions.KJ1001.Views.MainWindow"
                       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                      xmlns:uiCtrls="clr-namespace:Tekla.Structures.Dialog.UIControls;assembly=Tekla.Structures.Dialog"
-                      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-                      xmlns:local="clr-namespace:Muggle.TsExtensions.KJ1001"
-                      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-                      xmlns:tsd="clr-namespace:Tekla.Structures.Dialog;assembly=Tekla.Structures.Dialog"
-                      xmlns:viewModel="clr-namespace:Muggle.TsExtensions.KJ1001.ViewModels"
-                      xmlns:converters="clr-namespace:Muggle.TsExtensions.KJ1001.Converters"
-                      xmlns:cvc="clr-namespace:Muggle.TsExtensions.Common.WPF.ValueConverters;assembly=Common.WPF"
                       xmlns:sys="clr-namespace:System;assembly=mscorlib"
+                      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                      xmlns:c="clr-namespace:CalcBinding;assembly=CalcBinding"
+                      xmlns:tsd="clr-namespace:Tekla.Structures.Dialog;assembly=Tekla.Structures.Dialog"
+                      xmlns:tsuc="clr-namespace:Tekla.Structures.Dialog.UIControls;assembly=Tekla.Structures.Dialog"
+                      xmlns:vm="clr-namespace:Muggle.TsExtensions.KJ1001.ViewModels"
                       Title="{tsd:Loc albl_KJ1001_title}"
                       ResizeMode="NoResize"
                       SizeToContent="WidthAndHeight"
+                      UseDefaultStyle="False"
                       mc:Ignorable="d">
     <d:UserControl.DataContext>
-        <viewModel:MainWindowViewModel />
+        <vm:MainWindowViewModel />
     </d:UserControl.DataContext>
     <tsd:PluginWindowBase.DataContext>
-        <viewModel:MainWindowViewModel />
+        <vm:MainWindowViewModel />
     </tsd:PluginWindowBase.DataContext>
 
     <Window.Resources>
@@ -42,42 +41,41 @@
                 <ResourceDictionary Source="/KJ1001;component/Resources/backgroundImage_Type0.xaml" />
                 <ResourceDictionary Source="/KJ1001;component/Resources/backgroundImage_type1.xaml" />
                 <ResourceDictionary Source="/KJ1001;component/Resources/backgroundImage_type2.xaml" />
-                <ResourceDictionary Source="/Common.WPF;component/Assets/UpDirection.xaml" />
+                <ResourceDictionary Source="/Common.WPF;component/Controls/PresetControlGroups.xaml" />
             </ResourceDictionary.MergedDictionaries>
-
-            <converters:ConnectionTypeToBoolConverter x:Key="TypeToBoolConverter" />
-            <cvc:UpDirectionToSelectedIndexValueConverter x:Key="upDirectionToSelectedIndex" />
 
             <sys:Int32 x:Key="ConnectionType0">0</sys:Int32>
             <sys:Int32 x:Key="ConnectionType1">1</sys:Int32>
             <sys:Int32 x:Key="ConnectionType2">2</sys:Int32>
 
-            <Style x:Key="element" TargetType="FrameworkElement">
+            <Style x:Key="Element" TargetType="FrameworkElement">
                 <Setter Property="Margin" Value="2" />
                 <Setter Property="VerticalAlignment" Value="Center" />
             </Style>
-            <Style BasedOn="{StaticResource element}" TargetType="TextBlock">
+            <Style x:Key="ContainingTextBoxElement" TargetType="FrameworkElement" BasedOn="{StaticResource Element}">
+                <Setter Property="Height" Value="20" />
+            </Style>
+            <Style BasedOn="{StaticResource Element}" TargetType="TextBlock">
                 <Setter Property="HorizontalAlignment" Value="Right" />
             </Style>
-            <Style BasedOn="{StaticResource element}" TargetType="TextBox" />
-            <Style BasedOn="{StaticResource element}" TargetType="ComboBox" />
-            <Style BasedOn="{StaticResource element}" TargetType="uiCtrls:WpfFilterCheckBox">
-                <Setter Property="HorizontalAlignment" Value="Center" />
+            <Style BasedOn="{StaticResource Element}" TargetType="CheckBox" />
+            <Style BasedOn="{StaticResource ContainingTextBoxElement}" TargetType="TextBox">
+                <Setter Property="HorizontalContentAlignment" Value="Center" />
+                <Setter Property="VerticalContentAlignment" Value="Center" />
             </Style>
-            <Style BasedOn="{StaticResource element}" TargetType="uiCtrls:WpfBoltCatalogStandard" />
-            <Style BasedOn="{StaticResource element}" TargetType="uiCtrls:WpfBoltCatalogSize" />
-            <Style BasedOn="{StaticResource element}" TargetType="uiCtrls:WpfMaterialCatalog">
-                <Setter Property="HorizontalAlignment" Value="Center" />
-            </Style>
-            <Style BasedOn="{StaticResource element}" TargetType="uiCtrls:WpfProfileCatalog">
-                <Setter Property="HorizontalAlignment" Value="Center" />
-            </Style>
+            <Style BasedOn="{StaticResource ContainingTextBoxElement}" TargetType="ComboBox" />
+            <Style BasedOn="{StaticResource Element}" TargetType="tsuc:WpfFilterCheckBox" />
+            <Style BasedOn="{StaticResource Element}" TargetType="tsuc:WpfProfileCatalog" />
+            <Style BasedOn="{StaticResource Element}" TargetType="tsuc:WpfMaterialCatalog" />
+            <Style BasedOn="{StaticResource ContainingTextBoxElement}" TargetType="tsuc:WpfBoltCatalogSize" />
+            <Style BasedOn="{StaticResource ContainingTextBoxElement}" TargetType="tsuc:WpfBoltCatalogStandard" />
+            
         </ResourceDictionary>
     </Window.Resources>
 
     <DockPanel>
-        <uiCtrls:WpfSaveLoad HorizontalAlignment="Stretch" VerticalAlignment="Top" DockPanel.Dock="Top" />
-        <uiCtrls:WpfOkApplyModifyGetOnOffCancel ApplyClicked="WPFOkApplyModifyGetOnOffCancel_ApplyClicked"
+        <tsuc:WpfSaveLoad HorizontalAlignment="Stretch" VerticalAlignment="Top" DockPanel.Dock="Top" />
+        <tsuc:WpfOkApplyModifyGetOnOffCancel ApplyClicked="WPFOkApplyModifyGetOnOffCancel_ApplyClicked"
                                                 CancelClicked="WPFOkApplyModifyGetOnOffCancel_CancelClicked"
                                                 DockPanel.Dock="Bottom"
                                                 GetClicked="WPFOkApplyModifyGetOnOffCancel_GetClicked"
@@ -124,7 +122,7 @@
                         </Grid.RowDefinitions>
 
                         <TextBlock Grid.Row="0" Grid.Column="0" Text="{tsd:Loc albl_connection_type}" />
-                        <uiCtrls:WpfFilterCheckBox Grid.Row="0" Grid.Column="2" AttributeName="type" />
+                        <tsuc:WpfFilterCheckBox Grid.Row="0" Grid.Column="2" AttributeName="type" />
                         <ComboBox Grid.Row="0" Grid.Column="3" SelectedIndex="{Binding Type, Mode=TwoWay}">
                             <ComboBoxItem Content="{tsd:Loc albl_type1_description}" />
                             <ComboBoxItem Content="{tsd:Loc albl_type2_description}" />
@@ -133,39 +131,39 @@
 
                         <TextBlock Grid.Row="1" Grid.Column="0" Text="{tsd:Loc albl_inner_stiffener_thickness}" />
                         <TextBlock Grid.Row="1" Grid.Column="1" Text="a" />
-                        <uiCtrls:WpfFilterCheckBox Grid.Row="1" Grid.Column="2" AttributeName="innerSTF_THK" />
+                        <tsuc:WpfFilterCheckBox Grid.Row="1" Grid.Column="2" AttributeName="innerSTF_THK" />
                         <TextBox Grid.Row="1" Grid.Column="3" Text="{Binding InnerStiffenerThickness, Mode=TwoWay}" ToolTip="{tsd:Loc albl_inner_stiffener_thickness_tooltip}" />
 
                         <TextBlock Grid.Row="2" Grid.Column="0" Text="{tsd:Loc albl_inner_stiffener_chamfer_size}" />
                         <TextBlock Grid.Row="2" Grid.Column="1" Text="b" />
-                        <uiCtrls:WpfFilterCheckBox Grid.Row="2" Grid.Column="2" AttributeName="innerSTF_chamfer" />
+                        <tsuc:WpfFilterCheckBox Grid.Row="2" Grid.Column="2" AttributeName="innerSTF_chamfer" />
                         <TextBox Grid.Row="2" Grid.Column="3" Text="{Binding InnerStiffenerChamferSize, Mode=TwoWay}" />
 
                         <TextBlock Grid.Row="3" Grid.Column="0" Text="{tsd:Loc albl_more_inner_stiffeners_distance_list}" />
                         <TextBlock Grid.Row="3" Grid.Column="1" Text="c" />
-                        <uiCtrls:WpfFilterCheckBox Grid.Row="3" Grid.Column="2" AttributeName="moreSTF_DISLST" />
+                        <tsuc:WpfFilterCheckBox Grid.Row="3" Grid.Column="2" AttributeName="moreSTF_DISLST" />
                         <TextBox Grid.Row="3" Grid.Column="3" Text="{Binding MoreInnerStiffenersDistanceList, Mode=TwoWay}" />
 
                         <TextBlock Grid.Row="4" Grid.Column="0" Text="{tsd:Loc albl_thickened_stiffener_thickness}" />
                         <TextBlock Grid.Row="4" Grid.Column="1" Text="d" />
-                        <uiCtrls:WpfFilterCheckBox Grid.Row="4" Grid.Column="2" AttributeName="THKDSTF_THK" />
+                        <tsuc:WpfFilterCheckBox Grid.Row="4" Grid.Column="2" AttributeName="THKDSTF_THK" />
                         <TextBox Grid.Row="4" Grid.Column="3" Text="{Binding ThickenedStiffenerThickness, Mode=TwoWay}" />
 
                         <TextBlock Grid.Row="5" Grid.Column="0" Text="{tsd:Loc albl_thickened_stiffener_extension_length}" />
                         <TextBlock Grid.Row="5" Grid.Column="1" Text="e" />
-                        <uiCtrls:WpfFilterCheckBox Grid.Row="5" Grid.Column="2" AttributeName="THKDSTF_EXTLEN" />
+                        <tsuc:WpfFilterCheckBox Grid.Row="5" Grid.Column="2" AttributeName="THKDSTF_EXTLEN" />
                         <TextBox Grid.Row="5" Grid.Column="3" Text="{Binding ThickenedStiffenerExtensionLength, Mode=TwoWay}" />
 
                         <TextBlock Grid.Row="6" Grid.Column="0" Text="{tsd:Loc albl_stiffener_material}" />
-                        <uiCtrls:WpfFilterCheckBox Grid.Row="6" Grid.Column="2" AttributeName="STF_MATL" />
+                        <tsuc:WpfFilterCheckBox Grid.Row="6" Grid.Column="2" AttributeName="STF_MATL" />
                         <TextBox Grid.Row="6" Grid.Column="3" Text="{Binding StiffenerMaterial, Mode=TwoWay}" />
-                        <uiCtrls:WpfMaterialCatalog Grid.Row="6" Grid.Column="4" SelectClicked="STF_MATL_SelectClicked" SelectionDone="STF_MATL_SelectionDone" />
+                        <tsuc:WpfMaterialCatalog Grid.Row="6" Grid.Column="4" SelectClicked="STF_MATL_SelectClicked" SelectionDone="STF_MATL_SelectionDone" />
 
                     </Grid>
                 </DockPanel>
             </TabItem>
             <TabItem Header="{tsd:Loc albl_type1}">
-                <DockPanel IsEnabled="{Binding Type, Converter={StaticResource TypeToBoolConverter}, ConverterParameter={StaticResource ConnectionType0}}">
+                <DockPanel IsEnabled="{c:Binding 'Type == 0'}">
                     <Canvas Width="300" Height="400" DockPanel.Dock="Left">
                         <Image Width="300" Height="400">
                             <Image.Source>
@@ -218,67 +216,67 @@
 
                         <TextBlock Grid.Row="0" Grid.Column="0" Text="{tsd:Loc albl_gap}" />
                         <TextBlock Grid.Row="0" Grid.Column="1" Text="a" />
-                        <uiCtrls:WpfFilterCheckBox Grid.Row="0" Grid.Column="2" AttributeName="gap" />
+                        <tsuc:WpfFilterCheckBox Grid.Row="0" Grid.Column="2" AttributeName="gap" />
                         <TextBox Grid.Row="0" Grid.Column="3" Text="{Binding Gap, Mode=TwoWay}" />
 
                         <TextBlock Grid.Row="1" Grid.Column="0" Text="{tsd:Loc albl_rathole_radius}" />
                         <TextBlock Grid.Row="1" Grid.Column="1" Text="b" />
-                        <uiCtrls:WpfFilterCheckBox Grid.Row="1" Grid.Column="2" AttributeName="ratHole_radius" />
+                        <tsuc:WpfFilterCheckBox Grid.Row="1" Grid.Column="2" AttributeName="ratHole_radius" />
                         <TextBox Grid.Row="1" Grid.Column="3" Text="{Binding RatHoleRadius, Mode=TwoWay}" />
 
                         <TextBlock Grid.Row="2" Grid.Column="0" Text="{tsd:Loc albl_weld_angle}" />
-                        <uiCtrls:WpfFilterCheckBox Grid.Row="2" Grid.Column="2" AttributeName="weld_angle" />
+                        <tsuc:WpfFilterCheckBox Grid.Row="2" Grid.Column="2" AttributeName="weld_angle" />
                         <TextBox Grid.Row="2" Grid.Column="3" Text="{Binding WeldAngle, Mode=TwoWay}" />
 
                         <TextBlock Grid.Row="3" Grid.Column="0" Text="{tsd:Loc albl_root_face}" />
-                        <uiCtrls:WpfFilterCheckBox Grid.Row="3" Grid.Column="2" AttributeName="root_face" />
+                        <tsuc:WpfFilterCheckBox Grid.Row="3" Grid.Column="2" AttributeName="root_face" />
                         <TextBox Grid.Row="3" Grid.Column="3" Text="{Binding WeldRootFace, Mode=TwoWay}" />
 
                         <TextBlock Grid.Row="4" Grid.Column="0" Text="{tsd:Loc albl_root_opening}" />
-                        <uiCtrls:WpfFilterCheckBox Grid.Row="4" Grid.Column="2" AttributeName="root_opening" />
+                        <tsuc:WpfFilterCheckBox Grid.Row="4" Grid.Column="2" AttributeName="root_opening" />
                         <TextBox Grid.Row="4" Grid.Column="3" Text="{Binding WeldRootOpening, Mode=TwoWay}" />
 
                         <TextBlock Grid.Row="5" Grid.Column="0" Text="{tsd:Loc albl_cover_thickness}" />
-                        <uiCtrls:WpfFilterCheckBox Grid.Row="5" Grid.Column="2" AttributeName="cover_THK" />
+                        <tsuc:WpfFilterCheckBox Grid.Row="5" Grid.Column="2" AttributeName="cover_THK" />
                         <TextBox Grid.Row="5" Grid.Column="3" Text="{Binding CoverThickness, Mode=TwoWay}" />
 
                         <TextBlock Grid.Row="6" Grid.Column="0" Text="{tsd:Loc albl_cover_length1}" />
                         <TextBlock Grid.Row="6" Grid.Column="1" Text="c" />
-                        <uiCtrls:WpfFilterCheckBox Grid.Row="6" Grid.Column="2" AttributeName="cover_LEN1" />
+                        <tsuc:WpfFilterCheckBox Grid.Row="6" Grid.Column="2" AttributeName="cover_LEN1" />
                         <TextBox Grid.Row="6" Grid.Column="3" Text="{Binding CoverLength1, Mode=TwoWay}" />
 
                         <TextBlock Grid.Row="7" Grid.Column="0" Text="{tsd:Loc albl_cover_length2}" />
                         <TextBlock Grid.Row="7" Grid.Column="1" Text="d" />
-                        <uiCtrls:WpfFilterCheckBox Grid.Row="7" Grid.Column="2" AttributeName="cover_LEN2" />
+                        <tsuc:WpfFilterCheckBox Grid.Row="7" Grid.Column="2" AttributeName="cover_LEN2" />
                         <TextBox Grid.Row="7" Grid.Column="3" Text="{Binding CoverLength2, Mode=TwoWay}" />
 
                         <TextBlock Grid.Row="8" Grid.Column="0" Text="{tsd:Loc albl_top_cover_width1}" />
                         <TextBlock Grid.Row="8" Grid.Column="1" Text="e" />
-                        <uiCtrls:WpfFilterCheckBox Grid.Row="8" Grid.Column="2" AttributeName="topCover_WD1" />
+                        <tsuc:WpfFilterCheckBox Grid.Row="8" Grid.Column="2" AttributeName="topCover_WD1" />
                         <TextBox Grid.Row="8" Grid.Column="3" Text="{Binding TopCoverWidth1, Mode=TwoWay}" />
 
                         <TextBlock Grid.Row="9" Grid.Column="0" Text="{tsd:Loc albl_top_cover_width2}" />
                         <TextBlock Grid.Row="9" Grid.Column="1" Text="f" />
-                        <uiCtrls:WpfFilterCheckBox Grid.Row="9" Grid.Column="2" AttributeName="topCover_WD2" />
+                        <tsuc:WpfFilterCheckBox Grid.Row="9" Grid.Column="2" AttributeName="topCover_WD2" />
                         <TextBox Grid.Row="9" Grid.Column="3" Text="{Binding TopCoverWidth2, Mode=TwoWay}" />
 
                         <TextBlock Grid.Row="10" Grid.Column="0" Text="{tsd:Loc albl_bottom_cover_width1}" />
                         <TextBlock Grid.Row="10" Grid.Column="1" Text="g" />
-                        <uiCtrls:WpfFilterCheckBox Grid.Row="10" Grid.Column="2" AttributeName="BTMCover_WD1" />
+                        <tsuc:WpfFilterCheckBox Grid.Row="10" Grid.Column="2" AttributeName="BTMCover_WD1" />
                         <TextBox Grid.Row="10" Grid.Column="3" Text="{Binding BottomCoverWidth1, Mode=TwoWay}" />
 
                         <TextBlock Grid.Row="11" Grid.Column="0" Text="{tsd:Loc albl_bottom_cover_width2}" />
                         <TextBlock Grid.Row="11" Grid.Column="1" Text="h" />
-                        <uiCtrls:WpfFilterCheckBox Grid.Row="11" Grid.Column="2" AttributeName="BTMCover_WD2" />
+                        <tsuc:WpfFilterCheckBox Grid.Row="11" Grid.Column="2" AttributeName="BTMCover_WD2" />
                         <TextBox Grid.Row="11" Grid.Column="3" Text="{Binding BottomCoverWidth2, Mode=TwoWay}" />
 
                         <TextBlock Grid.Row="12" Grid.Column="0" Text="{tsd:Loc albl_cover_material}" />
-                        <uiCtrls:WpfFilterCheckBox Grid.Row="12" Grid.Column="2" AttributeName="cover_MATL" />
+                        <tsuc:WpfFilterCheckBox Grid.Row="12" Grid.Column="2" AttributeName="cover_MATL" />
                         <TextBox Grid.Row="12" Grid.Column="3" Text="{Binding CoverMaterial, Mode=TwoWay}" />
-                        <uiCtrls:WpfMaterialCatalog Grid.Row="12" Grid.Column="4" SelectClicked="Cover_MATL_SelectClicked" SelectionDone="Cover_MATL_SelectionDone" />
+                        <tsuc:WpfMaterialCatalog Grid.Row="12" Grid.Column="4" SelectClicked="Cover_MATL_SelectClicked" SelectionDone="Cover_MATL_SelectionDone" />
 
                         <TextBlock Grid.Row="13" Grid.Column="0" Text="{tsd:Loc albl_web_connection_plate_creation_enum}" />
-                        <uiCtrls:WpfFilterCheckBox Grid.Row="13" Grid.Column="2" AttributeName="webCNXPL_enum" />
+                        <tsuc:WpfFilterCheckBox Grid.Row="13" Grid.Column="2" AttributeName="webCNXPL_enum" />
                         <ComboBox Grid.Row="13" Grid.Column="3" SelectedIndex="{Binding WebConnectionPlateCreationEnum, Mode=TwoWay}">
                             <ComboBoxItem Content="{tsd:Loc albl_only_front}" />
                             <ComboBoxItem Content="{tsd:Loc albl_only_behind}" />
@@ -286,36 +284,36 @@
                         </ComboBox>
 
                         <TextBlock Grid.Row="14" Grid.Column="0" Text="{tsd:Loc albl_web_connection_plate_thickness}" />
-                        <uiCtrls:WpfFilterCheckBox Grid.Row="14" Grid.Column="2" AttributeName="webCNXPL_THK" />
+                        <tsuc:WpfFilterCheckBox Grid.Row="14" Grid.Column="2" AttributeName="webCNXPL_THK" />
                         <TextBox Grid.Row="14" Grid.Column="3" Text="{Binding WebConnectionPlateThickness, Mode=TwoWay}" />
 
                         <TextBlock Grid.Row="15" Grid.Column="0" Text="{tsd:Loc albl_connection_plate_material}" />
-                        <uiCtrls:WpfFilterCheckBox Grid.Row="15" Grid.Column="2" AttributeName="CNXPL_MATL" />
+                        <tsuc:WpfFilterCheckBox Grid.Row="15" Grid.Column="2" AttributeName="CNXPL_MATL" />
                         <TextBox Grid.Row="15" Grid.Column="3" Text="{Binding ConnectionPlateMaterial, Mode=TwoWay}" />
-                        <uiCtrls:WpfMaterialCatalog Grid.Row="15" Grid.Column="4" SelectClicked="CNXPL_MATL_SelectClicked" SelectionDone="CNXPL_MATL_SelectionDone" />
+                        <tsuc:WpfMaterialCatalog Grid.Row="15" Grid.Column="4" SelectClicked="CNXPL_MATL_SelectClicked" SelectionDone="CNXPL_MATL_SelectionDone" />
 
                         <TextBlock Grid.Row="16" Grid.Column="0" Text="{tsd:Loc albl_web_bolt_standard}" />
-                        <uiCtrls:WpfFilterCheckBox Grid.Row="16" Grid.Column="2" AttributeName="webBolt_STD" />
-                        <uiCtrls:WpfBoltCatalogStandard x:Name="wpfBS_webBolt_STD" Grid.Row="16" Grid.Column="3" SelectedItem="{Binding WebBoltStandard, Mode=TwoWay}" />
+                        <tsuc:WpfFilterCheckBox Grid.Row="16" Grid.Column="2" AttributeName="webBolt_STD" />
+                        <tsuc:WpfBoltCatalogStandard x:Name="wpfBS_webBolt_STD" Grid.Row="16" Grid.Column="3" SelectedItem="{Binding WebBoltStandard, Mode=TwoWay}" />
 
                         <TextBlock Grid.Row="17" Grid.Column="0" Text="{tsd:Loc albl_web_bolt_size}" />
-                        <uiCtrls:WpfFilterCheckBox Grid.Row="17" Grid.Column="2" AttributeName="webBolt_size" />
-                        <uiCtrls:WpfBoltCatalogSize Grid.Row="17" Grid.Column="3" SelectedItem="{Binding WebBoltSize}" ItemsSource="{Binding ElementName=wpfBS_webBolt_STD, Path=BoltSizes}" />
+                        <tsuc:WpfFilterCheckBox Grid.Row="17" Grid.Column="2" AttributeName="webBolt_size" />
+                        <tsuc:WpfBoltCatalogSize Grid.Row="17" Grid.Column="3" SelectedItem="{Binding WebBoltSize}" ItemsSource="{Binding ElementName=wpfBS_webBolt_STD, Path=BoltSizes}" />
 
                         <TextBlock Grid.Row="18" Grid.Column="0" Text="{tsd:Loc albl_web_position_distance_list_X}" />
                         <TextBlock Grid.Row="18" Grid.Column="1" Text="i" />
-                        <uiCtrls:WpfFilterCheckBox Grid.Row="18" Grid.Column="2" AttributeName="webPOS_X" />
+                        <tsuc:WpfFilterCheckBox Grid.Row="18" Grid.Column="2" AttributeName="webPOS_X" />
                         <TextBox Grid.Row="18" Grid.Column="3" Text="{Binding WebPositionDistanceListX, Mode=TwoWay}" />
 
                         <TextBlock Grid.Row="19" Grid.Column="0" Text="{tsd:Loc albl_web_position_distance_list_Y}" />
                         <TextBlock Grid.Row="19" Grid.Column="1" Text="j" />
-                        <uiCtrls:WpfFilterCheckBox Grid.Row="19" Grid.Column="2" AttributeName="webPOS_Y" />
+                        <tsuc:WpfFilterCheckBox Grid.Row="19" Grid.Column="2" AttributeName="webPOS_Y" />
                         <TextBox Grid.Row="19" Grid.Column="3" Text="{Binding WebPositionDistanceListY, Mode=TwoWay}" />
                     </Grid>
                 </DockPanel>
             </TabItem>
             <TabItem Header="{tsd:Loc albl_type2}">
-                <DockPanel IsEnabled="{Binding Type, Converter={StaticResource TypeToBoolConverter}, ConverterParameter={StaticResource ConnectionType1}}">
+                <DockPanel IsEnabled="{c:Binding 'Type == 1'}">
                     <Canvas Width="350" Height="400" DockPanel.Dock="Left">
                         <Image Width="350" Height="400">
                             <Image.Source>
@@ -364,99 +362,99 @@
 
                         <TextBlock Grid.Row="0" Grid.Column="0" Text="{tsd:Loc albl_gap}" />
                         <TextBlock Grid.Row="0" Grid.Column="1" Text="a" />
-                        <uiCtrls:WpfFilterCheckBox Grid.Row="0" Grid.Column="2" AttributeName="gap" />
+                        <tsuc:WpfFilterCheckBox Grid.Row="0" Grid.Column="2" AttributeName="gap" />
                         <TextBox Grid.Row="0" Grid.Column="3" Text="{Binding Gap, Mode=TwoWay}" />
 
                         <TextBlock Grid.Row="1" Grid.Column="0" Text="{tsd:Loc albl_rathole_radius}" />
                         <TextBlock Grid.Row="1" Grid.Column="1" Text="b" />
-                        <uiCtrls:WpfFilterCheckBox Grid.Row="1" Grid.Column="2" AttributeName="ratHole_radius" />
+                        <tsuc:WpfFilterCheckBox Grid.Row="1" Grid.Column="2" AttributeName="ratHole_radius" />
                         <TextBox Grid.Row="1" Grid.Column="3" Text="{Binding RatHoleRadius, Mode=TwoWay}" />
 
                         <TextBlock Grid.Row="2" Grid.Column="0" Text="{tsd:Loc albl_weld_angle}" />
-                        <uiCtrls:WpfFilterCheckBox Grid.Row="2" Grid.Column="2" AttributeName="weld_angle" />
+                        <tsuc:WpfFilterCheckBox Grid.Row="2" Grid.Column="2" AttributeName="weld_angle" />
                         <TextBox Grid.Row="2" Grid.Column="3" Text="{Binding WeldAngle, Mode=TwoWay}" />
 
                         <TextBlock Grid.Row="3" Grid.Column="0" Text="{tsd:Loc albl_root_face}" />
-                        <uiCtrls:WpfFilterCheckBox Grid.Row="3" Grid.Column="2" AttributeName="root_face" />
+                        <tsuc:WpfFilterCheckBox Grid.Row="3" Grid.Column="2" AttributeName="root_face" />
                         <TextBox Grid.Row="3" Grid.Column="3" Text="{Binding WeldRootFace, Mode=TwoWay}" />
 
                         <TextBlock Grid.Row="4" Grid.Column="0" Text="{tsd:Loc albl_root_opening}" />
-                        <uiCtrls:WpfFilterCheckBox Grid.Row="4" Grid.Column="2" AttributeName="root_opening" />
+                        <tsuc:WpfFilterCheckBox Grid.Row="4" Grid.Column="2" AttributeName="root_opening" />
                         <TextBox Grid.Row="4" Grid.Column="3" Text="{Binding WeldRootOpening, Mode=TwoWay}" />
 
                         <TextBlock Grid.Row="5" Grid.Column="0" Text="{tsd:Loc albl_short_beam_length}" />
                         <TextBlock Grid.Row="5" Grid.Column="1" Text="c" />
-                        <uiCtrls:WpfFilterCheckBox Grid.Row="5" Grid.Column="2" AttributeName="shortBeam_LEN" />
+                        <tsuc:WpfFilterCheckBox Grid.Row="5" Grid.Column="2" AttributeName="shortBeam_LEN" />
                         <TextBox Grid.Row="5" Grid.Column="3" Text="{Binding ShortBeamLength, Mode=TwoWay}" />
 
                         <TextBlock Grid.Row="6" Grid.Column="0" Text="{tsd:Loc albl_short_beam_profile}" />
-                        <uiCtrls:WpfFilterCheckBox Grid.Row="6" Grid.Column="2" AttributeName="shortBeam_PRF" />
+                        <tsuc:WpfFilterCheckBox Grid.Row="6" Grid.Column="2" AttributeName="shortBeam_PRF" />
                         <TextBox Grid.Row="6" Grid.Column="3" Text="{Binding ShortBeamProfile, Mode=TwoWay}" />
-                        <uiCtrls:WpfProfileCatalog Grid.Row="6" Grid.Column="4" SelectClicked="ShortBeam_PRF_SelectClicked" SelectionDone="ShortBeam_PRF_SelectionDone" />
+                        <tsuc:WpfProfileCatalog Grid.Row="6" Grid.Column="4" SelectClicked="ShortBeam_PRF_SelectClicked" SelectionDone="ShortBeam_PRF_SelectionDone" />
 
                         <TextBlock Grid.Row="7" Grid.Column="0" Text="{tsd:Loc albl_short_beam_material}" />
-                        <uiCtrls:WpfFilterCheckBox Grid.Row="7" Grid.Column="2" AttributeName="shortBeam_MATL" />
+                        <tsuc:WpfFilterCheckBox Grid.Row="7" Grid.Column="2" AttributeName="shortBeam_MATL" />
                         <TextBox Grid.Row="7" Grid.Column="3" Text="{Binding ShortBeamMaterial, Mode=TwoWay}" />
-                        <uiCtrls:WpfMaterialCatalog Grid.Row="7" Grid.Column="4" SelectClicked="ShortBeam_MATL_SelectClicked" SelectionDone="ShortBeam_MATL_SelectionDone" />
+                        <tsuc:WpfMaterialCatalog Grid.Row="7" Grid.Column="4" SelectClicked="ShortBeam_MATL_SelectClicked" SelectionDone="ShortBeam_MATL_SelectionDone" />
 
                         <TextBlock Grid.Row="8" Grid.Column="0" Text="{tsd:Loc albl_web_connection_plate_thickness}" />
-                        <uiCtrls:WpfFilterCheckBox Grid.Row="8" Grid.Column="2" AttributeName="webCNXPL_THK" />
+                        <tsuc:WpfFilterCheckBox Grid.Row="8" Grid.Column="2" AttributeName="webCNXPL_THK" />
                         <TextBox Grid.Row="8" Grid.Column="3" Text="{Binding WebConnectionPlateThickness, Mode=TwoWay}" />
 
                         <TextBlock Grid.Row="9" Grid.Column="0" Text="{tsd:Loc albl_outter_flange_connection_plate_thickness}" />
-                        <uiCtrls:WpfFilterCheckBox Grid.Row="9" Grid.Column="2" AttributeName="outFLNGCNXPL_THK" />
+                        <tsuc:WpfFilterCheckBox Grid.Row="9" Grid.Column="2" AttributeName="outFLNGCNXPL_THK" />
                         <TextBox Grid.Row="9" Grid.Column="3" Text="{Binding OutterFlangeConnectionPlateThickness, Mode=TwoWay}" />
 
                         <TextBlock Grid.Row="10" Grid.Column="0" Text="{tsd:Loc albl_inner_flange_connection_plate_thickness}" />
-                        <uiCtrls:WpfFilterCheckBox Grid.Row="10" Grid.Column="2" AttributeName="innerFLNGCNXPL_THK" />
+                        <tsuc:WpfFilterCheckBox Grid.Row="10" Grid.Column="2" AttributeName="innerFLNGCNXPL_THK" />
                         <TextBox Grid.Row="10" Grid.Column="3" Text="{Binding InnerFlangeConnectionPlateThickness, Mode=TwoWay}" />
 
                         <TextBlock Grid.Row="11" Grid.Column="0" Text="{tsd:Loc albl_connection_plate_material}" />
-                        <uiCtrls:WpfFilterCheckBox Grid.Row="11" Grid.Column="2" AttributeName="CNXPL_MATL" />
+                        <tsuc:WpfFilterCheckBox Grid.Row="11" Grid.Column="2" AttributeName="CNXPL_MATL" />
                         <TextBox Grid.Row="11" Grid.Column="3" Text="{Binding ConnectionPlateMaterial, Mode=TwoWay}" />
-                        <uiCtrls:WpfMaterialCatalog Grid.Row="11" Grid.Column="4" SelectClicked="CNXPL_MATL_SelectClicked" SelectionDone="CNXPL_MATL_SelectionDone" />
+                        <tsuc:WpfMaterialCatalog Grid.Row="11" Grid.Column="4" SelectClicked="CNXPL_MATL_SelectClicked" SelectionDone="CNXPL_MATL_SelectionDone" />
 
                         <TextBlock Grid.Row="12" Grid.Column="0" Text="{tsd:Loc albl_web_bolt_standard}" />
-                        <uiCtrls:WpfFilterCheckBox Grid.Row="12" Grid.Column="2" AttributeName="webBolt_STD" />
-                        <uiCtrls:WpfBoltCatalogStandard Grid.Row="12" Grid.Column="3" SelectedItem="{Binding WebBoltStandard, Mode=TwoWay}" />
+                        <tsuc:WpfFilterCheckBox Grid.Row="12" Grid.Column="2" AttributeName="webBolt_STD" />
+                        <tsuc:WpfBoltCatalogStandard Grid.Row="12" Grid.Column="3" SelectedItem="{Binding WebBoltStandard, Mode=TwoWay}" />
 
                         <TextBlock Grid.Row="13" Grid.Column="0" Text="{tsd:Loc albl_web_bolt_size}" />
-                        <uiCtrls:WpfFilterCheckBox Grid.Row="13" Grid.Column="2" AttributeName="webBolt_size" />
-                        <uiCtrls:WpfBoltCatalogSize Grid.Row="13" Grid.Column="3" SelectedItem="{Binding WebBoltSize}" ItemsSource="{Binding ElementName=wpfBS_webBolt_STD, Path=BoltSizes}" />
+                        <tsuc:WpfFilterCheckBox Grid.Row="13" Grid.Column="2" AttributeName="webBolt_size" />
+                        <tsuc:WpfBoltCatalogSize Grid.Row="13" Grid.Column="3" SelectedItem="{Binding WebBoltSize}" ItemsSource="{Binding ElementName=wpfBS_webBolt_STD, Path=BoltSizes}" />
 
                         <TextBlock Grid.Row="14" Grid.Column="0" Text="{tsd:Loc albl_web_position_distance_list_X}" />
                         <TextBlock Grid.Row="14" Grid.Column="1" Text="d" />
-                        <uiCtrls:WpfFilterCheckBox Grid.Row="14" Grid.Column="2" AttributeName="webPOS_X" />
+                        <tsuc:WpfFilterCheckBox Grid.Row="14" Grid.Column="2" AttributeName="webPOS_X" />
                         <TextBox Grid.Row="14" Grid.Column="3" Text="{Binding WebPositionDistanceListX, Mode=TwoWay}" />
 
                         <TextBlock Grid.Row="15" Grid.Column="0" Text="{tsd:Loc albl_web_position_distance_list_Y}" />
                         <TextBlock Grid.Row="15" Grid.Column="1" Text="e" />
-                        <uiCtrls:WpfFilterCheckBox Grid.Row="15" Grid.Column="2" AttributeName="webPOS_Y" />
+                        <tsuc:WpfFilterCheckBox Grid.Row="15" Grid.Column="2" AttributeName="webPOS_Y" />
                         <TextBox Grid.Row="15" Grid.Column="3" Text="{Binding WebPositionDistanceListY, Mode=TwoWay}" />
 
                         <TextBlock Grid.Row="16" Grid.Column="0" Text="{tsd:Loc albl_flange_bolt_standard}" />
-                        <uiCtrls:WpfFilterCheckBox Grid.Row="16" Grid.Column="2" AttributeName="FLNGBolt_STD" />
-                        <uiCtrls:WpfBoltCatalogStandard x:Name="wpfBS_FLNGBolt_STD" Grid.Row="16" Grid.Column="3" SelectedItem="{Binding FlangeBoltStandard, Mode=TwoWay}" />
+                        <tsuc:WpfFilterCheckBox Grid.Row="16" Grid.Column="2" AttributeName="FLNGBolt_STD" />
+                        <tsuc:WpfBoltCatalogStandard x:Name="wpfBS_FLNGBolt_STD" Grid.Row="16" Grid.Column="3" SelectedItem="{Binding FlangeBoltStandard, Mode=TwoWay}" />
 
                         <TextBlock Grid.Row="17" Grid.Column="0" Text="{tsd:Loc albl_flange_bolt_size}" />
-                        <uiCtrls:WpfFilterCheckBox Grid.Row="17" Grid.Column="2" AttributeName="FLNGBolt_size" />
-                        <uiCtrls:WpfBoltCatalogSize Grid.Row="17" Grid.Column="3" SelectedItem="{Binding FlangeBoltSize, Mode=TwoWay}" ItemsSource="{Binding ElementName=wpfBS_FLNGBolt_STD, Path=BoltSizes}" />
+                        <tsuc:WpfFilterCheckBox Grid.Row="17" Grid.Column="2" AttributeName="FLNGBolt_size" />
+                        <tsuc:WpfBoltCatalogSize Grid.Row="17" Grid.Column="3" SelectedItem="{Binding FlangeBoltSize, Mode=TwoWay}" ItemsSource="{Binding ElementName=wpfBS_FLNGBolt_STD, Path=BoltSizes}" />
 
                         <TextBlock Grid.Row="18" Grid.Column="0" Text="{tsd:Loc albl_flange_position_distance_list_X}" />
                         <TextBlock Grid.Row="18" Grid.Column="1" Text="f" />
-                        <uiCtrls:WpfFilterCheckBox Grid.Row="18" Grid.Column="2" AttributeName="FLNGPOS_X" />
+                        <tsuc:WpfFilterCheckBox Grid.Row="18" Grid.Column="2" AttributeName="FLNGPOS_X" />
                         <TextBox Grid.Row="18" Grid.Column="3" Text="{Binding FlangePositionDistanceListX, Mode=TwoWay}" />
 
                         <TextBlock Grid.Row="19" Grid.Column="0" Text="{tsd:Loc albl_flange_position_distance_list_Y}" />
                         <TextBlock Grid.Row="19" Grid.Column="1" Text="g" />
-                        <uiCtrls:WpfFilterCheckBox Grid.Row="19" Grid.Column="2" AttributeName="FLNGPOS_Y" />
+                        <tsuc:WpfFilterCheckBox Grid.Row="19" Grid.Column="2" AttributeName="FLNGPOS_Y" />
                         <TextBox Grid.Row="19" Grid.Column="3" Text="{Binding FlangePositionDistanceListY, Mode=TwoWay}" />
 
                     </Grid>
                 </DockPanel>
             </TabItem>
             <TabItem Header="{tsd:Loc albl_type3}">
-                <DockPanel IsEnabled="{Binding Type, Converter={StaticResource TypeToBoolConverter}, ConverterParameter={StaticResource ConnectionType2}}">
+                <DockPanel IsEnabled="{c:Binding 'Type == 2'}">
                     <Canvas Width="350" Height="400" DockPanel.Dock="Left">
                         <Image Width="350" Height="400">
                             <Image.Source>
@@ -496,141 +494,71 @@
 
                         <TextBlock Grid.Row="0" Grid.Column="0" Text="{tsd:Loc albl_gap}" />
                         <TextBlock Grid.Row="0" Grid.Column="1" Text="a" />
-                        <uiCtrls:WpfFilterCheckBox Grid.Row="0" Grid.Column="2" AttributeName="gap" />
+                        <tsuc:WpfFilterCheckBox Grid.Row="0" Grid.Column="2" AttributeName="gap" />
                         <TextBox Grid.Row="0" Grid.Column="3" Text="{Binding Gap, Mode=TwoWay}" />
 
                         <TextBlock Grid.Row="1" Grid.Column="0" Text="{tsd:Loc albl_rathole_radius}" />
                         <TextBlock Grid.Row="1" Grid.Column="1" Text="b" />
-                        <uiCtrls:WpfFilterCheckBox Grid.Row="1" Grid.Column="2" AttributeName="ratHole_radius" />
+                        <tsuc:WpfFilterCheckBox Grid.Row="1" Grid.Column="2" AttributeName="ratHole_radius" />
                         <TextBox Grid.Row="1" Grid.Column="3" Text="{Binding RatHoleRadius, Mode=TwoWay}" />
 
                         <TextBlock Grid.Row="2" Grid.Column="0" Text="{tsd:Loc albl_weld_angle}" />
-                        <uiCtrls:WpfFilterCheckBox Grid.Row="2" Grid.Column="2" AttributeName="weld_angle" />
+                        <tsuc:WpfFilterCheckBox Grid.Row="2" Grid.Column="2" AttributeName="weld_angle" />
                         <TextBox Grid.Row="2" Grid.Column="3" Text="{Binding WeldAngle, Mode=TwoWay}" />
 
                         <TextBlock Grid.Row="3" Grid.Column="0" Text="{tsd:Loc albl_root_face}" />
-                        <uiCtrls:WpfFilterCheckBox Grid.Row="3" Grid.Column="2" AttributeName="root_face" />
+                        <tsuc:WpfFilterCheckBox Grid.Row="3" Grid.Column="2" AttributeName="root_face" />
                         <TextBox Grid.Row="3" Grid.Column="3" Text="{Binding WeldRootFace, Mode=TwoWay}" />
 
                         <TextBlock Grid.Row="4" Grid.Column="0" Text="{tsd:Loc albl_root_opening}" />
-                        <uiCtrls:WpfFilterCheckBox Grid.Row="4" Grid.Column="2" AttributeName="root_opening" />
+                        <tsuc:WpfFilterCheckBox Grid.Row="4" Grid.Column="2" AttributeName="root_opening" />
                         <TextBox Grid.Row="4" Grid.Column="3" Text="{Binding WeldRootOpening, Mode=TwoWay}" />
 
                         <TextBlock Grid.Row="5" Grid.Column="0" Text="{tsd:Loc albl_short_beam_length}" />
                         <TextBlock Grid.Row="5" Grid.Column="1" Text="c" />
-                        <uiCtrls:WpfFilterCheckBox Grid.Row="5" Grid.Column="2" AttributeName="shortBeam_LEN" />
+                        <tsuc:WpfFilterCheckBox Grid.Row="5" Grid.Column="2" AttributeName="shortBeam_LEN" />
                         <TextBox Grid.Row="5" Grid.Column="3" Text="{Binding ShortBeamLength, Mode=TwoWay}" />
 
                         <TextBlock Grid.Row="6" Grid.Column="0" Text="{tsd:Loc albl_short_beam_profile}" />
-                        <uiCtrls:WpfFilterCheckBox Grid.Row="6" Grid.Column="2" AttributeName="shortBeam_PRF" />
+                        <tsuc:WpfFilterCheckBox Grid.Row="6" Grid.Column="2" AttributeName="shortBeam_PRF" />
                         <TextBox Grid.Row="6" Grid.Column="3" Text="{Binding ShortBeamProfile, Mode=TwoWay}" />
-                        <uiCtrls:WpfProfileCatalog Grid.Row="6" Grid.Column="4" SelectClicked="ShortBeam_PRF_SelectClicked" SelectionDone="ShortBeam_PRF_SelectionDone" />
+                        <tsuc:WpfProfileCatalog Grid.Row="6" Grid.Column="4" SelectClicked="ShortBeam_PRF_SelectClicked" SelectionDone="ShortBeam_PRF_SelectionDone" />
 
                         <TextBlock Grid.Row="7" Grid.Column="0" Text="{tsd:Loc albl_short_beam_material}" />
-                        <uiCtrls:WpfFilterCheckBox Grid.Row="7" Grid.Column="2" AttributeName="shortBeam_MATL" />
+                        <tsuc:WpfFilterCheckBox Grid.Row="7" Grid.Column="2" AttributeName="shortBeam_MATL" />
                         <TextBox Grid.Row="7" Grid.Column="3" Text="{Binding ShortBeamMaterial, Mode=TwoWay}" />
-                        <uiCtrls:WpfMaterialCatalog Grid.Row="7" Grid.Column="4" SelectClicked="ShortBeam_MATL_SelectClicked" SelectionDone="ShortBeam_MATL_SelectionDone" />
+                        <tsuc:WpfMaterialCatalog Grid.Row="7" Grid.Column="4" SelectClicked="ShortBeam_MATL_SelectClicked" SelectionDone="ShortBeam_MATL_SelectionDone" />
 
                         <TextBlock Grid.Row="8" Grid.Column="0" Text="{tsd:Loc albl_web_connection_plate_thickness}" />
-                        <uiCtrls:WpfFilterCheckBox Grid.Row="8" Grid.Column="2" AttributeName="webCNXPL_THK" />
+                        <tsuc:WpfFilterCheckBox Grid.Row="8" Grid.Column="2" AttributeName="webCNXPL_THK" />
                         <TextBox Grid.Row="8" Grid.Column="3" Text="{Binding WebConnectionPlateThickness, Mode=TwoWay}" />
 
                         <TextBlock Grid.Row="9" Grid.Column="0" Text="{tsd:Loc albl_connection_plate_material}" />
-                        <uiCtrls:WpfFilterCheckBox Grid.Row="9" Grid.Column="2" AttributeName="CNXPL_MATL" />
+                        <tsuc:WpfFilterCheckBox Grid.Row="9" Grid.Column="2" AttributeName="CNXPL_MATL" />
                         <TextBox Grid.Row="9" Grid.Column="3" Text="{Binding ConnectionPlateMaterial, Mode=TwoWay}" />
-                        <uiCtrls:WpfMaterialCatalog Grid.Row="9" Grid.Column="4" SelectClicked="CNXPL_MATL_SelectClicked" SelectionDone="CNXPL_MATL_SelectionDone" />
+                        <tsuc:WpfMaterialCatalog Grid.Row="9" Grid.Column="4" SelectClicked="CNXPL_MATL_SelectClicked" SelectionDone="CNXPL_MATL_SelectionDone" />
 
                         <TextBlock Grid.Row="10" Grid.Column="0" Text="{tsd:Loc albl_web_bolt_standard}" />
-                        <uiCtrls:WpfFilterCheckBox Grid.Row="10" Grid.Column="2" AttributeName="webBolt_STD" />
-                        <uiCtrls:WpfBoltCatalogStandard Grid.Row="10" Grid.Column="3" SelectedItem="{Binding WebBoltStandard, Mode=TwoWay}" />
+                        <tsuc:WpfFilterCheckBox Grid.Row="10" Grid.Column="2" AttributeName="webBolt_STD" />
+                        <tsuc:WpfBoltCatalogStandard Grid.Row="10" Grid.Column="3" SelectedItem="{Binding WebBoltStandard, Mode=TwoWay}" />
 
                         <TextBlock Grid.Row="11" Grid.Column="0" Text="{tsd:Loc albl_web_bolt_size}" />
-                        <uiCtrls:WpfFilterCheckBox Grid.Row="11" Grid.Column="2" AttributeName="webBolt_size" />
-                        <uiCtrls:WpfBoltCatalogSize Grid.Row="11" Grid.Column="3" SelectedItem="{Binding WebBoltSize}" ItemsSource="{Binding ElementName=wpfBS_webBolt_STD, Path=BoltSizes}" />
+                        <tsuc:WpfFilterCheckBox Grid.Row="11" Grid.Column="2" AttributeName="webBolt_size" />
+                        <tsuc:WpfBoltCatalogSize Grid.Row="11" Grid.Column="3" SelectedItem="{Binding WebBoltSize}" ItemsSource="{Binding ElementName=wpfBS_webBolt_STD, Path=BoltSizes}" />
 
                         <TextBlock Grid.Row="12" Grid.Column="0" Text="{tsd:Loc albl_web_position_distance_list_X}" />
                         <TextBlock Grid.Row="12" Grid.Column="1" Text="d" />
-                        <uiCtrls:WpfFilterCheckBox Grid.Row="12" Grid.Column="2" AttributeName="webPOS_X" />
+                        <tsuc:WpfFilterCheckBox Grid.Row="12" Grid.Column="2" AttributeName="webPOS_X" />
                         <TextBox Grid.Row="12" Grid.Column="3" Text="{Binding WebPositionDistanceListX, Mode=TwoWay}" />
 
                         <TextBlock Grid.Row="13" Grid.Column="0" Text="{tsd:Loc albl_web_position_distance_list_Y}" />
                         <TextBlock Grid.Row="13" Grid.Column="1" Text="e" />
-                        <uiCtrls:WpfFilterCheckBox Grid.Row="13" Grid.Column="2" AttributeName="webPOS_Y" />
+                        <tsuc:WpfFilterCheckBox Grid.Row="13" Grid.Column="2" AttributeName="webPOS_Y" />
                         <TextBox Grid.Row="13" Grid.Column="3" Text="{Binding WebPositionDistanceListY, Mode=TwoWay}" />
                     </Grid>
                 </DockPanel>
             </TabItem>
-            <TabItem Header="{tsd:Loc albl_general}">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="1*" />
-                        <ColumnDefinition Width="22" />
-                        <ColumnDefinition Width="100" />
-                        <ColumnDefinition Width="30" />
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="auto" />
-                        <RowDefinition Height="auto" />
-                        <RowDefinition Height="auto" />
-                        <RowDefinition Height="1*" />
-                        <RowDefinition Height="auto" />
-                        <RowDefinition Height="auto" />
-                        <RowDefinition Height="auto" />
-                        <RowDefinition Height="auto" />
-                        <RowDefinition Height="auto" />
-                    </Grid.RowDefinitions>
-
-                    <TextBlock Grid.Row="0" Grid.Column="0" Text="{tsd:Loc albl_up_direction}" />
-                    <uiCtrls:WpfFilterCheckBox Grid.Row="0" Grid.Column="1" AttributeName="zsuunta" />
-                    <ComboBox Grid.Row="0" Grid.Column="2" SelectedIndex="{Binding UpDirection, Mode=TwoWay, Converter={StaticResource upDirectionToSelectedIndex}}">
-                        <ComboBoxItem Content="{tsd:Loc albl_auto}" />
-                        <ComboBoxItem Content="{tsd:Loc +y}" />
-                        <ComboBoxItem Content="{tsd:Loc -y}" />
-                        <ComboBoxItem Content="{tsd:Loc -x}" />
-                        <ComboBoxItem Content="{tsd:Loc +x}" />
-                        <ComboBoxItem Content="{tsd:Loc +z}" />
-                        <ComboBoxItem Content="{tsd:Loc -z}" />
-                    </ComboBox>
-
-                    <Image Grid.Row="1"
-                           Grid.RowSpan="3"
-                           Grid.Column="0"
-                           Width="80"
-                           Height="80"
-                           HorizontalAlignment="Right">
-                        <Image.Source>
-                            <DrawingImage Drawing="{StaticResource UpDirection}" />
-                        </Image.Source>
-                    </Image>
-                    <uiCtrls:WpfFilterCheckBox Grid.Row="1" Grid.Column="1" AttributeName="zang1" />
-                    <TextBox Grid.Row="1" Grid.Column="2" Text="{Binding RotationAngleY, Mode=TwoWay}" />
-                    <uiCtrls:WpfFilterCheckBox Grid.Row="2" Grid.Column="1" AttributeName="zang2" />
-                    <TextBox Grid.Row="2" Grid.Column="2" Text="{Binding RotationAngleX, Mode=TwoWay}" />
-
-                    <TextBlock Grid.Row="4" Grid.Column="0" Text="{tsd:Loc albl_locked}" />
-                    <uiCtrls:WpfFilterCheckBox Grid.Row="4" Grid.Column="1" AttributeName="OBJECT_LOCKED" />
-                    <ComboBox Grid.Row="4" Grid.Column="2" SelectedIndex="{Binding Locked, Mode=TwoWay}">
-                        <ComboBoxItem Content="{tsd:Loc albl_no}" />
-                        <ComboBoxItem Content="{tsd:Loc albl_yes}" />
-                    </ComboBox>
-
-                    <TextBlock Grid.Row="5" Grid.Column="0" Text="{tsd:Loc albl_class}" />
-                    <uiCtrls:WpfFilterCheckBox Grid.Row="5" Grid.Column="1" AttributeName="group_no" />
-                    <TextBox Grid.Row="5" Grid.Column="2" Text="{Binding Class, Mode=TwoWay}" />
-
-                    <TextBlock Grid.Row="6" Grid.Column="0" Text="{tsd:Loc albl_connection_code}" />
-                    <uiCtrls:WpfFilterCheckBox Grid.Row="6" Grid.Column="1" AttributeName="joint_code" />
-                    <TextBox Grid.Row="6" Grid.Column="2" Text="{Binding ConnectionCode, Mode=TwoWay}" />
-
-                    <TextBlock Grid.Row="7" Grid.Column="0" Text="{tsd:Loc albl_auto_defaults_rule_group}" />
-                    <uiCtrls:WpfFilterCheckBox Grid.Row="7" Grid.Column="1" AttributeName="ad_root" />
-                    <TextBox Grid.Row="7" Grid.Column="2" Text="{Binding AutoDefaults, Mode=TwoWay}" />
-
-                    <TextBlock Grid.Row="8" Grid.Column="0" Text="{tsd:Loc albl_auto_connection_rule_group}" />
-                    <uiCtrls:WpfFilterCheckBox Grid.Row="8" Grid.Column="1" AttributeName="ac_root" />
-                    <TextBox Grid.Row="8" Grid.Column="2" Text="{Binding AutoConnection, Mode=TwoWay}" />
-                </Grid>
-            </TabItem>
+            <TabItem Header="{tsd:Loc albl_general}" Content="{StaticResource ConnectionGeneralTab}" />
         </TabControl>
     </DockPanel>
 </tsd:PluginWindowBase>
