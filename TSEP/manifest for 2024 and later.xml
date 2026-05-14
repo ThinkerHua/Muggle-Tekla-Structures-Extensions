@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <TEP Version="1.0">
 
 	<Product
@@ -23,7 +23,7 @@
 		<SourcePathVariable Id="StandardFileFolder" Value="%TEPDEFINITIONFILEFOLDER%\standard file"/>
 		<SourcePathVariable Id="MessagesFolder" Value="%TEPDEFINITIONFILEFOLDER%\messages"/>
 		<SourcePathVariable Id="BitmapsFolder" Value="%TEPDEFINITIONFILEFOLDER%\bitmaps"/>
-		<SourcePathVariable Id="ComponentCatalogFolder" Value="%TEPDEFINITIONFILEFOLDER%\component catalog" />
+		<SourcePathVariable Id="ComponentCatalogFolder" Value="%TEPDEFINITIONFILEFOLDER%\componentCatalog" />
 		<SourcePathVariable Id="SolutionFolder" Value="%TEPDEFINITIONFILEFOLDER%\.." />
 		<SourcePathVariable Id="MSBuildOutputPath" Value="bin\R2024\net48"/>
 	</SourcePathVariables>
