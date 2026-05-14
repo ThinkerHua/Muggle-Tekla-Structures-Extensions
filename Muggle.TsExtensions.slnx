@@ -10,6 +10,40 @@
         <File Path="Directory.Build.Props" />
         <File Path="Directory.Packages.Props" />
     </Folder>
+    <Folder Name="/Solution Items/Documents/">
+        <File Path="LICENSE" />
+        <File Path="README.md" />
+    </Folder>
+    <Folder Name="/TSEP/">
+        <File Path="TSEP/manifest for 2021~2023.xml" />
+        <File Path="TSEP/manifest for 2024 and later.xml" />
+    </Folder>
+    <Folder Name="/TSEP/Assets/">
+        <File Path="TSEP/assets/logo.png" />
+    </Folder>
+    <Folder Name="/TSEP/Bitmaps/">
+        <File Path="TSEP/bitmaps/et_element_HJ1001.bmp" />
+        <File Path="TSEP/bitmaps/et_element_KJ1001.bmp" />
+        <File Path="TSEP/bitmaps/et_element_KJ1002.bmp" />
+        <File Path="TSEP/bitmaps/et_element_KJ2001.bmp" />
+        <File Path="TSEP/bitmaps/et_element_MG1001.bmp" />
+        <File Path="TSEP/bitmaps/et_element_MG1002.bmp" />
+        <File Path="TSEP/bitmaps/et_element_MJ5001.bmp" />
+        <File Path="TSEP/bitmaps/et_element_WK1001.bmp" />
+    </Folder>
+    <Folder Name="/TSEP/ComponentCatalog/">
+        <File Path="TSEP/componentCatalog/Muggle.TsExtensions_ComponentCatalog.ac.xml" />
+    </Folder>
+    <Folder Name="/TSEP/Messages/">
+        <File Path="TSEP/messages/HJ1001.ail" />
+        <File Path="TSEP/messages/KJ1001.ail" />
+        <File Path="TSEP/messages/KJ1002.ail" />
+        <File Path="TSEP/messages/KJ2001.ail" />
+        <File Path="TSEP/messages/MG1001.ail" />
+        <File Path="TSEP/messages/MG1002.ail" />
+        <File Path="TSEP/messages/MJ5001.ail" />
+        <File Path="TSEP/messages/WK1001.ail" />
+    </Folder>
     <Project Path="CodingHelper/CodingHelper.csproj">
         <BuildType Solution="D2021|*" Project="Debug" />
         <BuildType Solution="D2024|*" Project="Debug" />
