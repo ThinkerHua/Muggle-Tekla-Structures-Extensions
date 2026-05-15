@@ -107,7 +107,9 @@ public class PluginFieldsGenerator : IIncrementalGenerator {
                     continue;
                 if (!string.IsNullOrEmpty(generalFieldDataType) && Regex.IsMatch(nameOrNumber, "^[0-9]")) continue;
 
-                nameOrNumberSet.Add(nameOrNumber);
+                if (!string.IsNullOrEmpty(generalFieldDataType) && generalFieldNameSet.Add(nameOrNumber) ||
+                    string.IsNullOrEmpty(generalFieldDataType))
+                    nameOrNumberSet.Add(nameOrNumber);
             }
         }
 
