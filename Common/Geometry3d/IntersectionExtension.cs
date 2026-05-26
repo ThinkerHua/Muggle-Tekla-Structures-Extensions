@@ -15,7 +15,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Muggle.TsExtensions.Common.Operation;
 using Tekla.Structures.Geometry3d;
 
 namespace Muggle.TsExtensions.Common.Geometry3d {
@@ -172,7 +171,7 @@ namespace Muggle.TsExtensions.Common.Geometry3d {
             foreach (var point in points) {
                 disList.Add(Distance.PointToLine(point, line));
             }
-            var minExtremeIndexs = CommonOperation.GetLocalExtremeIndexes(disList, CommonOperation.ExtremeTypeEnum.LocalMinimum);
+            var minExtremeIndexs = Operation.GetLocalExtremeIndexes(disList, Operation.ExtremeTypeEnum.LocalMinimum);
             var minExtremePoints = new List<Point>();//  极小值点集合
             foreach (var index in minExtremeIndexs) {
                 minExtremePoints.Add(points[index]);
@@ -207,7 +206,7 @@ namespace Muggle.TsExtensions.Common.Geometry3d {
                     disList.Add(Distance.PointToLine(point, line));
                 }
 
-                minExtremeIndexs = CommonOperation.GetLocalExtremeIndexes(disList, CommonOperation.ExtremeTypeEnum.LocalMinimum);
+                minExtremeIndexs = Operation.GetLocalExtremeIndexes(disList, Operation.ExtremeTypeEnum.LocalMinimum);
                 minExtremePoints.Clear();
                 foreach (var index in minExtremeIndexs) {
                     minExtremePoints.Add(points[index]);

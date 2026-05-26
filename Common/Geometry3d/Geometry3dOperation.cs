@@ -17,7 +17,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Muggle.TsExtensions.Common.Operation;
 using Tekla.Structures.Geometry3d;
 using Tekla.Structures.Model;
 using Task = System.Threading.Tasks.Task;
@@ -502,7 +501,7 @@ namespace Muggle.TsExtensions.Common.Geometry3d {
                 distances.Add(Math.Abs(Distance.PointToPoint(vertex1, vertex2) - edge3));
             }
 
-            var minExtremeIndexes = CommonOperation.GetLocalExtremeIndexes(distances, CommonOperation.ExtremeTypeEnum.LocalMinimum);
+            var minExtremeIndexes = Operation.GetLocalExtremeIndexes(distances, Operation.ExtremeTypeEnum.LocalMinimum);
 
             if (minExtremeIndexes.Count > 10) {
                 minExtremeIndexes = distances.Select((dis, index) => (dis, index))

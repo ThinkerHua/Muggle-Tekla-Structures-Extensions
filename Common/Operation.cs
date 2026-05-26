@@ -12,26 +12,17 @@
  *  CommonOperation.cs: commonly operations
  *  written by Huang YongXing - thinkerhua@hotmail.com
  *==============================================================================*/
+
 using System;
 using System.Collections.Generic;
 
-namespace Muggle.TsExtensions.Common.Operation {
+namespace Muggle.TsExtensions.Common {
+    
     /// <summary>
     /// 通用操作
     /// </summary>
-    public static class CommonOperation {
-        /// <summary>
-        /// 交换数据。
-        /// </summary>
-        /// <typeparam name="T">执行交换操作的数据类型</typeparam>
-        /// <param name="a">要交换的数据</param>
-        /// <param name="b">要交换的数据</param>
-        public static void Swap<T>(ref T a, ref T b) {
-            T t;
-            t = a;
-            a = b;
-            b = t;
-        }
+    public static class Operation {
+        
         /// <summary>
         /// 极值枚举
         /// </summary>
@@ -40,11 +31,13 @@ namespace Muggle.TsExtensions.Common.Operation {
             /// 局部极小值
             /// </summary>
             LocalMinimum,
+            
             /// <summary>
             /// 局部极大值
             /// </summary>
             LocalMaximum,
         }
+        
         /// <summary>
         /// 找出数据集合 <paramref name="data"/> 中的局部极值，并返回其序号集合。
         /// </summary>
@@ -120,6 +113,7 @@ namespace Muggle.TsExtensions.Common.Operation {
 
             return result;
         }
+        
         /// <summary>
         /// 判断变化集合 <paramref name="variations"/> 是否符合极值分布。
         /// </summary>
@@ -171,6 +165,33 @@ namespace Muggle.TsExtensions.Common.Operation {
             }
 
             return true;
+        }
+
+        /// <summary>
+        /// <inheritdoc cref="Enum.Parse(Type, string)" />
+        /// </summary>
+        /// <param name="value"><inheritdoc cref="Enum.Parse(Type, string)" path="/param[2]"/></param>
+        /// <typeparam name="T"><inheritdoc cref="Enum.Parse(Type, string)" path="/param[1]"/></typeparam>
+        /// <returns><typeparamref name="T"/> 类型的对象。</returns>
+        public static T EnumParse<T>(string value) where T : Enum {
+            T result;
+            try {
+                result = (T)Enum.Parse(typeof(T), value, true);
+            } catch (Exception e) when (e is ArgumentException or OverflowException) {
+                result = default;
+            }
+
+            return result;
+        }
+
+        /// <summary>
+        /// 将枚举常数的数字值转换成等效的枚举对象。
+        /// </summary>
+        /// <param name="value">枚举常数的数字值。</param>
+        /// <typeparam name="T"><inheritdoc cref="Enum.Parse(Type, string)" path="/param[1]"/></typeparam>
+        /// <returns><typeparamref name="T"/> 类型的对象。</returns>
+        public static T EnumParse<T>(int value) where T : Enum {
+            return EnumParse<T>(value.ToString());
         }
     }
 }

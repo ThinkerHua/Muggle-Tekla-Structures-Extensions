@@ -12,6 +12,7 @@ using Tekla.Structures.Model.UI;
 using Tekla.Structures.Plugins;
 using Distance = Tekla.Structures.Datatype.Distance;
 using Win = System.Windows;
+using static Muggle.TsExtensions.Common.Operation;
 
 namespace Muggle.TsExtensions.Demo1;
 
@@ -426,20 +427,5 @@ public partial class Demo1 : PluginBase {
             Win.MessageBox.Show(e.Message, "Error", Win.MessageBoxButton.OK, Win.MessageBoxImage.Error);
             return false;
         }
-    }
-
-    private static T EnumParse<T>(string value) where T : Enum {
-        T result;
-        try {
-            result = (T)Enum.Parse(typeof(T), value);
-        } catch (Exception e) when (e is ArgumentException || e is OverflowException) {
-            result = default;
-        }
-
-        return result;
-    }
-
-    private static T EnumParse<T>(int value) where T : Enum {
-        return EnumParse<T>(value.ToString());
     }
 }
