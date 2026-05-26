@@ -1,4 +1,4 @@
-﻿/*==============================================================================
+/*==============================================================================
  *  Muggle TsExtensions - extensions for Tekla Structures
  *
  *  Copyright © 2025 Huang YongXing.                 
@@ -272,6 +272,41 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
             } catch (Exception e) {
                 messageBoxService.ShowError(e.ToString());
             }
+        }
+
+        [RelayCommand]
+        private void AlignColumnControlPointsWithCentroid() {
+            var columns = uiSelector.GetSelectedObjects();
+
+            if (columns.GetSize() == 0) {
+                try {
+                    columns = picker.PickObjects(Picker.PickObjectsEnum.PICK_N_PARTS, "Pick columns:");
+                } catch (Exception e) when (e.Message == App.UserInterrupt) {
+                    return;
+                } catch (Exception e) {
+                    messageBoxService.ShowError(e.ToString());
+                }
+            }
+
+            if (columns.GetSize() == 0) return;
+
+            foreach (var item in columns) {
+                if (item is not Beam column) continue;
+
+                var centerLine = column.GetCenterLine(false);
+                var startPoint = centerLine[0] as Point;
+                var endPoint = centerLine[centerLine.Count - 1] as Point;
+
+                column.Position.Depth = Position.DepthEnum.MIDDLE;
+                column.Position.Plane = Position.PlaneEnum.MIDDLE;
+
+                column.StartPoint = startPoint;
+                column.EndPoint = endPoint;
+
+                column.Modify();
+            }
+
+            model.CommitChanges();
         }
     }
 }

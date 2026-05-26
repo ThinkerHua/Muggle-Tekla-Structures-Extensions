@@ -1,4 +1,4 @@
-﻿/*==============================================================================
+/*==============================================================================
  *  Muggle TsExtensions - extensions for Tekla Structures
  *
  *  Copyright © 2026 Huang YongXing.                 
@@ -121,10 +121,12 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
 
         private Point NearestPointOnColumn(Point sourcePoint, Point anotherPoint, Beam column) {
             double width = 0, height = 0, length = 0;
-            if (!column.GetReportProperty("PROFILE.WIDTH", ref width))
-                throw new Exception($"Cannot get \"PROFILE.WIDTH\" value from beam {column.Identifier}");
-            if (!column.GetReportProperty("PROFILE.HEIGHT", ref height))
-                throw new Exception($"Cannot get \"PROFILE.HEIGHT\" value from beam {column.Identifier}");
+            if (!column.GetReportProperty("WIDTH", ref width))
+                if (!column.GetReportProperty("PROFILE.WIDTH", ref width))
+                    throw new Exception($"Cannot get \"PROFILE.WIDTH\" value from beam {column.Identifier}");
+            if (!column.GetReportProperty("HEIGHT", ref height))
+                if (!column.GetReportProperty("PROFILE.HEIGHT", ref height))
+                    throw new Exception($"Cannot get \"PROFILE.HEIGHT\" value from beam {column.Identifier}");
             if (!column.GetReportProperty("LENGTH", ref length))
                 throw new Exception($"Cannot get \"LENGTH\" value from beam {column.Identifier}");
 

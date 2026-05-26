@@ -1,4 +1,4 @@
-﻿<!--==============================================================================
+<!--==============================================================================
  *  Muggle TsExtensions - extensions for Tekla Structures
  *
  *  Copyright © 2025 Huang YongXing.
@@ -44,6 +44,7 @@
         <Button Content="ShowContourOrder" Command="{Binding ShowContourOrderCommand}" />
         <Button Content="CopyWithDirection" Command="{Binding CopyWithDirectionCommand}" />
         <Button Content="LocateToPrecisePosition" Command="{Binding LocateToPrecisePositionCommand}" />
+        <Button Content="AlignColumnControlPointsWithCentroid" Command="{Binding AlignColumnControlPointsWithCentroidCommand}" />
 
     </StackPanel>
 </Page>
