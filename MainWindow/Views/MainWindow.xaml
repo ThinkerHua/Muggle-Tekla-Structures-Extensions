@@ -86,6 +86,11 @@
                                 <local:ExtendBeam />
                             </RadioButton.CommandParameter>
                         </RadioButton>
+                        <RadioButton Content="ProjectBeamOntoPlane" GroupName="menuBtn" Command="{Binding NavigateCommand}">
+                            <RadioButton.CommandParameter>
+                                <local:ProjectBeamOntoPlane />
+                            </RadioButton.CommandParameter>
+                        </RadioButton>
                     </StackPanel>
                 </Expander>
                 <RadioButton Margin="4,8,4,0" Content="Plugins" GroupName="menuBtn" Command="{Binding NavigateCommand}">
