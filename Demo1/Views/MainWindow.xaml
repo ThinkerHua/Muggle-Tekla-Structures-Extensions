@@ -23,55 +23,11 @@
     <tsd:PluginWindowBase.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Common.WPF;component/Assets/BoltSymbols.xaml" />
                 <ResourceDictionary Source="/Common.WPF;component/Assets/WeldSymbols.xaml" />
                 <ResourceDictionary Source="/Common.WPF;component/Assets/ChamferSymbols.xaml" />
                 <ResourceDictionary Source="/Common.WPF;component/DataTemplates/SymbolDataTemplate.xaml" />
             </ResourceDictionary.MergedDictionaries>
-
-            <x:Array x:Key="WeldConnectAsSet" Type="sys:String">
-                <sys:String>As secondary part</sys:String>
-                <sys:String>As sub assembly</sys:String>
-            </x:Array>
-
-            <x:Array x:Key="WeldPlacementSet" Type="sys:String">
-                <sys:String>Auto</sys:String>
-                <sys:String>Main part</sys:String>
-                <sys:String>Secondary part</sys:String>
-            </x:Array>
-
-            <x:Array x:Key="WeldPreparationSet" Type="sys:String">
-                <sys:String>None</sys:String>
-                <sys:String>Auto</sys:String>
-                <sys:String>Main part</sys:String>
-                <sys:String>Secondary part</sys:String>
-            </x:Array>
-
-            <x:Array x:Key="BoltTypeSet" Type="sys:String">
-                <sys:String>Site</sys:String>
-                <sys:String>Workshop</sys:String>
-            </x:Array>
-
-            <x:Array x:Key="BoltThreadInMaterialSet" Type="sys:String">
-                <sys:String>No</sys:String>
-                <sys:String>Yes</sys:String>
-            </x:Array>
-
-            <x:Array x:Key="BoltPlainHoleTypeSet" Type="sys:String">
-                <sys:String>Through</sys:String>
-                <sys:String>Blind</sys:String>
-            </x:Array>
-
-            <x:Array x:Key="BoltSpecialHoleTypeSet" Type="sys:String">
-                <sys:String>Oversized</sys:String>
-                <sys:String>Slotted</sys:String>
-                <sys:String>No hole</sys:String>
-            </x:Array>
-
-            <x:Array x:Key="BoltRotateSlotsSet" Type="sys:String">
-                <sys:String>Odd</sys:String>
-                <sys:String>Even</sys:String>
-                <sys:String>Parallel</sys:String>
-            </x:Array>
 
             <Style x:Key="Element" TargetType="FrameworkElement">
                 <Setter Property="Margin" Value="2" />

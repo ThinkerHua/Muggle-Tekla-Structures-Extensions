@@ -458,7 +458,7 @@
                 <Style.Triggers>
                     <Trigger Property="IsEditable" Value="true">
                         <Setter Property="IsTabStop" Value="false" />
-                        <!--<Setter Property="Padding" Value="2" />-->
+                        <Setter Property="Padding" Value="5,0,5,0" />
                         <Setter Property="Template" Value="{StaticResource ComboBoxEditableTemplate}" />
                     </Trigger>
                 </Style.Triggers>

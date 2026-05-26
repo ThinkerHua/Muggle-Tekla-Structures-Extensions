@@ -33,7 +33,7 @@
 
     <Grid x:Key="ConnectionGeneralTab">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="auto" />
             <ColumnDefinition Width="22" />
             <ColumnDefinition Width="100" />
             <ColumnDefinition Width="30" />
@@ -103,7 +103,7 @@
 
     <Grid x:Key="DetailGeneralTab">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="auto" />
             <ColumnDefinition Width="22" />
             <ColumnDefinition Width="100" />
             <ColumnDefinition Width="30" />

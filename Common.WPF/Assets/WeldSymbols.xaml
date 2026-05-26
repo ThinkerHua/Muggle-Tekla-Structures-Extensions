@@ -1,5 +1,6 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib"
                     xmlns:templates="clr-namespace:Muggle.TsExtensions.Common.WPF.DataTemplates">
     <DrawingGroup x:Key="AroundWeld_Edge">
         <GeometryDrawing>
@@ -574,5 +575,23 @@
         <templates:Symbol Name="ISO surfacing" Drawing="{StaticResource WeldType_IsoSurfacing}" />
         <templates:Symbol Name="Fold" Drawing="{StaticResource WeldType_Fold}" />
         <templates:Symbol Name="Inclined" Drawing="{StaticResource WeldType_Inclined}" />
+    </x:Array>
+
+    <x:Array x:Key="WeldConnectAsSet" Type="sys:String">
+        <sys:String>As secondary part</sys:String>
+        <sys:String>As sub assembly</sys:String>
+    </x:Array>
+
+    <x:Array x:Key="WeldPlacementSet" Type="sys:String">
+        <sys:String>Auto</sys:String>
+        <sys:String>Main part</sys:String>
+        <sys:String>Secondary part</sys:String>
+    </x:Array>
+
+    <x:Array x:Key="WeldPreparationSet" Type="sys:String">
+        <sys:String>None</sys:String>
+        <sys:String>Auto</sys:String>
+        <sys:String>Main part</sys:String>
+        <sys:String>Secondary part</sys:String>
     </x:Array>
 </ResourceDictionary>
