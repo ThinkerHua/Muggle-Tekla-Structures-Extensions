@@ -1,4 +1,4 @@
-﻿/*==============================================================================
+/*==============================================================================
  *  Muggle TsExtensions - extensions for Tekla Structures
  *
  *  Copyright © 2026 Huang YongXing.
@@ -115,10 +115,19 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
                 };
 
                 foreach (var selectedObject in selectedObjects) {
-                    if (selectedObject is not Beam beam) continue;
-                    beam.StartPoint = IntersectionPoint(beam.StartPoint, direction, plane);
-                    beam.EndPoint = IntersectionPoint(beam.EndPoint, direction, plane);
-                    beam.Modify();
+                    if (selectedObject is Beam beam) {
+                        beam.StartPoint = IntersectionPoint(beam.StartPoint, direction, plane);
+                        beam.EndPoint = IntersectionPoint(beam.EndPoint, direction, plane);
+                        beam.Modify();
+                    } else if (selectedObject is PolyBeam polyBeam) {
+                        foreach (ContourPoint contourPoint in polyBeam.Contour.ContourPoints) {
+                            var point = IntersectionPoint(contourPoint, direction, plane);
+                            contourPoint.X = point.X;
+                            contourPoint.Y = point.Y;
+                            contourPoint.Z = point.Z;
+                        }
+                        polyBeam.Modify();
+                    }
                 }
 
                 Model.CommitChanges();
