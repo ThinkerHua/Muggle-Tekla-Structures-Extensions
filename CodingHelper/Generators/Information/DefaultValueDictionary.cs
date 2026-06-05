@@ -5,15 +5,15 @@ using System.Linq;
 namespace Muggle.TsExtensions.CodingHelper.Generators.Information {
 
     /// <summary>
-    /// 
+    /// Wrapper for 'Dictionary&lt;string, Dictionary&lt;string, string>>', and implements the <see cref="IEquatable{T}"/>.
     /// </summary>
     /// <remarks>
     /// <list type="bullet">
-    ///     <item>Key - model object name or number, such as "Brace1".</item>
+    ///     <item>Key - model object id, such as 'Brace1'.</item>
     ///     <item>Value - dictionary for property default values,
     ///         <list type="bullet">
-    ///             <item>Key - property name, such as "Profile".</item>
-    ///             <item>Value - property default value, such as "HM244*175*7*11".</item>
+    ///             <item>Key - property name, such as 'profile'.</item>
+    ///             <item>Value - property default value, such as 'HM244*175*7*11'.</item>
     ///         </list>
     ///     </item>
     /// </list>
@@ -22,11 +22,11 @@ namespace Muggle.TsExtensions.CodingHelper.Generators.Information {
 
         public bool Equals(DefaultValueDictionary other) {
 
-            if (other == null || this.Count != other.Count) return false;
+            if (other is null || this.Count != other.Count) return false;
 
             foreach (var kvp in this) {
-                var nameOrNumber = kvp.Key;
-                if (!other.TryGetValue(nameOrNumber, out var otherKvp)) return false;
+                var id = kvp.Key;
+                if (!other.TryGetValue(id, out var otherKvp)) return false;
 
                 if (kvp.Value.Count != otherKvp.Count) return false;
 

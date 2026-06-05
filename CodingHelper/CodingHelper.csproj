@@ -8,7 +8,7 @@
         <IsRoslynComponent>true</IsRoslynComponent>
         <PackageId>Muggle.TsExtensions.CodingHelper</PackageId>
         <Title>Tekla Structures OpenAPI development helper</Title>
-        <Version>1.4.1</Version>
+        <Version>2.0.0-beta.1</Version>
         <Authors>Huang YongXing</Authors>
         <Description>Help to generate fields (with StructuresFieldAttribute) for plugin data, fields for plugin, and properties (with StructuresDialogAttribute) for view model which used by plugin WPF UI.</Description>
         <Copyright>© 2026 Huang YongXing</Copyright>
@@ -20,7 +20,23 @@
         <PackageTags>Tekla Structures OpenAPI Generator</PackageTags>
         <PackageLicenseExpression>GPL-3.0-only</PackageLicenseExpression>
         <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
-        <PackageReleaseNotes>Fix the issue where 'PluginFieldsGenerator' might generate fields with the same name but different data types.</PackageReleaseNotes>
+        <PackageReleaseNotes>
+            Destructive update:
+            1. '**PropertiesWithDefaultValuesAttribute' was renamed and replaced the old '**PropertiesAttribute'
+                (the original name was too long and inconvenient to use).
+            
+            Feature improvement update:
+            1. Added some 'Creat**' methods which only need to pass in generic parameter 
+                to automatically use the associated fields to create model object.
+            2. Added some 'ModifyTo**' methods which only need to pass in existing object
+                to automatically use the associated fields to modify it.
+            3. In previous versions, 
+                the code for analysis to collect information needed for generation and 
+                the code for diagnostics had many similarities, now the two have been integrated together.
+            4. Supports using attributes by specifying property equal to value like 'Property = value'.
+            5. If at least one '**FieldDefaultValuesAttribute' is used, 
+                other fields without specified default value will also be registered use the preset value.
+        </PackageReleaseNotes>
         <IncludeBuildOutput>false</IncludeBuildOutput>
     </PropertyGroup>
 
@@ -51,8 +67,8 @@
     </ItemGroup>
 
     <ItemGroup>
-        <Compile Remove="Resources\*.cs" />
-        <EmbeddedResource Include="Resources\*.cs" />
+        <Compile Remove="Resources\*.cs"/>
+        <EmbeddedResource Include="Resources\*.cs"/>
     </ItemGroup>
 
 </Project>

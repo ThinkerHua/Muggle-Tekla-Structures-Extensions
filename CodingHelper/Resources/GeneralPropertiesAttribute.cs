@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Muggle.TsExtensions.CodingHelper.Generators {
 
@@ -36,7 +37,9 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
     /// </example>
     /// </remarks>
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
-    public class GeneralPropertiesWithDefaultValuesAttribute : Attribute {
+    public class GeneralPropertiesAttribute : Attribute {
+        public Type Type { get; set; }
+        public Dictionary<string, object> DefaultValues { get; }
         
         /// <summary>
         /// Register property and default values.
@@ -62,7 +65,19 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
         /// For 'Integer' type property: ["Param1", 8, "Param2", 10, "Param3", 12]
         /// </example>
         /// </param>
-        public GeneralPropertiesWithDefaultValuesAttribute(Type type, params object[] nameValuePairs) { }
+        public GeneralPropertiesAttribute(Type type, params object[] nameValuePairs) { 
+            Type = type;
+            DefaultValues = new Dictionary<string, object>();
+            
+            for (int i = 0; i < nameValuePairs.Length / 2 * 2; i += 2) {
+                var name = nameValuePairs[i];
+                var value = nameValuePairs[i + 1];
+                
+                //  no "not pattern" for compatibility
+                if (!(name is string nameStr)) continue;
+                DefaultValues.Add(nameStr, value);
+            }
+        }
         
     }
     

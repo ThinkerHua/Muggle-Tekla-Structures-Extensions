@@ -1,7 +1,7 @@
 ﻿using System;
+using System.Linq;
 
 namespace Muggle.TsExtensions.CodingHelper.Generators {
-    
     /// <summary>
     /// Register the weld fields that need to be generated for the applied class,
     /// used by Muggle.TsExtensions.CodingHelper.Generators.PluginDataFieldsGenerator,
@@ -12,17 +12,20 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
     /// see here</a>.</remarks>
     [AttributeUsage(AttributeTargets.Class)]
     public class WeldFieldsAttribute : Attribute {
-        
+        public string[] Ids { get; set; }
+
         /// <summary>
-        /// Register the weld fields using the given numbers.
+        /// Register the weld fields using the given ids.
         /// </summary>
-        public WeldFieldsAttribute(params uint[] numbers) { }
-        
+        public WeldFieldsAttribute(params uint[] ids) {
+            Ids = ids.Select(id => id.ToString()).ToArray();
+        }
+
         /// <summary>
-        /// Register the weld fields using the given names.
+        /// Register the weld fields using the given ids.
         /// </summary>
-        public WeldFieldsAttribute(params string[] names) { }
-        
+        public WeldFieldsAttribute(params string[] ids) {
+            Ids = ids;
+        }
     }
-    
 }

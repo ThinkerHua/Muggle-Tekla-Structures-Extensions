@@ -83,11 +83,11 @@ internal class SystemAttributesDiagnoser : DiagnosticAnalyzer {
         if (!ConcernedAttributes.Contains(GetAttributeQualifiedName(attributeSyntax, semanticModel))) return;
 
         var argumentSyntax = attributeSyntax.ArgumentList?.Arguments[0];
-        if (argumentSyntax == null) return;
+        if (argumentSyntax is null) return;
 
         var argumentLes = argumentSyntax.ChildNodes().OfType<LiteralExpressionSyntax>().FirstOrDefault();
         var argument = argumentLes?.Token.ValueText;
-        if (argument == null) return;
+        if (argument is null) return;
 
         var location = argumentSyntax.GetLocation();
 

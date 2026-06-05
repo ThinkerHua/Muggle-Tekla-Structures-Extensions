@@ -5,18 +5,18 @@ using System.Linq;
 namespace Muggle.TsExtensions.CodingHelper.Generators.Information {
 
     /// <summary>
-    /// A hash set of name or number, such as ["Part1", "Part2", "Part3"].
+    /// A hash set of id, such as ["Part1", "Part2", "Part3"].
     /// </summary>
-    internal class NameOrNumberSet : HashSet<string>, IEquatable<NameOrNumberSet> {
+    internal class IdSet : HashSet<string>, IEquatable<IdSet> {
 
-        public bool Equals(NameOrNumberSet other) {
-            if (other == null) return false;
+        public bool Equals(IdSet other) {
+            if (other is null) return false;
 
             return this.Count == other.Count && this.OrderBy(s => s).SequenceEqual(other.OrderBy(s => s));
         }
 
         public override bool Equals(object obj) {
-            return obj is NameOrNumberSet other && this.Equals(other);
+            return obj is IdSet other && this.Equals(other);
         }
 
         public override int GetHashCode() {

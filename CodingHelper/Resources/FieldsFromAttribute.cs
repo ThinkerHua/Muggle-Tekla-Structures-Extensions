@@ -17,6 +17,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
     /// </remarks>
     [AttributeUsage(AttributeTargets.Class)]
     public class FieldsFromAttribute : Attribute {
+        public Type DataType { get; set; }
         
         /// <summary>
         /// Register the public fields of the data class to this class.

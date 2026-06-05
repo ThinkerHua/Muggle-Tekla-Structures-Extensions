@@ -6,10 +6,9 @@
         /// <list type="bullet">
         ///     <item>Key - for 'GeneralFieldsAttribute', key is one of 'int', 'double', 'string';
         ///         for other '*FieldsAttribute', key is attribute name.</item>
-        ///     <item>Value - for 'GeneralFieldsAttribute', value is name set;
-        ///         for other '*FieldsAttribute', value is name or number set.</item>
+        ///     <item>Value - id set.</item>
         /// </list>
         /// </summary>
-        public ArgumentsDictionary<NameOrNumberSet> Arguments;
+        public ArgumentsDictionary<IdSet> Arguments;
     }
 }

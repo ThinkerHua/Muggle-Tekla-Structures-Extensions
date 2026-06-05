@@ -2,24 +2,23 @@
 
 ---
 
-## Contents
+## Table of Contents
 
-- [Generate fields for plugin data class](#generate-fields-for-plugin-data-class)
-    - [Example](#example)
-- [Generate fields for plugin class](#generate-fields-for-plugin-class)
-    - [Fields and get field values method](#fields-and-get-field-values-method)
-        - [Example](#example-1)
-    - [Set field default values method](#set-field-default-values-method)
-        - [Example](#example-2)
-- [Generate properties for view model class](#generate-properties-for-view-model-class)
-    - [General properties](#general-properties)
-    - [Specific properties](#specific-properties)
-        - [Example](#example-3)
-- [Demo](#demo)
-
+* [Generator for plugin data class](#generator-for-plugin-data-class)
+  * [Example](#example)
+* [Generator for plugin class](#generator-for-plugin-class)
+  * [Fields and "GetFieldValuesFrom" method](#fields-and-getfieldvaluesfrom-method)
+    * [Example](#example-1)
+  * ["SetDataToDefaultIfUnset" method, "Creat\*\*" methods and "ModifyTo\*\*" methods](#setdatatodefaultifunset-method-creat-methods-and-modifyto-methods)
+    * [Example](#example-2)
+* [Generator for view model class](#generator-for-view-model-class)
+  * [System preset properties](#system-preset-properties)
+  * [Specific properties](#specific-properties)
+    * [Example](#example-3)
+* [Demo](#demo)
 ---
 
-## Generate fields for plugin data class
+## Generator for plugin data class
 
 Apply these attributes to plugin data class to auto generate fields (with StructuresFieldAttribute):
 
@@ -41,6 +40,7 @@ The source codes by hand:
 
 using Muggle.TsExtensions.CodingHelper.Generators;
 
+[GeneralFields(typeof(int), "num")]
 [PlateFields("Stiffener")]
 public partial class PluginData { }
 ~~~
@@ -52,48 +52,52 @@ Then it will auto generate codes behind like this:
 
 public partial class PluginData {
         
-        [StructuresField("PLStiffenerNAME")]
+        [global::Tekla.Structures.Plugins.StructuresField("num")]
+        public int Num;
+        
+        [global::Tekla.Structures.Plugins.StructuresField("PLStiffenerNAME")]
         public string PlateStiffenerName;
         
-        [StructuresField("PLStiffenerT")]
+        [global::Tekla.Structures.Plugins.StructuresField("PLStiffenerT")]
         public double PlateStiffenerThickness;
         
-        [StructuresField("PLStiffenerB")]
+        [global::Tekla.Structures.Plugins.StructuresField("PLStiffenerB")]
         public double PlateStiffenerBreadth;
         
-        [StructuresField("PLStiffenerH")]
+        [global::Tekla.Structures.Plugins.StructuresField("PLStiffenerH")]
         public double PlateStiffenerHeight;
         
-        [StructuresField("PLStiffenerMATL")]
+        [global::Tekla.Structures.Plugins.StructuresField("PLStiffenerMATL")]
         public string PlateStiffenerMaterial;
         
-        [StructuresField("PLStiffenerFNSH")]
+        [global::Tekla.Structures.Plugins.StructuresField("PLStiffenerFNSH")]
         public string PlateStiffenerFinish;
         
-        [StructuresField("PLStiffenerCLS")]
+        [global::Tekla.Structures.Plugins.StructuresField("PLStiffenerCLS")]
         public int PlateStiffenerClass;
         
-        [StructuresField("PLStiffenerASMP")]
+        [global::Tekla.Structures.Plugins.StructuresField("PLStiffenerASMP")]
         public string PlateStiffenerAssemblyPrefix;
         
-        [StructuresField("PLStiffenerASMN")]
+        [global::Tekla.Structures.Plugins.StructuresField("PLStiffenerASMN")]
         public int PlateStiffenerAssemblyStartNumber;
         
-        [StructuresField("PLStiffenerPTP")]
+        [global::Tekla.Structures.Plugins.StructuresField("PLStiffenerPTP")]
         public string PlateStiffenerPartPrefix;
         
-        [StructuresField("PLStiffenerPTN")]
+        [global::Tekla.Structures.Plugins.StructuresField("PLStiffenerPTN")]
         public int PlateStiffenerPartStartNumber;
 }
 ~~~
 
 ---
 
-## Generate fields for plugin class
+## Generator for plugin class
 
-### Fields and get field values method
+### Fields and "GetFieldValuesFrom" method
 
-Apply "**FieldsFromAttribute**" on the plugin class and input the plugin data type, then it will auto generate private fields one-to-one corresponds with each public fields (including manually written fields and generated fields) in data type. And it will also generate a **"GetFieldValuesFrom"** method, you need to manually call this method at an appropriate location.
+Apply "**FieldsFromAttribute**" on the plugin class and input the plugin data type, then it will auto generate private fields one-to-one corresponds with each public fields (including manually written fields and generated fields) in data type. 
+And it will also generate a **"GetFieldValuesFrom"** method, you need to manually call this method at an appropriate location.
 
 #### Example
 
@@ -166,9 +170,9 @@ public partial class Plugin {
 }
 ~~~
 
-### Set field default values method
+### "SetDataToDefaultIfUnset" method, "Creat\*\*" methods and "ModifyTo\*\*" methods
 
-Apply these attributes on the plugin class or its data field or property, then it will auto generate a **"SetDataToDefaultIfUnset"** method to register default value:
+Apply these attributes on the plugin class or its data field or property, then it will auto generate a **"SetDataToDefaultIfUnset"** method, a series of **"Creat\*\*"** methods and **"ModifyTo\*\*"** methods:
 
 - GeneralFieldDefaultValuesAttribute
 - PartFieldDefaultValuesAttribute
@@ -177,15 +181,21 @@ Apply these attributes on the plugin class or its data field or property, then i
 - BoltFieldDefaultValuesAttribute
 - BoltCircleFieldDefaultValuesAttribute
 
+The "SetDataToDefaultIfUnset" used to set fields of plugin or fields of plugin data member to default value, if they are not set form user interface.
+
+The "Creat\*\*" method only need to pass in generic parameter to automatically use the associated fields to create model object.
+
+The "ModifyTo\*\*" method only need to pass in existing object to automatically use the associated fields to modify it.
+
 > ***Note***: When applied on class, you need to apply "FieldsFromAttribute" also.
 
 > ***Note***: You need to pay attention to the order of calling the "SetDataToDefaultIfUnset" method and the "GetFieldValuesFrom" method. Otherwise, you might not get the correct values.
 >
-> | If applied "FieldsFromAttribute" | Place "***FieldDefaultValuesAttribute" applied on | Calling order                                                  | Way to access value                    |
-> |----------------------------------|---------------------------------------------------|----------------------------------------------------------------|----------------------------------------|
-> | Yes                              | Class                                             | GetFieldValuesFrom(data);<br/>SetDataToDefaultIfUnset();       | Only fields                            |
-> | Yes                              | Data field or property                            | SetDataToDefaultIfUnset();<br/>GetFieldValuesFrom(data);       | Both fields and data field or property |
-> | No                               | Data field or property                            | SetDataToDefaultIfUnset();<br/>~~//GetFieldValuesFrom(data);~~ | Only data field or property            |
+> | Applied "FieldsFromAttribute" | Place "***FieldDefaultValuesAttribute" applied on | Calling order                                                  | Way to access value         |
+> |-------------------------------|---------------------------------------------------|----------------------------------------------------------------|-----------------------------|
+> | Yes                           | Class                                             | GetFieldValuesFrom(data);<br/>SetDataToDefaultIfUnset();       | Only fields                 |
+> | Yes                           | Data member (field or property)                   | SetDataToDefaultIfUnset();<br/>GetFieldValuesFrom(data);       | Both fields and data member |
+> | No                            | Data member (field or property)                   | SetDataToDefaultIfUnset();<br/>~~//GetFieldValuesFrom(data);~~ | Only data member            |
 
 #### Example
 
@@ -201,13 +211,27 @@ using Muggle.TsExtensions.CodingHelper.Generators;
 [FieldsFrom(typeof(PluginData))]
 public partial class Plugin : PluginBase {
 
-    [PlateFieldDefaultValues("Stiffener", breadth: 300, thickness: 14, material: "Q235")]
+    [PlateFieldDefaultValues("Stiffener", breadth: 300, Thickness = 14, Material = "Q235")]
     public PluginData Data { get; set; }
 
     public Plugin(PluginData data) {
         Data = data;
         SetDataToDefaultIfUnset();
         GetFieldValuesFrom(Data);
+    }
+    
+    public override List<InputDefinition> DefineInput() {
+        /* ... */
+    }
+    
+    public override bool Run(List<InputDefinition> input) {
+        /* ... */
+        var stif = CreatPlateStiffener<ContourPlate>();
+        stif.Insert();
+        
+        var plate = new Beam();
+        ModifyToPlateStiffener(ref plate);
+        /* ... */
     }
 }
 ~~~
@@ -244,16 +268,70 @@ public partial class Plugin {
         if (IsDefaultValue(Data.PlateStiffenerPartStartNumber))
             Data.PlateStiffenerPartStartNumber = 1;
     }
+    
+    private T CreatPlateStiffener<T>() where T : global::Tekla.Structures.Model.Part, new() {
+        if (typeof(T) == typeof(global::Tekla.Structures.Model.Brep))
+            throw new global::System.NotSupportedException($"Type \"{typeof(global::Tekla.Structures.Model.Brep)}\" not supported.");
+        
+        T plate = new T();
+        plate.Name = Data.PlateStiffenerName;
+        switch (typeof(T).ToString()) { 
+        case "Tekla.Structures.Model.Beam": 
+        case "Tekla.Structures.Model.PolyBeam": 
+        case "Tekla.Structures.Model.SpiralBeam": 
+            plate.Profile.ProfileString = $"PL{Data.PlateStiffenerThickness}*{Data.PlateStiffenerBreadth}"; 
+            break; 
+        case "Tekla.Structures.Model.BentPlate": 
+        case "Tekla.Structures.Model.ContourPlate": 
+        case "Tekla.Structures.Model.LoftedPlate": 
+            plate.Profile.ProfileString = $"PL{Data.PlateStiffenerThickness}"; 
+            break;
+        }
+        plate.Material.MaterialString = Data.PlateStiffenerMaterial;
+        plate.Finish = Data.PlateStiffenerFinish;
+        plate.Class = Data.PlateStiffenerClass.ToString();
+        plate.AssemblyNumber.Prefix = Data.PlateStiffenerAssemblyPrefix;
+        plate.AssemblyNumber.StartNumber = Data.PlateStiffenerAssemblyStartNumber;
+        plate.PartNumber.Prefix = Data.PlateStiffenerPartPrefix;
+        plate.PartNumber.StartNumber = Data.PlateStiffenerPartStartNumber;
+        return plate;
+    }
+    
+    private void ModifyToPlateStiffener<T>(ref T plate) where T : global::Tekla.Structures.Model.Part {
+        if (typeof(T) == typeof(global::Tekla.Structures.Model.Brep))
+            throw new global::System.NotSupportedException($"Type \"{typeof(global::Tekla.Structures.Model.Brep)}\" not supported.");
+        
+        plate.Name = Data.PlateStiffenerName;
+        switch (typeof(T).ToString()) { 
+        case "Tekla.Structures.Model.Beam": 
+        case "Tekla.Structures.Model.PolyBeam": 
+        case "Tekla.Structures.Model.SpiralBeam": 
+            plate.Profile.ProfileString = $"PL{Data.PlateStiffenerThickness}*{Data.PlateStiffenerBreadth}"; 
+            break; 
+        case "Tekla.Structures.Model.BentPlate": 
+        case "Tekla.Structures.Model.ContourPlate": 
+        case "Tekla.Structures.Model.LoftedPlate": 
+            plate.Profile.ProfileString = $"PL{Data.PlateStiffenerThickness}"; 
+            break;
+        }
+        plate.Material.MaterialString = Data.PlateStiffenerMaterial;
+        plate.Finish = Data.PlateStiffenerFinish;
+        plate.Class = Data.PlateStiffenerClass.ToString();
+        plate.AssemblyNumber.Prefix = Data.PlateStiffenerAssemblyPrefix;
+        plate.AssemblyNumber.StartNumber = Data.PlateStiffenerAssemblyStartNumber;
+        plate.PartNumber.Prefix = Data.PlateStiffenerPartPrefix;
+        plate.PartNumber.StartNumber = Data.PlateStiffenerPartStartNumber;
+    }
 }
 ~~~
 
 ---
 
-## Generate properties for view model class
+## Generator for view model class
 
-### General properties
+### System preset properties
 
-Inherit view model from preset view model base to make it has ability to notify when its property changed and has some **general properties** (with StructuresDialogAttribute).
+Inherit view model from preset view model base to make it has ability to notify when its property changed and has some Tekla Structures preset properties.
 
 - NotificationObject
 
@@ -261,24 +339,24 @@ Inherit view model from preset view model base to make it has ability to notify 
 
 - ConnectionViewModel
 
-  An abstract class inherit from NotificationObject, and has a several general properties for connection type plugin. The usage of properties is consistent with the options in Tekla Structures system *connection* component general tab.
+  An abstract class inherit from NotificationObject, and has a several Tekla Structures preset properties for connection type plugin.
+  The usage of properties is consistent with the options in Tekla Structures system *connection* component general tab.
 
 - DetailViewModel
 
-  An abstract class inherit from NotificationObject, and has a several general properties for detail type plugin. The usage of properties is consistent with the options in Tekla Structures system *detail* component general tab.
+  An abstract class inherit from NotificationObject, and has a several Tekla Structures preset properties for detail type plugin.
+  The usage of properties is consistent with the options in Tekla Structures system *detail* component general tab.
 
 ### Specific properties
 
 Apply these attributes to view model class to auto generate properties (with StructuresDialogAttribute) and set default values at the same time:
 
-- GeneralPropertiesWithDefaultValuesAttribute
-- PartPropertiesWithDefaultValuesAttribute
-- PlatePropertiesWithDefaultValuesAttribute
-- WeldPropertiesWithDefaultValuesAttribute
-- BoltPropertiesWithDefaultValuesAttribute
-- BoltCirclePropertiesWithDefaultValuesAttribute
-
-> ***Note***: Currently, the attributes from the previous version are retained (the same names of the above but do not include "WithDefaultValues"), but they are not recommended for use and might be removed in later versions, because the default values in the old version are hard-coded, whereas the new version allows manual specification.
+- GeneralPropertiesAttribute
+- PartPropertiesAttribute
+- PlatePropertiesAttribute
+- WeldPropertiesAttribute
+- BoltPropertiesAttribute
+- BoltCirclePropertiesAttribute
 
 > ***Note***: Mapping relationship between model object properties and plugin attribute names [see here](https://github.com/ThinkerHua/Muggle-Tekla-Structures-Extensions/blob/master/CodingHelper/AttributeNameReference.md).
 
@@ -290,8 +368,10 @@ The source codes by hand:
 // in MainWindowViewModel.cs
 
 using Muggle.TsExtensions.CodingHelper.Generators;
+using Tekla.Structures.Datatype;
 
-[PlatePropertiesWithDefaultValues("Stiffener", 10, 200.0, 300.00,)]
+[GeneralProperties(typeof(Integer), "num", 10)]
+[PlatePropertiesWithDefaultValues("Stiffener", 10, breadth: 200.0, Height = 300.00,)]
 public partial class MainWindowViewModel : ConnectionViewModel { 
     // ...
 }
@@ -302,140 +382,154 @@ Then it will auto generate codes behind like this:
 ~~~CSharp
 // in MainWindowViewModel.g.cs
 
-public partial class MainWindowViewModel {
+using System;
 
-        private Tekla.Structures.Datatype.Double _plateStiffenerThickness;
-        private Tekla.Structures.Datatype.Double _plateStiffenerBreadth;
-        private Tekla.Structures.Datatype.Double _plateStiffenerHeight;
-        private Tekla.Structures.Datatype.String _plateStiffenerMaterial;
-        private Tekla.Structures.Datatype.String _plateStiffenerName;
-        private Tekla.Structures.Datatype.String _plateStiffenerFinish;
-        private Tekla.Structures.Datatype.Integer _plateStiffenerClass;
-        private Tekla.Structures.Datatype.String _plateStiffenerAssemblyPrefix;
-        private Tekla.Structures.Datatype.Integer _plateStiffenerAssemblyStartNumber;
-        private Tekla.Structures.Datatype.String _plateStiffenerPartPrefix;
-        private Tekla.Structures.Datatype.Integer _plateStiffenerPartStartNumber;
-        
-        [Tekla.Structures.Dialog.StructuresDialog("PLStiffenerT", typeof(Tekla.Structures.Datatype.Double))]
-        public Tekla.Structures.Datatype.Double PlateStiffenerThickness {
-            get {
-                return _plateStiffenerThickness;
-            }
-            set {
-                _plateStiffenerThickness = value == int.MinValue ? 10 : value;
-                OnPropertyChanged();
-            }
+public partial class MainWindowViewModel {
+    
+    private global::Tekla.Structures.Datatype.Integer _num;
+    private global::Tekla.Structures.Datatype.Double _plateStiffenerThickness;
+    private global::Tekla.Structures.Datatype.Double _plateStiffenerBreadth;
+    private global::Tekla.Structures.Datatype.Double _plateStiffenerHeight;
+    private global::Tekla.Structures.Datatype.String _plateStiffenerMaterial;
+    private global::Tekla.Structures.Datatype.String _plateStiffenerName;
+    private global::Tekla.Structures.Datatype.String _plateStiffenerFinish;
+    private global::Tekla.Structures.Datatype.Integer _plateStiffenerClass;
+    private global::Tekla.Structures.Datatype.String _plateStiffenerAssemblyPrefix;
+    private global::Tekla.Structures.Datatype.Integer _plateStiffenerAssemblyStartNumber;
+    private global::Tekla.Structures.Datatype.String _plateStiffenerPartPrefix;
+    private global::Tekla.Structures.Datatype.Integer _plateStiffenerPartStartNumber;
+    
+    [global::Tekla.Structures.Dialog.StructuresDialog("num", typeof(global::Tekla.Structures.Datatype.Integer))]
+    public global::Tekla.Structures.Datatype.Integer Num {
+        get {
+            return _num;
         }
-        
-        [Tekla.Structures.Dialog.StructuresDialog("PLStiffenerB", typeof(Tekla.Structures.Datatype.Double))]
-        public Tekla.Structures.Datatype.Double PlateStiffenerBreadth {
-            get {
-                return _plateStiffenerBreadth;
-            }
-            set {
-                _plateStiffenerBreadth = value == int.MinValue ? 200 : value;
-                OnPropertyChanged();
-            }
+        set {
+            _num = value == int.MinValue ? 10 : value;
+            OnPropertyChanged();
         }
-        
-        [Tekla.Structures.Dialog.StructuresDialog("PLStiffenerH", typeof(Tekla.Structures.Datatype.Double))]
-        public Tekla.Structures.Datatype.Double PlateStiffenerHeight {
-            get {
-                return _plateStiffenerHeight;
-            }
-            set {
-                _plateStiffenerHeight = value == int.MinValue ? 300 : value;
-                OnPropertyChanged();
-            }
+    }
+    
+    [global::Tekla.Structures.Dialog.StructuresDialog("PLStiffenerT", typeof(global::Tekla.Structures.Datatype.Double))]
+    public global::Tekla.Structures.Datatype.Double PlateStiffenerThickness {
+        get {
+            return _plateStiffenerThickness;
         }
-        
-        [Tekla.Structures.Dialog.StructuresDialog("PLStiffenerMATL", typeof(Tekla.Structures.Datatype.String))]
-        public Tekla.Structures.Datatype.String PlateStiffenerMaterial {
-            get {
-                return _plateStiffenerMaterial;
-            }
-            set {
-                _plateStiffenerMaterial = string.IsNullOrEmpty(value) ? "" : value;
-                OnPropertyChanged();
-            }
+        set {
+            _plateStiffenerThickness = value == int.MinValue ? 10 : value;
+            OnPropertyChanged();
         }
-        
-        [Tekla.Structures.Dialog.StructuresDialog("PLStiffenerNAME", typeof(Tekla.Structures.Datatype.String))]
-        public Tekla.Structures.Datatype.String PlateStiffenerName {
-            get {
-                return _plateStiffenerName;
-            }
-            set {
-                _plateStiffenerName = string.IsNullOrEmpty(value) ? "" : value;
-                OnPropertyChanged();
-            }
+    }
+    
+    [global::Tekla.Structures.Dialog.StructuresDialog("PLStiffenerB", typeof(global::Tekla.Structures.Datatype.Double))]
+    public global::Tekla.Structures.Datatype.Double PlateStiffenerBreadth {
+        get {
+            return _plateStiffenerBreadth;
         }
-        
-        [Tekla.Structures.Dialog.StructuresDialog("PLStiffenerFNSH", typeof(Tekla.Structures.Datatype.String))]
-        public Tekla.Structures.Datatype.String PlateStiffenerFinish {
-            get {
-                return _plateStiffenerFinish;
-            }
-            set {
-                _plateStiffenerFinish = string.IsNullOrEmpty(value) ? "" : value;
-                OnPropertyChanged();
-            }
+        set {
+            _plateStiffenerBreadth = value == int.MinValue ? 0 : value;
+            OnPropertyChanged();
         }
-        
-        [Tekla.Structures.Dialog.StructuresDialog("PLStiffenerCLS", typeof(Tekla.Structures.Datatype.Integer))]
-        public Tekla.Structures.Datatype.Integer PlateStiffenerClass {
-            get {
-                return _plateStiffenerClass;
-            }
-            set {
-                _plateStiffenerClass = value == int.MinValue ? 99 : value;
-                OnPropertyChanged();
-            }
+    }
+    
+    [global::Tekla.Structures.Dialog.StructuresDialog("PLStiffenerH", typeof(global::Tekla.Structures.Datatype.Double))]
+    public global::Tekla.Structures.Datatype.Double PlateStiffenerHeight {
+        get {
+            return _plateStiffenerHeight;
         }
-        
-        [Tekla.Structures.Dialog.StructuresDialog("PLStiffenerASMP", typeof(Tekla.Structures.Datatype.String))]
-        public Tekla.Structures.Datatype.String PlateStiffenerAssemblyPrefix {
-            get {
-                return _plateStiffenerAssemblyPrefix;
-            }
-            set {
-                _plateStiffenerAssemblyPrefix = string.IsNullOrEmpty(value) ? "A-" : value;
-                OnPropertyChanged();
-            }
+        set {
+            _plateStiffenerHeight = value == int.MinValue ? 0 : value;
+            OnPropertyChanged();
         }
-        
-        [Tekla.Structures.Dialog.StructuresDialog("PLStiffenerASMN", typeof(Tekla.Structures.Datatype.Integer))]
-        public Tekla.Structures.Datatype.Integer PlateStiffenerAssemblyStartNumber {
-            get {
-                return _plateStiffenerAssemblyStartNumber;
-            }
-            set {
-                _plateStiffenerAssemblyStartNumber = value == int.MinValue ? 1 : value;
-                OnPropertyChanged();
-            }
+    }
+    
+    [global::Tekla.Structures.Dialog.StructuresDialog("PLStiffenerMATL", typeof(global::Tekla.Structures.Datatype.String))]
+    public global::Tekla.Structures.Datatype.String PlateStiffenerMaterial {
+        get {
+            return _plateStiffenerMaterial;
         }
-        
-        [Tekla.Structures.Dialog.StructuresDialog("PLStiffenerPTP", typeof(Tekla.Structures.Datatype.String))]
-        public Tekla.Structures.Datatype.String PlateStiffenerPartPrefix {
-            get {
-                return _plateStiffenerPartPrefix;
-            }
-            set {
-                _plateStiffenerPartPrefix = string.IsNullOrEmpty(value) ? "P" : value;
-                OnPropertyChanged();
-            }
+        set {
+            _plateStiffenerMaterial = string.IsNullOrEmpty(value) ? "" : value;
+            OnPropertyChanged();
         }
-        
-        [Tekla.Structures.Dialog.StructuresDialog("PLStiffenerPTN", typeof(Tekla.Structures.Datatype.Integer))]
-        public Tekla.Structures.Datatype.Integer PlateStiffenerPartStartNumber {
-            get {
-                return _plateStiffenerPartStartNumber;
-            }
-            set {
-                _plateStiffenerPartStartNumber = value == int.MinValue ? 1 : value;
-                OnPropertyChanged();
-            }
+    }
+    
+    [global::Tekla.Structures.Dialog.StructuresDialog("PLStiffenerNAME", typeof(global::Tekla.Structures.Datatype.String))]
+    public global::Tekla.Structures.Datatype.String PlateStiffenerName {
+        get {
+            return _plateStiffenerName;
         }
+        set {
+            _plateStiffenerName = string.IsNullOrEmpty(value) ? "" : value;
+            OnPropertyChanged();
+        }
+    }
+    
+    [global::Tekla.Structures.Dialog.StructuresDialog("PLStiffenerFNSH", typeof(global::Tekla.Structures.Datatype.String))]
+    public global::Tekla.Structures.Datatype.String PlateStiffenerFinish {
+        get {
+            return _plateStiffenerFinish;
+        }
+        set {
+            _plateStiffenerFinish = string.IsNullOrEmpty(value) ? "" : value;
+            OnPropertyChanged();
+        }
+    }
+    
+    [global::Tekla.Structures.Dialog.StructuresDialog("PLStiffenerCLS", typeof(global::Tekla.Structures.Datatype.Integer))]
+    public global::Tekla.Structures.Datatype.Integer PlateStiffenerClass {
+        get {
+            return _plateStiffenerClass;
+        }
+        set {
+            _plateStiffenerClass = value == int.MinValue ? 99 : value;
+            OnPropertyChanged();
+        }
+    }
+    
+    [global::Tekla.Structures.Dialog.StructuresDialog("PLStiffenerASMP", typeof(global::Tekla.Structures.Datatype.String))]
+    public global::Tekla.Structures.Datatype.String PlateStiffenerAssemblyPrefix {
+        get {
+            return _plateStiffenerAssemblyPrefix;
+        }
+        set {
+            _plateStiffenerAssemblyPrefix = string.IsNullOrEmpty(value) ? "A-" : value;
+            OnPropertyChanged();
+        }
+    }
+    
+    [global::Tekla.Structures.Dialog.StructuresDialog("PLStiffenerASMN", typeof(global::Tekla.Structures.Datatype.Integer))]
+    public global::Tekla.Structures.Datatype.Integer PlateStiffenerAssemblyStartNumber {
+        get {
+            return _plateStiffenerAssemblyStartNumber;
+        }
+        set {
+            _plateStiffenerAssemblyStartNumber = value == int.MinValue ? 1 : value;
+            OnPropertyChanged();
+        }
+    }
+    
+    [global::Tekla.Structures.Dialog.StructuresDialog("PLStiffenerPTP", typeof(global::Tekla.Structures.Datatype.String))]
+    public global::Tekla.Structures.Datatype.String PlateStiffenerPartPrefix {
+        get {
+            return _plateStiffenerPartPrefix;
+        }
+        set {
+            _plateStiffenerPartPrefix = string.IsNullOrEmpty(value) ? "P" : value;
+            OnPropertyChanged();
+        }
+    }
+    
+    [global::Tekla.Structures.Dialog.StructuresDialog("PLStiffenerPTN", typeof(global::Tekla.Structures.Datatype.Integer))]
+    public global::Tekla.Structures.Datatype.Integer PlateStiffenerPartStartNumber {
+        get {
+            return _plateStiffenerPartStartNumber;
+        }
+        set {
+            _plateStiffenerPartStartNumber = value == int.MinValue ? 1 : value;
+            OnPropertyChanged();
+        }
+    }
 }
 ~~~
 

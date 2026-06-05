@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 
 namespace Muggle.TsExtensions.CodingHelper.Generators {
     
@@ -12,16 +13,21 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
     /// see here</a>.</remarks>
     [AttributeUsage(AttributeTargets.Class)]
     public class PlateFieldsAttribute : Attribute {
-        
+        public string[] Ids { get; set; }
+
         /// <summary>
-        /// Register the plate fields using the given numbers.
+        /// Register the plate fields using the given ids.
         /// </summary>
-        public PlateFieldsAttribute(params uint[] numbers) { }
-        
+        public PlateFieldsAttribute(params uint[] ids) {
+            Ids = ids.Select(id => id.ToString()).ToArray();
+        }
+
         /// <summary>
-        /// Register the plate fields using the given names.
+        /// Register the plate fields using the given ids.
         /// </summary>
-        public PlateFieldsAttribute(params string[] names) { }
+        public PlateFieldsAttribute(params string[] ids) {
+            Ids = ids;
+        }
         
     }
     

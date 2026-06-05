@@ -7,6 +7,6 @@ namespace Muggle.TsExtensions.CodingHelper.Generators.Information {
 
         public ITypeSymbol DataType;
 
-        public ArgumentsDictionary<NameOrNumberSet> Arguments;
+        public ArgumentsDictionary<IdSet> Arguments;
     }
 }

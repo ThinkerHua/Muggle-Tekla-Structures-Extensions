@@ -23,9 +23,9 @@ using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
-using Muggle.TsExtensions.CodingHelper.Diagnosers;
 using Muggle.TsExtensions.CodingHelper.Generators.Information;
 using static Muggle.TsExtensions.CodingHelper.Generators.GeneratorHelper;
+using static Muggle.TsExtensions.CodingHelper.Diagnosers.InternalAttributesDiagnoser;
 
 namespace Muggle.TsExtensions.CodingHelper.Generators;
 
@@ -43,31 +43,48 @@ public class PluginFieldsGenerator : IIncrementalGenerator {
         var provider = context.SyntaxProvider.ForAttributeWithMetadataName(ConcernedAttribute, Predicate, Transform)
             .Where(x => x != default);
 
-        context.RegisterSourceOutput(provider, Generate);
+        var diagnostics = provider.SelectMany(static (x, _) => x.DiagnosticInfos);
+        context.RegisterSourceOutput(diagnostics, static (spc, info) => {
+            spc.ReportDiagnostic(Diagnostic.Create(info.Descriptor, info.Location, info.Arguments));
+        });
+
+        var pluginFieldsInfo = provider.Select(static (x, _) => x.Value).Where(x => x != default);
+        context.RegisterSourceOutput(pluginFieldsInfo, Generate);
     }
 
     private static bool Predicate(SyntaxNode node, CancellationToken token) {
         if (token.IsCancellationRequested) return false;
 
-        var classDeclarationSyntax = node as ClassDeclarationSyntax;
-
-        return classDeclarationSyntax!.Modifiers.Any(m => m.IsKind(SyntaxKind.PartialKeyword));
+        return node is ClassDeclarationSyntax;
     }
 
-    private static PluginFieldsInfo Transform(GeneratorAttributeSyntaxContext context, CancellationToken token) {
+    private static GatheredInfo<PluginFieldsInfo> Transform(
+        GeneratorAttributeSyntaxContext context,
+        CancellationToken token) {
+
         var classDeclarationSyntax = (ClassDeclarationSyntax)context.TargetNode;
         var semanticModel = context.SemanticModel;
 
         var classSymbol = semanticModel.GetDeclaredSymbol(classDeclarationSyntax);
-        if (classSymbol == null) return default;
+        if (classSymbol is null) return default;
+
+        var result = new GatheredInfo<PluginFieldsInfo>(default, []);
+
+        if (!classDeclarationSyntax!.Modifiers.Any(m => m.IsKind(SyntaxKind.PartialKeyword))) {
+            result.DiagnosticInfos = result.DiagnosticInfos.Add(
+                new DiagnosticInfo(NotPartial, classDeclarationSyntax.Identifier.GetLocation(),
+                    [classDeclarationSyntax.Identifier.ValueText])
+            );
+            return result;
+        }
 
         var attSyntax = classDeclarationSyntax.AttributeLists.SelectMany(a => a.Attributes)
             .First(a => GetAttributeQualifiedName(a, semanticModel) == ConcernedAttribute);
-        if (attSyntax.ArgumentList == null) return default;
+        if (attSyntax.ArgumentList is null) return result;
 
         var dataTypeInfo = semanticModel.GetTypeInfo(attSyntax.ArgumentList.DescendantNodes()
             .OfType<TypeOfExpressionSyntax>().First().Type);
-        if (dataTypeInfo.Type == null) return default;
+        if (dataTypeInfo.Type is null) return result;
 
         var dataAttSyntaxes = dataTypeInfo.Type.GetAttributes().Where(a =>
                 PluginDataFieldsGenerator.ConcernedAttributes.Contains(a.AttributeClass?.ToDisplayString()))
@@ -75,59 +92,63 @@ public class PluginFieldsGenerator : IIncrementalGenerator {
 
         //  Key - for 'GeneralFieldDefaultValuesAttribute' is 'int' or 'double' or 'string'
         //        for other attributes is attribute name
-        //  Value - name or number hash set
-        var argDict = new ArgumentsDictionary<NameOrNumberSet>();
-        var generalFieldNameSet = new NameOrNumberSet();
+        //  Value - id hash set
+        var argDict = new ArgumentsDictionary<IdSet>();
+        var generalFieldSet = new IdSet();
 
         foreach (var dataAttSyntax in dataAttSyntaxes) {
-            //  when plugin data class not in the same file as plugin class, it doesn't work
+            // when plugin data class not in the same file as plugin class, this method doesn't work
             // var attName = GetAttributeName(dataAttSyntax, semanticModel);
 
             var attName = dataAttSyntax!.Name.ToString();
             if (!attName.EndsWith("Attribute")) attName += "Attribute";
+            var key = attName;
 
             var generalFieldDataType = dataAttSyntax.ArgumentList!.Arguments
                 .SelectMany(attArgSyntax => attArgSyntax.DescendantNodes().OfType<TypeOfExpressionSyntax>())
                 .FirstOrDefault()?.Type.ToString();
-            if (!string.IsNullOrEmpty(generalFieldDataType)) attName = generalFieldDataType;
+            if (!string.IsNullOrEmpty(generalFieldDataType)) key = generalFieldDataType;
 
-            if (!argDict.TryGetValue(attName, out var nameOrNumberSet)) {
-                nameOrNumberSet = [];
-                argDict.Add(attName, nameOrNumberSet);
+            if (!argDict.TryGetValue(key, out var idSet)) {
+                idSet = [];
+                argDict.Add(key, idSet);
             }
 
-            var nameOrNumbers = dataAttSyntax.ArgumentList!.Arguments
+            var ids = dataAttSyntax.ArgumentList!.Arguments
                 .SelectMany(attArgSyntax => attArgSyntax.DescendantNodes().OfType<LiteralExpressionSyntax>())
                 .Select(exprSyntax => exprSyntax.Token.ValueText);
 
-            foreach (var nameOrNumber in nameOrNumbers) {
-                if (nameOrNumber.Length == 0 ||
-                    nameOrNumber.Length > InternalAttributesDiagnoser.MaxLengthOfArgument(attName) ||
-                    Regex.IsMatch(nameOrNumber, InternalAttributesDiagnoser.SpecialCharacterPattern))
+            foreach (var id in ids) {
+                if (id.Length == 0 ||
+                    id.Length > MaxLengthOfArgument(attName) ||
+                    Regex.IsMatch(id, SpecialCharacterPattern))
+                    //  dont need to report diagnostic
                     continue;
-                if (!string.IsNullOrEmpty(generalFieldDataType) && Regex.IsMatch(nameOrNumber, "^[0-9]")) continue;
+                //  dont need to report diagnostic
+                if (key != attName && Regex.IsMatch(id, "^[0-9]")) continue;
 
-                if (!string.IsNullOrEmpty(generalFieldDataType) && generalFieldNameSet.Add(nameOrNumber) ||
-                    string.IsNullOrEmpty(generalFieldDataType))
-                    nameOrNumberSet.Add(nameOrNumber);
+                if (key != attName && generalFieldSet.Add(id) ||
+                    key == attName)
+                    idSet.Add(id);
             }
         }
 
-        if (argDict.Count == 0 || argDict.All(kvp => kvp.Value.Count == 0)) return default;
+        if (argDict.Count == 0 || argDict.All(kvp => kvp.Value.Count == 0)) return result;
 
         token.ThrowIfCancellationRequested();
 
-        return new PluginFieldsInfo {
+        result.Value = new PluginFieldsInfo {
             ClassInfo = new ClassInfo {
-                Name = classDeclarationSyntax.Identifier.ValueText,
                 NameSpace = classSymbol.ContainingNamespace.ToDisplayString(),
                 Accessibility = classSymbol.DeclaredAccessibility,
                 IsRecord = classSymbol.IsRecord,
+                Name = classDeclarationSyntax.Identifier.ValueText,
             },
             DataType = dataTypeInfo.Type,
             Arguments = argDict
         };
 
+        return result;
     }
 
     private static void Generate(SourceProductionContext context, PluginFieldsInfo fieldsInfo) {
@@ -165,20 +186,17 @@ public class PluginFieldsGenerator : IIncrementalGenerator {
         }
 
         foreach (var kvp in info.Arguments) {
-            var attName = kvp.Key;
-            var attPrefix = attName.Length > 15 ? attName.Substring(0, 15) : string.Empty;
-
-            if (attPrefix == string.Empty) {
-                singleFieldsBuilder.Append(GenerateSingleFields(kvp));
-            } else {
+            if (kvp.Key.EndsWith("Attribute")) {
                 seriesFieldsBuilder.Append(GenerateSeriesFields(kvp));
+            } else {
+                singleFieldsBuilder.Append(GenerateSingleFields(kvp));
             }
         }
 
         return builder.Append(singleFieldsBuilder).Append(seriesFieldsBuilder).ToString();
     }
 
-    private static string GenerateSeriesFields(KeyValuePair<string, NameOrNumberSet> kvp) {
+    private static string GenerateSeriesFields(KeyValuePair<string, IdSet> kvp) {
         var attName = kvp.Key;
 
         var fieldPrefix = ToPrivateFieldNameStyle(attName.Substring(0, attName.Length - 15));
@@ -193,30 +211,30 @@ public class PluginFieldsGenerator : IIncrementalGenerator {
         };
 
         var fieldsBuilder = new StringBuilder();
-        foreach (var nameOrNumber in kvp.Value) {
+        foreach (var id in kvp.Value) {
             foreach (var info in fieldInfos) {
-                fieldsBuilder.AppendLine($"        private {info.Type} {fieldPrefix}{nameOrNumber}{info.Name};");
+                fieldsBuilder.AppendLine(
+                    $"        private {info.Type} {fieldPrefix}{ToPropertyNameStyle(id)}{info.Name};");
             }
         }
 
         return fieldsBuilder.ToString();
     }
 
-    private static string GenerateSingleFields(KeyValuePair<string, NameOrNumberSet> kvp) {
+    private static string GenerateSingleFields(KeyValuePair<string, IdSet> kvp) {
         var dataType = kvp.Key;
 
         if (dataType != "int" && dataType != "double" && dataType != "string") { return string.Empty; }
 
         var fieldsBuilder = new StringBuilder();
-        foreach (var name in kvp.Value) {
-            fieldsBuilder.AppendLine($"        private {dataType} {ToPrivateFieldNameStyle(name)};");
+        foreach (var id in kvp.Value) {
+            fieldsBuilder.AppendLine($"        private {dataType} {ToPrivateFieldNameStyle(id)};");
         }
 
         return fieldsBuilder.ToString();
     }
 
     private static string GenerateGetFieldValuesFromMethod(PluginFieldsInfo fieldsInfo) {
-
         var builder = new StringBuilder();
 
         var fieldSymbols = fieldsInfo.DataType.GetMembers().OfType<IFieldSymbol>()
@@ -228,15 +246,15 @@ public class PluginFieldsGenerator : IIncrementalGenerator {
         }
 
         foreach (var kvp in fieldsInfo.Arguments) {
-            var attName = kvp.Key;
+            var key = kvp.Key;
 
-            if (attName is "int" or "double" or "string") {
-                foreach (var name in kvp.Value) {
+            if (key is "int" or "double" or "string") {
+                foreach (var id in kvp.Value) {
                     builder.AppendLine(
-                        $"            {ToPrivateFieldNameStyle(name)} = data.{ToPropertyNameStyle(name)};");
+                        $"            {ToPrivateFieldNameStyle(id)} = data.{ToPropertyNameStyle(id)};");
                 }
             } else {
-                var fieldInfos = attName switch {
+                var fieldInfos = key switch {
                     "PartFieldsAttribute" => PluginDataFieldsGenerator.PartFieldInfos,
                     "PlateFieldsAttribute" => PluginDataFieldsGenerator.PlateFieldInfos,
                     "WeldFieldsAttribute" => PluginDataFieldsGenerator.WeldFieldInfos,
@@ -245,18 +263,22 @@ public class PluginFieldsGenerator : IIncrementalGenerator {
                     _ => []
                 };
 
-                var modelObjectType = attName.Substring(0, attName.Length - 15);
+                var modelObjectType = key.Substring(0, key.Length - 15);
 
                 foreach (var fieldInfo in fieldInfos) {
-                    foreach (var nameOrNumber in kvp.Value) {
+                    foreach (var id in kvp.Value) {
                         builder.AppendLine(
-                            $"            {ToPrivateFieldNameStyle(modelObjectType)}{nameOrNumber}{fieldInfo.Name} = data.{modelObjectType}{nameOrNumber}{fieldInfo.Name};");
+                            $"            {ToPrivateFieldNameStyle(modelObjectType)}{ToPropertyNameStyle(id)}{fieldInfo.Name} = data.{modelObjectType}{ToPropertyNameStyle(id)}{fieldInfo.Name};");
                     }
                 }
             }
         }
 
-        return $"        private void GetFieldValuesFrom({fieldsInfo.DataType} data) {{\n" +
+        return $"/// <summary>\n" +
+               $"/// Copy the values of each field in <paramref name=\"data\" /> to the fields of this plugin.\n" +
+               $"/// </summary>\n" +
+               $"/// <param name=\"data\">The given data provider.</param>\n" +
+               $"        private void GetFieldValuesFrom({fieldsInfo.DataType} data) {{\n" +
                $"{builder}" +
                $"        }}";
     }

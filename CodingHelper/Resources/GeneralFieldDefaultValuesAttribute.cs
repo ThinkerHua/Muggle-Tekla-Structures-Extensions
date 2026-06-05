@@ -1,7 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Muggle.TsExtensions.CodingHelper.Generators {
-    
     /// <summary>
     /// Register default values for general field.
     /// </summary>
@@ -10,14 +10,24 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
     /// </remarks>
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Field | AttributeTargets.Property)]
     public class GeneralFieldDefaultValuesAttribute : Attribute {
-        
+        public Dictionary<string, object> DefaultValues { get; }
+
         /// <summary>
         /// Register default values.
         /// </summary>
         /// <param name="nameValuePairs">Field name and default values, must be passed in pairs,
         /// such as ["param1", 12, "param2", 8.5, "param3", "value"].</param>
-        public GeneralFieldDefaultValuesAttribute(params object[] nameValuePairs) { }
-        
+        public GeneralFieldDefaultValuesAttribute(params object[] nameValuePairs) {
+            DefaultValues = new Dictionary<string, object>();
+            
+            for (int i = 0; i < nameValuePairs.Length / 2 * 2; i += 2) {
+                var name = nameValuePairs[i];
+                var value = nameValuePairs[i + 1];
+                
+                //  no "not pattern" for compatibility
+                if (!(name is string nameStr)) continue;
+                DefaultValues.Add(nameStr, value);
+            }
+        }
     }
-    
 }

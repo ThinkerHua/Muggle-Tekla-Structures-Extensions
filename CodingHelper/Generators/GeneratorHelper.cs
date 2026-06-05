@@ -18,87 +18,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using System.Threading;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Muggle.TsExtensions.CodingHelper.Diagnosers;
-using Muggle.TsExtensions.CodingHelper.Generators.Information;
 
 namespace Muggle.TsExtensions.CodingHelper.Generators {
     internal static class GeneratorHelper {
-        internal static PluginDataFieldsInfo GetPluginDataFieldsInfo(GeneratorSyntaxContext syntaxContext,
-            CancellationToken token,
-            IReadOnlyCollection<string> matchTheseAttributes) {
-            if (syntaxContext.Node is not ClassDeclarationSyntax classDeclarationSyntax) return default;
-
-            var semanticModel = syntaxContext.SemanticModel;
-
-            //  Key - for 'GeneralFieldsAttribute' is 'int' or 'double' or 'string'
-            //        for other attribute is attribute name
-            //  Value - name or number set
-            var attArguments = new ArgumentsDictionary<NameOrNumberSet>();
-
-            foreach (var attListSyntax in classDeclarationSyntax.AttributeLists) {
-                foreach (var attSyntax in attListSyntax.Attributes) {
-                    var attQualifiedName = GetAttributeQualifiedName(attSyntax, semanticModel);
-                    if (!matchTheseAttributes.Contains(attQualifiedName)) continue;
-
-                    var attName = GetUnqualifiedName(attQualifiedName);
-
-                    if (attSyntax.ArgumentList == null) continue;
-
-                    var dataType = attSyntax.ArgumentList.Arguments
-                        .SelectMany(argSyntax => argSyntax.DescendantNodes().OfType<TypeOfExpressionSyntax>())
-                        .FirstOrDefault()?.Type.ToString();
-
-                    // if (attName == "GeneralFieldsAttribute") attName = "int" 
-                    if (attName == matchTheseAttributes.Last() && string.IsNullOrEmpty(dataType)) {
-                        continue;
-                    }
-
-                    if (!string.IsNullOrEmpty(dataType)) {
-                        attName = dataType;
-                    }
-
-                    if (!attArguments.TryGetValue(attName!, out var nameOrNumberSet)) {
-                        nameOrNumberSet = [];
-                        attArguments.Add(attName, nameOrNumberSet);
-                    }
-
-                    var nameOrNumbers = attSyntax.ArgumentList.Arguments
-                        .SelectMany(argSyntax => argSyntax.DescendantNodes().OfType<LiteralExpressionSyntax>())
-                        .Select(exprSyntax => exprSyntax.Token.ValueText);
-
-                    foreach (var nameOrNumber in nameOrNumbers) {
-                        if (nameOrNumber.Length == 0 ||
-                            nameOrNumber.Length > InternalAttributesDiagnoser.MaxLengthOfArgument(attName) ||
-                            Regex.IsMatch(nameOrNumber, InternalAttributesDiagnoser.SpecialCharacterPattern))
-                            continue;
-                        if (!string.IsNullOrEmpty(dataType) && Regex.IsMatch(nameOrNumber, "^[0-9]")) continue;
-
-                        nameOrNumberSet.Add(nameOrNumber);
-                    }
-                }
-            }
-
-            if (attArguments.Count == 0 || attArguments.All(kvp => kvp.Value.Count == 0)) return default;
-
-            var classSymbol = syntaxContext.SemanticModel.GetDeclaredSymbol(classDeclarationSyntax)!;
-
-            if (token.IsCancellationRequested) return default;
-
-            return new PluginDataFieldsInfo {
-                ClassInfo = new ClassInfo {
-                    Name = classSymbol.Name,
-                    NameSpace = classSymbol.ContainingNamespace.ToDisplayString(),
-                    Accessibility = classSymbol.DeclaredAccessibility,
-                    IsRecord = classSymbol!.IsRecord,
-                },
-                Arguments = attArguments
-            };
-        }
-
+        
         internal static string GetAttributeQualifiedName(AttributeSyntax attributeSyntax, SemanticModel semanticModel) {
             var attributeTypeInfo = semanticModel.GetTypeInfo(attributeSyntax);
             return attributeTypeInfo.Type?.ToDisplayString();
@@ -115,6 +41,8 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
         }
 
         internal static string ToPrivateFieldNameStyle(string name) {
+            if (name == null) throw new ArgumentNullException(nameof(name));
+
             if (Regex.IsMatch(name, "^_[a-z]")) return name;
 
             while (name.StartsWith("_")) { name = name.Substring(1); }
@@ -130,6 +58,8 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
         }
 
         internal static string ToPropertyNameStyle(string name) {
+            if (name == null) throw new ArgumentNullException(nameof(name));
+
             if (Regex.IsMatch(name, "^[A-Z]")) return name;
 
             while (name.StartsWith("_")) { name = name.Substring(1); }
@@ -140,6 +70,8 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
         }
 
         internal static string ToLocalVariableNameStyle(string name) {
+            if (name is null) throw new ArgumentNullException(nameof(name));
+
             if (Regex.IsMatch(name, "^[a-z]")) return name;
 
             while (name.StartsWith("_")) { name = name.Substring(1); }
@@ -193,18 +125,22 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
         /// Value - argument, which is the value of property.</returns>
         internal static Dictionary<string, string> GetDefaultValuesFromSyntaxTree(
             SyntaxTree syntaxTree, out string attributeName) {
-            attributeName = syntaxTree.GetRoot().DescendantNodes().OfType<ConstructorDeclarationSyntax>().First()
-                .Identifier.ValueText;
+
+            var attClassDeclarationSyntax = syntaxTree.GetRoot().DescendantNodes()
+                .First(node => node is ClassDeclarationSyntax) as ClassDeclarationSyntax;
+            attributeName = attClassDeclarationSyntax!.Identifier.ValueText;
 
             var dict = new Dictionary<string, string>();
 
-            var paramListSyntax = syntaxTree.GetRoot().DescendantNodes().OfType<ParameterListSyntax>().First();
+            var paramListSyntax = attClassDeclarationSyntax
+                .DescendantNodes().OfType<ConstructorDeclarationSyntax>().Last()
+                .DescendantNodes().OfType<ParameterListSyntax>().Single();
+
             for (int i = 1; i < paramListSyntax.Parameters.Count; i++) {
                 var parameterSyntax = paramListSyntax.Parameters[i];
                 var parameter = parameterSyntax.Identifier.ValueText;
                 var argument = parameterSyntax.DescendantNodes().OfType<LiteralExpressionSyntax>()
-                    .FirstOrDefault()?
-                    .Token.ValueText;
+                    .Single().Token.ValueText;
                 dict.Add(parameter, argument);
             }
 
