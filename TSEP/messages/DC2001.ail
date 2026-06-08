@@ -1,0 +1,344 @@
+string_utf8 albl_DC2001_title {
+    entry = ("enu", "DC2001 - Crane grider support corbel");
+    entry = ("chs", "DC2001 - 吊车梁牛腿");
+};
+
+string_utf8 albl_parameters {
+    entry = ("enu", "Parameters");
+    entry = ("chs", "参数");
+};
+
+string_utf8 albl_left_corbel_length {
+    entry = ("enu", "Left corbel length");
+    entry = ("chs", "左牛腿长度");
+};
+
+string_utf8 albl_D1 {
+    entry = ("enu", "D1");
+    entry = ("chs", "D1");
+};
+
+string_utf8 albl_right_corbel_creation {
+    entry = ("enu", "Right corbel creation");
+    entry = ("chs", "右牛腿创建");
+};
+
+string_utf8 albl_none {
+    entry = ("enu", "None");
+    entry = ("chs", "无");
+};
+
+string_utf8 albl_same {
+    entry = ("enu", "Same");
+    entry = ("chs", "相同");
+};
+
+string_utf8 albl_different {
+    entry = ("enu", "Different");
+    entry = ("chs", "不同");
+};
+
+string_utf8 albl_right_corbel_length {
+    entry = ("enu", "Right corbel length");
+    entry = ("chs", "右牛腿长度");
+};
+
+string_utf8 albl_D2 {
+    entry = ("enu", "D2");
+    entry = ("chs", "D2");
+};
+
+string_utf8 albl_column_stiffener_chamfer {
+    entry = ("enu", "Column stiffener chamfer");
+    entry = ("chs", "柱加劲板倒角");
+};
+
+string_utf8 albl_chamfer_type {
+    entry = ("enu", "Chamfer type");
+    entry = ("chs", "倒角类型");
+};
+
+string_utf8 albl_chamfer_X {
+    entry = ("enu", "X");
+    entry = ("chs", "X");
+};
+
+string_utf8 albl_chamfer_Y {
+    entry = ("enu", "Y");
+    entry = ("chs", "Y");
+};
+
+string_utf8 albl_chamfer_Dz1 {
+    entry = ("enu", "Dz1");
+    entry = ("chs", "Dz1");
+};
+
+string_utf8 albl_chamfer_Dz2 {
+    entry = ("enu", "Dz2");
+    entry = ("chs", "Dz2");
+};
+
+string_utf8 albl_parts {
+    entry = ("enu", "Parts");
+    entry = ("chs", "零件");
+};
+
+string_utf8 albl_id {
+    entry = ("enu", "Id");
+    entry = ("chs", "标识");
+};
+
+string_utf8 albl_name {
+    entry = ("enu", "Name");
+    entry = ("chs", "名称");
+};
+
+string_utf8 albl_thickness {
+    entry = ("enu", "t");
+    entry = ("chs", "厚");
+};
+
+string_utf8 albl_breadth {
+    entry = ("enu", "b");
+    entry = ("chs", "宽");
+};
+
+string_utf8 albl_height {
+    entry = ("enu", "h");
+    entry = ("chs", "高");
+};
+
+string_utf8 albl_profile {
+    entry = ("enu", "Profile");
+    entry = ("chs", "截面规格");
+};
+
+string_utf8 albl_material {
+    entry = ("enu", "Material");
+    entry = ("chs", "材质");
+};
+
+string_utf8 albl_finish {
+    entry = ("enu", "Finish");
+    entry = ("chs", "抛光");
+};
+
+string_utf8 albl_numbering_series_prefix {
+    entry = ("enu", "Prefix");
+    entry = ("chs", "前缀");
+};
+
+string_utf8 albl_numbering_series_startnumber {
+    entry = ("enu", "No.");
+    entry = ("chs", "起始号");
+};
+
+string_utf8 albl_left_corbel {
+    entry = ("enu", "Left corbel");
+    entry = ("chs", "左牛腿");
+};
+
+string_utf8 albl_right_corbel {
+    entry = ("enu", "Right corbel");
+    entry = ("chs", "右牛腿");
+};
+
+string_utf8 albl_column_stiffener {
+    entry = ("enu", "Column stiffener");
+    entry = ("chs", "柱加劲板");
+};
+
+string_utf8 albl_left_corbel_stiffener {
+    entry = ("enu", "Left corbel stiffener");
+    entry = ("chs", "左牛腿加劲板");
+};
+
+string_utf8 albl_right_corbel_stiffener {
+    entry = ("enu", "Right corbel stiffener");
+    entry = ("chs", "右牛腿加劲板");
+};
+
+string_utf8 albl_left_pad {
+    entry = ("enu", "Left pad");
+    entry = ("chs", "左垫板");
+};
+
+string_utf8 albl_right_pad {
+    entry = ("enu", "Right pad");
+    entry = ("chs", "右垫板");
+};
+
+string_utf8 albl_welds {
+    entry = ("enu", "Welds");
+    entry = ("chs", "焊缝");
+};
+
+string_utf8 albl_number {
+    entry = ("enu", "No.");
+    entry = ("chs", "序号");
+};
+
+string_utf8 albl_size {
+    entry = ("enu", "Size");
+    entry = ("chs", "尺寸");
+};
+
+string_utf8 albl_type {
+    entry = ("enu", "Type");
+    entry = ("chs", "类型");
+};
+
+string_utf8 albl_angle {
+    entry = ("enu", "Angle");
+    entry = ("chs", "角度");
+};
+
+string_utf8 albl_contour {
+    entry = ("enu", "Contour");
+    entry = ("chs", "轮廓");
+};
+
+string_utf8 albl_root_face {
+    entry = ("enu", "R.face");
+    entry = ("chs", "钝边");
+};
+
+string_utf8 albl_effective_throat {
+    entry = ("enu", "Eff.thr");
+    entry = ("chs", "喉高");
+};
+
+string_utf8 albl_root_opening {
+    entry = ("enu", "R.opng");
+    entry = ("chs", "根部间隙");
+};
+
+string_utf8 albl_edge_or_around {
+    entry = ("enu", "Ed./Ar.");
+    entry = ("chs", "边缘/四周");
+};
+
+string_utf8 albl_workshop_or_site {
+    entry = ("enu", "Wo./Si.");
+    entry = ("chs", "工厂/工地");
+};
+
+string_utf8 albl_placement {
+    entry = ("enu", "Place.");
+    entry = ("chs", "布置");
+};
+
+string_utf8 albl_preparation {
+    entry = ("enu", "Prepa.");
+    entry = ("chs", "预加工");
+};
+
+string_utf8 albl_intermittent_type {
+    entry = ("enu", "Intermi.");
+    entry = ("chs", "形状");
+};
+
+string_utf8 albl_increment_amount {
+    entry = ("enu", "#");
+    entry = ("chs", "增量");
+};
+
+string_utf8 albl_length {
+    entry = ("enu", "Length");
+    entry = ("chs", "长度");
+};
+
+string_utf8 albl_pitch {
+    entry = ("enu", "Pitch");
+    entry = ("chs", "间距");
+};
+
+string_utf8 albl_reference_text {
+    entry = ("enu", "Ref.");
+    entry = ("chs", "参考文本");
+};
+
+string_utf8 albl_general {
+	entry = ("enu", "General");
+	entry = ("chs", "通用");
+};
+
+string_utf8 albl_up_direction {
+	entry = ("enu", "Up direction");
+	entry = ("chs", "向上方向");
+};
+
+string_utf8 albl_auto {
+	entry = ("enu", "Auto");
+	entry = ("chs", "自动");
+};
+
+string_utf8 albl_position_in_relation_to_primary_part {
+	entry = ("enu", "Position in relation to primary part");
+	entry = ("chs", "相对于主件的位置");
+};
+
+string_utf8 albl_vertical_offset {
+	entry = ("enu", "Vertical offset");
+	entry = ("chs", "垂直偏移");
+};
+
+string_utf8 albl_horizontal_offset {
+	entry = ("enu", "Horizontal offset");
+	entry = ("chs", "水平偏移");
+};
+
+string_utf8 albl_deatil_type {
+	entry = ("enu", "Detail type");
+	entry = ("chs", "细部类型");
+};
+
+string_utf8 albl_end_detail {
+	entry = ("enu", "End detail");
+	entry = ("chs", "端头细部");
+};
+
+string_utf8 albl_intermediate_detail {
+	entry = ("enu", "Intermediate detail");
+	entry = ("chs", "中间细部");
+};
+
+string_utf8 albl_intermediate_detail_reverse {
+	entry = ("enu", "Intermediate detail (reverse)");
+	entry = ("chs", "中间细部(反转)");
+};
+
+string_utf8 albl_locked {
+	entry = ("enu", "Locked");
+	entry = ("chs", "锁定");
+};
+
+string_utf8 albl_no {
+	entry = ("enu", "No");
+	entry = ("chs", "否");
+};
+
+string_utf8 albl_yes {
+	entry = ("enu", "Yes");
+	entry = ("chs", "是");
+};
+
+string_utf8 albl_class {
+	entry = ("enu", "Class");
+	entry = ("chs", "等级");
+};
+
+string_utf8 albl_connection_code {
+	entry = ("enu", "Connection code");
+	entry = ("chs", "节点号");
+};
+
+string_utf8 albl_auto_defaults_rule_group {
+	entry = ("enu", "AutoDefaults rule group");
+	entry = ("chs", "自动默认值规则组");
+};
+
+string_utf8 albl_no_root {
+	entry = ("enu", "None");
+	entry = ("chs", "无");
+};

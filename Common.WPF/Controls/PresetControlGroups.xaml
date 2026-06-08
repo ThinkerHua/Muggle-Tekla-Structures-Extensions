@@ -159,10 +159,10 @@
         <TextBlock Grid.Row="4" Grid.Column="0" Text="{tsd:Loc albl_position_in_relation_to_primary_part}" />
         <tsuc:WpfFilterCheckBox x:Name="filterVerticalPosition" Grid.Row="4" Grid.Column="1" AttributeName="vertical_position" />
         <tsuc:WpfFilterCheckBox Grid.Row="4"
-                                      Grid.Column="1"
-                                      AttributeName="horizontal_position"
-                                      Visibility="Hidden"
-                                      IsChecked="{Binding ElementName=filterVerticalPosition, Path=IsChecked, Mode=TwoWay}" />
+                                Grid.Column="1"
+                                AttributeName="horizontal_position"
+                                Visibility="Hidden"
+                                IsChecked="{Binding ElementName=filterVerticalPosition, Path=IsChecked, Mode=TwoWay}" />
 
         <!-- UpMiddleLeft UpMiddleMiddle UpMiddleRight -->
         <Image Grid.Row="4"

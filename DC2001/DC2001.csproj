@@ -1,0 +1,37 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net48</TargetFramework>
+        <LangVersion>latest</LangVersion>
+        <UseWPF>true</UseWPF>
+        <AssemblyName>DC2001</AssemblyName>
+        <RootNamespace>Muggle.TsExtensions.DC2001</RootNamespace>
+        <Copyright>Copyright © 2026 thinkerhua@hotmail.com. All rights reserved.</Copyright>
+        <Configurations>D2021;D2024;R2021;R2024</Configurations>
+        <Optimize Condition="$(Configuration.StartsWith('R'))">True</Optimize>
+        <DefineConstants Condition="$(Configuration.StartsWith('D'))">TRACE;DEBUG</DefineConstants>
+        <DefineConstants Condition="$(Configuration.StartsWith('R'))">TRACE;RELEASE</DefineConstants>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="CalcBinding" />
+        <PackageReference Include="Muggle.TsExtensions.CodingHelper" />
+        <PackageReference Include="Tekla.Structures" ExcludeAssets="runtime" />
+        <PackageReference Include="Tekla.Structures.Catalogs" ExcludeAssets="runtime" />
+        <PackageReference Include="Tekla.Structures.Datatype" ExcludeAssets="runtime" />
+        <PackageReference Include="Tekla.Structures.Dialog" ExcludeAssets="runtime" />
+        <PackageReference Include="Tekla.Structures.Model" ExcludeAssets="runtime" />
+        <PackageReference Include="Tekla.Structures.Plugins" ExcludeAssets="runtime" />
+        <PackageReference Include="TeklaStructuresAttributes" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\Common.WPF\Common.WPF.csproj" />
+        <ProjectReference Include="..\Common\Common.csproj" />
+    </ItemGroup>
+
+    <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+        <Exec Command="xcopy &quot;$(TargetDir)$(TargetName).dll&quot; &quot;D:\Program Files\Tekla Structures\$(TeklaVersion)\Environments\common\extensions\Muggle.TsExtensions\&quot; /Y /C /Q /R" />
+    </Target>
+
+</Project>
