@@ -19,7 +19,8 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:local="clr-namespace:Muggle.TsExtensions.MainWindow.Views"
       xmlns:vm="clr-namespace:Muggle.TsExtensions.MainWindow.ViewModels"
-      Title="ProjectBeamOntoPlane"
+      xmlns:dialog="clr-namespace:Tekla.Structures.Dialog;assembly=Tekla.Structures.Dialog"
+      Title="{dialog:Loc albl_project_beam_onto_plane}"
       mc:Ignorable="d"
       d:DesignHeight="300"
       d:DesignWidth="200"
@@ -63,36 +64,36 @@
             <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
 
-        <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Text="Projection direction" />
+        <TextBlock Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Text="{dialog:Loc albl_projection_direction}" />
         <RadioButton Grid.Row="1"
                      Grid.Column="0"
                      GroupName="ProjectionDirection"
-                     Content="Perpendicular"
-                     IsChecked="{Binding ProjectionDirection, Converter={StaticResource enumToBool}, ConverterParameter={x:Static vm:ProjectBeamOntoPlaneViewModel+ProjectionDirectionEnum.Perpendicular}, Mode=TwoWay}" />
+                     Content="{dialog:Loc albl_perpendicular}"
+                     IsChecked="{Binding ProjectionDirection, Converter={StaticResource EnumToBool}, ConverterParameter={x:Static vm:ProjectBeamOntoPlaneViewModel+ProjectionDirectionEnum.Perpendicular}, Mode=TwoWay}" />
         <RadioButton Grid.Row="1"
                      Grid.Column="1"
                      GroupName="ProjectionDirection"
-                     Content="Global Z"
-                     IsChecked="{Binding ProjectionDirection, Converter={StaticResource enumToBool}, ConverterParameter={x:Static vm:ProjectBeamOntoPlaneViewModel+ProjectionDirectionEnum.GlobalZ}, Mode=TwoWay}" />
+                     Content="{dialog:Loc albl_global_Z}"
+                     IsChecked="{Binding ProjectionDirection, Converter={StaticResource EnumToBool}, ConverterParameter={x:Static vm:ProjectBeamOntoPlaneViewModel+ProjectionDirectionEnum.GlobalZ}, Mode=TwoWay}" />
 
         <Separator Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" />
 
-        <TextBlock Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Text="Plane" />
+        <TextBlock Grid.Row="3" Grid.Column="0" Grid.ColumnSpan="2" Text="{dialog:Loc albl_plane}" />
         <RadioButton Grid.Row="4"
                      Grid.Column="0"
                      GroupName="WayToGetPlane"
-                     Content="Pick face"
-                     IsChecked="{Binding WayToGetPlane, Converter={StaticResource enumToBool}, ConverterParameter={x:Static vm:ProjectBeamOntoPlaneViewModel+WayToGetPlaneEnum.PickFace}, Mode=TwoWay}" />
+                     Content="{dialog:Loc albl_pick_face}"
+                     IsChecked="{Binding WayToGetPlane, Converter={StaticResource EnumToBool}, ConverterParameter={x:Static vm:ProjectBeamOntoPlaneViewModel+WayToGetPlaneEnum.PickFace}, Mode=TwoWay}" />
         <RadioButton Grid.Row="4"
                      Grid.Column="1"
                      GroupName="WayToGetPlane"
-                     Content="Pick 3 points"
-                     IsChecked="{Binding WayToGetPlane, Converter={StaticResource enumToBool}, ConverterParameter={x:Static vm:ProjectBeamOntoPlaneViewModel+WayToGetPlaneEnum.Pick3Points}, Mode=TwoWay}" />
+                     Content="{dialog:Loc albl_pick_3_points}"
+                     IsChecked="{Binding WayToGetPlane, Converter={StaticResource EnumToBool}, ConverterParameter={x:Static vm:ProjectBeamOntoPlaneViewModel+WayToGetPlaneEnum.Pick3Points}, Mode=TwoWay}" />
 
         <Button Grid.Row="5"
                 Grid.Column="0"
                 Grid.ColumnSpan="2"
-                Content="Project beam onto plane"
+                Content="{dialog:Loc albl_project_beam_onto_plane}"
                 Command="{Binding ProjectBeamOntoPlaneCommand}" />
     </Grid>
 </Page>

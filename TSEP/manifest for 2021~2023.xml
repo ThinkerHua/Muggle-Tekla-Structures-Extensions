@@ -98,6 +98,7 @@
 	<Component Id="MainWindow" Guid="121610DD-75AB-479A-AEB8-D6CD4C806CB5">
 		<File Id="Muggle.TsExtensions" Source="%SolutionFolder%\MainWindow\%MSBuildOutputPath%\Muggle.TsExtensions.exe" Target="%BinariesDirectory%"/>
 		<File Id="Muggle.TsExtensions.config" Source="%SolutionFolder%\MainWindow\%MSBuildOutputPath%\Muggle.TsExtensions.exe.config" Target="%BinariesDirectory%"/>
+		<File Id="Muggle.TsExtensions.Ail" Source="%MessagesFolder%\Muggle.TsExtensions.ail" Target="%MessagesDirectory%"/>
 		<File Id="CommunityToolkit.Mvvm" Source="%SolutionFolder%\MainWindow\%MSBuildOutputPath%\CommunityToolkit.Mvvm.dll" Target="%BinariesDirectory%"/>
 		<File Id="CalcBinding" Source="%SolutionFolder%\MainWindow\%MSBuildOutputPath%\CalcBinding.dll" Target="%BinariesDirectory%"/>
 		<File Id="DynamicExpresso.Core" Source="%SolutionFolder%\MainWindow\%MSBuildOutputPath%\DynamicExpresso.Core.dll" Target="%BinariesDirectory%"/>

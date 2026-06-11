@@ -35,6 +35,7 @@
         <File Path="TSEP/componentCatalog/Muggle.TsExtensions_ComponentCatalog.ac.xml" />
     </Folder>
     <Folder Name="/TSEP/Messages/">
+        <File Path="TSEP/messages/Muggle.TsExtensions.ail" />
         <File Path="TSEP/messages/DC2001.ail" />
         <File Path="TSEP/messages/HJ1001.ail" />
         <File Path="TSEP/messages/KJ1001.ail" />

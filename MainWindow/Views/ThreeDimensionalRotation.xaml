@@ -19,7 +19,8 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:local="clr-namespace:Muggle.TsExtensions.MainWindow.Views"
       xmlns:vm="clr-namespace:Muggle.TsExtensions.MainWindow.ViewModels"
-      Title="ThreeDimensionalRotation"
+      xmlns:dialog="clr-namespace:Tekla.Structures.Dialog;assembly=Tekla.Structures.Dialog"
+      Title="{dialog:Loc albl_3d_rotation}"
       mc:Ignorable="d"
       d:DesignHeight="300"
       d:DesignWidth="300"
@@ -46,16 +47,16 @@
     </Page.Resources>
 
     <StackPanel Margin="5">
-        <GroupBox Header="Rotation axis">
+        <GroupBox Header="{dialog:Loc albl_rotation_axis}">
             <StackPanel>
-                <RadioButton Content="X axis of part coordinate system" IsChecked="{Binding Axis, Converter={StaticResource enumToBool}, ConverterParameter={x:Static vm:ThreeDimensionalRotationViewModel+AxisEnum.PartCS_AxisX}}" />
-                <RadioButton Content="Y axis of part coordinate system" IsChecked="{Binding Axis, Converter={StaticResource enumToBool}, ConverterParameter={x:Static vm:ThreeDimensionalRotationViewModel+AxisEnum.PartCS_AxisY}}" />
-                <RadioButton Content="Z axis of part coordinate system" IsChecked="{Binding Axis, Converter={StaticResource enumToBool}, ConverterParameter={x:Static vm:ThreeDimensionalRotationViewModel+AxisEnum.PartCS_AxisZ}}" />
-                <RadioButton Content="Manually specify" IsChecked="{Binding Axis, Converter={StaticResource enumToBool}, ConverterParameter={x:Static vm:ThreeDimensionalRotationViewModel+AxisEnum.ManualSelect}}" />
+                <RadioButton Content="{dialog:Loc albl_X_axis_of_part_coordinate_system}" IsChecked="{Binding Axis, Converter={StaticResource EnumToBool}, ConverterParameter={x:Static vm:ThreeDimensionalRotationViewModel+AxisEnum.PartCS_AxisX}}" />
+                <RadioButton Content="{dialog:Loc albl_Y_axis_of_part_coordinate_system}" IsChecked="{Binding Axis, Converter={StaticResource EnumToBool}, ConverterParameter={x:Static vm:ThreeDimensionalRotationViewModel+AxisEnum.PartCS_AxisY}}" />
+                <RadioButton Content="{dialog:Loc albl_Z_axis_of_part_coordinate_system}" IsChecked="{Binding Axis, Converter={StaticResource EnumToBool}, ConverterParameter={x:Static vm:ThreeDimensionalRotationViewModel+AxisEnum.PartCS_AxisZ}}" />
+                <RadioButton Content="{dialog:Loc albl_manually_specify}" IsChecked="{Binding Axis, Converter={StaticResource EnumToBool}, ConverterParameter={x:Static vm:ThreeDimensionalRotationViewModel+AxisEnum.ManualSelect}}" />
             </StackPanel>
         </GroupBox>
 
-        <GroupBox Header="Rotation angle">
+        <GroupBox Header="{dialog:Loc albl_rotation_angle}">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="auto" />
@@ -67,7 +68,7 @@
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
-                <RadioButton Grid.Row="0" Grid.Column="0" Content="Angle value" IsChecked="{Binding Angle, Converter={StaticResource enumToBool}, ConverterParameter={x:Static vm:ThreeDimensionalRotationViewModel+AngleEnum.AngleValue}}" />
+                <RadioButton Grid.Row="0" Grid.Column="0" Content="{dialog:Loc albl_angle_value}" IsChecked="{Binding Angle, Converter={StaticResource EnumToBool}, ConverterParameter={x:Static vm:ThreeDimensionalRotationViewModel+AngleEnum.AngleValue}}" />
                 <TextBox Grid.Row="0"
                          Grid.Column="1"
                          HorizontalContentAlignment="Center"
@@ -76,18 +77,18 @@
                 <RadioButton Grid.Row="1"
                              Grid.Column="0"
                              Grid.ColumnSpan="2"
-                             Content="Manually specify the start and end direction"
-                             IsChecked="{Binding Angle, Converter={StaticResource enumToBool}, ConverterParameter={x:Static vm:ThreeDimensionalRotationViewModel+AngleEnum.ManualSelect}}" />
+                             Content="{dialog:Loc albl_manually_specify_start_and_end_direction}"
+                             IsChecked="{Binding Angle, Converter={StaticResource EnumToBool}, ConverterParameter={x:Static vm:ThreeDimensionalRotationViewModel+AngleEnum.ManualSelect}}" />
                 <CheckBox Grid.Row="2"
                           Grid.Column="0"
                           Grid.ColumnSpan="2"
                           Margin="16,5,5,5"
-                          Content="The end direction is the normal of plane"
+                          Content="{dialog:Loc albl_end_direction_is_normal_of_plane}"
                           IsChecked="{Binding TargetDirectionIsNormalOfPlane, Mode=TwoWay}"
-                          IsEnabled="{Binding Angle, Converter={StaticResource enumToBool}, ConverterParameter={x:Static vm:ThreeDimensionalRotationViewModel+AngleEnum.ManualSelect}}" />
+                          IsEnabled="{Binding Angle, Converter={StaticResource EnumToBool}, ConverterParameter={x:Static vm:ThreeDimensionalRotationViewModel+AngleEnum.ManualSelect}}" />
             </Grid>
         </GroupBox>
 
-        <Button Width="100" Height="30" Content="Action" Command="{Binding ThreeDimensionalRotationCommand}" />
+        <Button Width="100" Height="30" Content="{dialog:Loc albl_action}" Command="{Binding ThreeDimensionalRotationCommand}" />
     </StackPanel>
 </Page>

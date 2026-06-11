@@ -1,4 +1,4 @@
-﻿<!--==============================================================================
+<!--==============================================================================
  *  Muggle TsExtensions - extensions for Tekla Structures
  *
  *  Copyright © 2026 Huang YongXing.
@@ -19,7 +19,8 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:local="clr-namespace:Muggle.TsExtensions.MainWindow.Views"
       xmlns:vm="clr-namespace:Muggle.TsExtensions.MainWindow.ViewModels"
-      Title="ConnectionStatusFilter"
+      xmlns:dialog="clr-namespace:Tekla.Structures.Dialog;assembly=Tekla.Structures.Dialog"
+      Title="{dialog:Loc albl_connection_status_filter}"
       mc:Ignorable="d"
       d:DesignHeight="200"
       d:DesignWidth="300"
@@ -59,18 +60,18 @@
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
-        <CheckBox Grid.Row="0" Content="Green symbol" IsChecked="{Binding FilterGreenSymbol, Mode=TwoWay}" />
-        <CheckBox Grid.Row="1" Content="Yellow symbol" IsChecked="{Binding FilterYellowSymbol, Mode=TwoWay}" />
-        <CheckBox Grid.Row="2" Content="Red symbol" IsChecked="{Binding FilterRedSymbol, Mode=TwoWay}" />
-        <CheckBox Grid.Row="3" Content="Not pass design check" IsChecked="{Binding FilterNotPassDesignCheck, Mode=TwoWay}" />
+        <CheckBox Grid.Row="0" Content="{dialog:Loc albl_green_symbol}" IsChecked="{Binding FilterGreenSymbol, Mode=TwoWay}" />
+        <CheckBox Grid.Row="1" Content="{dialog:Loc albl_yellow_symbol}" IsChecked="{Binding FilterYellowSymbol, Mode=TwoWay}" />
+        <CheckBox Grid.Row="2" Content="{dialog:Loc albl_red_symbol}" IsChecked="{Binding FilterRedSymbol, Mode=TwoWay}" />
+        <CheckBox Grid.Row="3" Content="{dialog:Loc albl_not_pass_design_check}" IsChecked="{Binding FilterNotPassDesignCheck, Mode=TwoWay}" />
         <Separator Grid.Row="4" />
         <Grid Grid.Row="5">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="*" />
                 <ColumnDefinition Width="*" />
             </Grid.ColumnDefinitions>
-            <RadioButton Grid.Column="0" IsChecked="{Binding ManualSelection, Mode=TwoWay}" Content="Manual selection" />
-            <RadioButton Grid.Column="1" IsChecked="{Binding ManualSelection, Mode=TwoWay, Converter={StaticResource boolInverter}}" Content="All model objects" />
+            <RadioButton Grid.Column="0" IsChecked="{Binding ManualSelection, Mode=TwoWay}" Content="{dialog:Loc albl_manual_selection}" />
+            <RadioButton Grid.Column="1" IsChecked="{Binding ManualSelection, Mode=TwoWay, Converter={StaticResource BoolInverter}}" Content="{dialog:Loc albl_all_model_objects}" />
         </Grid>
         <Button Grid.Row="6" Content="Apply filter" Command="{Binding ApplyFilterCommand}" />
 

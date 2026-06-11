@@ -1,13 +1,14 @@
-﻿using System;
+using System;
 using System.IO;
 using System.Windows;
 using Microsoft.Extensions.DependencyInjection;
 using Muggle.TsExtensions.MainWindow.Services;
 using Muggle.TsExtensions.MainWindow.ViewModels;
+using Muggle.TsExtensions.MainWindow.Views;
 using Tekla.Structures;
 using Events = Tekla.Structures.Model.Events;
 using Model = Tekla.Structures.Model.Model;
-using TSDialog = Tekla.Structures.Dialog;
+using TsDialog = Tekla.Structures.Dialog;
 
 namespace Muggle.TsExtensions.MainWindow {
     public partial class App : Application {
@@ -15,12 +16,13 @@ namespace Muggle.TsExtensions.MainWindow {
         internal const string NotConnected = "Not connected to a model.";
 
         private string _xsDataDir;
+        private string _tsLanguage;
         private Model _model;
         private Events _events;
 
         private readonly ServiceCollection _servicesBuilder;
 
-        internal TSDialog.Localization Localization { get; private set; }
+        internal TsDialog.Localization Localization { get; private set; }
 
         public static new App Current => (App)Application.Current;
 
@@ -35,35 +37,34 @@ namespace Muggle.TsExtensions.MainWindow {
         }
 
         private IServiceProvider ConfigureServices() {
-            _servicesBuilder.AddSingleton<IMessageBoxService, MessageBoxService>();
             _servicesBuilder.AddSingleton<INavigationService, NavigationService>();
 
             _servicesBuilder.AddSingleton<MainWindowViewModel>();
             _servicesBuilder.AddSingleton<Views.MainWindow>();
 
             _servicesBuilder.AddTransient<NormalToolsViewModel>();
-            _servicesBuilder.AddTransient<Views.NormalTools>();
+            _servicesBuilder.AddTransient<NormalTools>();
 
             _servicesBuilder.AddTransient<SelectBooleansViewModel>();
-            _servicesBuilder.AddTransient<Views.SelectBooleans>();
+            _servicesBuilder.AddTransient<SelectBooleans>();
 
             _servicesBuilder.AddTransient<ThreeDimensionalRotationViewModel>();
-            _servicesBuilder.AddTransient<Views.ThreeDimensionalRotation>();
+            _servicesBuilder.AddTransient<ThreeDimensionalRotation>();
 
             _servicesBuilder.AddTransient<PluginsViewModel>();
-            _servicesBuilder.AddTransient<Views.Plugins>();
+            _servicesBuilder.AddTransient<Plugins>();
 
             _servicesBuilder.AddTransient<MoveToElevationViewModel>();
-            _servicesBuilder.AddTransient<Views.MoveToElevation>();
+            _servicesBuilder.AddTransient<MoveToElevation>();
 
             _servicesBuilder.AddTransient<ConnectionStatusFilterViewModel>();
-            _servicesBuilder.AddTransient<Views.ConnectionStatusFilter>();
+            _servicesBuilder.AddTransient<ConnectionStatusFilter>();
 
             _servicesBuilder.AddTransient<ExtendBeamViewModel>();
-            _servicesBuilder.AddTransient<Views.ExtendBeam>();
+            _servicesBuilder.AddTransient<ExtendBeam>();
 
             _servicesBuilder.AddTransient<ProjectBeamOntoPlaneViewModel>();
-            _servicesBuilder.AddTransient<Views.ProjectBeamOntoPlane>();
+            _servicesBuilder.AddTransient<ProjectBeamOntoPlane>();
 
             return _servicesBuilder.BuildServiceProvider();
         }
@@ -88,17 +89,20 @@ namespace Muggle.TsExtensions.MainWindow {
             }
 
             try {
-                var language = string.Empty;
-                TeklaStructuresSettings.GetAdvancedOption("XS_LANGUAGE", ref language);
-                language = GetShortLanguage(language);
+                TeklaStructuresSettings.GetAdvancedOption("XS_LANGUAGE", ref _tsLanguage);
+                _tsLanguage = GetShortLanguage(_tsLanguage);
 
                 TeklaStructuresSettings.GetAdvancedOption("XSDATADIR", ref _xsDataDir);
+#if D2021 || R2021
                 var promptsAilFilePath = Path.Combine(_xsDataDir, @"messages\prompts.ail");
+#elif D2024 || R2024
+                var promptsAilFilePath = Path.Combine(_xsDataDir, @"bin\messages\prompts.ail");
+#endif
 
-                Localization = new TSDialog.Localization(promptsAilFilePath, language);
+                Localization = new TsDialog.Localization(promptsAilFilePath, _tsLanguage);
                 Localization.LoadAilFile(promptsAilFilePath);
             } catch {
-                Localization = new TSDialog.Localization();
+                Localization = new TsDialog.Localization();
             }
 
             Services = ConfigureServices();

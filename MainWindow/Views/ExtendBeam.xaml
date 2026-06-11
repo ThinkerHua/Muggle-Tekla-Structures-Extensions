@@ -1,4 +1,4 @@
-﻿<!--==============================================================================
+<!--==============================================================================
  *  Muggle TsExtensions - extensions for Tekla Structures
  *
  *  Copyright © 2026 Huang YongXing.
@@ -20,7 +20,8 @@
       xmlns:local="clr-namespace:Muggle.TsExtensions.MainWindow.Views"
       xmlns:vm="clr-namespace:Muggle.TsExtensions.MainWindow.ViewModels"
       xmlns:vc="clr-namespace:Muggle.TsExtensions.Common.WPF.ValueConverters;assembly=Common.WPF"
-      Title="ExtendBeam"
+      xmlns:dialog="clr-namespace:Tekla.Structures.Dialog;assembly=Tekla.Structures.Dialog"
+      Title="{dialog:Loc albl_extend_beam}"
       mc:Ignorable="d"
       d:Background="AliceBlue"
       d:DataContext="{d:DesignInstance Type=vm:ExtendBeamViewModel}">
@@ -52,21 +53,21 @@
                 <ColumnDefinition Width="1*" />
             </Grid.ColumnDefinitions>
 
-            <TextBlock Grid.Column="0" Text="Tolerance" />
+            <TextBlock Grid.Column="0" Text="{dialog:Loc albl_tolerance}" />
             <TextBox Grid.Column="1" Text="{Binding Tolerance, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
         </Grid>
 
         <Separator />
 
-        <TextBlock Text="Position in relation to column" />
-        <RadioButton Content="MiddlePlane" IsChecked="{Binding ExtendToColumnPosition, Converter={StaticResource enumToBool}, ConverterParameter={x:Static vm:ExtendBeamViewModel+ExtendToColumnPositionEnum.MiddlePlane}}" />
-        <RadioButton Content="BoundingBoxPlane" IsChecked="{Binding ExtendToColumnPosition, Converter={StaticResource enumToBool}, ConverterParameter={x:Static vm:ExtendBeamViewModel+ExtendToColumnPositionEnum.BoundingBoxPlane}}" />
-        <RadioButton Content="Surface" IsChecked="{Binding ExtendToColumnPosition, Converter={StaticResource enumToBool}, ConverterParameter={x:Static vm:ExtendBeamViewModel+ExtendToColumnPositionEnum.Surface}}" />
+        <TextBlock Text="{dialog:Loc albl_position_in_relation_to_column}" />
+        <RadioButton Content="{dialog:Loc albl_middle_plane}" IsChecked="{Binding ExtendToColumnPosition, Converter={StaticResource EnumToBool}, ConverterParameter={x:Static vm:ExtendBeamViewModel+ExtendToColumnPositionEnum.MiddlePlane}}" />
+        <RadioButton Content="{dialog:Loc albl_bounding_box_plane}" IsChecked="{Binding ExtendToColumnPosition, Converter={StaticResource EnumToBool}, ConverterParameter={x:Static vm:ExtendBeamViewModel+ExtendToColumnPositionEnum.BoundingBoxPlane}}" />
+        <RadioButton Content="{dialog:Loc albl_surface}" IsChecked="{Binding ExtendToColumnPosition, Converter={StaticResource EnumToBool}, ConverterParameter={x:Static vm:ExtendBeamViewModel+ExtendToColumnPositionEnum.Surface}}" />
 
         <Button Grid.Row="3"
                 Grid.Column="0"
                 Grid.ColumnSpan="2"
-                Content="ExtendBeam"
+                Content="{dialog:Loc albl_extend_beam}"
                 Command="{Binding ExtendCommand}" />
     </StackPanel>
 </Page>

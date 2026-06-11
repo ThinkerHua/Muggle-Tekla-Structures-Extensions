@@ -3,10 +3,6 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:cvt="clr-namespace:Muggle.TsExtensions.MainWindow.Converters"
              xmlns:cvc="clr-namespace:Muggle.TsExtensions.Common.WPF.ValueConverters;assembly=Common.WPF"
-             xmlns:local="clr-namespace:Muggle.TsExtensions.MainWindow"
-             xmlns:theme="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero2"
-             xmlns:views="clr-namespace:Muggle.TsExtensions.MainWindow.Views"
-             xmlns:sys="clr-namespace:System;assembly=mscorlib"
              Startup="Application_Startup">
     <Application.Resources>
         <ResourceDictionary>
@@ -19,11 +15,11 @@
                 <ResourceDictionary Source="/Styles/ToggleButtonStyle1.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
-            <cvc:EnumToBoolValueConverter x:Key="enumToBool" />
-            <cvc:BoolInverterValueConverter x:Key="boolInverter" />
-            <cvt:MultiplesValueConverter x:Key="multiples" />
-            <cvt:PluginNameToIconValueConverter x:Key="pluginNameToIcon" />
-            <cvt:RoundDownValueConverter x:Key="roundDown" />
+            <cvc:EnumToBoolValueConverter x:Key="EnumToBool" />
+            <cvc:BoolInverterValueConverter x:Key="BoolInverter" />
+            <cvt:MultiplesValueConverter x:Key="Multiples" />
+            <cvt:PluginNameToIconValueConverter x:Key="PluginNameToIcon" />
+            <cvt:RoundDownValueConverter x:Key="RoundDown" />
 
         </ResourceDictionary>
     </Application.Resources>

@@ -19,7 +19,8 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:local="clr-namespace:Muggle.TsExtensions.MainWindow.Views"
       xmlns:vm="clr-namespace:Muggle.TsExtensions.MainWindow.ViewModels"
-      Title="NormalTools"
+      xmlns:dialog="clr-namespace:Tekla.Structures.Dialog;assembly=Tekla.Structures.Dialog"
+      Title="{dialog:Loc albl_normal_tools}"
       mc:Ignorable="d"
       d:DataContext="{d:DesignInstance Type=vm:NormalToolsViewModel}"
       d:DesignHeight="300"
@@ -38,13 +39,13 @@
     </Page.Resources>
 
     <StackPanel Margin="0" HorizontalAlignment="Left" VerticalAlignment="Top">
-        <Button Content="ShowModelObjectCoordinateSystem" Command="{Binding ShowModelObjectCoordinateSystemCommand}" />
-        <Button Content="SelectWeldedObjects" Command="{Binding SelectWeldedObjectsCommand}" />
-        <Button Content="ReorderContourPoints" Command="{Binding ReorderContourPointsCommand}" />
-        <Button Content="ShowContourOrder" Command="{Binding ShowContourOrderCommand}" />
-        <Button Content="CopyWithDirection" Command="{Binding CopyWithDirectionCommand}" />
-        <Button Content="LocateToPrecisePosition" Command="{Binding LocateToPrecisePositionCommand}" />
-        <Button Content="AlignColumnControlPointsWithCentroid" Command="{Binding AlignColumnControlPointsWithCentroidCommand}" />
+        <Button Content="{dialog:Loc albl_show_model_object_coordinate_system}" Command="{Binding ShowModelObjectCoordinateSystemCommand}" />
+        <Button Content="{dialog:Loc albl_select_welded_objects}" Command="{Binding SelectWeldedObjectsCommand}" />
+        <Button Content="{dialog:Loc albl_reorder_contour_points}" Command="{Binding ReorderContourPointsCommand}" />
+        <Button Content="{dialog:Loc albl_show_contour_order}" Command="{Binding ShowContourOrderCommand}" />
+        <Button Content="{dialog:Loc albl_copy_with_direction}" Command="{Binding CopyWithDirectionCommand}" />
+        <Button Content="{dialog:Loc albl_locate_to_precise_position}" Command="{Binding LocateToPrecisePositionCommand}" />
+        <Button Content="{dialog:Loc albl_align_column_control_points_with_centroid}" Command="{Binding AlignColumnControlPointsWithCentroidCommand}" />
 
     </StackPanel>
 </Page>

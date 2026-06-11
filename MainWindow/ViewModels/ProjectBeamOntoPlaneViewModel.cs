@@ -18,7 +18,6 @@ using System.Collections;
 using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
-using Muggle.TsExtensions.Common.Geometry3d;
 using Muggle.TsExtensions.MainWindow.Services;
 using Tekla.Structures.Geometry3d;
 using Tekla.Structures.Model;

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Globalization;
 using System.IO;
 using System.Windows.Data;
@@ -21,7 +21,7 @@ namespace Muggle.TsExtensions.MainWindow.Converters {
             if (!File.Exists(uriStr)) {
                 uriStr = new DirectoryInfo(
                     string.Format(
-                        @"{0}..\bitmaps\et_element_{1}.bmp",
+                        @"{0}..\..\..\..\TSEP\Bitmaps\et_element_{1}.bmp",
                         currentDirectory,
                         value as string))
                     .FullName;

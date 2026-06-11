@@ -1,0 +1,289 @@
+string_utf8 albl_window_title {
+    entry = ("enu", "Muggle TsExtensions");
+    entry = ("chs", "Muggle TsExtensions");
+};
+
+string_utf8 albl_modeling_tools {
+    entry = ("enu", "Modeling tools");
+    entry = ("chs", "建模工具");
+};
+
+string_utf8 albl_plugins {
+    entry = ("enu", "Plugins");
+    entry = ("chs", "自定义组件");
+};
+
+string_utf8 albl_normal_tools {
+    entry = ("enu", "Normal tools");
+    entry = ("chs", "简易工具");
+};
+
+string_utf8 albl_select_booleans {
+    entry = ("enu", "Select booleans");
+    entry = ("chs", "选择布尔零件");
+};
+
+string_utf8 albl_3d_rotation {
+    entry = ("enu", "3D rotation");
+    entry = ("chs", "3维旋转");
+};
+
+string_utf8 albl_move_to_elevation {
+    entry = ("enu", "Move to elevation");
+    entry = ("chs", "移动到标高");
+};
+
+string_utf8 albl_filter_connection_status {
+    entry = ("enu", "Filter connection status");
+    entry = ("chs", "过滤节点状态");
+};
+
+string_utf8 albl_extend_beam {
+    entry = ("enu", "Extend beam");
+    entry = ("chs", "延伸梁");
+};
+
+string_utf8 albl_project_beam_onto_plane {
+    entry = ("enu", "Project beam onto plane");
+    entry = ("chs", "梁投影到平面");
+};
+
+string_utf8 albl_green_symbol {
+    entry = ("enu", "Green symbol");
+    entry = ("chs", "绿色符号");
+};
+
+string_utf8 albl_yellow_symbol {
+    entry = ("enu", "Yellow symbol");
+    entry = ("chs", "黄色符号");
+};
+
+string_utf8 albl_red_symbol {
+    entry = ("enu", "Red symbol");
+    entry = ("chs", "红色符号");
+};
+
+string_utf8 albl_not_pass_design_check {
+    entry = ("enu", "Not pass design check");
+    entry = ("chs", "未通过设计校核");
+};
+
+string_utf8 albl_apply_filter {
+    entry = ("enu", "Apply filter");
+    entry = ("chs", "应用过滤");
+};
+
+string_utf8 albl_manual_selection {
+    entry = ("enu", "Manual selection");
+    entry = ("chs", "手动选择");
+};
+
+string_utf8 albl_all_model_objects {
+    entry = ("enu", "All model objects");
+    entry = ("chs", "所有模型对象");
+};
+
+string_utf8 albl_tolerance {
+    entry = ("enu", "Tolerance");
+    entry = ("chs", "容许误差");
+};
+
+string_utf8 albl_position_in_relation_to_column {
+    entry = ("enu", "Position in relation to column");
+    entry = ("chs", "相对于柱的位置");
+};
+
+string_utf8 albl_middle_plane {
+    entry = ("enu", "Middle plane");
+    entry = ("chs", "中心平面");
+};
+
+string_utf8 albl_bounding_box_plane {
+    entry = ("enu", "Bounding box plane");
+    entry = ("chs", "边界框平面");
+};
+
+string_utf8 albl_surface {
+    entry = ("enu", "Surface");
+    entry = ("chs", "表面");
+};
+
+string_utf8 albl_target_elevation {
+    entry = ("enu", "Target elevation");
+    entry = ("chs", "目标标高");
+};
+
+string_utf8 albl_absolutely {
+    entry = ("enu", "Absolutely");
+    entry = ("chs", "绝对值");
+};
+
+string_utf8 albl_relative {
+    entry = ("enu", "Relative");
+    entry = ("chs", "相对值");
+};
+
+string_utf8 albl_top {
+    entry = ("enu", "Top");
+    entry = ("chs", "顶面");
+};
+
+string_utf8 albl_middle {
+    entry = ("enu", "Middle");
+    entry = ("chs", "中心面");
+};
+
+string_utf8 albl_bottom {
+    entry = ("enu", "Bottom");
+    entry = ("chs", "底面");
+};
+
+string_utf8 albl_show_model_object_coordinate_system {
+    entry = ("enu", "Show model object coordinate system");
+    entry = ("chs", "展示对象坐标系");
+};
+
+string_utf8 albl_select_welded_objects {
+    entry = ("enu", "Select welded objects");
+    entry = ("chs", "选择被焊接的对象");
+};
+
+string_utf8 albl_reorder_contour_points {
+    entry = ("enu", "Reorder contour points");
+    entry = ("chs", "重排轮廓点");
+};
+
+string_utf8 albl_show_contour_order {
+    entry = ("enu", "Show contour order");
+    entry = ("chs", "展示轮廓点顺序");
+};
+
+string_utf8 albl_copy_with_direction {
+    entry = ("enu", "Copy with direction");
+    entry = ("chs", "带方向复制");
+};
+
+string_utf8 albl_locate_to_precise_position {
+    entry = ("enu", "Locate to precise position");
+    entry = ("chs", "定位到精确坐标");
+};
+
+string_utf8 albl_align_column_control_points_with_centroid {
+    entry = ("enu", "Align column control points with centroid");
+    entry = ("chs", "柱控制点对齐到中心");
+};
+
+string_utf8 albl_projection_direction {
+    entry = ("enu", "Projection direction");
+    entry = ("chs", "投影方向");
+};
+
+string_utf8 albl_perpendicular {
+    entry = ("enu", "Perpendicular");
+    entry = ("chs", "垂直");
+};
+
+string_utf8 albl_global_Z {
+    entry = ("enu", "Global Z");
+    entry = ("chs", "全局Z向");
+};
+
+string_utf8 albl_plane {
+    entry = ("enu", "Plane");
+    entry = ("chs", "平面");
+};
+
+string_utf8 albl_pick_face {
+    entry = ("enu", "Pick face");
+    entry = ("chs", "选择平面");
+};
+
+string_utf8 albl_pick_3_points {
+    entry = ("enu", "Pick 3 points");
+    entry = ("chs", "选择3个点");
+};
+
+string_utf8 albl_boolean_add {
+    entry = ("enu", "Boolean add");
+    entry = ("chs", "布尔增");
+};
+
+string_utf8 albl_boolean_cut {
+    entry = ("enu", "Boolean cut");
+    entry = ("chs", "布尔减");
+};
+
+string_utf8 albl_weld_prepare {
+    entry = ("enu", "Weld prepare");
+    entry = ("chs", "焊接准备");
+};
+
+string_utf8 albl_cut_plane {
+    entry = ("enu", "Cut plane");
+    entry = ("chs", "剪切平面");
+};
+
+string_utf8 albl_edge_chamfer {
+    entry = ("enu", "Edge chamfer");
+    entry = ("chs", "边缘切角");
+};
+
+string_utf8 albl_fitting {
+    entry = ("enu", "Fitting");
+    entry = ("chs", "末端对齐");
+};
+
+string_utf8 albl_select {
+    entry = ("enu", "Select");
+    entry = ("chs", "选择");
+};
+
+string_utf8 albl_rotation_axis {
+    entry = ("enu", "Rotation axis");
+    entry = ("chs", "旋转轴");
+};
+
+string_utf8 albl_X_axis_of_part_coordinate_system {
+    entry = ("enu", "X axis of part coordinate system");
+    entry = ("chs", "零件坐标系X轴");
+};
+
+string_utf8 albl_Y_axis_of_part_coordinate_system {
+    entry = ("enu", "Y axis of part coordinate system");
+    entry = ("chs", "零件坐标系Y轴");
+};
+
+string_utf8 albl_Z_axis_of_part_coordinate_system {
+    entry = ("enu", "Z axis of part coordinate system");
+    entry = ("chs", "零件坐标系Z轴");
+};
+
+string_utf8 albl_manually_specify {
+    entry = ("enu", "Manually specify");
+    entry = ("chs", "手动指定");
+};
+
+string_utf8 albl_rotation_angle {
+    entry = ("enu", "Rotation angle");
+    entry = ("chs", "旋转角度");
+};
+
+string_utf8 albl_angle_value {
+    entry = ("enu", "Angle value");
+    entry = ("chs", "角度值");
+};
+
+string_utf8 albl_manually_specify_start_and_end_direction {
+    entry = ("enu", "Manually specify start and end direction");
+    entry = ("chs", "手动指定起止方向");
+};
+
+string_utf8 albl_end_direction_is_normal_of_plane {
+    entry = ("enu", "End direction is the normal of plane");
+    entry = ("chs", "终止方向为平面法向");
+};
+
+string_utf8 albl_action {
+    entry = ("enu", "Action");
+    entry = ("chs", "执行");
+};

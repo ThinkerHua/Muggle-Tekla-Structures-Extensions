@@ -19,7 +19,8 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:local="clr-namespace:Muggle.TsExtensions.MainWindow.Views"
       xmlns:vm="clr-namespace:Muggle.TsExtensions.MainWindow.ViewModels"
-      Title="Elevation"
+      xmlns:dialog="clr-namespace:Tekla.Structures.Dialog;assembly=Tekla.Structures.Dialog"
+      Title="{dialog:Loc albl_move_to_elevation}"
       mc:Ignorable="d"
       d:DesignHeight="450"
       d:DesignWidth="800"
@@ -61,21 +62,21 @@
             <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
 
-        <TextBlock Grid.Row="0" Grid.Column="0" Text="Target elevation" />
+        <TextBlock Grid.Row="0" Grid.Column="0" Text="{dialog:Loc albl_target_elevation}" />
         <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding TargetElevation, Mode=TwoWay, UpdateSourceTrigger=LostFocus, StringFormat={}{0:F3}}" />
         <RadioButton Grid.Row="1"
                      Grid.Column="0"
                      HorizontalAlignment="Left"
                      GroupName="absolutely"
-                     Content="Absolutely"
+                     Content="{dialog:Loc albl_absolutely}"
                      IsChecked="{Binding IsAbsolutely, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
         <RadioButton Grid.Row="1"
                      Grid.Column="0"
                      Grid.ColumnSpan="2"
                      HorizontalAlignment="Right"
                      GroupName="absolutely"
-                     Content="Relative"
-                     IsChecked="{Binding IsAbsolutely, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource boolInverter}}" />
+                     Content="{dialog:Loc albl_relative}"
+                     IsChecked="{Binding IsAbsolutely, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BoolInverter}}" />
 
         <Separator Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" />
 
@@ -83,27 +84,27 @@
                      Grid.Column="0"
                      Grid.ColumnSpan="2"
                      HorizontalAlignment="Left"
-                     Content="Top"
-                     IsChecked="{Binding ElevationType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource enumToBool}, ConverterParameter={x:Static vm:MoveToElevationViewModel+ElevationTypeEnum.Top}}" />
+                     Content="{dialog:Loc albl_top}"
+                     IsChecked="{Binding ElevationType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource EnumToBool}, ConverterParameter={x:Static vm:MoveToElevationViewModel+ElevationTypeEnum.Top}}" />
         <RadioButton Grid.Row="3"
                      Grid.Column="0"
                      Grid.ColumnSpan="2"
                      HorizontalAlignment="Center"
-                     Content="Middle"
-                     IsChecked="{Binding ElevationType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource enumToBool}, ConverterParameter={x:Static vm:MoveToElevationViewModel+ElevationTypeEnum.Middle}}" />
+                     Content="{dialog:Loc albl_middle}"
+                     IsChecked="{Binding ElevationType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource EnumToBool}, ConverterParameter={x:Static vm:MoveToElevationViewModel+ElevationTypeEnum.Middle}}" />
         <RadioButton Grid.Row="3"
                      Grid.Column="0"
                      Grid.ColumnSpan="2"
                      HorizontalAlignment="Right"
-                     Content="Bottom"
-                     IsChecked="{Binding ElevationType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource enumToBool}, ConverterParameter={x:Static vm:MoveToElevationViewModel+ElevationTypeEnum.Bottom}}" />
+                     Content="{dialog:Loc albl_bottom}"
+                     IsChecked="{Binding ElevationType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource EnumToBool}, ConverterParameter={x:Static vm:MoveToElevationViewModel+ElevationTypeEnum.Bottom}}" />
 
         <Button Grid.Row="4"
                 Grid.Column="0"
                 Grid.ColumnSpan="2"
                 Padding="5,2,5,2"
                 HorizontalAlignment="Center"
-                Content="Move to this elevation"
+                Content="{dialog:Loc albl_move_to_elevation}"
                 Command="{Binding MoveToElevationCommand}" />
     </Grid>
 </Page>
