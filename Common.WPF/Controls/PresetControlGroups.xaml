@@ -36,7 +36,6 @@
             <ColumnDefinition Width="auto" />
             <ColumnDefinition Width="22" />
             <ColumnDefinition Width="100" />
-            <ColumnDefinition Width="30" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto" />
@@ -106,7 +105,6 @@
             <ColumnDefinition Width="auto" />
             <ColumnDefinition Width="22" />
             <ColumnDefinition Width="100" />
-            <ColumnDefinition Width="30" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto" />
