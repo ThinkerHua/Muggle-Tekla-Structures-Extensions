@@ -1,4 +1,6 @@
 ﻿using System;
+using System.ComponentModel;
+using System.Windows;
 using System.Windows.Markup;
 
 namespace Muggle.TsExtensions.Common.WPF.Localization;
@@ -12,6 +14,12 @@ public class TranslateExtension : MarkupExtension {
     }
 
     public override object ProvideValue(IServiceProvider serviceProvider) {
+        if (IsInDesignMode()) return Key;
+
         return TranslationService.Instance[Key];
+    }
+
+    private static bool IsInDesignMode() {
+        return DesignerProperties.GetIsInDesignMode(new DependencyObject());
     }
 }
