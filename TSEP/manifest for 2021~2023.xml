@@ -45,6 +45,7 @@
 
 	<Component Id="Common.WPF" Guid="E64B36A7-2004-4943-A8EC-3A97B5BF701A">
 		<File Id="Common.WPF" Source="%SolutionFolder%\Common.WPF\%MSBuildOutputPath%\Common.WPF.dll" Target="%BinariesDirectory%"/>
+		<File Id="Common.WPF.Ail" Source="%MessagesFolder%\Common.WPF.ail" Target="%MessagesDirectory%"/>
 	</Component>
 
 	<Component Id="HJ1001" Guid="13696F27-FEFD-4603-82BE-7DE7221CBCF5">

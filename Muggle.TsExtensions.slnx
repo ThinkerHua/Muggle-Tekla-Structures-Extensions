@@ -36,6 +36,7 @@
     </Folder>
     <Folder Name="/TSEP/Messages/">
         <File Path="TSEP/messages/Muggle.TsExtensions.ail" />
+        <File Path="TSEP/messages/Common.WPF.ail" />
         <File Path="TSEP/messages/DC2001.ail" />
         <File Path="TSEP/messages/HJ1001.ail" />
         <File Path="TSEP/messages/KJ1001.ail" />

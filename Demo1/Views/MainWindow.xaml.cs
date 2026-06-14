@@ -1,5 +1,6 @@
 using System;
 using System.Windows;
+using Muggle.TsExtensions.Common.WPF.Localization;
 using Muggle.TsExtensions.Demo1.ViewModels;
 using Tekla.Structures.Dialog;
 using Tekla.Structures.Dialog.UIControls;
@@ -12,6 +13,8 @@ namespace Muggle.TsExtensions.Demo1.Views {
         private MainWindowViewModel ViewModel { get; }
 
         public MainWindow(MainWindowViewModel dataContext) {
+            TranslationService.Instance.ChangeLanguage(Localization.Language);
+            
             InitializeComponent();
             ViewModel = dataContext;
         }
@@ -45,6 +48,7 @@ namespace Muggle.TsExtensions.Demo1.Views {
             while (sender is not WpfProfileCatalog) {
                 sender = LogicalTreeHelper.GetParent(sender as DependencyObject);
             }
+
             var catalog = sender as WpfProfileCatalog;
             catalog.SelectedProfile = ViewModel.PartPrimaryProfile;
         }
@@ -53,6 +57,7 @@ namespace Muggle.TsExtensions.Demo1.Views {
             while (sender is not WpfProfileCatalog) {
                 sender = LogicalTreeHelper.GetParent(sender as DependencyObject);
             }
+
             var catalog = sender as WpfProfileCatalog;
             ViewModel.PartPrimaryProfile = catalog.SelectedProfile;
         }
@@ -61,6 +66,7 @@ namespace Muggle.TsExtensions.Demo1.Views {
             while (sender is not WpfMaterialCatalog) {
                 sender = LogicalTreeHelper.GetParent(sender as DependencyObject);
             }
+
             var catalog = sender as WpfMaterialCatalog;
             catalog.SelectedMaterial = ViewModel.PartPrimaryMaterial;
         }
@@ -69,6 +75,7 @@ namespace Muggle.TsExtensions.Demo1.Views {
             while (sender is not WpfMaterialCatalog) {
                 sender = LogicalTreeHelper.GetParent(sender as DependencyObject);
             }
+
             var catalog = sender as WpfMaterialCatalog;
             ViewModel.PartPrimaryMaterial = catalog.SelectedMaterial;
         }
@@ -77,6 +84,7 @@ namespace Muggle.TsExtensions.Demo1.Views {
             while (sender is not WpfProfileCatalog) {
                 sender = LogicalTreeHelper.GetParent(sender as DependencyObject);
             }
+
             var catalog = sender as WpfProfileCatalog;
             catalog.SelectedProfile = ViewModel.PartSecondaryProfile;
         }
@@ -85,6 +93,7 @@ namespace Muggle.TsExtensions.Demo1.Views {
             while (sender is not WpfProfileCatalog) {
                 sender = LogicalTreeHelper.GetParent(sender as DependencyObject);
             }
+
             var catalog = sender as WpfProfileCatalog;
             ViewModel.PartSecondaryProfile = catalog.SelectedProfile;
         }
@@ -93,6 +102,7 @@ namespace Muggle.TsExtensions.Demo1.Views {
             while (sender is not WpfMaterialCatalog) {
                 sender = LogicalTreeHelper.GetParent(sender as DependencyObject);
             }
+
             var catalog = sender as WpfMaterialCatalog;
             catalog.SelectedMaterial = ViewModel.PartSecondaryMaterial;
         }
@@ -101,6 +111,7 @@ namespace Muggle.TsExtensions.Demo1.Views {
             while (sender is not WpfMaterialCatalog) {
                 sender = LogicalTreeHelper.GetParent(sender as DependencyObject);
             }
+
             var catalog = sender as WpfMaterialCatalog;
             ViewModel.PartSecondaryMaterial = catalog.SelectedMaterial;
         }
@@ -109,6 +120,7 @@ namespace Muggle.TsExtensions.Demo1.Views {
             while (sender is not WpfMaterialCatalog) {
                 sender = LogicalTreeHelper.GetParent(sender as DependencyObject);
             }
+
             var catalog = sender as WpfMaterialCatalog;
             catalog.SelectedMaterial = ViewModel.PlateStiffenerMaterial;
         }
@@ -117,6 +129,7 @@ namespace Muggle.TsExtensions.Demo1.Views {
             while (sender is not WpfMaterialCatalog) {
                 sender = LogicalTreeHelper.GetParent(sender as DependencyObject);
             }
+
             var catalog = sender as WpfMaterialCatalog;
             ViewModel.PlateStiffenerMaterial = catalog.SelectedMaterial;
         }
@@ -125,6 +138,7 @@ namespace Muggle.TsExtensions.Demo1.Views {
             while (sender is not WpfMaterialCatalog) {
                 sender = LogicalTreeHelper.GetParent(sender as DependencyObject);
             }
+
             var catalog = sender as WpfMaterialCatalog;
             catalog.SelectedMaterial = ViewModel.PlateSpliceMaterial;
         }
@@ -133,6 +147,7 @@ namespace Muggle.TsExtensions.Demo1.Views {
             while (sender is not WpfMaterialCatalog) {
                 sender = LogicalTreeHelper.GetParent(sender as DependencyObject);
             }
+
             var catalog = sender as WpfMaterialCatalog;
             ViewModel.PlateSpliceMaterial = catalog.SelectedMaterial;
         }

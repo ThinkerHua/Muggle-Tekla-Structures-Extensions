@@ -12,7 +12,7 @@ string_utf8 albl_parameters_1
 
 string_utf8 albl_parameters_2
 {
-	entry = ("enu", "Patameters 2");
+	entry = ("enu", "Parameters 2");
 	entry = ("chs", "参数2");
 };
 
@@ -188,54 +188,4 @@ string_utf8 albl_material
 {
 	entry = ("enu", "Material");
 	entry = ("chs", "材质");
-};
-
-string_utf8 albl_general {
-	entry = ("enu", "General");
-	entry = ("chs", "通用");
-};
-
-string_utf8 albl_up_direction {
-	entry = ("enu", "Up direction");
-	entry = ("chs", "向上方向");
-};
-
-string_utf8 albl_auto {
-	entry = ("enu", "Auto");
-	entry = ("chs", "自动");
-};
-
-string_utf8 albl_locked {
-	entry = ("enu", "Locked");
-	entry = ("chs", "锁定");
-};
-
-string_utf8 albl_no {
-	entry = ("enu", "No");
-	entry = ("chs", "否");
-};
-
-string_utf8 albl_yes {
-	entry = ("enu", "Yes");
-	entry = ("chs", "是");
-};
-
-string_utf8 albl_class {
-	entry = ("enu", "Class");
-	entry = ("chs", "等级");
-};
-
-string_utf8 albl_connection_code {
-	entry = ("enu", "Connection code");
-	entry = ("chs", "节点号");
-};
-
-string_utf8 albl_auto_defaults_rule_group {
-	entry = ("enu", "AutoDefaults rule group");
-	entry = ("chs", "自动默认值规则组");
-};
-
-string_utf8 albl_auto_connection_rule_group {
-	entry = ("enu", "AutoConnection rule group");
-	entry = ("chs", "自动连接规则组");
 };

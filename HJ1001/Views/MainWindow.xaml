@@ -20,6 +20,7 @@
                       xmlns:tsd="clr-namespace:Tekla.Structures.Dialog;assembly=Tekla.Structures.Dialog"
                       xmlns:tsuc="clr-namespace:Tekla.Structures.Dialog.UIControls;assembly=Tekla.Structures.Dialog"
                       xmlns:vm="clr-namespace:Muggle.TsExtensions.HJ1001.ViewModels"
+                      xmlns:tr="clr-namespace:Muggle.TsExtensions.Common.WPF.Localization;assembly=Common.WPF"
                       Title="{tsd:Loc albl_HJ1001_title}"
                       ResizeMode="NoResize"
                       SizeToContent="WidthAndHeight"
@@ -183,7 +184,7 @@
                     </Grid>
                 </DockPanel>
             </TabItem>
-            <TabItem Header="{tsd:Loc albl_general}" Content="{StaticResource ConnectionGeneralTab}" />
+            <TabItem Header="{tr:Translate albl_General}" Content="{StaticResource ConnectionGeneralTab}" />
         </TabControl>
     </DockPanel>
 </tsd:PluginWindowBase>

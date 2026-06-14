@@ -13,6 +13,7 @@
  *  written by Huang YongXing - thinkerhua@hotmail.com
  *==============================================================================*/
 using System;
+using Muggle.TsExtensions.Common.WPF.Localization;
 using Muggle.TsExtensions.KJ2001.ViewModels;
 using Tekla.Structures.Dialog;
 
@@ -25,6 +26,8 @@ namespace Muggle.TsExtensions.KJ2001.Views {
         public MainWindowViewModel dataModel;
 
         public MainWindow(MainWindowViewModel DataModel) {
+            TranslationService.Instance.ChangeLanguage(Localization.Language);
+
             InitializeComponent();
             dataModel = DataModel;
         }

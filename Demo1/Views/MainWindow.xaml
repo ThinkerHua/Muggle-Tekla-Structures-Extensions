@@ -4,11 +4,11 @@
                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                       xmlns:c="clr-namespace:CalcBinding;assembly=CalcBinding"
-                      xmlns:sys="clr-namespace:System;assembly=mscorlib"
                       xmlns:tsd="clr-namespace:Tekla.Structures.Dialog;assembly=Tekla.Structures.Dialog"
                       xmlns:tsuc="clr-namespace:Tekla.Structures.Dialog.UIControls;assembly=Tekla.Structures.Dialog"
                       xmlns:vm="clr-namespace:Muggle.TsExtensions.Demo1.ViewModels"
                       xmlns:uc="clr-namespace:Muggle.TsExtensions.Common.WPF.Controls;assembly=Common.WPF"
+                      xmlns:assets="clr-namespace:Muggle.TsExtensions.Common.WPF.Assets;assembly=Common.WPF"
                       Title="Demo1"
                       Background="#F3F3F7"
                       ResizeMode="NoResize"
@@ -23,7 +23,6 @@
     <tsd:PluginWindowBase.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/Common.WPF;component/Assets/BoltSymbols.xaml" />
                 <ResourceDictionary Source="/Common.WPF;component/Assets/WeldSymbols.xaml" />
                 <ResourceDictionary Source="/Common.WPF;component/Assets/ChamferSymbols.xaml" />
                 <ResourceDictionary Source="/Common.WPF;component/DataTemplates/SymbolDataTemplate.xaml" />
@@ -106,7 +105,7 @@
                               Grid.Column="2"
                               ItemTemplate="{StaticResource SymbolDataTemplate}"
                               SelectedIndex="{Binding StifChamferType, Mode=TwoWay}"
-                              ItemsSource="{StaticResource ChamferTypeSet}" />
+                              ItemsSource="{x:Static assets:ChamferSymbols.ChamferTypeSet}" />
 
                     <TextBlock Grid.Row="4" Grid.Column="0" Text="X" />
                     <tsuc:WpfFilterCheckBox Grid.Row="4" Grid.Column="1" AttributeName="StifChamferX" IsEnabled="{c:Binding 'StifChamferType.Value >= 1 and StifChamferType.Value less=3 or StifChamferType.Value >= 5 and StifChamferType.Value less= 7'}" />
@@ -382,11 +381,11 @@
 
                         <TextBlock Grid.Row="2" Grid.Column="0" Text="Bolt type" />
                         <tsuc:WpfFilterCheckBox Grid.Row="2" Grid.Column="1" AttributeName="BConnectTYPE" />
-                        <ComboBox Grid.Row="2" Grid.Column="2" SelectedIndex="{Binding BoltConnectType, Mode=TwoWay}" ItemsSource="{StaticResource BoltTypeSet}" />
+                        <ComboBox Grid.Row="2" Grid.Column="2" SelectedIndex="{Binding BoltConnectType, Mode=TwoWay}" ItemsSource="{x:Static assets:BoltSymbols.BoltTypeSet}" />
 
                         <TextBlock Grid.Row="3" Grid.Column="0" Text="Thread in material" />
                         <tsuc:WpfFilterCheckBox Grid.Row="3" Grid.Column="1" AttributeName="BConnectTHRD" />
-                        <ComboBox Grid.Row="3" Grid.Column="2" SelectedIndex="{Binding BoltConnectThreadInMaterial, Mode=TwoWay}" ItemsSource="{StaticResource BoltThreadInMaterialSet}" />
+                        <ComboBox Grid.Row="3" Grid.Column="2" SelectedIndex="{Binding BoltConnectThreadInMaterial, Mode=TwoWay}" ItemsSource="{x:Static assets:BoltSymbols.BoltThreadInMaterialSet}" />
 
                         <TextBlock Grid.Row="4" Grid.Column="0" Text="Cut length" />
                         <tsuc:WpfFilterCheckBox Grid.Row="4" Grid.Column="1" AttributeName="BConnectCLEN" />
@@ -402,7 +401,7 @@
 
                         <TextBlock Grid.Row="7" Grid.Column="0" Text="Plain hole type" />
                         <tsuc:WpfFilterCheckBox Grid.Row="7" Grid.Column="1" AttributeName="BConnectPLAIN" />
-                        <ComboBox Grid.Row="7" Grid.Column="2" SelectedIndex="{Binding BoltConnectPlainType, Mode=TwoWay}" ItemsSource="{StaticResource BoltPlainHoleTypeSet}" />
+                        <ComboBox Grid.Row="7" Grid.Column="2" SelectedIndex="{Binding BoltConnectPlainType, Mode=TwoWay}" ItemsSource="{x:Static assets:BoltSymbols.BoltPlainHoleTypeSet}" />
 
                         <TextBlock Grid.Row="8" Grid.Column="0" Text="Hole depth" />
                         <tsuc:WpfFilterCheckBox Grid.Row="8" Grid.Column="1" AttributeName="BConnectDEPTH" IsEnabled="{c:Binding 'BoltConnectPlainType.Value == 1', Mode=OneWay}" />
@@ -410,7 +409,7 @@
 
                         <TextBlock Grid.Row="9" Grid.Column="0" Text="Special hole type" />
                         <tsuc:WpfFilterCheckBox Grid.Row="9" Grid.Column="1" AttributeName="BConnectHOLTY" />
-                        <ComboBox Grid.Row="9" Grid.Column="2" SelectedIndex="{Binding BoltConnectHoleType, Mode=TwoWay}" ItemsSource="{StaticResource BoltSpecialHoleTypeSet}" />
+                        <ComboBox Grid.Row="9" Grid.Column="2" SelectedIndex="{Binding BoltConnectHoleType, Mode=TwoWay}" ItemsSource="{x:Static assets:BoltSymbols.BoltSpecialHoleTypeSet}" />
 
                         <TextBlock Grid.Row="10" Grid.Column="0" Text="{c:Binding 'BoltConnectHoleType.Value == 0 ? &quot;Oversized&quot; : &quot;Slotted hole X&quot;'}" />
                         <tsuc:WpfFilterCheckBox Grid.Row="10" Grid.Column="1" AttributeName="BConnectSLOTX" IsEnabled="{c:Binding 'BoltConnectHoleType.Value != 2'}" />
@@ -425,7 +424,7 @@
                         <ComboBox Grid.Row="12"
                                   Grid.Column="2"
                                   SelectedIndex="{Binding BoltConnectRotateSlots, Mode=TwoWay}"
-                                  ItemsSource="{StaticResource BoltRotateSlotsSet}"
+                                  ItemsSource="{x:Static assets:BoltSymbols.BoltRotateSlotsSet}"
                                   IsEnabled="{c:Binding 'BoltConnectHoleType.Value == 1'}" />
                     </Grid>
 
@@ -554,7 +553,7 @@
 
                     <TextBlock Grid.Row="3" Grid.Column="0" Text="Bolt type" />
                     <tsuc:WpfFilterCheckBox Grid.Row="3" Grid.Column="1" AttributeName="BStudTYPE" />
-                    <ComboBox Grid.Row="3" Grid.Column="2" SelectedIndex="{Binding BoltStudType, Mode=TwoWay}" ItemsSource="{StaticResource BoltTypeSet}" />
+                    <ComboBox Grid.Row="3" Grid.Column="2" SelectedIndex="{Binding BoltStudType, Mode=TwoWay}" ItemsSource="{x:Static assets:BoltSymbols.BoltTypeSet}" />
 
                     <TextBlock Grid.Row="4" Grid.Column="0" Text="Cut length" />
                     <tsuc:WpfFilterCheckBox Grid.Row="4" Grid.Column="1" AttributeName="BStudCLEN" />
@@ -695,9 +694,9 @@
                         <TextBox Grid.Row="1" Grid.Column="2" Text="{Binding Weld1SizeBelow, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                         <tsuc:WpfFilterCheckBox Grid.Row="0" Grid.Column="3" AttributeName="W1TYPEA" />
-                        <ComboBox Grid.Row="0" Grid.Column="4" SelectedIndex="{Binding Weld1TypeAbove, Mode=TwoWay}" ItemsSource="{StaticResource WeldTypeSet}" />
+                        <ComboBox Grid.Row="0" Grid.Column="4" SelectedIndex="{Binding Weld1TypeAbove, Mode=TwoWay}" ItemsSource="{x:Static assets:WeldSymbols.WeldTypeSet}" />
                         <tsuc:WpfFilterCheckBox Grid.Row="1" Grid.Column="3" AttributeName="W1TYPEB" />
-                        <ComboBox Grid.Row="1" Grid.Column="4" SelectedIndex="{Binding Weld1TypeBelow, Mode=TwoWay}" ItemsSource="{StaticResource WeldTypeSet}" />
+                        <ComboBox Grid.Row="1" Grid.Column="4" SelectedIndex="{Binding Weld1TypeBelow, Mode=TwoWay}" ItemsSource="{x:Static assets:WeldSymbols.WeldTypeSet}" />
 
                         <tsuc:WpfFilterCheckBox Grid.Row="0" Grid.Column="5" AttributeName="W1ANGA" />
                         <TextBox Grid.Row="0" Grid.Column="6" Text="{Binding Weld1AngleAbove, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
@@ -705,14 +704,14 @@
                         <TextBox Grid.Row="1" Grid.Column="6" Text="{Binding Weld1AngleBelow, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                         <tsuc:WpfFilterCheckBox Grid.Row="0" Grid.Column="7" AttributeName="W1CTRA" />
-                        <ComboBox Grid.Row="0" Grid.Column="8" SelectedIndex="{Binding Weld1ContourAbove, Mode=TwoWay}" ItemsSource="{StaticResource WeldContourSet}" />
+                        <ComboBox Grid.Row="0" Grid.Column="8" SelectedIndex="{Binding Weld1ContourAbove, Mode=TwoWay}" ItemsSource="{x:Static assets:WeldSymbols.WeldContourSet}" />
                         <tsuc:WpfFilterCheckBox Grid.Row="1" Grid.Column="7" AttributeName="W1CTRB" />
-                        <ComboBox Grid.Row="1" Grid.Column="8" SelectedIndex="{Binding Weld1ContourBelow, Mode=TwoWay}" ItemsSource="{StaticResource WeldContourSet}" />
+                        <ComboBox Grid.Row="1" Grid.Column="8" SelectedIndex="{Binding Weld1ContourBelow, Mode=TwoWay}" ItemsSource="{x:Static assets:WeldSymbols.WeldContourSet}" />
 
                         <tsuc:WpfFilterCheckBox Grid.Row="0" Grid.Column="9" AttributeName="W1FNSHA" />
-                        <ComboBox Grid.Row="0" Grid.Column="10" SelectedIndex="{Binding Weld1FinishAbove, Mode=TwoWay}" ItemsSource="{StaticResource WeldFinishSet}" />
+                        <ComboBox Grid.Row="0" Grid.Column="10" SelectedIndex="{Binding Weld1FinishAbove, Mode=TwoWay}" ItemsSource="{x:Static assets:WeldSymbols.WeldFinishSet}" />
                         <tsuc:WpfFilterCheckBox Grid.Row="1" Grid.Column="9" AttributeName="W1FNSHB" />
-                        <ComboBox Grid.Row="1" Grid.Column="10" SelectedIndex="{Binding Weld1FinishBelow, Mode=TwoWay}" ItemsSource="{StaticResource WeldFinishSet}" />
+                        <ComboBox Grid.Row="1" Grid.Column="10" SelectedIndex="{Binding Weld1FinishBelow, Mode=TwoWay}" ItemsSource="{x:Static assets:WeldSymbols.WeldFinishSet}" />
 
                         <tsuc:WpfFilterCheckBox Grid.Row="0" Grid.Column="11" AttributeName="W1FACEA" />
                         <TextBox Grid.Row="0" Grid.Column="12" Text="{Binding Weld1RootFaceAbove, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
@@ -734,14 +733,14 @@
                                   Grid.RowSpan="2"
                                   Grid.Column="18"
                                   SelectedIndex="{Binding Weld1Around, Mode=TwoWay}"
-                                  ItemsSource="{StaticResource AroundWeldSet}" />
+                                  ItemsSource="{x:Static assets:WeldSymbols.AroundWeldSet}" />
 
                         <tsuc:WpfFilterCheckBox Grid.Row="0" Grid.RowSpan="2" Grid.Column="19" AttributeName="W1SHOP" />
                         <ComboBox Grid.Row="0"
                                   Grid.RowSpan="2"
                                   Grid.Column="20"
                                   SelectedIndex="{Binding Weld1Shop, Mode=TwoWay}"
-                                  ItemsSource="{StaticResource ShopWeldSet}" />
+                                  ItemsSource="{x:Static assets:WeldSymbols.ShopWeldSet}" />
 
                         <tsuc:WpfFilterCheckBox Grid.Row="0" Grid.RowSpan="2" Grid.Column="21" AttributeName="W1PLACE" />
                         <ComboBox Grid.Row="0"
@@ -749,7 +748,7 @@
                                   Grid.Column="22"
                                   ItemTemplate="{x:Null}"
                                   SelectedIndex="{Binding Weld1Placement, Mode=TwoWay}"
-                                  ItemsSource="{StaticResource WeldPlacementSet}" />
+                                  ItemsSource="{x:Static assets:WeldSymbols.WeldPlacementSet}" />
 
                         <tsuc:WpfFilterCheckBox Grid.Row="0" Grid.RowSpan="2" Grid.Column="23" AttributeName="W1PREP" />
                         <ComboBox Grid.Row="0"
@@ -757,14 +756,14 @@
                                   Grid.Column="24"
                                   ItemTemplate="{x:Null}"
                                   SelectedIndex="{Binding Weld1Preparation, Mode=TwoWay}"
-                                  ItemsSource="{StaticResource WeldPreparationSet}" />
+                                  ItemsSource="{x:Static assets:WeldSymbols.WeldPreparationSet}" />
 
                         <tsuc:WpfFilterCheckBox Grid.Row="0" Grid.RowSpan="2" Grid.Column="25" AttributeName="W1INTMI" />
                         <ComboBox Grid.Row="0"
                                   Grid.RowSpan="2"
                                   Grid.Column="26"
                                   SelectedIndex="{Binding Weld1Intermittent, Mode=TwoWay}"
-                                  ItemsSource="{StaticResource WeldIntermittentSet}" />
+                                  ItemsSource="{x:Static assets:WeldSymbols.WeldIntermittentSet}" />
 
                         <tsuc:WpfFilterCheckBox Grid.Row="0" Grid.Column="27" AttributeName="W1INCRA" />
                         <TextBox Grid.Row="0" Grid.Column="28" Text="{Binding Weld1IncrementAmountAbove, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
@@ -831,9 +830,9 @@
                         <TextBox Grid.Row="1" Grid.Column="2" Text="{Binding Weld2SizeBelow, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                         <tsuc:WpfFilterCheckBox Grid.Row="0" Grid.Column="3" AttributeName="W2TYPEA" />
-                        <ComboBox Grid.Row="0" Grid.Column="4" SelectedIndex="{Binding Weld2TypeAbove, Mode=TwoWay}" ItemsSource="{StaticResource WeldTypeSet}" />
+                        <ComboBox Grid.Row="0" Grid.Column="4" SelectedIndex="{Binding Weld2TypeAbove, Mode=TwoWay}" ItemsSource="{x:Static assets:WeldSymbols.WeldTypeSet}" />
                         <tsuc:WpfFilterCheckBox Grid.Row="1" Grid.Column="3" AttributeName="W2TYPEB" />
-                        <ComboBox Grid.Row="1" Grid.Column="4" SelectedIndex="{Binding Weld2TypeBelow, Mode=TwoWay}" ItemsSource="{StaticResource WeldTypeSet}" />
+                        <ComboBox Grid.Row="1" Grid.Column="4" SelectedIndex="{Binding Weld2TypeBelow, Mode=TwoWay}" ItemsSource="{x:Static assets:WeldSymbols.WeldTypeSet}" />
 
                         <tsuc:WpfFilterCheckBox Grid.Row="0" Grid.Column="5" AttributeName="W2ANGA" />
                         <TextBox Grid.Row="0" Grid.Column="6" Text="{Binding Weld2AngleAbove, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
@@ -841,14 +840,14 @@
                         <TextBox Grid.Row="1" Grid.Column="6" Text="{Binding Weld2AngleBelow, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                         <tsuc:WpfFilterCheckBox Grid.Row="0" Grid.Column="7" AttributeName="W2CTRA" />
-                        <ComboBox Grid.Row="0" Grid.Column="8" SelectedIndex="{Binding Weld2ContourAbove, Mode=TwoWay}" ItemsSource="{StaticResource WeldContourSet}" />
+                        <ComboBox Grid.Row="0" Grid.Column="8" SelectedIndex="{Binding Weld2ContourAbove, Mode=TwoWay}" ItemsSource="{x:Static assets:WeldSymbols.WeldContourSet}" />
                         <tsuc:WpfFilterCheckBox Grid.Row="1" Grid.Column="7" AttributeName="W2CTRB" />
-                        <ComboBox Grid.Row="1" Grid.Column="8" SelectedIndex="{Binding Weld2ContourBelow, Mode=TwoWay}" ItemsSource="{StaticResource WeldContourSet}" />
+                        <ComboBox Grid.Row="1" Grid.Column="8" SelectedIndex="{Binding Weld2ContourBelow, Mode=TwoWay}" ItemsSource="{x:Static assets:WeldSymbols.WeldContourSet}" />
 
                         <tsuc:WpfFilterCheckBox Grid.Row="0" Grid.Column="9" AttributeName="W2FNSHA" />
-                        <ComboBox Grid.Row="0" Grid.Column="10" SelectedIndex="{Binding Weld2FinishAbove, Mode=TwoWay}" ItemsSource="{StaticResource WeldFinishSet}" />
+                        <ComboBox Grid.Row="0" Grid.Column="10" SelectedIndex="{Binding Weld2FinishAbove, Mode=TwoWay}" ItemsSource="{x:Static assets:WeldSymbols.WeldFinishSet}" />
                         <tsuc:WpfFilterCheckBox Grid.Row="1" Grid.Column="9" AttributeName="W2FNSHB" />
-                        <ComboBox Grid.Row="1" Grid.Column="10" SelectedIndex="{Binding Weld2FinishBelow, Mode=TwoWay}" ItemsSource="{StaticResource WeldFinishSet}" />
+                        <ComboBox Grid.Row="1" Grid.Column="10" SelectedIndex="{Binding Weld2FinishBelow, Mode=TwoWay}" ItemsSource="{x:Static assets:WeldSymbols.WeldFinishSet}" />
 
                         <tsuc:WpfFilterCheckBox Grid.Row="0" Grid.Column="11" AttributeName="W2FACEA" />
                         <TextBox Grid.Row="0" Grid.Column="12" Text="{Binding Weld2RootFaceAbove, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
@@ -870,14 +869,14 @@
                                   Grid.RowSpan="2"
                                   Grid.Column="18"
                                   SelectedIndex="{Binding Weld2Around, Mode=TwoWay}"
-                                  ItemsSource="{StaticResource AroundWeldSet}" />
+                                  ItemsSource="{x:Static assets:WeldSymbols.AroundWeldSet}" />
 
                         <tsuc:WpfFilterCheckBox Grid.Row="0" Grid.RowSpan="2" Grid.Column="19" AttributeName="W2SHOP" />
                         <ComboBox Grid.Row="0"
                                   Grid.RowSpan="2"
                                   Grid.Column="20"
                                   SelectedIndex="{Binding Weld2Shop, Mode=TwoWay}"
-                                  ItemsSource="{StaticResource ShopWeldSet}" />
+                                  ItemsSource="{x:Static assets:WeldSymbols.ShopWeldSet}" />
 
                         <tsuc:WpfFilterCheckBox Grid.Row="0" Grid.RowSpan="2" Grid.Column="21" AttributeName="W2PLACE" />
                         <ComboBox Grid.Row="0"
@@ -885,7 +884,7 @@
                                   Grid.Column="22"
                                   ItemTemplate="{x:Null}"
                                   SelectedIndex="{Binding Weld2Placement, Mode=TwoWay}"
-                                  ItemsSource="{StaticResource WeldPlacementSet}" />
+                                  ItemsSource="{x:Static assets:WeldSymbols.WeldPlacementSet}" />
 
                         <tsuc:WpfFilterCheckBox Grid.Row="0" Grid.RowSpan="2" Grid.Column="23" AttributeName="W2PREP" />
                         <ComboBox Grid.Row="0"
@@ -893,14 +892,14 @@
                                   Grid.Column="24"
                                   ItemTemplate="{x:Null}"
                                   SelectedIndex="{Binding Weld2Preparation, Mode=TwoWay}"
-                                  ItemsSource="{StaticResource WeldPreparationSet}" />
+                                  ItemsSource="{x:Static assets:WeldSymbols.WeldPreparationSet}" />
 
                         <tsuc:WpfFilterCheckBox Grid.Row="0" Grid.RowSpan="2" Grid.Column="25" AttributeName="W2INTMI" />
                         <ComboBox Grid.Row="0"
                                   Grid.RowSpan="2"
                                   Grid.Column="26"
                                   SelectedIndex="{Binding Weld2Intermittent, Mode=TwoWay}"
-                                  ItemsSource="{StaticResource WeldIntermittentSet}" />
+                                  ItemsSource="{x:Static assets:WeldSymbols.WeldIntermittentSet}" />
 
                         <tsuc:WpfFilterCheckBox Grid.Row="0" Grid.Column="27" AttributeName="W2INCRA" />
                         <TextBox Grid.Row="0" Grid.Column="28" Text="{Binding Weld2IncrementAmountAbove, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />

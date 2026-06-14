@@ -1,7 +1,6 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:sys="clr-namespace:System;assembly=mscorlib"
-                    xmlns:templates="clr-namespace:Muggle.TsExtensions.Common.WPF.DataTemplates">
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    
     <DrawingGroup x:Key="AroundWeld_Edge">
         <GeometryDrawing>
             <GeometryDrawing.Pen>
@@ -67,8 +66,7 @@
         </GeometryDrawing>
     </DrawingGroup>
 
-    <DrawingGroup x:Key="WeldContour_None">
-    </DrawingGroup>
+    <DrawingGroup x:Key="WeldContour_None" />
 
     <DrawingGroup x:Key="WeldContour_Flush">
         <GeometryDrawing>
@@ -168,8 +166,7 @@
         </GeometryDrawing>
     </DrawingGroup>
 
-    <DrawingGroup x:Key="WeldFinish_None">
-    </DrawingGroup>
+    <DrawingGroup x:Key="WeldFinish_None" />
 
     <DrawingGroup x:Key="WeldFinish_Grind">
         <GeometryDrawing>
@@ -226,8 +223,7 @@
         </GeometryDrawing>
     </DrawingGroup>
 
-    <DrawingGroup x:Key="WeldType_None">
-    </DrawingGroup>
+    <DrawingGroup x:Key="WeldType_None" />
 
     <DrawingGroup x:Key="WeldType_EdgeFlange">
         <GeometryDrawing>
@@ -515,83 +511,4 @@
         </GeometryDrawing>
     </DrawingGroup>
 
-    <x:Array x:Key="AroundWeldSet" Type="templates:Symbol">
-        <templates:Symbol Name="Edge" Drawing="{StaticResource AroundWeld_Edge}" />
-        <templates:Symbol Name="Around" Drawing="{StaticResource AroundWeld_Around}" />
-    </x:Array>
-
-    <x:Array x:Key="ShopWeldSet" Type="templates:Symbol">
-        <templates:Symbol Name="WorkShop" Drawing="{StaticResource ShopWeld_Workshop}" />
-        <templates:Symbol Name="Site" Drawing="{StaticResource ShopWeld_Site}" />
-    </x:Array>
-
-    <x:Array x:Key="WeldContourSet" Type="templates:Symbol">
-        <templates:Symbol Name="None" Drawing="{StaticResource WeldContour_None}" />
-        <templates:Symbol Name="Flush" Drawing="{StaticResource WeldContour_Flush}" />
-        <templates:Symbol Name="Convex" Drawing="{StaticResource WeldContour_Convex}" />
-        <templates:Symbol Name="Concave" Drawing="{StaticResource WeldContour_Concave}" />
-    </x:Array>
-
-    <x:Array x:Key="WeldIntermittentSet" Type="templates:Symbol">
-        <templates:Symbol Name="Continuous" Drawing="{StaticResource WeldIntermittent_Continuous}" />
-        <templates:Symbol Name="Chain intermittent" Drawing="{StaticResource WeldIntermittent_ChainIntermittent}" />
-        <templates:Symbol Name="Staggered intermittent" Drawing="{StaticResource WeldIntermittent_StaggeredIntermittent}" />
-    </x:Array>
-
-    <x:Array x:Key="WeldFinishSet" Type="templates:Symbol">
-        <templates:Symbol Name="None" Drawing="{StaticResource WeldFinish_None}" />
-        <templates:Symbol Name="Grind" Drawing="{StaticResource WeldFinish_Grind}" />
-        <templates:Symbol Name="Machine" Drawing="{StaticResource WeldFinish_Machine}" />
-        <templates:Symbol Name="Chip" Drawing="{StaticResource WeldFinish_Chip}" />
-        <templates:Symbol Name="Finished weld" Drawing="{StaticResource WeldFinish_FinishedWeld}" />
-        <templates:Symbol Name="Smooth transition" Drawing="{StaticResource WeldFinish_SmoothTransition}" />
-    </x:Array>
-
-    <x:Array x:Key="WeldTypeSet" Type="templates:Symbol">
-        <templates:Symbol Name="None" Drawing="{StaticResource WeldType_None}" />
-        <templates:Symbol Name="Edge flange" Drawing="{StaticResource WeldType_EdgeFlange}" />
-        <templates:Symbol Name="Square groove square butt" Drawing="{StaticResource WeldType_SquareGrooveSquareButt}" />
-        <templates:Symbol Name="Bevel groove single V butt" Drawing="{StaticResource WeldType_BevelGrooveSingleVButt}" />
-        <templates:Symbol Name="Bevel groove single bevel butt" Drawing="{StaticResource WeldType_BevelGrooveSingleBevelButt}" />
-        <templates:Symbol Name="Single V butt with broad root face" Drawing="{StaticResource WeldType_SingleVButtWithBroadRootFace}" />
-        <templates:Symbol Name="Single bevel butt with broad root face" Drawing="{StaticResource WeldType_SingleBevelButtWithBroadRootFace}" />
-        <templates:Symbol Name="U groove single U butt" Drawing="{StaticResource WeldType_UGrooveSingleUButt}" />
-        <templates:Symbol Name="J groove J butt" Drawing="{StaticResource WeldType_JGrooveJButt}" />
-        <templates:Symbol Name="Bevel backing" Drawing="{StaticResource WeldType_BevelBacking}" />
-        <templates:Symbol Name="Fillet" Drawing="{StaticResource WeldType_Fillet}" />
-        <templates:Symbol Name="Plug" Drawing="{StaticResource WeldType_Plug}" />
-        <templates:Symbol Name="Spot" Drawing="{StaticResource WeldType_Spot}" />
-        <templates:Symbol Name="Seam" Drawing="{StaticResource WeldType_Seam}" />
-        <templates:Symbol Name="Slot" Drawing="{StaticResource WeldType_Slot}" />
-        <templates:Symbol Name="Flare bevel groove" Drawing="{StaticResource WeldType_FlareBevelGroove}" />
-        <templates:Symbol Name="Flare V groove" Drawing="{StaticResource WeldType_FlareVGroove}" />
-        <templates:Symbol Name="Corner flange" Drawing="{StaticResource WeldType_CornerFlange}" />
-        <templates:Symbol Name="Partial penetration single bevel butt plus fillet" Drawing="{StaticResource WeldType_PartialPenetrationSingleBevelButtPlusFillet}" />
-        <templates:Symbol Name="Partial penetration square groove plus fillet" Drawing="{StaticResource WeldType_PartialPenetrationSquareGroovePlusFillet}" />
-        <templates:Symbol Name="Melt through" Drawing="{StaticResource WeldType_MeltThrough}" />
-        <templates:Symbol Name="Steep flanked bevel groove single V butt" Drawing="{StaticResource WeldType_SteepFlankedBevelGrooveSingleVButt}" />
-        <templates:Symbol Name="Steep flanked bevel groove single bevel butt" Drawing="{StaticResource WeldType_SteepFlankedBevelGrooveSingleBevelButt}" />
-        <templates:Symbol Name="Edge" Drawing="{StaticResource WeldType_Edge}" />
-        <templates:Symbol Name="ISO surfacing" Drawing="{StaticResource WeldType_IsoSurfacing}" />
-        <templates:Symbol Name="Fold" Drawing="{StaticResource WeldType_Fold}" />
-        <templates:Symbol Name="Inclined" Drawing="{StaticResource WeldType_Inclined}" />
-    </x:Array>
-
-    <x:Array x:Key="WeldConnectAsSet" Type="sys:String">
-        <sys:String>As secondary part</sys:String>
-        <sys:String>As sub assembly</sys:String>
-    </x:Array>
-
-    <x:Array x:Key="WeldPlacementSet" Type="sys:String">
-        <sys:String>Auto</sys:String>
-        <sys:String>Main part</sys:String>
-        <sys:String>Secondary part</sys:String>
-    </x:Array>
-
-    <x:Array x:Key="WeldPreparationSet" Type="sys:String">
-        <sys:String>None</sys:String>
-        <sys:String>Auto</sys:String>
-        <sys:String>Main part</sys:String>
-        <sys:String>Secondary part</sys:String>
-    </x:Array>
 </ResourceDictionary>

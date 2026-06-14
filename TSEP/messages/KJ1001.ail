@@ -67,7 +67,7 @@ string_utf8 albl_inner_stiffener_thickness
 
 string_utf8 albl_inner_stiffener_thickness_tooltip
 {
-	entry = ("enu", "Keep the default value or enter a negative value to determine based on the flange thickness of the secondary part; If 0 is enterd, the inner stiffener plate will not be created; If a positive value is entered, it is created as the input value.");
+	entry = ("enu", "Keep the default value or enter a negative value to determine based on the flange thickness of the secondary part; If 0 is entered, the inner stiffener plate will not be created; If a positive value is entered, it is created as the input value.");
 	entry = ("chs", "保持默认值或输入负值，以根据次零件翼缘厚度确定；输入0，则不创建内部加劲板；输入正值，则按输入值创建。");
 };
 
@@ -251,9 +251,9 @@ string_utf8 albl_short_beam_material
 	entry = ("chs", "短梁材质");
 };
 
-string_utf8 albl_outter_flange_connection_plate_thickness
+string_utf8 albl_outer_flange_connection_plate_thickness
 {
-	entry = ("enu", "Thickness of outter flange connection plate");
+	entry = ("enu", "Thickness of outer flange connection plate");
 	entry = ("chs", "翼缘外连接板厚度");
 };
 
@@ -285,54 +285,4 @@ string_utf8 albl_flange_position_distance_list_Y
 {
 	entry = ("enu", "Distance list in Y direction of flange position");
 	entry = ("chs", "翼缘定位Y向距离列");
-};
-
-string_utf8 albl_general {
-	entry = ("enu", "General");
-	entry = ("chs", "通用");
-};
-
-string_utf8 albl_up_direction {
-	entry = ("enu", "Up direction");
-	entry = ("chs", "向上方向");
-};
-
-string_utf8 albl_auto {
-	entry = ("enu", "Auto");
-	entry = ("chs", "自动");
-};
-
-string_utf8 albl_locked {
-	entry = ("enu", "Locked");
-	entry = ("chs", "锁定");
-};
-
-string_utf8 albl_no {
-	entry = ("enu", "No");
-	entry = ("chs", "否");
-};
-
-string_utf8 albl_yes {
-	entry = ("enu", "Yes");
-	entry = ("chs", "是");
-};
-
-string_utf8 albl_class {
-	entry = ("enu", "Class");
-	entry = ("chs", "等级");
-};
-
-string_utf8 albl_connection_code {
-	entry = ("enu", "Connection code");
-	entry = ("chs", "节点号");
-};
-
-string_utf8 albl_auto_defaults_rule_group {
-	entry = ("enu", "AutoDefaults rule group");
-	entry = ("chs", "自动默认值规则组");
-};
-
-string_utf8 albl_auto_connection_rule_group {
-	entry = ("enu", "AutoConnection rule group");
-	entry = ("chs", "自动连接规则组");
 };

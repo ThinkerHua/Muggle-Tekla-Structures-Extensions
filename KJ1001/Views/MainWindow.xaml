@@ -22,6 +22,7 @@
                       xmlns:tsd="clr-namespace:Tekla.Structures.Dialog;assembly=Tekla.Structures.Dialog"
                       xmlns:tsuc="clr-namespace:Tekla.Structures.Dialog.UIControls;assembly=Tekla.Structures.Dialog"
                       xmlns:vm="clr-namespace:Muggle.TsExtensions.KJ1001.ViewModels"
+                      xmlns:tr="clr-namespace:Muggle.TsExtensions.Common.WPF.Localization;assembly=Common.WPF"
                       Title="{tsd:Loc albl_KJ1001_title}"
                       ResizeMode="NoResize"
                       SizeToContent="WidthAndHeight"
@@ -401,9 +402,9 @@
                         <tsuc:WpfFilterCheckBox Grid.Row="8" Grid.Column="2" AttributeName="webCNXPL_THK" />
                         <TextBox Grid.Row="8" Grid.Column="3" Text="{Binding WebConnectionPlateThickness, Mode=TwoWay}" />
 
-                        <TextBlock Grid.Row="9" Grid.Column="0" Text="{tsd:Loc albl_outter_flange_connection_plate_thickness}" />
+                        <TextBlock Grid.Row="9" Grid.Column="0" Text="{tsd:Loc albl_outer_flange_connection_plate_thickness}" />
                         <tsuc:WpfFilterCheckBox Grid.Row="9" Grid.Column="2" AttributeName="outFLNGCNXPL_THK" />
-                        <TextBox Grid.Row="9" Grid.Column="3" Text="{Binding OutterFlangeConnectionPlateThickness, Mode=TwoWay}" />
+                        <TextBox Grid.Row="9" Grid.Column="3" Text="{Binding OuterFlangeConnectionPlateThickness, Mode=TwoWay}" />
 
                         <TextBlock Grid.Row="10" Grid.Column="0" Text="{tsd:Loc albl_inner_flange_connection_plate_thickness}" />
                         <tsuc:WpfFilterCheckBox Grid.Row="10" Grid.Column="2" AttributeName="innerFLNGCNXPL_THK" />
@@ -558,7 +559,7 @@
                     </Grid>
                 </DockPanel>
             </TabItem>
-            <TabItem Header="{tsd:Loc albl_general}" Content="{StaticResource ConnectionGeneralTab}" />
+            <TabItem Header="{tr:Translate albl_General}" Content="{StaticResource ConnectionGeneralTab}" />
         </TabControl>
     </DockPanel>
 </tsd:PluginWindowBase>

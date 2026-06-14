@@ -1,6 +1,5 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:templates="clr-namespace:Muggle.TsExtensions.Common.WPF.DataTemplates">
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
     <DrawingGroup x:Key="Chamfer_None">
         <GeometryDrawing>
@@ -68,7 +67,7 @@
         </GeometryDrawing>
     </DrawingGroup>
 
-    <DrawingGroup x:Key="Chamfer_SquareParaller">
+    <DrawingGroup x:Key="Chamfer_SquareParallel">
         <GeometryDrawing>
             <GeometryDrawing.Pen>
                 <Pen Thickness="2" Brush="Black" />
@@ -90,14 +89,4 @@
         </GeometryDrawing>
     </DrawingGroup>
 
-    <x:Array x:Key="ChamferTypeSet" Type="templates:Symbol">
-        <templates:Symbol Name="None" Drawing="{StaticResource Chamfer_None}" />
-        <templates:Symbol Name="Line" Drawing="{StaticResource Chamfer_Line}" />
-        <templates:Symbol Name="Rounding" Drawing="{StaticResource Chamfer_Rounding}" />
-        <templates:Symbol Name="Arc" Drawing="{StaticResource Chamfer_Arc}" />
-        <templates:Symbol Name="Arc point" Drawing="{StaticResource Chamfer_ArcPoint}" />
-        <templates:Symbol Name="Square" Drawing="{StaticResource Chamfer_Square}" />
-        <templates:Symbol Name="Square parallel" Drawing="{StaticResource Chamfer_SquareParaller}" />
-        <templates:Symbol Name="Line and arc" Drawing="{StaticResource Chamfer_LineAndArc}" />
-    </x:Array>
 </ResourceDictionary>

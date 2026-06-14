@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows;
+using Muggle.TsExtensions.Common.WPF.Localization;
 using Tekla.Structures.Dialog;
 using Tekla.Structures.Dialog.UIControls;
 
@@ -8,6 +9,8 @@ namespace Muggle.TsExtensions.DC2001 {
         private ViewModel ViewModel { get; }
 
         public View(ViewModel viewModel) {
+            TranslationService.Instance.ChangeLanguage(Localization.Language);
+
             InitializeComponent();
             ViewModel = viewModel;
         }

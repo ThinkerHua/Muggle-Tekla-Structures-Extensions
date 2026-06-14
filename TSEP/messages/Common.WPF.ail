@@ -1,0 +1,634 @@
+﻿string_utf8 albl_General {
+    entry = ("enu", "General");
+    entry = ("chs", "通用");
+};
+
+string_utf8 albl_UpDirection {
+	entry = ("enu", "Up direction");
+	entry = ("chs", "向上方向");
+};
+
+string_utf8 albl_Auto {
+	entry = ("enu", "Auto");
+	entry = ("chs", "自动");
+};
+
+string_utf8 albl_Locked {
+	entry = ("enu", "Locked");
+	entry = ("chs", "锁定");
+};
+
+string_utf8 albl_No {
+	entry = ("enu", "No");
+	entry = ("chs", "否");
+};
+
+string_utf8 albl_Yes {
+	entry = ("enu", "Yes");
+	entry = ("chs", "是");
+};
+
+string_utf8 albl_Class {
+	entry = ("enu", "Class");
+	entry = ("chs", "等级");
+};
+
+string_utf8 albl_ConnectionCode {
+	entry = ("enu", "Connection code");
+	entry = ("chs", "节点号");
+};
+
+string_utf8 albl_AutoDefaultsRuleGroup {
+	entry = ("enu", "AutoDefaults rule group");
+	entry = ("chs", "自动默认值规则组");
+};
+
+string_utf8 albl_NoRoot {
+	entry = ("enu", "None");
+	entry = ("chs", "无");
+};
+
+string_utf8 albl_AutoConnectionRuleGroup {
+	entry = ("enu", "AutoConnection rule group");
+	entry = ("chs", "自动连接规则组");
+};
+
+string_utf8 albl_PositionInRelationToPrimaryPart {
+	entry = ("enu", "Position in relation to primary part");
+	entry = ("chs", "相对于主件的位置");
+};
+
+string_utf8 albl_VerticalOffset {
+	entry = ("enu", "Vertical offset");
+	entry = ("chs", "垂直偏移");
+};
+
+string_utf8 albl_HorizontalOffset {
+	entry = ("enu", "Horizontal offset");
+	entry = ("chs", "水平偏移");
+};
+
+string_utf8 albl_DetailType {
+	entry = ("enu", "Detail type");
+	entry = ("chs", "细部类型");
+};
+
+string_utf8 albl_EndDetail {
+	entry = ("enu", "End detail");
+	entry = ("chs", "端头细部");
+};
+
+string_utf8 albl_IntermediateDetail {
+	entry = ("enu", "Intermediate detail");
+	entry = ("chs", "中间细部");
+};
+
+string_utf8 albl_IntermediateDetailReverse {
+	entry = ("enu", "Intermediate detail (reverse)");
+	entry = ("chs", "中间细部(反转)");
+};
+
+string_utf8 albl_Part_Header_Id {
+    entry = ("enu", "Id");
+    entry = ("chs", "标识");
+};
+
+string_utf8 albl_Part_Header_Name {
+    entry = ("enu", "Name");
+    entry = ("chs", "名称");
+};
+
+string_utf8 albl_Part_Header_Thickness {
+    entry = ("enu", "t");
+    entry = ("chs", "厚");
+};
+
+string_utf8 albl_Part_Header_Breadth {
+    entry = ("enu", "b");
+    entry = ("chs", "宽");
+};
+
+string_utf8 albl_Part_Header_Height {
+    entry = ("enu", "h");
+    entry = ("chs", "高");
+};
+
+string_utf8 albl_Part_Header_Profile {
+    entry = ("enu", "Profile");
+    entry = ("chs", "截面规格");
+};
+
+string_utf8 albl_Part_Header_Material {
+    entry = ("enu", "Material");
+    entry = ("chs", "材质");
+};
+
+string_utf8 albl_Part_Header_Finish {
+    entry = ("enu", "Finish");
+    entry = ("chs", "抛光");
+};
+
+string_utf8 albl_Part_Header_Class {
+    entry = ("enu", "Class");
+    entry = ("chs", "等级");
+};
+
+string_utf8 albl_Part_Header_NumberingSeries_Prefix {
+    entry = ("enu", "Prefix");
+    entry = ("chs", "前缀");
+};
+
+string_utf8 albl_Part_Header_NumberingSeries_StartNumber {
+    entry = ("enu", "No.");
+    entry = ("chs", "起始号");
+};
+
+string_utf8 albl_Weld_Header_Number {
+    entry = ("enu", "No.");
+    entry = ("chs", "序号");
+};
+
+string_utf8 albl_Weld_Header_Size {
+    entry = ("enu", "Size");
+    entry = ("chs", "尺寸");
+};
+
+string_utf8 albl_Weld_Header_Type {
+    entry = ("enu", "Type");
+    entry = ("chs", "类型");
+};
+
+string_utf8 albl_Weld_Header_Angle {
+    entry = ("enu", "Angle");
+    entry = ("chs", "角度");
+};
+
+string_utf8 albl_Weld_Header_Contour {
+    entry = ("enu", "Contour");
+    entry = ("chs", "轮廓");
+};
+
+string_utf8 albl_Weld_Header_Finish {
+    entry = ("enu", "Finish");
+    entry = ("chs", "表面处理");
+};
+
+string_utf8 albl_Weld_Header_RootFace {
+    entry = ("enu", "R.face");
+    entry = ("chs", "钝边");
+};
+
+string_utf8 albl_Weld_Header_EffectiveThroat {
+    entry = ("enu", "Eff.thr");
+    entry = ("chs", "喉高");
+};
+
+string_utf8 albl_Weld_Header_RootOpening {
+    entry = ("enu", "R.opng");
+    entry = ("chs", "根部间隙");
+};
+
+string_utf8 albl_Weld_Header_EdgeOrAround {
+    entry = ("enu", "Ed./Ar.");
+    entry = ("chs", "边缘/四周");
+};
+
+string_utf8 albl_Weld_Header_WorkshopOrSite {
+    entry = ("enu", "Wo./Si.");
+    entry = ("chs", "工厂/工地");
+};
+
+string_utf8 albl_Weld_Header_Placement {
+    entry = ("enu", "Place.");
+    entry = ("chs", "布置");
+};
+
+string_utf8 albl_Weld_Header_Preparation {
+    entry = ("enu", "Prepa.");
+    entry = ("chs", "预加工");
+};
+
+string_utf8 albl_Weld_Header_IntermittentType {
+    entry = ("enu", "Intermi.");
+    entry = ("chs", "形状");
+};
+
+string_utf8 albl_Weld_Header_IncrementAmount {
+    entry = ("enu", "#");
+    entry = ("chs", "增量");
+};
+
+string_utf8 albl_Weld_Header_Length {
+    entry = ("enu", "Length");
+    entry = ("chs", "长度");
+};
+
+string_utf8 albl_Weld_Header_Pitch {
+    entry = ("enu", "Pitch");
+    entry = ("chs", "间距");
+};
+
+string_utf8 albl_Weld_Header_ReferenceText {
+    entry = ("enu", "Ref.");
+    entry = ("chs", "参考文本");
+};
+
+string_utf8 albl_Bolt_PlainHoleType_Blind {
+    entry = ("enu", "Blind");
+    entry = ("chs", "盲孔");
+};
+
+string_utf8 albl_Bolt_PlainHoleType_Through {
+    entry = ("enu", "Through");
+    entry = ("chs", "穿透");
+};
+
+string_utf8 albl_Bolt_RotateSlots_Even {
+    entry = ("enu", "Even");
+    entry = ("chs", "偶数");
+};
+
+string_utf8 albl_Bolt_RotateSlots_Odd {
+    entry = ("enu", "Odd");
+    entry = ("chs", "奇数");
+};
+
+string_utf8 albl_Bolt_RotateSlots_Parallel {
+    entry = ("enu", "Parallel");
+    entry = ("chs", "平行");
+};
+
+string_utf8 albl_Bolt_SpecialHoleType_NoHole {
+    entry = ("enu", "No hole");
+    entry = ("chs", "无孔");
+};
+
+string_utf8 albl_Bolt_SpecialHoleType_Oversized {
+    entry = ("enu", "Oversized");
+    entry = ("chs", "扩大孔");
+};
+
+string_utf8 albl_Bolt_SpecialHoleType_Slotted {
+    entry = ("enu", "Slotted");
+    entry = ("chs", "长孔");
+};
+
+string_utf8 albl_Bolt_SpecialHoleType_Tapped {
+    entry = ("enu", "Tapped");
+    entry = ("chs", "有内螺纹的");
+};
+
+string_utf8 albl_Bolt_ThreadInMaterial_No {
+    entry = ("enu", "No");
+    entry = ("chs", "否");
+};
+
+string_utf8 albl_Bolt_ThreadInMaterial_Yes {
+    entry = ("enu", "Yes");
+    entry = ("chs", "是");
+};
+
+string_utf8 albl_Bolt_Type_Site {
+    entry = ("enu", "Site");
+    entry = ("chs", "工地");
+};
+
+string_utf8 albl_Bolt_Type_Workshop {
+    entry = ("enu", "Workshop");
+    entry = ("chs", "车间");
+};
+
+string_utf8 albl_Chamfer_Type {
+    entry = ("enu", "Chamfer type");
+    entry = ("chs", "倒角类型");
+};
+
+string_utf8 albl_Chamfer_X {
+    entry = ("enu", "X");
+    entry = ("chs", "X");
+};
+
+string_utf8 albl_Chamfer_Y {
+    entry = ("enu", "Y");
+    entry = ("chs", "Y");
+};
+
+string_utf8 albl_Chamfer_Dz1 {
+    entry = ("enu", "Dz1");
+    entry = ("chs", "Dz1");
+};
+
+string_utf8 albl_Chamfer_Dz2 {
+    entry = ("enu", "Dz2");
+    entry = ("chs", "Dz2");
+};
+
+string_utf8 albl_ChamferType_Arc {
+    entry = ("enu", "Arc");
+    entry = ("chs", "内圆弧");
+};
+
+string_utf8 albl_ChamferType_ArcPoint {
+    entry = ("enu", "Arc point");
+    entry = ("chs", "弧点");
+};
+
+string_utf8 albl_ChamferType_Line {
+    entry = ("enu", "Line");
+    entry = ("chs", "直线");
+};
+
+string_utf8 albl_ChamferType_LineAndArc {
+    entry = ("enu", "Line and arc");
+    entry = ("chs", "直线和圆弧");
+};
+
+string_utf8 albl_ChamferType_None {
+    entry = ("enu", "None");
+    entry = ("chs", "无");
+};
+
+string_utf8 albl_ChamferType_Rounding {
+    entry = ("enu", "Rounding");
+    entry = ("chs", "圆弧");
+};
+
+string_utf8 albl_ChamferType_Square {
+    entry = ("enu", "Square");
+    entry = ("chs", "折线");
+};
+
+string_utf8 albl_ChamferType_SquareParallel {
+    entry = ("enu", "SquareParallel");
+    entry = ("chs", "平行折线");
+};
+
+string_utf8 albl_ClickToChangeState {
+    entry = ("enu", "Click to change state.");
+    entry = ("chs", "点击以切换状态。");
+};
+
+string_utf8 albl_Weld_AroundWeld_Around {
+    entry = ("enu", "Around");
+    entry = ("chs", "四周");
+};
+
+string_utf8 albl_Weld_AroundWeld_Edge {
+    entry = ("enu", "Edge");
+    entry = ("chs", "边缘");
+};
+
+string_utf8 albl_Weld_ConnectAs_AsSecondaryPart {
+    entry = ("enu", "As secondary part");
+    entry = ("chs", "作为次零件");
+};
+
+string_utf8 albl_Weld_ConnectAs_AsSubAssembly {
+    entry = ("enu", "As sub assembly");
+    entry = ("chs", "作为子构件");
+};
+
+string_utf8 albl_Weld_Contour_Concave {
+    entry = ("enu", "Concave");
+    entry = ("chs", "凹");
+};
+
+string_utf8 albl_Weld_Contour_Convex {
+    entry = ("enu", "Convex");
+    entry = ("chs", "凸");
+};
+
+string_utf8 albl_Weld_Contour_Flush {
+    entry = ("enu", "Flush");
+    entry = ("chs", "平");
+};
+
+string_utf8 albl_Weld_Contour_None {
+    entry = ("enu", "None");
+    entry = ("chs", "无");
+};
+
+string_utf8 albl_Weld_Finish_Chip {
+    entry = ("enu", "Chip");
+    entry = ("chs", "铲削");
+};
+
+string_utf8 albl_Weld_Finish_FinishedWeld {
+    entry = ("enu", "Finished weld");
+    entry = ("chs", "完工焊缝");
+};
+
+string_utf8 albl_Weld_Finish_Grind {
+    entry = ("enu", "Grind");
+    entry = ("chs", "打磨");
+};
+
+string_utf8 albl_Weld_Finish_Machine {
+    entry = ("enu", "Machine");
+    entry = ("chs", "机加工");
+};
+
+string_utf8 albl_Weld_Finish_None {
+    entry = ("enu", "None");
+    entry = ("chs", "无");
+};
+
+string_utf8 albl_Weld_Finish_SmoothTransition {
+    entry = ("enu", "Smooth transition");
+    entry = ("chs", "平滑过渡");
+};
+
+string_utf8 albl_Weld_Intermittent_ChainIntermittent {
+    entry = ("enu", "Chain intermittent");
+    entry = ("chs", "链状断续");
+};
+
+string_utf8 albl_Weld_Intermittent_Continuous {
+    entry = ("enu", "Continuous");
+    entry = ("chs", "连续");
+};
+
+string_utf8 albl_Weld_Intermittent_StaggeredIntermittent {
+    entry = ("enu", "Staggered intermittent");
+    entry = ("chs", "交错断续");
+};
+
+string_utf8 albl_Weld_Placement_Auto {
+    entry = ("enu", "Auto");
+    entry = ("chs", "自动");
+};
+
+string_utf8 albl_Weld_Placement_MainPart {
+    entry = ("enu", "Main part");
+    entry = ("chs", "主零件");
+};
+
+string_utf8 albl_Weld_Placement_SecondaryPart {
+    entry = ("enu", "Secondary part");
+    entry = ("chs", "次零件");
+};
+
+string_utf8 albl_Weld_Preparation_Auto {
+    entry = ("enu", "Auto");
+    entry = ("chs", "自动");
+};
+
+string_utf8 albl_Weld_Preparation_MainPart {
+    entry = ("enu", "Main part");
+    entry = ("chs", "主零件");
+};
+
+string_utf8 albl_Weld_Preparation_None {
+    entry = ("enu", "None");
+    entry = ("chs", "无");
+};
+
+string_utf8 albl_Weld_Preparation_SecondaryPart {
+    entry = ("enu", "Secondary part");
+    entry = ("chs", "交零件");
+};
+
+string_utf8 albl_Weld_ShopWeld_Site {
+    entry = ("enu", "Site");
+    entry = ("chs", "工地");
+};
+
+string_utf8 albl_Weld_ShopWeld_Workshop {
+    entry = ("enu", "Workshop");
+    entry = ("chs", "车间");
+};
+
+string_utf8 albl_Weld_Type_BevelBacking {
+    entry = ("enu", "Bevel backing");
+    entry = ("chs", "带垫板的单边坡口");
+};
+
+string_utf8 albl_Weld_Type_BevelGrooveSingleBevelButt {
+    entry = ("enu", "Bevel groove single bevel butt");
+    entry = ("chs", "单边坡口对接");
+};
+
+string_utf8 albl_Weld_Type_BevelGrooveSingleVButt {
+    entry = ("enu", "Bevel groove single V butt");
+    entry = ("chs", "单V形坡口对接");
+};
+
+string_utf8 albl_Weld_Type_CornerFlange {
+    entry = ("enu", "Corner flange");
+    entry = ("chs", "卷边角接");
+};
+
+string_utf8 albl_Weld_Type_Edge {
+    entry = ("enu", "Edge");
+    entry = ("chs", "边缘");
+};
+
+string_utf8 albl_Weld_Type_EdgeFlange {
+    entry = ("enu", "Edge flange");
+    entry = ("chs", "卷边端接");
+};
+
+string_utf8 albl_Weld_Type_Fillet {
+    entry = ("enu", "Fillet");
+    entry = ("chs", "角焊");
+};
+
+string_utf8 albl_Weld_Type_FlareBevelGroove {
+    entry = ("enu", "Flare bevel groove");
+    entry = ("chs", "卷边单边坡口");
+};
+
+string_utf8 albl_Weld_Type_FlareVGroove {
+    entry = ("enu", "Flare V Groove");
+    entry = ("chs", "卷边V形坡口");
+};
+
+string_utf8 albl_Weld_Type_Fold {
+    entry = ("enu", "Fold");
+    entry = ("chs", "折叠");
+};
+
+string_utf8 albl_Weld_Type_Inclined {
+    entry = ("enu", "Inclined");
+    entry = ("chs", "倾斜");
+};
+
+string_utf8 albl_Weld_Type_IsoSurfacing {
+    entry = ("enu", "ISO surfacing");
+    entry = ("chs", "ISO堆焊");
+};
+
+string_utf8 albl_Weld_Type_JGrooveJButt {
+    entry = ("enu", "J groove J butt");
+    entry = ("chs", "J形坡口对接");
+};
+
+string_utf8 albl_Weld_Type_MeltThrough {
+    entry = ("enu", "Melt through");
+    entry = ("chs", "全熔透");
+};
+
+string_utf8 albl_Weld_Type_None {
+    entry = ("enu", "None");
+    entry = ("chs", "无");
+};
+
+string_utf8 albl_Weld_Type_PartialPenetrationSingleBevelButtPlusFillet {
+    entry = ("enu", "Partial penetration single bevel butt plus fillet");
+    entry = ("chs", "未焊透单边坡口+角焊");
+};
+
+string_utf8 albl_Weld_Type_PartialPenetrationSquareGroovePlusFillet {
+    entry = ("enu", "Partial penetration square groove plus fillet");
+    entry = ("chs", "未焊透I形坡口+角焊");
+};
+
+string_utf8 albl_Weld_Type_Plug {
+    entry = ("enu", "Plug");
+    entry = ("chs", "塞焊");
+};
+
+string_utf8 albl_Weld_Type_Seam {
+    entry = ("enu", "Seam");
+    entry = ("chs", "缝焊");
+};
+
+string_utf8 albl_Weld_Type_SingleBevelButtWithBroadRootFace {
+    entry = ("enu", "Single bevel butt with broad root face");
+    entry = ("chs", "带钝边的单边坡口对接");
+};
+
+string_utf8 albl_Weld_Type_SingleVButtWithBroadRootFace {
+    entry = ("enu", "Single V butt with broad root face");
+    entry = ("chs", "带钝边的单V形坡口对接");
+};
+
+string_utf8 albl_Weld_Type_Slot {
+    entry = ("enu", "Slot");
+    entry = ("chs", "槽焊");
+};
+
+string_utf8 albl_Weld_Type_Spot {
+    entry = ("enu", "Spot");
+    entry = ("chs", "点焊");
+};
+
+string_utf8 albl_Weld_Type_SquareGrooveSquareButt {
+    entry = ("enu", "Square groove square butt");
+    entry = ("chs", "I形坡口");
+};
+
+string_utf8 albl_Weld_Type_SteepFlankedBevelGrooveSingleBevelButt {
+    entry = ("enu", "Steep flanked bevel groove single bevel butt");
+    entry = ("chs", "陡坡单边坡口对接");
+};
+
+string_utf8 albl_Weld_Type_SteepFlankedBevelGrooveSingleVButt {
+    entry = ("enu", "Steep flanked bevel groove single V butt");
+    entry = ("chs", "陡坡单V形坡口对接");
+};
+
+string_utf8 albl_Weld_Type_UGrooveSingleUButt {
+    entry = ("enu", "U groove single U butt");
+    entry = ("chs", "U形坡口对接");
+};

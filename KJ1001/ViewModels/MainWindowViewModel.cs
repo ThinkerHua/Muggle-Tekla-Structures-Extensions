@@ -337,13 +337,13 @@ namespace Muggle.TsExtensions.KJ1001.ViewModels {
             }
         }
 
-        private double outterFlangeConnectionPlate_thickness = 25.0;
+        private double outerFlangeConnectionPlate_thickness = 25.0;
         [StructuresDialog("outFLNGCNXPL_THK", typeof(TD.Double))]
-        public double OutterFlangeConnectionPlateThickness {
-            get { return outterFlangeConnectionPlate_thickness; }
+        public double OuterFlangeConnectionPlateThickness {
+            get { return outerFlangeConnectionPlate_thickness; }
             set {
-                outterFlangeConnectionPlate_thickness = value == int.MinValue ? 25.0 : value;
-                OnPropertyChanged("OutterFlangeConnectionPlateThickness");
+                outerFlangeConnectionPlate_thickness = value == int.MinValue ? 25.0 : value;
+                OnPropertyChanged("OuterFlangeConnectionPlateThickness");
             }
         }
 

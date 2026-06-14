@@ -1,9 +1,9 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-                    xmlns:tsd="clr-namespace:Tekla.Structures.Dialog;assembly=Tekla.Structures.Dialog"
                     xmlns:tsuc="clr-namespace:Tekla.Structures.Dialog.UIControls;assembly=Tekla.Structures.Dialog"
                     xmlns:uc="clr-namespace:Muggle.TsExtensions.Common.WPF.Controls"
-                    xmlns:vc="clr-namespace:Muggle.TsExtensions.Common.WPF.ValueConverters">
+                    xmlns:vc="clr-namespace:Muggle.TsExtensions.Common.WPF.ValueConverters"
+                    xmlns:tr="clr-namespace:Muggle.TsExtensions.Common.WPF.Localization">
 
     <ResourceDictionary.MergedDictionaries>
         <ResourceDictionary Source="/Common.WPF;component/Assets/UpDirection.xaml" />
@@ -50,16 +50,16 @@
             <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
 
-        <TextBlock Grid.Row="0" Grid.Column="0" Text="{tsd:Loc albl_up_direction}" />
+        <TextBlock Grid.Row="0" Grid.Column="0" Text="{tr:Translate albl_UpDirection}" />
         <tsuc:WpfFilterCheckBox Grid.Row="0" Grid.Column="1" AttributeName="zsuunta" />
         <ComboBox Grid.Row="0" Grid.Column="2" SelectedIndex="{Binding UpDirection, Mode=TwoWay, Converter={StaticResource UpDirectionToSelectedIndex}}">
-            <ComboBoxItem Content="{tsd:Loc albl_auto}" />
-            <ComboBoxItem Content="{tsd:Loc +y}" />
-            <ComboBoxItem Content="{tsd:Loc -y}" />
-            <ComboBoxItem Content="{tsd:Loc -x}" />
-            <ComboBoxItem Content="{tsd:Loc +x}" />
-            <ComboBoxItem Content="{tsd:Loc +z}" />
-            <ComboBoxItem Content="{tsd:Loc -z}" />
+            <ComboBoxItem Content="{tr:Translate albl_Auto}" />
+            <ComboBoxItem Content="{tr:Translate +y}" />
+            <ComboBoxItem Content="{tr:Translate -y}" />
+            <ComboBoxItem Content="{tr:Translate -x}" />
+            <ComboBoxItem Content="{tr:Translate +x}" />
+            <ComboBoxItem Content="{tr:Translate +z}" />
+            <ComboBoxItem Content="{tr:Translate -z}" />
         </ComboBox>
 
         <Image Grid.Row="1"
@@ -77,26 +77,26 @@
         <tsuc:WpfFilterCheckBox Grid.Row="2" Grid.Column="1" AttributeName="zang2" />
         <TextBox Grid.Row="2" Grid.Column="2" Text="{Binding RotationAngleX, Mode=TwoWay}" />
 
-        <TextBlock Grid.Row="4" Grid.Column="0" Text="{tsd:Loc albl_locked}" />
+        <TextBlock Grid.Row="4" Grid.Column="0" Text="{tr:Translate albl_Locked}" />
         <tsuc:WpfFilterCheckBox Grid.Row="4" Grid.Column="1" AttributeName="OBJECT_LOCKED" />
         <ComboBox Grid.Row="4" Grid.Column="2" SelectedIndex="{Binding Locked, Mode=TwoWay}">
-            <ComboBoxItem Content="{tsd:Loc albl_no}" />
-            <ComboBoxItem Content="{tsd:Loc albl_yes}" />
+            <ComboBoxItem Content="{tr:Translate albl_No}" />
+            <ComboBoxItem Content="{tr:Translate albl_Yes}" />
         </ComboBox>
 
-        <TextBlock Grid.Row="5" Grid.Column="0" Text="{tsd:Loc albl_class}" />
+        <TextBlock Grid.Row="5" Grid.Column="0" Text="{tr:Translate albl_Class}" />
         <tsuc:WpfFilterCheckBox Grid.Row="5" Grid.Column="1" AttributeName="group_no" />
         <uc:ClassSelector Grid.Row="5" Grid.Column="2" Value="{Binding Class, Mode=TwoWay}" />
 
-        <TextBlock Grid.Row="6" Grid.Column="0" Text="{tsd:Loc albl_connection_code}" />
+        <TextBlock Grid.Row="6" Grid.Column="0" Text="{tr:Translate albl_ConnectionCode}" />
         <tsuc:WpfFilterCheckBox Grid.Row="6" Grid.Column="1" AttributeName="joint_code" />
         <TextBox Grid.Row="6" Grid.Column="2" Text="{Binding ConnectionCode, Mode=TwoWay}" />
 
-        <TextBlock Grid.Row="7" Grid.Column="0" Text="{tsd:Loc albl_auto_defaults_rule_group}" />
+        <TextBlock Grid.Row="7" Grid.Column="0" Text="{tr:Translate albl_AutoDefaultsRuleGroup}" />
         <tsuc:WpfFilterCheckBox Grid.Row="7" Grid.Column="1" AttributeName="ad_root" />
         <TextBox Grid.Row="7" Grid.Column="2" Text="{Binding AutoDefaults, Mode=TwoWay}" />
 
-        <TextBlock Grid.Row="8" Grid.Column="0" Text="{tsd:Loc albl_auto_connection_rule_group}" />
+        <TextBlock Grid.Row="8" Grid.Column="0" Text="{tr:Translate albl_AutoConnectionRuleGroup}" />
         <tsuc:WpfFilterCheckBox Grid.Row="8" Grid.Column="1" AttributeName="ac_root" />
         <TextBox Grid.Row="8" Grid.Column="2" Text="{Binding AutoConnection, Mode=TwoWay}" />
     </Grid>
@@ -128,10 +128,10 @@
             <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
 
-        <TextBlock Grid.Row="0" Grid.Column="0" Text="{tsd:Loc albl_up_direction}" />
+        <TextBlock Grid.Row="0" Grid.Column="0" Text="{tr:Translate albl_UpDirection}" />
         <tsuc:WpfFilterCheckBox Grid.Row="0" Grid.Column="1" AttributeName="zsuunta" />
         <ComboBox Grid.Row="0" Grid.Column="2" SelectedIndex="{Binding UpDirection, Mode=TwoWay, Converter={StaticResource UpDirectionToSelectedIndex}}">
-            <ComboBoxItem Content="{tsd:Loc albl_auto}" />
+            <ComboBoxItem Content="{tr:Translate albl_Auto}" />
             <ComboBoxItem Content="+y" />
             <ComboBoxItem Content="-y" />
             <ComboBoxItem Content="-x" />
@@ -156,7 +156,7 @@
         <TextBox Grid.Row="2" Grid.Column="2" Text="{Binding RotationAngleX, Mode=TwoWay}" />
 
         <!-- Label of position in relation to primary part -->
-        <TextBlock Grid.Row="4" Grid.Column="0" Text="{tsd:Loc albl_position_in_relation_to_primary_part}" />
+        <TextBlock Grid.Row="4" Grid.Column="0" Text="{tr:Translate albl_PositionInRelationToPrimaryPart}" />
         <tsuc:WpfFilterCheckBox x:Name="filterVerticalPosition" Grid.Row="4" Grid.Column="1" AttributeName="vertical_position" />
         <tsuc:WpfFilterCheckBox Grid.Row="4"
                                 Grid.Column="1"
@@ -250,38 +250,38 @@
                   IsChecked="{Binding BottomRight, Mode=TwoWay}" />
 
         <!-- vertical and horizontal offset -->
-        <TextBlock Grid.Row="10" Grid.Column="0" Text="{tsd:Loc albl_vertical_offset}" />
+        <TextBlock Grid.Row="10" Grid.Column="0" Text="{tr:Translate albl_VerticalOffset}" />
         <tsuc:WpfFilterCheckBox Grid.Row="10" Grid.Column="1" AttributeName="vertical_offset" />
         <TextBox Grid.Row="10" Grid.Column="2" Text="{Binding VerticalOffset, Mode=TwoWay}" />
 
-        <TextBlock Grid.Row="11" Grid.Column="0" Text="{tsd:Loc albl_horizontal_offset}" />
+        <TextBlock Grid.Row="11" Grid.Column="0" Text="{tr:Translate albl_HorizontalOffset}" />
         <tsuc:WpfFilterCheckBox Grid.Row="11" Grid.Column="1" AttributeName="horizontal_offset" />
         <TextBox Grid.Row="11" Grid.Column="2" Text="{Binding HorizontalOffset, Mode=TwoWay}" />
 
-        <TextBlock Grid.Row="12" Grid.Column="0" Text="{tsd:Loc albl_deatil_type}" />
+        <TextBlock Grid.Row="12" Grid.Column="0" Text="{tr:Translate albl_DetailType}" />
         <tsuc:WpfFilterCheckBox Grid.Row="12" Grid.Column="1" AttributeName="detail_type" />
         <ComboBox Grid.Row="12" Grid.Column="2" SelectedIndex="{Binding DetailType, Mode=TwoWay}">
-            <ComboBoxItem Content="{tsd:Loc albl_end_detail}" />
-            <ComboBoxItem Content="{tsd:Loc albl_intermediate_detail}" />
-            <ComboBoxItem Content="{tsd:Loc albl_intermediate_detail_reverse}" />
+            <ComboBoxItem Content="{tr:Translate albl_EndDetail}" />
+            <ComboBoxItem Content="{tr:Translate albl_IntermediateDetail}" />
+            <ComboBoxItem Content="{tr:Translate albl_IntermediateDetailReverse}" />
         </ComboBox>
 
-        <TextBlock Grid.Row="13" Grid.Column="0" Text="{tsd:Loc albl_locked}" />
+        <TextBlock Grid.Row="13" Grid.Column="0" Text="{tr:Translate albl_Locked}" />
         <tsuc:WpfFilterCheckBox Grid.Row="13" Grid.Column="1" AttributeName="OBJECT_LOCKED" />
         <ComboBox Grid.Row="13" Grid.Column="2" SelectedIndex="{Binding Locked, Mode=TwoWay}">
-            <ComboBoxItem Content="{tsd:Loc albl_no}" />
-            <ComboBoxItem Content="{tsd:Loc albl_yes}" />
+            <ComboBoxItem Content="{tr:Translate albl_No}" />
+            <ComboBoxItem Content="{tr:Translate albl_Yes}" />
         </ComboBox>
 
-        <TextBlock Grid.Row="14" Grid.Column="0" Text="{tsd:Loc albl_class}" />
+        <TextBlock Grid.Row="14" Grid.Column="0" Text="{tr:Translate albl_Class}" />
         <tsuc:WpfFilterCheckBox Grid.Row="14" Grid.Column="1" AttributeName="group_no" />
         <uc:ClassSelector Grid.Row="14" Grid.Column="2" Value="{Binding Class, Mode=TwoWay}" />
 
-        <TextBlock Grid.Row="15" Grid.Column="0" Text="{tsd:Loc albl_connection_code}" />
+        <TextBlock Grid.Row="15" Grid.Column="0" Text="{tr:Translate albl_ConnectionCode}" />
         <tsuc:WpfFilterCheckBox Grid.Row="15" Grid.Column="1" AttributeName="joint_code" />
         <TextBox Grid.Row="15" Grid.Column="2" Text="{Binding ConnectionCode, Mode=TwoWay}" />
 
-        <TextBlock Grid.Row="16" Grid.Column="0" Text="{tsd:Loc albl_auto_defaults_rule_group}" />
+        <TextBlock Grid.Row="16" Grid.Column="0" Text="{tr:Translate albl_AutoDefaultsRuleGroup}" />
         <tsuc:WpfFilterCheckBox Grid.Row="16" Grid.Column="1" AttributeName="ad_root" />
         <TextBox Grid.Row="16" Grid.Column="2" Text="{Binding AutoDefaults, Mode=TwoWay}" />
     </Grid>

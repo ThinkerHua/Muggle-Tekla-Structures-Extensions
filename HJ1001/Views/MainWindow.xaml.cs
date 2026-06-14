@@ -14,6 +14,7 @@
  *==============================================================================*/
 using System;
 using System.Windows;
+using Muggle.TsExtensions.Common.WPF.Localization;
 using Muggle.TsExtensions.HJ1001.ViewModels;
 using Tekla.Structures.Dialog;
 using Tekla.Structures.Dialog.UIControls;
@@ -22,6 +23,8 @@ namespace Muggle.TsExtensions.HJ1001.Views {
     public partial class MainWindow : PluginWindowBase {
         private readonly MainWindowViewModel dataModel;
         public MainWindow(MainWindowViewModel dataModel) {
+            TranslationService.Instance.ChangeLanguage(Localization.Language);
+
             InitializeComponent();
             this.dataModel = dataModel;
         }

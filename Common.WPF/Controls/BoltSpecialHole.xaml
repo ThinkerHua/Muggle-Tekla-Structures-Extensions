@@ -19,27 +19,27 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:vc="clr-namespace:Muggle.TsExtensions.Common.WPF.ValueConverters"
-             ToolTip="Click to change state."
+             xmlns:tr="clr-namespace:Muggle.TsExtensions.Common.WPF.Localization"
+             ToolTip="{tr:Translate albl_ClickToChangeState}"
              mc:Ignorable="d"
              d:DesignHeight="109"
              d:DesignWidth="100"
              d:Background="WhiteSmoke">
 
     <UserControl.Resources>
-        <SolidColorBrush x:Key="partFill" Color="#2e74d7" />
-        <SolidColorBrush x:Key="partsBorder" Color="#595868" />
-        <SolidColorBrush x:Key="instanceFill" Color="#9d9da6" />
-        <SolidColorBrush x:Key="instanceFill_Dark1" Color="#7b7a86" />
-        <SolidColorBrush x:Key="instanceFill_Dark2" Color="#8c8b96" />
-        <SolidColorBrush x:Key="instanceFill_Light1" Color="#bfbfc6" />
-        <SolidColorBrush x:Key="instanceFill_Light2" Color="#aeaeb6" />
-        <SolidColorBrush x:Key="instanceBorder" Color="#595868" />
+        <SolidColorBrush x:Key="PartFill" Color="#2e74d7" />
+        <SolidColorBrush x:Key="InstanceFill" Color="#9d9da6" />
+        <SolidColorBrush x:Key="InstanceFillDark1" Color="#7b7a86" />
+        <SolidColorBrush x:Key="InstanceFillDark2" Color="#8c8b96" />
+        <SolidColorBrush x:Key="InstanceFillLight1" Color="#bfbfc6" />
+        <SolidColorBrush x:Key="InstanceFillLight2" Color="#aeaeb6" />
+        <SolidColorBrush x:Key="InstanceBorder" Color="#595868" />
 
         <Style TargetType="Image">
             <Setter Property="Stretch" Value="Fill" />
         </Style>
 
-        <vc:InversedBoolToOpacityValueConverter x:Key="isSelectedToOpacity" />
+        <vc:InversedBoolToOpacityValueConverter x:Key="IsSelectedToOpacity" />
     </UserControl.Resources>
 
     <Image>
@@ -48,87 +48,87 @@
                 <DrawingImage.Drawing>
                     <DrawingGroup>
                         <DrawingGroup x:Name="BoltInstance">
-                            <GeometryDrawing Brush="{StaticResource instanceFill_Dark1}">
+                            <GeometryDrawing Brush="{StaticResource InstanceFillDark1}">
                                 <GeometryDrawing.Geometry>
                                     <PathGeometry Figures="M 25,0 H 37.5 V 16 H 25 Z" />
                                 </GeometryDrawing.Geometry>
                             </GeometryDrawing>
-                            <GeometryDrawing Brush="{StaticResource instanceFill}">
+                            <GeometryDrawing Brush="{StaticResource InstanceFill}">
                                 <GeometryDrawing.Geometry>
                                     <PathGeometry Figures="M 37.5,0 H 62.5 V 16 H 37.5 Z" />
                                 </GeometryDrawing.Geometry>
                             </GeometryDrawing>
-                            <GeometryDrawing Brush="{StaticResource instanceFill_Light1}">
+                            <GeometryDrawing Brush="{StaticResource InstanceFillLight1}">
                                 <GeometryDrawing.Geometry>
                                     <PathGeometry Figures="M 62.5,0 H 75 V 16 H 62.5 Z" />
                                 </GeometryDrawing.Geometry>
                             </GeometryDrawing>
                             <GeometryDrawing>
                                 <GeometryDrawing.Pen>
-                                    <Pen Thickness="1" Brush="{StaticResource instanceBorder}" />
+                                    <Pen Thickness="1" Brush="{StaticResource InstanceBorder}" />
                                 </GeometryDrawing.Pen>
                                 <GeometryDrawing.Geometry>
                                     <PathGeometry Figures="M 25,0 H 75 V 16 H 25 Z" />
                                 </GeometryDrawing.Geometry>
                             </GeometryDrawing>
-                            <GeometryDrawing Brush="{StaticResource instanceFill}">
+                            <GeometryDrawing Brush="{StaticResource InstanceFill}">
                                 <GeometryDrawing.Pen>
-                                    <Pen Thickness="1" Brush="{StaticResource instanceBorder}" />
+                                    <Pen Thickness="1" Brush="{StaticResource InstanceBorder}" />
                                 </GeometryDrawing.Pen>
                                 <GeometryDrawing.Geometry>
                                     <PathGeometry Figures="M 42,16 H 58 V 109 H 42 Z" />
                                 </GeometryDrawing.Geometry>
                             </GeometryDrawing>
                         </DrawingGroup>
-                        <DrawingGroup x:Name="Part1" Opacity="{Binding SpecialHole1, ElementName=BoltSpecialHoleControl, Converter={StaticResource isSelectedToOpacity}, ConverterParameter=0.25, Mode=OneWay}">
-                            <GeometryDrawing Brush="{StaticResource partFill}">
+                        <DrawingGroup x:Name="Part1" Opacity="{Binding SpecialHole1, ElementName=BoltSpecialHoleControl, Converter={StaticResource IsSelectedToOpacity}, ConverterParameter=0.25, Mode=OneWay}">
+                            <GeometryDrawing Brush="{StaticResource PartFill}">
                                 <GeometryDrawing.Geometry>
                                     <PathGeometry Figures="M 0,18 H 40 V 28 H 0 Z M 60,18 H 100 V 28 H 60 Z" />
                                 </GeometryDrawing.Geometry>
                             </GeometryDrawing>
                         </DrawingGroup>
-                        <DrawingGroup x:Name="Part2" Opacity="{Binding SpecialHole2, ElementName=BoltSpecialHoleControl, Converter={StaticResource isSelectedToOpacity}, ConverterParameter=0.25, Mode=OneWay}">
-                            <GeometryDrawing Brush="{StaticResource partFill}">
+                        <DrawingGroup x:Name="Part2" Opacity="{Binding SpecialHole2, ElementName=BoltSpecialHoleControl, Converter={StaticResource IsSelectedToOpacity}, ConverterParameter=0.25, Mode=OneWay}">
+                            <GeometryDrawing Brush="{StaticResource PartFill}">
                                 <GeometryDrawing.Geometry>
                                     <PathGeometry Figures="M 0,30 H 40 V 40 H 0 Z M 60,30 H 100 V 40 H 60 Z" />
                                 </GeometryDrawing.Geometry>
                             </GeometryDrawing>
                         </DrawingGroup>
-                        <DrawingGroup x:Name="Part3" Opacity="{Binding SpecialHole3, ElementName=BoltSpecialHoleControl, Converter={StaticResource isSelectedToOpacity}, ConverterParameter=0.25, Mode=OneWay}">
-                            <GeometryDrawing Brush="{StaticResource partFill}">
+                        <DrawingGroup x:Name="Part3" Opacity="{Binding SpecialHole3, ElementName=BoltSpecialHoleControl, Converter={StaticResource IsSelectedToOpacity}, ConverterParameter=0.25, Mode=OneWay}">
+                            <GeometryDrawing Brush="{StaticResource PartFill}">
                                 <GeometryDrawing.Geometry>
                                     <PathGeometry Figures="M 0,42 H 40 V 52 H 0 Z M 60,42 H 100 V 52 H 60 Z" />
                                 </GeometryDrawing.Geometry>
                             </GeometryDrawing>
                         </DrawingGroup>
-                        <DrawingGroup x:Name="Part4" Opacity="{Binding SpecialHole4, ElementName=BoltSpecialHoleControl, Converter={StaticResource isSelectedToOpacity}, ConverterParameter=0.25, Mode=OneWay}">
-                            <GeometryDrawing Brush="{StaticResource partFill}">
+                        <DrawingGroup x:Name="Part4" Opacity="{Binding SpecialHole4, ElementName=BoltSpecialHoleControl, Converter={StaticResource IsSelectedToOpacity}, ConverterParameter=0.25, Mode=OneWay}">
+                            <GeometryDrawing Brush="{StaticResource PartFill}">
                                 <GeometryDrawing.Geometry>
                                     <PathGeometry Figures="M 0,54 H 40 V 64 H 0 Z M 60,54 H 100 V 64 H 60 Z" />
                                 </GeometryDrawing.Geometry>
                             </GeometryDrawing>
                         </DrawingGroup>
-                        <DrawingGroup x:Name="Part5" Opacity="{Binding SpecialHole5, ElementName=BoltSpecialHoleControl, Converter={StaticResource isSelectedToOpacity}, ConverterParameter=0.25, Mode=OneWay}">
-                            <GeometryDrawing Brush="{StaticResource partFill}">
+                        <DrawingGroup x:Name="Part5" Opacity="{Binding SpecialHole5, ElementName=BoltSpecialHoleControl, Converter={StaticResource IsSelectedToOpacity}, ConverterParameter=0.25, Mode=OneWay}">
+                            <GeometryDrawing Brush="{StaticResource PartFill}">
                                 <GeometryDrawing.Geometry>
                                     <PathGeometry Figures="M 0,66 H 40 V 76 H 0 Z M 60,66 H 100 V 76 H 60 Z" />
                                 </GeometryDrawing.Geometry>
                             </GeometryDrawing>
                         </DrawingGroup>
                         <DrawingGroup x:Name="NutInstance">
-                            <GeometryDrawing Brush="{StaticResource instanceFill_Dark2}">
+                            <GeometryDrawing Brush="{StaticResource InstanceFillDark2}">
                                 <GeometryDrawing.Geometry>
                                     <PathGeometry Figures="M 25,78 H 50 V 94 H 25 Z" />
                                 </GeometryDrawing.Geometry>
                             </GeometryDrawing>
-                            <GeometryDrawing Brush="{StaticResource instanceFill_Light2}">
+                            <GeometryDrawing Brush="{StaticResource InstanceFillLight2}">
                                 <GeometryDrawing.Geometry>
                                     <PathGeometry Figures="M 50,78 H 75 V 94 H 50 Z" />
                                 </GeometryDrawing.Geometry>
                             </GeometryDrawing>
                             <GeometryDrawing>
                                 <GeometryDrawing.Pen>
-                                    <Pen Brush="{StaticResource instanceBorder}" Thickness="1" />
+                                    <Pen Brush="{StaticResource InstanceBorder}" Thickness="1" />
                                 </GeometryDrawing.Pen>
                                 <GeometryDrawing.Geometry>
                                     <PathGeometry Figures="M 25,78 H 75 V 94 H 25 Z" />
