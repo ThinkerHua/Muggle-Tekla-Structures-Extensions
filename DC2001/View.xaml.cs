@@ -1,4 +1,18 @@
-﻿using System;
+﻿/*==============================================================================
+ *  Muggle TsExtensions - extensions for Tekla Structures
+ *
+ *  Copyright © 2026 Huang YongXing.
+ *
+ *  This library is free software, licensed under the terms of the GNU
+ *  General Public License as published by the Free Software Foundation,
+ *  either version 3 of the License, or (at your option) any later version.
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program. If not, see <http://www.gnu.org/licenses/>.
+ *==============================================================================
+ *  View.xaml.cs: code behind for main window of DC2001
+ *  written by Huang YongXing - thinkerhua@hotmail.com
+ *==============================================================================*/
+using System;
 using System.Windows;
 using Muggle.TsExtensions.Common.WPF.Localization;
 using Tekla.Structures.Dialog;
