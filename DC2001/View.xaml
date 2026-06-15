@@ -26,6 +26,7 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/Common.WPF;component/DataTemplates/SymbolDataTemplate.xaml" />
                 <ResourceDictionary Source="/Common.WPF;component/Controls/PresetControlGroups.xaml" />
+                <ResourceDictionary Source="/DC2001;component/Assets/BackgroundImage.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
             <Style x:Key="Element" TargetType="FrameworkElement">
@@ -36,7 +37,9 @@
                 <Setter Property="Height" Value="20" />
             </Style>
             <Style BasedOn="{StaticResource Element}" TargetType="Grid" />
-            <Style BasedOn="{StaticResource Element}" TargetType="TextBlock" />
+            <Style BasedOn="{StaticResource Element}" TargetType="TextBlock">
+                <Setter Property="HorizontalAlignment" Value="Right" />
+            </Style>
             <Style BasedOn="{StaticResource Element}" TargetType="CheckBox" />
             <Style BasedOn="{StaticResource ContainingTextBoxElement}" TargetType="TextBox">
                 <Setter Property="HorizontalContentAlignment" Value="Center" />
@@ -77,78 +80,104 @@
 
         <TabControl Margin="2,0">
             <TabItem Header="{tsd:Loc albl_parameters}">
-                <Grid>
-                    <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="auto" />
-                        <ColumnDefinition Width="22" />
-                        <ColumnDefinition Width="80" />
-                    </Grid.ColumnDefinitions>
-                    <Grid.RowDefinitions>
-                        <RowDefinition Height="auto" />
-                        <RowDefinition Height="auto" />
-                        <RowDefinition Height="auto" />
-                        <RowDefinition Height="auto" />
-                        <RowDefinition Height="auto" />
-                        <RowDefinition Height="auto" />
-                        <RowDefinition Height="auto" />
-                        <RowDefinition Height="auto" />
-                        <RowDefinition Height="auto" />
-                        <RowDefinition Height="auto" />
-                        <RowDefinition Height="auto" />
-                        <RowDefinition Height="auto" />
-                        <RowDefinition Height="auto" />
-                    </Grid.RowDefinitions>
+                <DockPanel>
+                    <Canvas Width="210" Height="200" DockPanel.Dock="Left">
+                        <Image>
+                            <Image.Source>
+                                <DrawingImage Drawing="{StaticResource ParametersBackground}" />
+                            </Image.Source>
+                        </Image>
+                        <TextBlock Canvas.Left="30" Canvas.Top="10" Text="L1" />
+                        <TextBlock Canvas.Left="160" Canvas.Top="10" Text="L2" />
+                        <TextBlock Canvas.Left="44" Canvas.Top="120" Text="D1" />
+                        <TextBlock Canvas.Left="146" Canvas.Top="120" Text="D2" />
+                    </Canvas>
 
-                    <TextBlock Grid.Row="0" Grid.Column="0" Text="{tsd:Loc albl_left_corbel_length}" />
-                    <tsuc:WpfFilterCheckBox Grid.Row="0" Grid.Column="1" AttributeName="LeftCorbelLength" />
-                    <TextBox Grid.Row="0" Grid.Column="2" Text="{Binding LeftCorbelLength, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <Grid DockPanel.Dock="Right">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1*" />
+                            <ColumnDefinition Width="22" />
+                            <ColumnDefinition Width="22" />
+                            <ColumnDefinition Width="80" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
+                            <RowDefinition Height="auto" />
+                        </Grid.RowDefinitions>
 
-                    <TextBlock Grid.Row="1" Grid.Column="0" Text="{tsd:Loc albl_D1}" />
-                    <tsuc:WpfFilterCheckBox Grid.Row="1" Grid.Column="1" AttributeName="LeftCorbelStifDist" />
-                    <TextBox Grid.Row="1" Grid.Column="2" Text="{Binding LeftCorbelStifDist, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="{tsd:Loc albl_left_corbel_length}" />
+                        <TextBlock Grid.Row="0" Grid.Column="1" Text="L1" />
+                        <tsuc:WpfFilterCheckBox Grid.Row="0" Grid.Column="2" AttributeName="LeftCorbelLength" />
+                        <TextBox Grid.Row="0" Grid.Column="3" Text="{Binding LeftCorbelLength, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-                    <TextBlock Grid.Row="2" Grid.Column="0" Text="{tsd:Loc albl_right_corbel_creation}" />
-                    <tsuc:WpfFilterCheckBox Grid.Row="2" Grid.Column="1" AttributeName="RightCorbelCreation" />
-                    <ComboBox Grid.Row="2" Grid.Column="2" SelectedIndex="{Binding RightCorbelCreation, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
-                        <ComboBoxItem Content="{tsd:Loc albl_none}" />
-                        <ComboBoxItem Content="{tsd:Loc albl_same}" />
-                        <ComboBoxItem Content="{tsd:Loc albl_different}" />
-                    </ComboBox>
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="{tsd:Loc albl_D1}" />
+                        <TextBlock Grid.Row="1" Grid.Column="1" Text="D1" />
+                        <tsuc:WpfFilterCheckBox Grid.Row="1" Grid.Column="2" AttributeName="LeftCorbelStifDist" />
+                        <TextBox Grid.Row="1" Grid.Column="3" Text="{Binding LeftCorbelStifDist, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-                    <TextBlock Grid.Row="3" Grid.Column="0" Text="{tsd:Loc albl_right_corbel_length}" />
-                    <tsuc:WpfFilterCheckBox Grid.Row="3" Grid.Column="1" AttributeName="RightCorbelLength" IsEnabled="{c:Binding 'RightCorbelCreation.Value == 2'}" />
-                    <TextBox Grid.Row="3" Grid.Column="2" Text="{Binding RightCorbelLength, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{c:Binding 'RightCorbelCreation.Value == 2'}" />
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="{tsd:Loc albl_right_corbel_creation}" />
+                        <tsuc:WpfFilterCheckBox Grid.Row="2" Grid.Column="2" AttributeName="RightCorbelCreation" />
+                        <ComboBox Grid.Row="2" Grid.Column="3" SelectedIndex="{Binding RightCorbelCreation, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}">
+                            <ComboBoxItem Content="{tsd:Loc albl_none}" />
+                            <ComboBoxItem Content="{tsd:Loc albl_same}" />
+                            <ComboBoxItem Content="{tsd:Loc albl_different}" />
+                        </ComboBox>
 
-                    <TextBlock Grid.Row="4" Grid.Column="0" Text="{tsd:Loc albl_D2}" />
-                    <tsuc:WpfFilterCheckBox Grid.Row="4" Grid.Column="1" AttributeName="RightCorbelStifDist" IsEnabled="{c:Binding 'RightCorbelCreation.Value == 2'}" />
-                    <TextBox Grid.Row="4" Grid.Column="2" Text="{Binding RightCorbelStifDist, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{c:Binding 'RightCorbelCreation.Value == 2'}" />
+                        <TextBlock Grid.Row="3" Grid.Column="0" Text="{tsd:Loc albl_right_corbel_length}" />
+                        <TextBlock Grid.Row="3" Grid.Column="1" Text="L2" />
+                        <tsuc:WpfFilterCheckBox Grid.Row="3" Grid.Column="2" AttributeName="RightCorbelLength" IsEnabled="{c:Binding 'RightCorbelCreation.Value == 2'}" />
+                        <TextBox Grid.Row="3" Grid.Column="3" Text="{Binding RightCorbelLength, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{c:Binding 'RightCorbelCreation.Value == 2'}" />
 
-                    <TextBlock Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="3" Text="{tsd:Loc albl_column_stiffener_chamfer}" />
+                        <TextBlock Grid.Row="4" Grid.Column="0" Text="{tsd:Loc albl_D2}" />
+                        <TextBlock Grid.Row="4" Grid.Column="1" Text="D2" />
+                        <tsuc:WpfFilterCheckBox Grid.Row="4" Grid.Column="2" AttributeName="RightCorbelStifDist" IsEnabled="{c:Binding 'RightCorbelCreation.Value == 2'}" />
+                        <TextBox Grid.Row="4" Grid.Column="3" Text="{Binding RightCorbelStifDist, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{c:Binding 'RightCorbelCreation.Value == 2'}" />
 
-                    <TextBlock Grid.Row="6" Grid.Column="0" Grid.ColumnSpan="3" Text="{tr:Translate albl_Chamfer_Type}" />
-                    <tsuc:WpfFilterCheckBox Grid.Row="6" Grid.Column="1" AttributeName="PrimStifChamferType" />
-                    <ComboBox Grid.Row="6"
-                              Grid.Column="2"
-                              ItemTemplate="{StaticResource SymbolDataTemplate}"
-                              SelectedIndex="{Binding PrimStifChamferType, Mode=TwoWay}"
-                              ItemsSource="{x:Static assets:ChamferSymbols.ChamferTypeSet}" />
+                        <Separator Grid.Row="5"
+                                   Grid.Column="0"
+                                   Grid.ColumnSpan="4"
+                                   Width="256"
+                                   HorizontalAlignment="Right" />
 
-                    <TextBlock Grid.Row="7" Grid.Column="0" Text="{tr:Translate albl_Chamfer_X}" />
-                    <tsuc:WpfFilterCheckBox Grid.Row="7" Grid.Column="1" AttributeName="PrimStifChamferX" IsEnabled="{c:Binding 'PrimStifChamferType.Value >= 1 and PrimStifChamferType.Value less=3 or PrimStifChamferType.Value >= 5 and PrimStifChamferType.Value less= 7'}" />
-                    <TextBox Grid.Row="7" Grid.Column="2" Text="{Binding PrimStifChamferX, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{c:Binding 'PrimStifChamferType.Value >= 1 and PrimStifChamferType.Value less=3 or PrimStifChamferType.Value >= 5 and PrimStifChamferType.Value less= 7'}" />
+                        <TextBlock Grid.Row="6" Grid.Column="0" Text="{tsd:Loc albl_column_stiffener_chamfer}" />
 
-                    <TextBlock Grid.Row="8" Grid.Column="0" Text="{tr:Translate albl_Chamfer_Y}" />
-                    <tsuc:WpfFilterCheckBox Grid.Row="8" Grid.Column="1" AttributeName="PrimStifChamferY" IsEnabled="{c:Binding 'PrimStifChamferType.Value == 1 or PrimStifChamferType.Value >= 5 and PrimStifChamferType.Value less= 7'}" />
-                    <TextBox Grid.Row="8" Grid.Column="2" Text="{Binding PrimStifChamferY, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{c:Binding 'PrimStifChamferType.Value == 1 or PrimStifChamferType.Value >= 5 and PrimStifChamferType.Value less= 7'}" />
+                        <TextBlock Grid.Row="7" Grid.Column="0" Text="{tr:Translate albl_Chamfer_Type}" />
+                        <tsuc:WpfFilterCheckBox Grid.Row="7" Grid.Column="2" AttributeName="PrimStifChamferType" />
+                        <ComboBox Grid.Row="7"
+                                  Grid.Column="3"
+                                  ItemTemplate="{StaticResource SymbolDataTemplate}"
+                                  SelectedIndex="{Binding PrimStifChamferType, Mode=TwoWay}"
+                                  ItemsSource="{x:Static assets:ChamferSymbols.ChamferTypeSet}" />
 
-                    <TextBlock Grid.Row="9" Grid.Column="0" Text="{tr:Translate albl_Chamfer_Dz1}" />
-                    <tsuc:WpfFilterCheckBox Grid.Row="9" Grid.Column="1" AttributeName="PrimStifChamferDz1" />
-                    <TextBox Grid.Row="9" Grid.Column="2" Text="{Binding PrimStifChamferDz1, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                        <TextBlock Grid.Row="8" Grid.Column="0" Text="{tr:Translate albl_Chamfer_X}" />
+                        <tsuc:WpfFilterCheckBox Grid.Row="8" Grid.Column="2" AttributeName="PrimStifChamferX" IsEnabled="{c:Binding 'PrimStifChamferType.Value >= 1 and PrimStifChamferType.Value less=3 or PrimStifChamferType.Value >= 5 and PrimStifChamferType.Value less= 7'}" />
+                        <TextBox Grid.Row="8" Grid.Column="3" Text="{Binding PrimStifChamferX, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{c:Binding 'PrimStifChamferType.Value >= 1 and PrimStifChamferType.Value less=3 or PrimStifChamferType.Value >= 5 and PrimStifChamferType.Value less= 7'}" />
 
-                    <TextBlock Grid.Row="10" Grid.Column="0" Text="{tr:Translate albl_Chamfer_Dz2}" />
-                    <tsuc:WpfFilterCheckBox Grid.Row="10" Grid.Column="1" AttributeName="PrimStifChamferDz2" />
-                    <TextBox Grid.Row="10" Grid.Column="2" Text="{Binding PrimStifChamferDz2, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
-                </Grid>
+                        <TextBlock Grid.Row="9" Grid.Column="0" Text="{tr:Translate albl_Chamfer_Y}" />
+                        <tsuc:WpfFilterCheckBox Grid.Row="9" Grid.Column="2" AttributeName="PrimStifChamferY" IsEnabled="{c:Binding 'PrimStifChamferType.Value == 1 or PrimStifChamferType.Value >= 5 and PrimStifChamferType.Value less= 7'}" />
+                        <TextBox Grid.Row="9" Grid.Column="3" Text="{Binding PrimStifChamferY, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{c:Binding 'PrimStifChamferType.Value == 1 or PrimStifChamferType.Value >= 5 and PrimStifChamferType.Value less= 7'}" />
+
+                        <TextBlock Grid.Row="10" Grid.Column="0" Text="{tr:Translate albl_Chamfer_Dz1}" />
+                        <tsuc:WpfFilterCheckBox Grid.Row="10" Grid.Column="2" AttributeName="PrimStifChamferDz1" />
+                        <TextBox Grid.Row="10" Grid.Column="3" Text="{Binding PrimStifChamferDz1, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                        <TextBlock Grid.Row="11" Grid.Column="0" Text="{tr:Translate albl_Chamfer_Dz2}" />
+                        <tsuc:WpfFilterCheckBox Grid.Row="11" Grid.Column="2" AttributeName="PrimStifChamferDz2" />
+                        <TextBox Grid.Row="11" Grid.Column="3" Text="{Binding PrimStifChamferDz2, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    </Grid>
+                </DockPanel>
             </TabItem>
 
             <TabItem Header="{tsd:Loc albl_parts}">
@@ -1270,10 +1299,31 @@
                         <tsuc:WpfFilterCheckBox Grid.Row="0" Grid.RowSpan="2" Grid.Column="33" AttributeName="WPadTEXT" />
                         <TextBox Grid.Row="0" Grid.RowSpan="2" Grid.Column="34" Text="{Binding WeldPadReferenceText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                     </Grid>
+
+                    <Canvas Width="240" Height="150" Margin="50,0,0,0" HorizontalAlignment="Left">
+                        <Image Stretch="None">
+                            <Image.Source>
+                                <DrawingImage Drawing="{StaticResource WeldsBackground1}" />
+                            </Image.Source>
+                        </Image>
+                        <Image Canvas.Left="250" Canvas.Top="20" Stretch="None">
+                            <Image.Source>
+                                <DrawingImage Drawing="{StaticResource WeldsBackground2}" />
+                            </Image.Source>
+                        </Image>
+                        <TextBlock Canvas.Left="60" Canvas.Top="3" Text="1" />
+                        <TextBlock Canvas.Left="170" Canvas.Top="3" Text="1" />
+                        <TextBlock Canvas.Left="7" Canvas.Top="70" Text="2" />
+                        <TextBlock Canvas.Left="223" Canvas.Top="70" Text="2" />
+                        <TextBlock Canvas.Left="380" Canvas.Top="3" Text="3" />
+                        <TextBlock Canvas.Left="380" Canvas.Top="112" Text="3" />
+                        <TextBlock Canvas.Left="0" Canvas.Top="3" Text="4" />
+                        <TextBlock Canvas.Left="230" Canvas.Top="3" Text="4" />
+                    </Canvas>
                 </StackPanel>
             </TabItem>
 
-            <TabItem Header="{tr:Translate albl_General}" Content="{StaticResource DetailGeneralTab}" />
+            <TabItem HorizontalContentAlignment="Right" Header="{tr:Translate albl_General}" Content="{StaticResource DetailGeneralTab}" />
         </TabControl>
     </DockPanel>
 </tsd:PluginWindowBase>
