@@ -21,7 +21,7 @@ public static class BoltSymbols {
         "albl_Bolt_SpecialHoleType_Slotted",
         "albl_Bolt_SpecialHoleType_NoHole",
 #if D2024 || R2024
-        "albl_Bolt_SpecialHoleType_Tapped]
+        "albl_Bolt_SpecialHoleType_Tapped",
 #endif
     ]);
 
