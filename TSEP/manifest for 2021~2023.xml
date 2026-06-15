@@ -4,7 +4,7 @@
 	<Product
 		Id="Muggle.TsExtensions"
 		UpgradeCode="547B1AA5-0F0D-4276-8D0C-BD54561E1D56"
-		Version="0.7" Language="1033"
+		Version="0.8" Language="1033"
 		Name="Muggle Tekla Structures Extensions"
 		Manufacturer="Huang YongXing (thinkerhua@hotmail.com)"
 		Description= "Extensions for Tekla Structures."
@@ -46,6 +46,12 @@
 	<Component Id="Common.WPF" Guid="E64B36A7-2004-4943-A8EC-3A97B5BF701A">
 		<File Id="Common.WPF" Source="%SolutionFolder%\Common.WPF\%MSBuildOutputPath%\Common.WPF.dll" Target="%BinariesDirectory%"/>
 		<File Id="Common.WPF.Ail" Source="%MessagesFolder%\Common.WPF.ail" Target="%MessagesDirectory%"/>
+	</Component>
+
+	<Component Id="DC2001" Guid="9A1FDE7E-D7B0-48DA-AF1E-6A22AB4E0B3C">
+		<File Id="DC2001" Source="%SolutionFolder%\DC2001\%MSBuildOutputPath%\DC2001.dll" Target="%BinariesDirectory%"/>
+		<File Id="DC2001.Icon" Source="%BitmapsFolder%\et_element_DC2001.bmp" Target="%BitmapsDirectory%"/>
+		<File Id="DC2001.Ail" Source="%MessagesFolder%\DC2001.ail" Target="%MessagesDirectory%"/>
 	</Component>
 
 	<Component Id="HJ1001" Guid="13696F27-FEFD-4603-82BE-7DE7221CBCF5">
@@ -121,6 +127,7 @@
 	<Feature Id="Muggle.TsExtensions" Title="Muggle Tekla Structures Extensions">
 		<ComponentRef ReferenceId="Common" />
 		<ComponentRef ReferenceId="Common.WPF" />
+		<ComponentRef ReferenceId="DC2001" />
 		<ComponentRef ReferenceId="HJ1001" />
 		<ComponentRef ReferenceId="KJ1001" />
 		<ComponentRef ReferenceId="KJ1002" />
