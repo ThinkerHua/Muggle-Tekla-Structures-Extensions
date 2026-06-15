@@ -29,6 +29,8 @@ Tools and plugins for Tekla Structures. Please use in accordance with the [Open 
 - [LocateToPrecisePosition](#locatetopreciseposition)
 - [ConnectionStatusFilter](#connectionstatusfilter)
 - [ExtendBeam](#extendbeam)
+- [AlignColumnControlPointsWithCentroid](#aligncolumncontrolpointswithcentroid)
+- [ProjectBeamOntoPlane](#projectbeamontoplane)
 
 >Components
 >组件
@@ -48,6 +50,8 @@ Tools and plugins for Tekla Structures. Please use in accordance with the [Open 
 - [KJ1002](#kj1002)
 
 - [KJ2001](#kj2001)
+
+- [DC2001](#dc2001)
 
 ---
 
@@ -252,6 +256,26 @@ You can first select the beams that need to be extended and then execute the com
 
 ![ExtendBeam](Resources/Introduction_ExtendBeam.png)
 
+## AlignColumnControlPointsWithCentroid
+
+## 柱控制点对齐到中心
+
+When tracing to create a model, some drawing column leader lines don’t point to the center of the column, and the snap placement is at the corners of the column's bounding box. After placement, you can use this tool to move the column control point to the center without moving the column itself.
+
+描图建模时，某些图纸柱标注引线不是指向柱中心，捕捉放置位置在柱外框角落，放置完成后可以用此工具在不移动柱位置的前提下，将柱控制点移动到中心。
+
+![AlignColumnControlPointsWithCentroid](Resources/Introduction_AlignColumnControlPointsWithCentroid.png)
+
+## ProjectBeamOntoPlane
+
+## 梁投影到平面
+
+Draw beams on the plan, then use this tool to batch project them onto the slope. You can choose the projection direction.
+
+在平面图绘制梁，然后使用此工具批量将其投影到斜面上。可选择投影方向。
+
+![ProjectBeamOntoPlane](Resources/Introduction_ProjectBeamOntoPlane.png)
+
 ## MG1001
 
 ### Portal frame structure series connection - vertical connection between portal frame side column and beam
@@ -353,3 +377,16 @@ Anchor bolts, exterior studs, internal diaphragm.
 柱脚锚栓，外侧栓钉，内部隔板。
 
 ![KJ2001](Resources/Introduction_KJ2001.gif)
+
+## DC2001
+
+### Crane beam series details - crane beam bracket
+
+### 吊车梁系列细部 - 吊车梁牛腿
+
+You can choose single or double brackets, and for double brackets, the left and right can be the same or different.
+To adjust the orientation, you can edit the up direction in the general tab.
+
+可选单、双牛腿，双牛腿可选左右相同或不同。要调整朝向可在通用选项卡中编辑向上方向。
+
+![DC2001](Resources/Introduction_DC2001.gif)
