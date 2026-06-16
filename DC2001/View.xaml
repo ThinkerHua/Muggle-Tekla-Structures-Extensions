@@ -1327,10 +1327,10 @@
                         </Image>
                         <TextBlock Canvas.Left="60" Canvas.Top="3" Text="1" />
                         <TextBlock Canvas.Left="170" Canvas.Top="3" Text="1" />
-                        <TextBlock Canvas.Left="7" Canvas.Top="70" Text="2" />
-                        <TextBlock Canvas.Left="223" Canvas.Top="70" Text="2" />
-                        <TextBlock Canvas.Left="380" Canvas.Top="3" Text="3" />
-                        <TextBlock Canvas.Left="380" Canvas.Top="112" Text="3" />
+                        <TextBlock Canvas.Left="380" Canvas.Top="3" Text="2" />
+                        <TextBlock Canvas.Left="380" Canvas.Top="112" Text="2" />
+                        <TextBlock Canvas.Left="7" Canvas.Top="70" Text="3" />
+                        <TextBlock Canvas.Left="223" Canvas.Top="70" Text="3" />
                         <TextBlock Canvas.Left="0" Canvas.Top="3" Text="4" />
                         <TextBlock Canvas.Left="230" Canvas.Top="3" Text="4" />
                     </Canvas>
