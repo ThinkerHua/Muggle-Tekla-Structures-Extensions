@@ -7,6 +7,10 @@
 			<DisplayName>DC2001</DisplayName>
 			<ComponentId>DC2001</ComponentId>
 		</CatalogPluginDetailItem>
+        <CatalogPluginPartItem>
+            <DisplayName>DC4001</DisplayName>
+            <ComponentId>DC4001</ComponentId>
+        </CatalogPluginPartItem>
 		<CatalogPluginConnectionItem>
 			<DisplayName>HJ1001</DisplayName>
 			<ComponentId>HJ1001</ComponentId>
@@ -47,18 +51,21 @@
 			<GroupChildren>
 				<ComponentCatalogGroupPlaceholder>
 					<GroupIdString>5e409bd8-9401-42e2-8709-f2c509316477</GroupIdString>
-					<GroupName>Muggle TSExtensions</GroupName>
+					<GroupName>Muggle.TsExtensions</GroupName>
 				</ComponentCatalogGroupPlaceholder>
 			</GroupChildren>
 		</ComponentCatalogGroup>
 		<ComponentCatalogGroup>
 			<GroupIdString>5e409bd8-9401-42e2-8709-f2c509316477</GroupIdString>
-			<GroupName>Muggle TSExtensions</GroupName>
+			<GroupName>Muggle.TsExtensions</GroupName>
 			<GroupDescription>Extensions for Tekla Structures. Manufacture by Huang YongXing (thinkerhua@hotmail.com).</GroupDescription>
 			<GroupChildren>
 				<ComponentCatalogItemPlaceholder>
 					<ItemIdString>CatalogPluginDetailItem?DC2001</ItemIdString>
 				</ComponentCatalogItemPlaceholder>
+                <ComponentCatalogItemPlaceholder>
+                    <ItemIdString>CatalogPluginPartItem?DC4001</ItemIdString>
+                </ComponentCatalogItemPlaceholder>
 				<ComponentCatalogItemPlaceholder>
 					<ItemIdString>CatalogPluginConnectionItem?HJ1001</ItemIdString>
 				</ComponentCatalogItemPlaceholder>
