@@ -30,8 +30,8 @@ public static class WeldSymbols {
     ]);
 
     public static Symbol[] ShopWeldSet => ItemsProvider.SymbolArray([
-        ("albl_Weld_ShopWeld_Workshop", Dict["ShopWeld_Workshop"] as DrawingGroup),
         ("albl_Weld_ShopWeld_Site", Dict["ShopWeld_Site"] as DrawingGroup),
+        ("albl_Weld_ShopWeld_Workshop", Dict["ShopWeld_Workshop"] as DrawingGroup),
     ]);
 
     public static Symbol[] WeldContourSet => ItemsProvider.SymbolArray([

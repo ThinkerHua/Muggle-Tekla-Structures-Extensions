@@ -193,9 +193,9 @@ string_utf8 albl_Weld_Header_EdgeOrAround {
     entry = ("chs", "边缘/四周");
 };
 
-string_utf8 albl_Weld_Header_WorkshopOrSite {
-    entry = ("enu", "Wo./Si.");
-    entry = ("chs", "工厂/工地");
+string_utf8 albl_Weld_Header_SiteOrWorkshop {
+    entry = ("enu", "Si./Wo.");
+    entry = ("chs", "工地/工厂");
 };
 
 string_utf8 albl_Weld_Header_Placement {

@@ -740,7 +740,7 @@
                         <TextBlock Grid.Column="14" Text="{tr:Translate albl_Weld_Header_EffectiveThroat}" />
                         <TextBlock Grid.Column="16" Text="{tr:Translate albl_Weld_Header_RootOpening}" />
                         <TextBlock Grid.Column="18" Text="{tr:Translate albl_Weld_Header_EdgeOrAround}" />
-                        <TextBlock Grid.Column="20" Text="{tr:Translate albl_Weld_Header_WorkshopOrSite}" />
+                        <TextBlock Grid.Column="20" Text="{tr:Translate albl_Weld_Header_SiteOrWorkshop}" />
                         <TextBlock Grid.Column="22" Text="{tr:Translate albl_Weld_Header_Placement}" />
                         <TextBlock Grid.Column="24" Text="{tr:Translate albl_Weld_Header_Preparation}" />
                         <TextBlock Grid.Column="26" Text="{tr:Translate albl_Weld_Header_IntermittentType}" />
