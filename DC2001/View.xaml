@@ -78,8 +78,7 @@
     </tsd:PluginWindowBase.Resources>
 
     <DockPanel LastChildFill="True">
-        <tsuc:WpfSaveLoad DockPanel.Dock="Top">
-        </tsuc:WpfSaveLoad>
+        <tsuc:WpfSaveLoad DockPanel.Dock="Top" />
         <tsuc:WpfOkApplyModifyGetOnOffCancel DockPanel.Dock="Bottom"
                                              ApplyClicked="WPFOkApplyModifyGetOnOffCancel_ApplyClicked"
                                              CancelClicked="WPFOkApplyModifyGetOnOffCancel_CancelClicked"
@@ -136,7 +135,7 @@
                         <tsuc:WpfFilterCheckBox Grid.Row="0" Grid.Column="2" AttributeName="LeftCorbelLength" />
                         <TextBox Grid.Row="0" Grid.Column="3" Text="{Binding LeftCorbelLength, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-                        <TextBlock Grid.Row="1" Grid.Column="0" Text="{tsd:Loc albl_D1}" />
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="{tsd:Loc albl_left_corbel_stiffener_position}" />
                         <TextBlock Grid.Row="1" Grid.Column="1" Text="D1" />
                         <tsuc:WpfFilterCheckBox Grid.Row="1" Grid.Column="2" AttributeName="LeftCorbelStifDist" />
                         <TextBox Grid.Row="1" Grid.Column="3" Text="{Binding LeftCorbelStifDist, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
@@ -154,7 +153,7 @@
                         <tsuc:WpfFilterCheckBox Grid.Row="3" Grid.Column="2" AttributeName="RightCorbelLength" IsEnabled="{c:Binding 'RightCorbelCreation.Value == 2'}" />
                         <TextBox Grid.Row="3" Grid.Column="3" Text="{Binding RightCorbelLength, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{c:Binding 'RightCorbelCreation.Value == 2'}" />
 
-                        <TextBlock Grid.Row="4" Grid.Column="0" Text="{tsd:Loc albl_D2}" />
+                        <TextBlock Grid.Row="4" Grid.Column="0" Text="{tsd:Loc albl_right_corbel_stiffener_position}" />
                         <TextBlock Grid.Row="4" Grid.Column="1" Text="D2" />
                         <tsuc:WpfFilterCheckBox Grid.Row="4" Grid.Column="2" AttributeName="RightCorbelStifDist" IsEnabled="{c:Binding 'RightCorbelCreation.Value == 2'}" />
                         <TextBox Grid.Row="4" Grid.Column="3" Text="{Binding RightCorbelStifDist, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{c:Binding 'RightCorbelCreation.Value == 2'}" />
@@ -256,7 +255,7 @@
 
                     <TextBlock Grid.Row="1" Grid.RowSpan="2" Grid.Column="0" Text="{tsd:Loc albl_left_corbel}" />
 
-                    <tsuc:WpfFilterCheckBox Grid.Row="1" Grid.RowSpan="2" Grid.Column="1" AttributeName="PTLeftCorbelName" />
+                    <tsuc:WpfFilterCheckBox Grid.Row="1" Grid.RowSpan="2" Grid.Column="1" AttributeName="PTLeftCorbelNAME" />
                     <TextBox Grid.Row="1" Grid.RowSpan="2" Grid.Column="2" Text="{Binding PartLeftCorbelName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                     <tsuc:WpfFilterCheckBox Grid.Row="1" Grid.RowSpan="2" Grid.Column="3" AttributeName="PTLeftCorbelPRF" />
@@ -302,7 +301,7 @@
                     <tsuc:WpfFilterCheckBox Grid.Row="3"
                                             Grid.RowSpan="2"
                                             Grid.Column="1"
-                                            AttributeName="PTRightCorbelName"
+                                            AttributeName="PTRightCorbelNAME"
                                             IsEnabled="{c:Binding 'RightCorbelCreation.Value == 2'}" />
                     <TextBox Grid.Row="3"
                              Grid.RowSpan="2"
@@ -381,7 +380,7 @@
 
                     <TextBlock Grid.Row="6" Grid.RowSpan="2" Grid.Column="0" Text="{tsd:Loc albl_column_stiffener}" />
 
-                    <tsuc:WpfFilterCheckBox Grid.Row="6" Grid.RowSpan="2" Grid.Column="1" AttributeName="PLPrimStifName" />
+                    <tsuc:WpfFilterCheckBox Grid.Row="6" Grid.RowSpan="2" Grid.Column="1" AttributeName="PLPrimStifNAME" />
                     <TextBox Grid.Row="6" Grid.RowSpan="2" Grid.Column="2" Text="{Binding PlatePrimStifName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                     <tsuc:WpfFilterCheckBox Grid.Row="6" Grid.RowSpan="2" Grid.Column="3" AttributeName="PLPrimStifT" />
@@ -415,7 +414,7 @@
 
                     <TextBlock Grid.Row="8" Grid.RowSpan="2" Grid.Column="0" Text="{tsd:Loc albl_left_corbel_stiffener}" />
 
-                    <tsuc:WpfFilterCheckBox Grid.Row="8" Grid.RowSpan="2" Grid.Column="1" AttributeName="PLLCorbelStifName" />
+                    <tsuc:WpfFilterCheckBox Grid.Row="8" Grid.RowSpan="2" Grid.Column="1" AttributeName="PLLCorbelStifNAME" />
                     <TextBox Grid.Row="8" Grid.RowSpan="2" Grid.Column="2" Text="{Binding PlateLCorbelStifName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                     <tsuc:WpfFilterCheckBox Grid.Row="8" Grid.RowSpan="2" Grid.Column="3" AttributeName="PLLCorbelStifT" />
@@ -455,7 +454,7 @@
                     <tsuc:WpfFilterCheckBox Grid.Row="10"
                                             Grid.RowSpan="2"
                                             Grid.Column="1"
-                                            AttributeName="PLRCorbelStifName"
+                                            AttributeName="PLRCorbelStifNAME"
                                             IsEnabled="{c:Binding 'RightCorbelCreation.Value == 2'}" />
                     <TextBox Grid.Row="10"
                              Grid.RowSpan="2"
@@ -538,7 +537,7 @@
 
                     <TextBlock Grid.Row="12" Grid.RowSpan="2" Grid.Column="0" Text="{tsd:Loc albl_left_pad}" />
 
-                    <tsuc:WpfFilterCheckBox Grid.Row="12" Grid.RowSpan="2" Grid.Column="1" AttributeName="PLLeftPadName" />
+                    <tsuc:WpfFilterCheckBox Grid.Row="12" Grid.RowSpan="2" Grid.Column="1" AttributeName="PLLeftPadNAME" />
                     <TextBox Grid.Row="12" Grid.RowSpan="2" Grid.Column="2" Text="{Binding PlateLeftPadName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                     <tsuc:WpfFilterCheckBox Grid.Row="12" Grid.RowSpan="2" Grid.Column="3" AttributeName="PLLeftPadT" />
@@ -581,7 +580,7 @@
                     <tsuc:WpfFilterCheckBox Grid.Row="14"
                                             Grid.RowSpan="2"
                                             Grid.Column="1"
-                                            AttributeName="PLRightPadName"
+                                            AttributeName="PLRightPadNAME"
                                             IsEnabled="{c:Binding 'RightCorbelCreation.Value == 2'}" />
                     <TextBox Grid.Row="14"
                              Grid.RowSpan="2"

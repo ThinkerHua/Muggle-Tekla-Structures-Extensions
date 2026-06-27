@@ -1,5 +1,5 @@
 string_utf8 albl_DC2001_title {
-    entry = ("enu", "DC2001 - Crane grider support corbel");
+    entry = ("enu", "DC2001 - Crane girder support corbel");
     entry = ("chs", "DC2001 - 吊车梁牛腿");
 };
 
@@ -13,9 +13,9 @@ string_utf8 albl_left_corbel_length {
     entry = ("chs", "左牛腿长度");
 };
 
-string_utf8 albl_D1 {
-    entry = ("enu", "D1");
-    entry = ("chs", "D1");
+string_utf8 albl_left_corbel_stiffener_position {
+    entry = ("enu", "Left corbel stiffener position");
+    entry = ("chs", "左牛腿加劲板定位");
 };
 
 string_utf8 albl_right_corbel_creation {
@@ -43,9 +43,9 @@ string_utf8 albl_right_corbel_length {
     entry = ("chs", "右牛腿长度");
 };
 
-string_utf8 albl_D2 {
-    entry = ("enu", "D2");
-    entry = ("chs", "D2");
+string_utf8 albl_right_corbel_stiffener_position {
+    entry = ("enu", "Right corbel stiffener position");
+    entry = ("chs", "右牛腿加劲板定位");
 };
 
 string_utf8 albl_column_stiffener_chamfer {
