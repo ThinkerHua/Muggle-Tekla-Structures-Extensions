@@ -1,0 +1,94 @@
+﻿string_utf8 albl_DC4001_title {
+    entry = ("enu", "DC4001 - 20G520 series crane girder");
+    entry = ("chs", "DC4001 - 20G520 系列吊车梁");
+};
+
+string_utf8 albl_parameters {
+    entry = ("enu", "Parameters");
+    entry = ("chs", "参数");
+};
+
+string_utf8 albl_Z_kind {
+    entry = ("enu", "Z kind");
+    entry = ("chs", "Z型");
+};
+
+string_utf8 albl_B_kind {
+    entry = ("enu", "B kind");
+    entry = ("chs", "B型");
+};
+
+string_utf8 albl_S_kind {
+    entry = ("enu", "S kind");
+    entry = ("chs", "S型");
+};
+
+string_utf8 albl_kind {
+    entry = ("enu", "Kind");
+    entry = ("chs", "形式");
+};
+
+string_utf8 albl_chamfers {
+    entry = ("enu", "Chamfers");
+    entry = ("chs", "倒角");
+};
+
+string_utf8 albl_chamfer_of_plate5_and_plate11 {
+    entry = ("enu", "Chamfer of plate 5 and plate 11");
+    entry = ("chs", "5号板和11号板倒角");
+};
+
+string_utf8 albl_chamfer_of_plate10 {
+    entry = ("enu", "Chamfer of plate 10");
+    entry = ("chs", "10号板倒角");
+};
+
+string_utf8 albl_chamfer_of_plate13 {
+    entry = ("enu", "Chamfer of plate 13");
+    entry = ("chs", "13号板倒角");
+};
+
+string_utf8 albl_parts {
+    entry = ("enu", "Parts");
+    entry = ("chs", "零件");
+};
+
+string_utf8 albl_main {
+    entry = ("enu", "Main");
+    entry = ("chs", "主零件");
+};
+
+string_utf8 albl_plate4 {
+    entry = ("enu", "Plate 4");
+    entry = ("chs", "5号板");
+};
+
+string_utf8 albl_plate5 {
+    entry = ("enu", "Plate 5");
+    entry = ("chs", "5号板");
+};
+
+string_utf8 albl_plate10 {
+    entry = ("enu", "Plate 10");
+    entry = ("chs", "10号板");
+};
+
+string_utf8 albl_plate11 {
+    entry = ("enu", "Plate 11");
+    entry = ("chs", "11号板");
+};
+
+string_utf8 albl_plate12 {
+    entry = ("enu", "Plate 12");
+    entry = ("chs", "12号板");
+};
+
+string_utf8 albl_Plate13 {
+    entry = ("enu", "Plate 13");
+    entry = ("chs", "13号板");
+};
+
+string_utf8 albl_welds {
+    entry = ("enu", "Welds");
+    entry = ("chs", "焊缝");
+};

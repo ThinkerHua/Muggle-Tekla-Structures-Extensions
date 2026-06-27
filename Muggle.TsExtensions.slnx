@@ -38,6 +38,7 @@
         <File Path="TSEP/messages/Muggle.TsExtensions.ail" />
         <File Path="TSEP/messages/Common.WPF.ail" />
         <File Path="TSEP/messages/DC2001.ail" />
+        <File Path="TSEP/messages/DC4001.ail" />
         <File Path="TSEP/messages/HJ1001.ail" />
         <File Path="TSEP/messages/KJ1001.ail" />
         <File Path="TSEP/messages/KJ1002.ail" />
@@ -56,6 +57,7 @@
     <Project Path="Common.WPF/Common.WPF.csproj" />
     <Project Path="Common/Common.csproj" />
     <Project Path="DC2001/DC2001.csproj" />
+    <Project Path="DC4001/DC4001.csproj" />
     <Project Path="Demo1/Demo1.csproj" />
     <Project Path="HJ1001/HJ1001.csproj" />
     <Project Path="KJ1001/KJ1001.csproj" />
