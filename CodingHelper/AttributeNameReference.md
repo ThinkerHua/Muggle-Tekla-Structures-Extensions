@@ -2,7 +2,7 @@
 
 Note:
 
-- The string "**\<Id>**" is used to identify the model object, including the angle brackets.
+- The string "**\<Id>**" is used to identify the object, including the angle brackets.
 
 - "**Plate**" is not an actual model object type in OpenAPI, the way to create it depends on the programmer.
 
@@ -113,3 +113,8 @@ Note:
 | BoltCircle.Washer1               | BC\<Id>WSHR1            |
 | BoltCircle.Washer2               | BC\<Id>WSHR2            |
 | BoltCircle.Washer3               | BC\<Id>WSHR3            |
+| Chamfer.Type                     | CF\<Id>TYPE             |
+| Chamfer.X                        | CF\<Id>X                |
+| Chamfer.Y                        | CF\<Id>Y                |
+| Chamfer.Dz1                      | CF\<Id>DZ1              |
+| Chamfer.Dz2                      | CF\<Id>DZ2              |

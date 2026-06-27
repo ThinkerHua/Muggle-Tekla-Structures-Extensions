@@ -39,6 +39,7 @@ internal class PluginFieldDefaultValuesGenerator : IIncrementalGenerator {
         "Muggle.TsExtensions.CodingHelper.Generators.WeldFieldDefaultValuesAttribute",
         "Muggle.TsExtensions.CodingHelper.Generators.BoltFieldDefaultValuesAttribute",
         "Muggle.TsExtensions.CodingHelper.Generators.BoltCircleFieldDefaultValuesAttribute",
+        "Muggle.TsExtensions.CodingHelper.Generators.ChamferFieldDefaultValuesAttribute",
         "Muggle.TsExtensions.CodingHelper.Generators.GeneralFieldDefaultValuesAttribute"
     ];
 
@@ -475,6 +476,7 @@ internal class PluginFieldDefaultValuesGenerator : IIncrementalGenerator {
             case "WeldFieldDefaultValuesAttribute":
             case "BoltFieldDefaultValuesAttribute":
             case "BoltCircleFieldDefaultValuesAttribute":
+            case "ChamferFieldDefaultValuesAttribute":
                 seriesFieldStatementsBuilder.Append(
                     GenerateSeriesFields(attName, kvp.Value, info.TargetType, info.TargetMemberName, PresetValues));
                 creatorsBuilder.Append(
@@ -547,6 +549,7 @@ internal class PluginFieldDefaultValuesGenerator : IIncrementalGenerator {
             "WeldFieldDefaultValuesAttribute" => PluginDataFieldsGenerator.WeldFieldInfos,
             "BoltFieldDefaultValuesAttribute" => PluginDataFieldsGenerator.BoltFieldInfos,
             "BoltCircleFieldDefaultValuesAttribute" => PluginDataFieldsGenerator.BoltCircleFieldInfos,
+            "ChamferFieldDefaultValuesAttribute" => PluginDataFieldsGenerator.ChamferFieldInfos,
             _ => []
         };
 
@@ -1036,6 +1039,41 @@ internal class PluginFieldDefaultValuesGenerator : IIncrementalGenerator {
                     $"            bolt.Washer1 = {propertyAccess}UseWasher1 != 0;\n" +
                     $"            bolt.Washer2 = {propertyAccess}UseWasher2 != 0;\n" +
                     $"            bolt.Washer3 = {propertyAccess}UseWasher3 != 0;\n" +
+                    $"        }}");
+                break;
+            case "ChamferFieldDefaultValuesAttribute":
+                propertyAccess = memberAccess + (targetType is AttributeTargets.Class
+                    ? $"_chamfer{ToPropertyNameStyle(id)}"
+                    : $"Chamfer{ToPropertyNameStyle(id)}");
+
+                builder.AppendLine(
+                    $"        \n" +
+                    $"        /// <summary>\n" +
+                    $"        /// Creat <see cref=\"global::Tekla.Structures.Model.Chamfer\"/> for id '{id}'.\n" +
+                    $"        /// </summary>\n" +
+                    $"        /// <returns>The <see cref=\"global::Tekla.Structures.Model.Chamfer\"/> created.</returns>\n" +
+                    $"        private {TsmNameSpace}.Chamfer CreatChamfer{ToPropertyNameStyle(id)}() {{\n" +
+                    $"            {TsmNameSpace}.Chamfer chamfer = new {TsmNameSpace}.Chamfer();\n" +
+                    $"            chamfer.Type = ({TsmNameSpace}.Chamfer.ChamferTypeEnum) global::System.Enum.Parse(typeof({TsmNameSpace}.Chamfer.ChamferTypeEnum), {propertyAccess}Type.ToString(), true);\n" +
+                    $"            chamfer.X = {propertyAccess}X;\n" +
+                    $"            chamfer.Y = {propertyAccess}Y;\n" +
+                    $"            chamfer.DZ1 = {propertyAccess}Dz1;\n" +
+                    $"            chamfer.DZ2 = {propertyAccess}Dz2;\n" +
+                    $"            return chamfer;\n" +
+                    $"        }}");
+
+                builder.AppendLine(
+                    $"        \n" +
+                    $"        /// <summary>\n" +
+                    $"        /// Modify the given chamfer to make its properties consistent with chamfer '{id}'.\n" +
+                    $"        /// </summary>\n" +
+                    $"        /// <param name=\"chamfer\">The chamfer to be modified.</param>\n" +
+                    $"        private void ModifyToChamfer{ToPropertyNameStyle(id)}(ref {TsmNameSpace}.Chamfer chamfer) {{\n" +
+                    $"            chamfer.Type = ({TsmNameSpace}.Chamfer.ChamferTypeEnum) global::System.Enum.Parse(typeof({TsmNameSpace}.Chamfer.ChamferTypeEnum), {propertyAccess}Type.ToString(), true);\n" +
+                    $"            chamfer.X = {propertyAccess}X;\n" +
+                    $"            chamfer.Y = {propertyAccess}Y;\n" +
+                    $"            chamfer.DZ1 = {propertyAccess}Dz1;\n" +
+                    $"            chamfer.DZ2 = {propertyAccess}Dz2;\n" +
                     $"        }}");
                 break;
             }

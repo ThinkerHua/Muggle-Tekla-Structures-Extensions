@@ -28,6 +28,7 @@ Apply these attributes to plugin data class to auto generate fields (with Struct
 - WeldFieldsAttribute
 - BoltFieldsAttribute
 - BoltCircleFieldsAttribute
+- ChamferFieldsAttribute
 
 > ***Note***: Mapping relationship between model object properties and plugin attribute names [see here](https://github.com/ThinkerHua/Muggle-Tekla-Structures-Extensions/blob/master/CodingHelper/AttributeNameReference.md).
 
@@ -180,6 +181,7 @@ Apply these attributes on the plugin class or its data field or property, then i
 - WeldFieldDefaultValuesAttribute
 - BoltFieldDefaultValuesAttribute
 - BoltCircleFieldDefaultValuesAttribute
+- ChamferFieldDefaultValuesAttribute
 
 The "SetDataToDefaultIfUnset" used to set fields of plugin or fields of plugin data member to default value, if they are not set form user interface.
 
@@ -347,6 +349,11 @@ Inherit view model from preset view model base to make it has ability to notify 
   An abstract class inherit from NotificationObject, and has a several Tekla Structures preset properties for detail type plugin.
   The usage of properties is consistent with the options in Tekla Structures system *detail* component general tab.
 
+- CustomPartViewModel
+
+  An abstract class inherit from NotificationObject, and has a several Tekla Structures preset properties for custom part type plugin.
+  The usage of properties is consistent with the options in Tekla Structures system *part* component general tab.
+
 ### Specific properties
 
 Apply these attributes to view model class to auto generate properties (with StructuresDialogAttribute) and set default values at the same time:
@@ -357,6 +364,7 @@ Apply these attributes to view model class to auto generate properties (with Str
 - WeldPropertiesAttribute
 - BoltPropertiesAttribute
 - BoltCirclePropertiesAttribute
+- ChamferPropertiesAttribute
 
 > ***Note***: Mapping relationship between model object properties and plugin attribute names [see here](https://github.com/ThinkerHua/Muggle-Tekla-Structures-Extensions/blob/master/CodingHelper/AttributeNameReference.md).
 

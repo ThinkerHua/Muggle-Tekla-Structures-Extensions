@@ -39,6 +39,7 @@ internal class PluginDataFieldsGenerator : IIncrementalGenerator {
         "Muggle.TsExtensions.CodingHelper.Generators.WeldFieldsAttribute",
         "Muggle.TsExtensions.CodingHelper.Generators.BoltFieldsAttribute",
         "Muggle.TsExtensions.CodingHelper.Generators.BoltCircleFieldsAttribute",
+        "Muggle.TsExtensions.CodingHelper.Generators.ChamferFieldsAttribute",
         "Muggle.TsExtensions.CodingHelper.Generators.GeneralFieldsAttribute"
     ];
 
@@ -157,6 +158,14 @@ internal class PluginDataFieldsGenerator : IIncrementalGenerator {
         ("UseWasher1", "WSHR1", "int"),
         ("UseWasher2", "WSHR2", "int"),
         ("UseWasher3", "WSHR3", "int")
+    ];
+
+    internal static readonly FieldInfo[] ChamferFieldInfos = [
+        ("Type", "TYPE", "int"),
+        ("X", "X", "double"),
+        ("Y", "Y", "double"),
+        ("Dz1", "DZ1", "double"),
+        ("Dz2", "DZ2", "double")
     ];
 
     public void Initialize(IncrementalGeneratorInitializationContext context) {
@@ -358,6 +367,7 @@ internal class PluginDataFieldsGenerator : IIncrementalGenerator {
             "Weld" => "W",
             "Bolt" => "B",
             "BoltCircle" => "BC",
+            "Chamfer" => "CF",
             _ => string.Empty
         };
 
@@ -369,6 +379,7 @@ internal class PluginDataFieldsGenerator : IIncrementalGenerator {
             "WeldFieldsAttribute" => WeldFieldInfos,
             "BoltFieldsAttribute" => BoltFieldInfos,
             "BoltCircleFieldsAttribute" => BoltCircleFieldInfos,
+            "ChamferFieldsAttribute" => ChamferFieldInfos,
             _ => []
         };
 

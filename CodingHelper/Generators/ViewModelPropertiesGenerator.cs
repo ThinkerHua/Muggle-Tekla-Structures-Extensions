@@ -45,6 +45,7 @@ internal class ViewModelPropertiesGenerator : IIncrementalGenerator {
         "Muggle.TsExtensions.CodingHelper.Generators.WeldPropertiesAttribute",
         "Muggle.TsExtensions.CodingHelper.Generators.BoltPropertiesAttribute",
         "Muggle.TsExtensions.CodingHelper.Generators.BoltCirclePropertiesAttribute",
+        "Muggle.TsExtensions.CodingHelper.Generators.ChamferPropertiesAttribute",
         "Muggle.TsExtensions.CodingHelper.Generators.GeneralPropertiesAttribute"
     ];
 
@@ -165,6 +166,14 @@ internal class ViewModelPropertiesGenerator : IIncrementalGenerator {
         ("UseWasher3", "WSHR3", "Integer", "value < 0 || value > 1"),
     ];
 
+    internal static readonly PropertyInfo[] ChamferPropertyInfos = [
+        ("Type", "TYPE", "Integer", "value < 0 || value > 7"),
+        ("X", "X", "Double", "value == int.MinValue"),
+        ("Y", "Y", "Double", "value == int.MinValue"),
+        ("Dz1", "DZ1", "Double", "value == int.MinValue"),
+        ("Dz2", "DZ2", "Double", "value == int.MinValue"),
+    ];
+
     /// <summary>
     /// Dictionary of preset values.
     /// <list type="bullet">
@@ -200,6 +209,8 @@ internal class ViewModelPropertiesGenerator : IIncrementalGenerator {
                 SourceText.From(GetResourceAsString("ConnectionViewModel.cs"), Encoding.UTF8));
             ctx.AddSource("DetailViewModel.g.cs",
                 SourceText.From(GetResourceAsString("DetailViewModel.cs"), Encoding.UTF8));
+            ctx.AddSource("CustomPartViewModel.g.cs",
+                SourceText.From(GetResourceAsString("CustomPartViewModel.cs"), Encoding.UTF8));
             foreach (var attribute in ConcernedAttributes) {
                 var shortName = attribute.Substring(attribute.LastIndexOf('.') + 1);
                 ctx.AddSource($"{shortName}.g.cs",
@@ -555,6 +566,7 @@ internal class ViewModelPropertiesGenerator : IIncrementalGenerator {
             "WeldPropertiesAttribute" => WeldPropertyInfos,
             "BoltPropertiesAttribute" => BoltPropertyInfos,
             "BoltCirclePropertiesAttribute" => BoltCircleProperties,
+            "ChamferPropertiesAttribute" => ChamferPropertyInfos,
             _ => []
         };
 
@@ -565,6 +577,7 @@ internal class ViewModelPropertiesGenerator : IIncrementalGenerator {
             "Weld" => "W",
             "Bolt" => "B",
             "BoltCircle" => "BC",
+            "Chamfer" => "CF",
             _ => string.Empty
         };
 

@@ -29,8 +29,8 @@ public partial class Demo1 : PluginBase {
     [BoltFieldDefaultValues("Stud", 10.0, "STUD", "4*90", "80")]
     [WeldFieldDefaultValues(1, 10, 10, 6.0, 6.0)]
     [WeldFieldDefaultValues(2, 10, sizeAbove: 6.0)]
-    [GeneralFieldDefaultValues("CreatStud", 1, "gap", 15.0, "BoltOffsetX", 50, "StudOffsetX", 50,
-        "StifChamferType", 1, "StifChamferX", 15.0, "StifChamferY", 15.0, "StifChamferDz1", 0.0, "StifChamferDz2", 0.0)]
+    [ChamferFieldDefaultValues("Stif", 1, 15.0, 15.0)]
+    [GeneralFieldDefaultValues("CreatStud", 1, "gap", 15.0, "BoltOffsetX", 50, "StudOffsetX", 50)]
     private PluginData Data { get; }
 
     public Demo1(PluginData data) {
@@ -122,15 +122,15 @@ public partial class Demo1 : PluginBase {
             var stiffeners = ModelOperation.CreatStiffeners(primary,
                 new Point(0, 0, -_plateStiffenerThickness * 0.5),
                 _plateStiffenerThickness, _plateStiffenerMaterial, _plateStiffenerClass.ToString(),
-                chamferType: EnumParse<Chamfer.ChamferTypeEnum>(_stifChamferType),
-                chamferSizeX: _stifChamferX, chamferSizeY: _stifChamferY,
-                chamferDz1: _stifChamferDz1, chamferDz2: _stifChamferDz2);
+                chamferType: EnumParse<Chamfer.ChamferTypeEnum>(_chamferStifType),
+                chamferSizeX: _chamferStifX, chamferSizeY: _chamferStifY,
+                chamferDz1: _chamferStifDz1, chamferDz2: _chamferStifDz2);
             stiffeners = stiffeners.Concat(ModelOperation.CreatStiffeners(primary,
                 new Point(0, 0, -secHeight + _plateStiffenerThickness * 0.5),
                 _plateStiffenerThickness, _plateStiffenerMaterial, _plateStiffenerClass.ToString(),
-                chamferType: EnumParse<Chamfer.ChamferTypeEnum>(_stifChamferType),
-                chamferSizeX: _stifChamferX, chamferSizeY: _stifChamferY,
-                chamferDz1: _stifChamferDz1, chamferDz2: _stifChamferDz2));
+                chamferType: EnumParse<Chamfer.ChamferTypeEnum>(_chamferStifType),
+                chamferSizeX: _chamferStifX, chamferSizeY: _chamferStifY,
+                chamferDz1: _chamferStifDz1, chamferDz2: _chamferStifDz2));
 
             var primProfileType = string.Empty;
             try {

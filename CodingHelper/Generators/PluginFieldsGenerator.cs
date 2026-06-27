@@ -207,6 +207,7 @@ public class PluginFieldsGenerator : IIncrementalGenerator {
             "WeldFieldsAttribute" => PluginDataFieldsGenerator.WeldFieldInfos,
             "BoltFieldsAttribute" => PluginDataFieldsGenerator.BoltFieldInfos,
             "BoltCircleFieldsAttribute" => PluginDataFieldsGenerator.BoltCircleFieldInfos,
+            "ChamferFieldsAttribute" => PluginDataFieldsGenerator.ChamferFieldInfos,
             _ => []
         };
 
@@ -260,6 +261,7 @@ public class PluginFieldsGenerator : IIncrementalGenerator {
                     "WeldFieldsAttribute" => PluginDataFieldsGenerator.WeldFieldInfos,
                     "BoltFieldsAttribute" => PluginDataFieldsGenerator.BoltFieldInfos,
                     "BoltCircleFieldsAttribute" => PluginDataFieldsGenerator.BoltCircleFieldInfos,
+                    "ChamferFieldsAttribute" => PluginDataFieldsGenerator.ChamferFieldInfos,
                     _ => []
                 };
 

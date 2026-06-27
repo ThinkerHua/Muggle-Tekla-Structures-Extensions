@@ -185,6 +185,7 @@ internal class InternalAttributesDiagnoser : DiagnosticAnalyzer {
         if (attributeName.StartsWith("Weld")) return "W<Id>SIZEA";
         if (attributeName.StartsWith("BoltCircle")) return "BC<Id>PLAIN";
         if (attributeName.StartsWith("Bolt")) return "B<Id>DISTX";
+        if (attributeName.StartsWith("Chamfer")) return "CF<Id>TYPE";
         return "TheLongestAttribute";
     }
 
@@ -204,6 +205,7 @@ internal class InternalAttributesDiagnoser : DiagnosticAnalyzer {
         if (attributeName.StartsWith("Weld")) return 13;
         if (attributeName.StartsWith("BoltCircle")) return 12;
         if (attributeName.StartsWith("Bolt")) return 13;
+        if (attributeName.StartsWith("Chamfer")) return 13;
         return 19;
     }
 
