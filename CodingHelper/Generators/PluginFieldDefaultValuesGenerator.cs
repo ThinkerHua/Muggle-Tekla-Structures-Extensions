@@ -768,6 +768,7 @@ internal class PluginFieldDefaultValuesGenerator : IIncrementalGenerator {
                     $"            weld.AroundWeld = {propertyAccess}Around != 0;\n" +
                     $"            weld.ShopWeld = {propertyAccess}Shop != 0;\n" +
                     $"            weld.Placement = ({TsmNameSpace}.BaseWeld.WeldPlacementTypeEnum) global::System.Enum.Parse(typeof({TsmNameSpace}.BaseWeld.WeldPlacementTypeEnum), {propertyAccess}Placement.ToString(), true);\n" +
+                    $"            weld.Preparation = ({TsmNameSpace}.BaseWeld.WeldPreparationTypeEnum) global::System.Enum.Parse(typeof({TsmNameSpace}.BaseWeld.WeldPreparationTypeEnum), {propertyAccess}Preparation.ToString(), true);\n" +
                     $"            weld.IntermittentType = ({TsmNameSpace}.BaseWeld.WeldIntermittentTypeEnum)global::System.Enum.Parse(typeof({TsmNameSpace}.BaseWeld.WeldIntermittentTypeEnum), {propertyAccess}Intermittent.ToString(), true);\n" +
                     $"            weld.ReferenceText = {propertyAccess}ReferenceText;\n" +
                     $"            return weld;\n" +
@@ -806,6 +807,7 @@ internal class PluginFieldDefaultValuesGenerator : IIncrementalGenerator {
                     $"            weld.AroundWeld = {propertyAccess}Around != 0;\n" +
                     $"            weld.ShopWeld = {propertyAccess}Shop != 0;\n" +
                     $"            weld.Placement = ({TsmNameSpace}.BaseWeld.WeldPlacementTypeEnum) global::System.Enum.Parse(typeof({TsmNameSpace}.BaseWeld.WeldPlacementTypeEnum), {propertyAccess}Placement.ToString(), true);\n" +
+                    $"            weld.Preparation = ({TsmNameSpace}.BaseWeld.WeldPreparationTypeEnum) global::System.Enum.Parse(typeof({TsmNameSpace}.BaseWeld.WeldPreparationTypeEnum), {propertyAccess}Preparation.ToString(), true);\n" +
                     $"            weld.IntermittentType = ({TsmNameSpace}.BaseWeld.WeldIntermittentTypeEnum)global::System.Enum.Parse(typeof({TsmNameSpace}.BaseWeld.WeldIntermittentTypeEnum), {propertyAccess}Intermittent.ToString(), true);\n" +
                     $"            weld.ReferenceText = {propertyAccess}ReferenceText;\n" +
                     $"        }}");
