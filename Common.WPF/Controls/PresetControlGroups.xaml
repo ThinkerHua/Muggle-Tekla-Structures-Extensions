@@ -297,4 +297,59 @@
         <tsuc:WpfFilterCheckBox Grid.Row="16" Grid.Column="1" AttributeName="ad_root" />
         <TextBox Grid.Row="16" Grid.Column="2" Text="{Binding AutoDefaults, Mode=TwoWay}" />
     </Grid>
+
+    <Grid x:Key="CustomPartGeneralTab">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="22" />
+            <ColumnDefinition Width="80" />
+            <ColumnDefinition Width="22" />
+            <ColumnDefinition Width="80" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Grid.Column="0" Text="{tr:Translate albl_Position_OnPlane}" />
+        <tsuc:WpfFilterCheckBox Grid.Row="0" Grid.Column="1" AttributeName="OnPlane" />
+        <ComboBox Grid.Row="0" Grid.Column="2" SelectedIndex="{Binding OnPlane, Mode=TwoWay}">
+            <ComboBoxItem Content="{tr:Translate albl_Position_OnPlane_Middle}" />
+            <ComboBoxItem Content="{tr:Translate albl_Position_OnPlane_Left}" />
+            <ComboBoxItem Content="{tr:Translate albl_Position_OnPlane_Right}" />
+        </ComboBox>
+        <tsuc:WpfFilterCheckBox Grid.Row="0" Grid.Column="3" AttributeName="OnPlaneValue" />
+        <TextBox Grid.Row="0" Grid.Column="4" Text="{Binding OnPlaneValue, Mode=TwoWay}" />
+
+        <TextBlock Grid.Row="1" Grid.Column="0" Text="{tr:Translate albl_Position_Rotation}" />
+        <tsuc:WpfFilterCheckBox Grid.Row="1" Grid.Column="1" AttributeName="Rotation" />
+        <ComboBox Grid.Row="1" Grid.Column="2" SelectedIndex="{Binding Rotation, Mode=TwoWay}">
+            <ComboBoxItem Content="{tr:Translate albl_Position_Rotation_Front}" />
+            <ComboBoxItem Content="{tr:Translate albl_Position_Rotation_Top}" />
+            <ComboBoxItem Content="{tr:Translate albl_Position_Rotation_Back}" />
+            <ComboBoxItem Content="{tr:Translate albl_Position_Rotation_Below}" />
+        </ComboBox>
+        <tsuc:WpfFilterCheckBox Grid.Row="1" Grid.Column="3" AttributeName="RotationValue" />
+        <TextBox Grid.Row="1" Grid.Column="4" Text="{Binding RotationValue, Mode=TwoWay}" />
+
+        <TextBlock Grid.Row="2" Grid.Column="0" Text="{tr:Translate albl_Position_AtDepth}" />
+        <tsuc:WpfFilterCheckBox Grid.Row="2" Grid.Column="1" AttributeName="AtDepth" />
+        <ComboBox Grid.Row="2" Grid.Column="2" SelectedIndex="{Binding AtDepth, Mode=TwoWay}">
+            <ComboBoxItem Content="{tr:Translate albl_Position_AtDepth_Middle}" />
+            <ComboBoxItem Content="{tr:Translate albl_Position_AtDepth_Front}" />
+            <ComboBoxItem Content="{tr:Translate albl_Position_AtDepth_Behind}" />
+        </ComboBox>
+        <tsuc:WpfFilterCheckBox Grid.Row="2" Grid.Column="3" AttributeName="AtDepthValue" />
+        <TextBox Grid.Row="2" Grid.Column="4" Text="{Binding AtDepthValue, Mode=TwoWay}" />
+
+        <TextBlock Grid.Row="3" Grid.Column="0" Text="{tr:Translate albl_CustomPart_ShowThirdHandle}" />
+        <tsuc:WpfFilterCheckBox Grid.Row="3" Grid.Column="1" AttributeName="ThirdHandle" />
+        <ComboBox Grid.Row="3" Grid.Column="2" SelectedIndex="{Binding ThirdHandle, Mode=TwoWay}">
+            <ComboBoxItem Content="{tr:Translate albl_CustomPart_ShowThirdHandle_No}" />
+            <ComboBoxItem Content="{tr:Translate albl_CustomPart_ShowThirdHandle_Above}" />
+            <ComboBoxItem Content="{tr:Translate albl_CustomPart_ShowThirdHandle_OnTheLeft}" />
+        </ComboBox>
+    </Grid>
 </ResourceDictionary>
