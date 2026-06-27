@@ -36,22 +36,15 @@ Tools and plugins for Tekla Structures. Please use in accordance with the [Open 
 >组件
 
 - [MG1001](#mg1001)
-
 - [MG1002](#mg1002)
-
 - [HJ1001](#hj1001)
-
 - [WK1001](#wk1001)
-
 - [MJ5001](#mj5001)
-
 - [KJ1001](#kj1001)
-
 - [KJ1002](#kj1002)
-
 - [KJ2001](#kj2001)
-
 - [DC2001](#dc2001)
+- [DC4001](#dc4001)
 
 ---
 
@@ -380,7 +373,7 @@ Anchor bolts, exterior studs, internal diaphragm.
 
 ## DC2001
 
-### Crane beam series details - crane beam bracket
+### Crane beam series detail - crane beam bracket
 
 ### 吊车梁系列细部 - 吊车梁牛腿
 
@@ -390,3 +383,15 @@ To adjust the orientation, you can edit the up direction in the general tab.
 可选单、双牛腿，双牛腿可选左右相同或不同。要调整朝向可在通用选项卡中编辑向上方向。
 
 ![DC2001](Resources/Introduction_DC2001.gif)
+
+## DC4001
+
+### Crane beam series part - crane beam
+
+### 吊车梁系列零件 - 吊车梁
+
+20G520 drawing collection crane beam.
+
+20G520 图集吊车梁。
+
+![DC4001](Resources/Introduction_DC4001.gif)
