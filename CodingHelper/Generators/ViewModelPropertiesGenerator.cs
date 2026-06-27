@@ -588,7 +588,7 @@ internal class ViewModelPropertiesGenerator : IIncrementalGenerator {
                     _ => value
                 };
 
-                var propertyName = propertyPrefix + id + ToPropertyNameStyle(property);
+                var propertyName = propertyPrefix + ToPropertyNameStyle(id) + ToPropertyNameStyle(property);
                 var fieldName = ToPrivateFieldNameStyle(propertyName);
 
                 fieldsBuilder.AppendLine($"        private {TsDatatype}.{propertyInfos[i].Type} {fieldName};");
