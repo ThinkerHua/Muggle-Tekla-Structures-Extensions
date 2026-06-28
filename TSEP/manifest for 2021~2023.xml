@@ -4,7 +4,7 @@
 	<Product
 		Id="Muggle.TsExtensions"
 		UpgradeCode="547B1AA5-0F0D-4276-8D0C-BD54561E1D56"
-		Version="0.9" Language="1033"
+		Version="0.10" Language="1033"
 		Name="Muggle Tekla Structures Extensions"
 		Manufacturer="Huang YongXing (thinkerhua@hotmail.com)"
 		Description= "Extensions for Tekla Structures."
@@ -23,6 +23,7 @@
 		<SourcePathVariable Id="StandardFileFolder" Value="%TEPDEFINITIONFILEFOLDER%\standard file"/>
 		<SourcePathVariable Id="MessagesFolder" Value="%TEPDEFINITIONFILEFOLDER%\messages"/>
 		<SourcePathVariable Id="BitmapsFolder" Value="%TEPDEFINITIONFILEFOLDER%\bitmaps"/>
+		<SourcePathVariable Id="MacrosFolder" Value="%TEPDEFINITIONFILEFOLDER%\macros"/>
 		<SourcePathVariable Id="ComponentCatalogFolder" Value="%TEPDEFINITIONFILEFOLDER%\componentCatalog" />
 		<SourcePathVariable Id="SolutionFolder" Value="%TEPDEFINITIONFILEFOLDER%\.." />
 		<SourcePathVariable Id="MSBuildOutputPath" Value="bin\R2021\net48"/>
@@ -37,6 +38,7 @@
 		<PathVariable Id="AttributeFileDirectory" Value="%commonEnvFolder%\system\"/>
 		<PathVariable Id="CommonMacroDirectory" Value="%commonEnvFolder%\macros\modeling\"/>
 		<PathVariable Id="MessagesDirectory" Value="%ExtensionsDir%\messages\Muggle.TsExtensions\"/>
+        <!--<PathVariable Id="Desktop" Value="%Desktop%" />-->
 	</TargetPathVariables>
 
 	<Component Id="Common" Guid="191F0900-2601-42FD-9334-4F0319628EBA">
@@ -125,6 +127,11 @@
 		<File Id="System.Runtime.CompilerServices.Unsafe" Source="%SolutionFolder%\MainWindow\%MSBuildOutputPath%\System.Runtime.CompilerServices.Unsafe.dll" Target="%BinariesDirectory%"/>
 		<File Id="System.Threading.Tasks.Extensions" Source="%SolutionFolder%\MainWindow\%MSBuildOutputPath%\System.Threading.Tasks.Extensions.dll" Target="%BinariesDirectory%"/>
 	</Component>
+    
+    <Component Id="MainWindowRunnerMacro" Guid="F0E3F77F-099A-46B6-91AA-7A5D40A32208">
+        <File Id="Muggle.TsExtensions.cs" Source="%MacrosFolder%\Muggle.TsExtensions.cs" Target="%CommonMacroDirectory%"/>
+        <File Id="Muggle.TsExtensions.bmp" Source="%BitmapsFolder%\Muggle.TsExtensions.bmp" Target="%CommonMacroDirectory%"/>
+    </Component>
 
 	<Component Id="ComponentCatalog" Guid="35A87B48-AA38-4E0D-8D0F-9CEE45B09DBB">
 		<File Id="ComponentCatalog" Source="%ComponentCatalogFolder%\Muggle.TsExtensions_ComponentCatalog.ac.xml" Target="%BinariesDirectory%"/>
@@ -144,6 +151,7 @@
 		<ComponentRef ReferenceId="MJ5001" />
 		<ComponentRef ReferenceId="WK1001" />
 		<ComponentRef ReferenceId="MainWindow" />
+        <ComponentRef ReferenceId="MainWindowRunnerMacro" />
 		<ComponentRef ReferenceId="ComponentCatalog" />
 	</Feature>
 

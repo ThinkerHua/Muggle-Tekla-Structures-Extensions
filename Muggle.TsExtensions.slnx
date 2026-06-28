@@ -30,9 +30,13 @@
         <File Path="TSEP/bitmaps/et_element_MG1002.bmp" />
         <File Path="TSEP/bitmaps/et_element_MJ5001.bmp" />
         <File Path="TSEP/bitmaps/et_element_WK1001.bmp" />
+        <File Path="TSEP/bitmaps/Muggle.TsExtensions.bmp" />
     </Folder>
     <Folder Name="/TSEP/ComponentCatalog/">
         <File Path="TSEP/componentCatalog/Muggle.TsExtensions_ComponentCatalog.ac.xml" />
+    </Folder>
+    <Folder Name="/TSEP/Macros/">
+        <File Path="TSEP/macros/Muggle.TsExtensions.cs" />
     </Folder>
     <Folder Name="/TSEP/Messages/">
         <File Path="TSEP/messages/Muggle.TsExtensions.ail" />

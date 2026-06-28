@@ -43,6 +43,11 @@
 			<DisplayName>WK1001</DisplayName>
 			<ComponentId>WK1001</ComponentId>
 		</CatalogPluginConnectionItem>
+        <CatalogMacroModelingItem>
+            <DisplayName>Muggle.TsExtensions</DisplayName>
+            <MacroFileName>Muggle.TsExtensions.cs</MacroFileName>
+            <MacroLocation>GLOBAL</MacroLocation>
+        </CatalogMacroModelingItem>
 	</ComponentCatalogItems>
 	<ComponentCatalogGroups>
 		<ComponentCatalogGroup>
@@ -90,6 +95,9 @@
 				<ComponentCatalogItemPlaceholder>
 					<ItemIdString>CatalogPluginConnectionItem?WK1001</ItemIdString>
 				</ComponentCatalogItemPlaceholder>
+                <ComponentCatalogItemPlaceholder>
+                    <ItemIdString>CatalogMacroModelingItem?Muggle.TsExtensions?GLOBAL</ItemIdString>
+                </ComponentCatalogItemPlaceholder>
 			</GroupChildren>
 		</ComponentCatalogGroup>
 	</ComponentCatalogGroups>
