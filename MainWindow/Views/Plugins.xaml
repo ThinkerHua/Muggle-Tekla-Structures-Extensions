@@ -64,6 +64,9 @@
             <Button Command="{Binding RepeatRunPluginCommand}" CommandParameter="DC2001" ContentTemplate="{StaticResource pluginCardView}">
                 <vm:PluginCard PluginName="DC2001" />
             </Button>
+            <Button Command="{Binding RepeatRunPluginCommand}" CommandParameter="DC4001" ContentTemplate="{StaticResource pluginCardView}">
+                <vm:PluginCard PluginName="DC4001" />
+            </Button>
             <Button Command="{Binding RepeatRunPluginCommand}" CommandParameter="HJ1001" ContentTemplate="{StaticResource pluginCardView}">
                 <vm:PluginCard PluginName="HJ1001" />
             </Button>
