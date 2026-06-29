@@ -36,7 +36,7 @@
     <tsd:PluginWindowBase.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/MJ5001;component/Resources/BackgroundImage.xaml" />
+                <ResourceDictionary Source="/MJ5001;component/Assets/BackgroundImage.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
             <Style x:Key="Element" TargetType="FrameworkElement">

@@ -17,7 +17,7 @@
 		<PackageReference Include="Muggle.TsExtensions.CodingHelper" />
 		<PackageReference Include="Tekla.Structures" ExcludeAssets="runtime" />
 		<PackageReference Include="Tekla.Structures.Datatype" ExcludeAssets="runtime" />
-		<PackageReference Include="Tekla.Structures.Dialog" ExcludeAssets="runtime" />
+		<PackageReference Include="Tekla.Structures.Dialog" ExcludeAssets="runtime;contentFiles" />
 		<PackageReference Include="Tekla.Structures.Model" ExcludeAssets="runtime" />
 		<PackageReference Include="Tekla.Structures.Plugins" ExcludeAssets="runtime" />
 	</ItemGroup>

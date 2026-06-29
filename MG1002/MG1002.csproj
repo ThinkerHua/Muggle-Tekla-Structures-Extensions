@@ -17,7 +17,7 @@
 		<PackageReference Include="Muggle.TsExtensions.CodingHelper" />
 		<PackageReference Include="Tekla.Structures" ExcludeAssets="runtime" />
 		<PackageReference Include="Tekla.Structures.Datatype" ExcludeAssets="runtime" />
-		<PackageReference Include="Tekla.Structures.Dialog" ExcludeAssets="runtime" />
+		<PackageReference Include="Tekla.Structures.Dialog" ExcludeAssets="runtime;contentFiles" />
 		<PackageReference Include="Tekla.Structures.Model" ExcludeAssets="runtime" />
 		<PackageReference Include="Tekla.Structures.Plugins" ExcludeAssets="runtime" />
 	</ItemGroup>
@@ -33,8 +33,8 @@
 	</ItemGroup>
 	
 	<ItemGroup>
-		<Resource Include="Resources\3.png" />
-		<Resource Include="Resources\4.png" />
+		<Resource Include="Assets\3.png" />
+		<Resource Include="Assets\4.png" />
 	</ItemGroup>
 	
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">

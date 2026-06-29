@@ -35,7 +35,7 @@
     <tsd:PluginWindowBase.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/KJ1002;component/Resources/backgroundImage.xaml" />
+                <ResourceDictionary Source="/KJ1002;component/Assets/backgroundImage.xaml" />
                 <ResourceDictionary Source="/Common.WPF;component/Controls/PresetControlGroups.xaml" />
             </ResourceDictionary.MergedDictionaries>
 

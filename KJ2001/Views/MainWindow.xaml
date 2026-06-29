@@ -35,10 +35,10 @@
     <tsd:PluginWindowBase.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/KJ2001;component/Resources/backgroundImage_anchorRod.xaml" />
-                <ResourceDictionary Source="/KJ2001;component/Resources/backgroundImage_basePlate.xaml" />
-                <ResourceDictionary Source="/KJ2001;component/Resources/backgroundImage_innerStiffener.xaml" />
-                <ResourceDictionary Source="/KJ2001;component/Resources/backgroundImage_stud.xaml" />
+                <ResourceDictionary Source="/KJ2001;component/Assets/backgroundImage_anchorRod.xaml" />
+                <ResourceDictionary Source="/KJ2001;component/Assets/backgroundImage_basePlate.xaml" />
+                <ResourceDictionary Source="/KJ2001;component/Assets/backgroundImage_innerStiffener.xaml" />
+                <ResourceDictionary Source="/KJ2001;component/Assets/backgroundImage_stud.xaml" />
                 <ResourceDictionary Source="/Common.WPF;component/Controls/PresetControlGroups.xaml" />
             </ResourceDictionary.MergedDictionaries>
 

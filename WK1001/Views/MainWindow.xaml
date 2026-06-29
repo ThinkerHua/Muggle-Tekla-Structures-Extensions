@@ -36,7 +36,7 @@
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/WK1001;component/Resources/backgroundImage.xaml" />
+                <ResourceDictionary Source="/WK1001;component/Assets/backgroundImage.xaml" />
                 <ResourceDictionary Source="/Common.WPF;component/Controls/PresetControlGroups.xaml" />
             </ResourceDictionary.MergedDictionaries>
 

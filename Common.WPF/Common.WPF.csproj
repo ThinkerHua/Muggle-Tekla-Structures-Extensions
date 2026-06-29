@@ -15,7 +15,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<PackageReference Include="Tekla.Structures.Dialog" ExcludeAssets="runtime" />
+		<PackageReference Include="Tekla.Structures.Dialog" ExcludeAssets="runtime;contentFiles" />
 	</ItemGroup>
 
 	<ItemGroup>

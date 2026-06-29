@@ -38,10 +38,10 @@
     <Window.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
-                <ResourceDictionary Source="/KJ1001;component/Resources/backgroundImage_general.xaml" />
-                <ResourceDictionary Source="/KJ1001;component/Resources/backgroundImage_Type0.xaml" />
-                <ResourceDictionary Source="/KJ1001;component/Resources/backgroundImage_type1.xaml" />
-                <ResourceDictionary Source="/KJ1001;component/Resources/backgroundImage_type2.xaml" />
+                <ResourceDictionary Source="/KJ1001;component/Assets/backgroundImage_general.xaml" />
+                <ResourceDictionary Source="/KJ1001;component/Assets/backgroundImage_Type0.xaml" />
+                <ResourceDictionary Source="/KJ1001;component/Assets/backgroundImage_type1.xaml" />
+                <ResourceDictionary Source="/KJ1001;component/Assets/backgroundImage_type2.xaml" />
                 <ResourceDictionary Source="/Common.WPF;component/Controls/PresetControlGroups.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
