@@ -1,28 +1,21 @@
 <Project>
-    <PropertyGroup>
-        <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
-    </PropertyGroup>
-    <ItemGroup>
-    <PackageVersion Include="BenchmarkDotNet" Version="0.15.8" />
-        <PackageVersion Include="CalcBinding" Version="2.5.2" />
-        <PackageVersion Include="CommunityToolkit.Mvvm" Version="8.4.0" />
-        <PackageVersion Include="coverlet.collector" Version="10.0.0" />
-        <PackageVersion Include="Microsoft.CodeAnalysis.Analyzers" Version="3.11.0" />
-        <PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="5.0.0" />
-        <PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="9.0.5" />
-    <PackageVersion Include="Microsoft.NET.Test.Sdk" Version="17.8.0" />
-    <PackageVersion Include="Muggle.TsExtensions.CodingHelper" Version="2.0.0-beta.3" />
-    <PackageVersion Include="NUnit" Version="3.14.0" />
-    <PackageVersion Include="NUnit.Analyzers" Version="3.9.0" />
-    <PackageVersion Include="NUnit3TestAdapter" Version="4.5.0" />
-    <PackageVersion Include="System.Memory" Version="4.5.5" />
-        <PackageVersion Include="Tekla.Structures" Version="$(TeklaVersion)" />
-        <PackageVersion Include="Tekla.Structures.Catalogs" Version="$(TeklaVersion)" />
-        <PackageVersion Include="Tekla.Structures.Datatype" Version="$(TeklaVersion)" />
-        <PackageVersion Include="Tekla.Structures.Dialog" Version="$(TeklaVersion)" />
-        <PackageVersion Include="Tekla.Structures.Model" Version="$(TeklaVersion)" />
-        <PackageVersion Include="Tekla.Structures.Plugins" Version="$(TeklaVersion)" />
-    <PackageVersion Include="TeklaStructuresAttributes" Version="1.0.5" />
-        <PackageVersion Include="TSAppConfigPatcherTask" Version="2.1.3" />
-    </ItemGroup>
+	<PropertyGroup>
+		<ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+	</PropertyGroup>
+	<ItemGroup>
+		<PackageVersion Include="CalcBinding" Version="2.5.2" />
+		<PackageVersion Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+		<PackageVersion Include="Microsoft.CodeAnalysis.Analyzers" Version="3.11.0" />
+		<PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="5.0.0" />
+		<PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="9.0.5" />
+		<PackageVersion Include="Muggle.TsExtensions.CodingHelper" Version="2.0.0-beta.3" />
+		<PackageVersion Include="Tekla.Structures" Version="$(TeklaVersion)" />
+		<PackageVersion Include="Tekla.Structures.Catalogs" Version="$(TeklaVersion)" />
+		<PackageVersion Include="Tekla.Structures.Datatype" Version="$(TeklaVersion)" />
+		<PackageVersion Include="Tekla.Structures.Dialog" Version="$(TeklaVersion)" />
+		<PackageVersion Include="Tekla.Structures.Model" Version="$(TeklaVersion)" />
+		<PackageVersion Include="Tekla.Structures.Plugins" Version="$(TeklaVersion)" />
+		<PackageVersion Include="TeklaStructuresAttributes" Version="1.0.5" />
+		<PackageVersion Include="TSAppConfigPatcherTask" Version="2.1.3" Condition="$(Configuration.EndsWith('2024'))" />
+	</ItemGroup>
 </Project>
