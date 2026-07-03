@@ -38,7 +38,6 @@
 		<PathVariable Id="AttributeFileDirectory" Value="%commonEnvFolder%\system\"/>
 		<PathVariable Id="CommonMacroDirectory" Value="%commonEnvFolder%\macros\modeling\"/>
 		<PathVariable Id="MessagesDirectory" Value="%ExtensionsDir%\messages\Muggle.TsExtensions\"/>
-        <!--<PathVariable Id="Desktop" Value="%Desktop%" />-->
 	</TargetPathVariables>
 
 	<Component Id="Common" Guid="191F0900-2601-42FD-9334-4F0319628EBA">
