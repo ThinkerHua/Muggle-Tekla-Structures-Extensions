@@ -1,4 +1,4 @@
-﻿/*==============================================================================
+/*==============================================================================
  *  Muggle TsExtensions - extensions for Tekla Structures
  *
  *  Copyright © 2024 Huang YongXing.                 
@@ -202,7 +202,7 @@ namespace Muggle.TsExtensions.MG1002 {
             prfVert = new ProfilePlate(prfStr_VERT);
             if (prfVert.t == 0.0 || prfVert.l != 0.0)
                 throw new ArgumentException("竖板规格必须提供厚度参数，可省略宽度参数，不需要长度参数。例如：PL18 或 PL18*150。");
-            
+
             if (IsDefaultValue(prfStr_DIAG) || prfStr_DIAG == string.Empty)
                 prfStr_DIAG = string.Empty;
             if (prfStr_DIAG != string.Empty) {

@@ -1155,7 +1155,7 @@ namespace Muggle.TsExtensions.Common.Model {
                 partPrefix: "D", @class: BooleanPart.BooleanOperativeClassName);
             ApplyBooleanOperation(washerPlate, hole);
             hole.Delete();
-            SkipWasherPlate:
+        SkipWasherPlate:
 
             if (!useWasher1)
                 goto SkipWasher1;
@@ -1165,7 +1165,7 @@ namespace Muggle.TsExtensions.Common.Model {
             washer1 = CreatBeam(
                 point1, point2, "WASHER", $"O{size * 2 + 6}*{size * 0.5 + 3}", material,
                 partPrefix: "O", @class: @class);
-            SkipWasher1:
+        SkipWasher1:
 
             if (!useWasher2)
                 goto SkipWasher2;
@@ -1175,7 +1175,7 @@ namespace Muggle.TsExtensions.Common.Model {
             washer2 = CreatBeam(
                 point1, point2, "WASHER", $"O{size * 2 + 6}*{size * 0.5 + 3}", material,
                 partPrefix: "O", @class: @class);
-            SkipWasher2:
+        SkipWasher2:
 
             if (!useWasher3)
                 goto SkipWasher3;
@@ -1184,7 +1184,7 @@ namespace Muggle.TsExtensions.Common.Model {
             washer3 = CreatBeam(
                 point1, point2, "WASHER", $"O{size * 2 + 6}*{size * 0.5 + 3}", material,
                 partPrefix: "O", @class: @class);
-            SkipWasher3:
+        SkipWasher3:
 
             var matrix = MatrixFactoryExtension.Rotate(new Line(firstPosition, secondPosition), Math.PI / 3);
             if (!useNut1)
@@ -1200,7 +1200,7 @@ namespace Muggle.TsExtensions.Common.Model {
             nut1 = CreatContourPlate(
                 [point1, point2, point3, point4, point5, point6], "NUT", $"PL{size}", material,
                 @class: @class, depthEnum: Position.DepthEnum.FRONT);
-            SkipNut1:
+        SkipNut1:
 
             if (!useNut2)
                 goto SkipNut2;
@@ -1216,7 +1216,7 @@ namespace Muggle.TsExtensions.Common.Model {
             nut2 = CreatContourPlate(
                 [point1, point2, point3, point4, point5, point6], "NUT", $"PL{size}", material,
                 @class: @class, depthEnum: Position.DepthEnum.FRONT);
-            SkipNut2:
+        SkipNut2:
 
             if (!useNut3)
                 goto SkipNut3;
@@ -1229,7 +1229,7 @@ namespace Muggle.TsExtensions.Common.Model {
             nut3 = CreatContourPlate(
                 [point1, point2, point3, point4, point5, point6], "NUT", $"PL{size}", material,
                 @class: @class, depthEnum: Position.DepthEnum.BEHIND);
-            SkipNut3:
+        SkipNut3:
 
             var parts = new List<Part> { anchorRod };
             if (washerPlate != null) parts.Add(washerPlate);
@@ -1596,10 +1596,10 @@ namespace Muggle.TsExtensions.Common.Model {
                 new ArrayList {
                     new ContourPoint(corners2[3], new Chamfer()),
                     new ContourPoint(
-                        corners2[2], 
+                        corners2[2],
                         new Chamfer(chamferSizeX, chamferSizeY, chamferType){DZ1 = chamferDz1, DZ2 = chamferDz2}),
                     new ContourPoint(
-                        corners2[1], 
+                        corners2[1],
                         new Chamfer(chamferSizeY, chamferSizeX, chamferType){DZ1 = chamferDz1, DZ2 = chamferDz2}),
                     new ContourPoint(corners2[0], new Chamfer())
                 }, "STIFFENER", $"PL{thickness}", material, @class: @class);
@@ -1770,7 +1770,7 @@ namespace Muggle.TsExtensions.Common.Model {
                 new ArrayList {
                     new ContourPoint(corners1[0], new Chamfer()),
                     new ContourPoint(
-                        corners1[1], 
+                        corners1[1],
                         new Chamfer(chamferSizeX, chamferSizeY, chamferType){DZ1 = chamferDz1, DZ2 = chamferDz2}),
                     new ContourPoint(corners1[2], new Chamfer()),
                     new ContourPoint(corners1[3], new Chamfer())
@@ -1779,7 +1779,7 @@ namespace Muggle.TsExtensions.Common.Model {
                 new ArrayList {
                     new ContourPoint(corners2[3], new Chamfer()),
                     new ContourPoint(
-                        corners2[2], 
+                        corners2[2],
                         new Chamfer(chamferSizeX, chamferSizeY, chamferType){DZ1 = chamferDz1, DZ2 = chamferDz2}),
                     new ContourPoint(corners2[1], new Chamfer()),
                     new ContourPoint(corners2[0], new Chamfer())
@@ -1935,10 +1935,10 @@ namespace Muggle.TsExtensions.Common.Model {
                 new ArrayList {
                     new ContourPoint(corners[0], new Chamfer()),
                     new ContourPoint(
-                        corners[1], 
+                        corners[1],
                         new Chamfer(chamferSizeX, chamferSizeY, chamferType){DZ1 = chamferDz1, DZ2 = chamferDz2}),
                     new ContourPoint(
-                        corners[2], 
+                        corners[2],
                         new Chamfer(chamferSizeY, chamferSizeX, chamferType){DZ1 = chamferDz1, DZ2 = chamferDz2}),
                     new ContourPoint(corners[3], new Chamfer())
                 }, "STIFFENER", $"PL{thickness}", material, @class: @class);
@@ -2200,16 +2200,16 @@ namespace Muggle.TsExtensions.Common.Model {
             var contourPlate = CreatContourPlate(
                 new ArrayList {
                     new ContourPoint(
-                        corners[0], 
+                        corners[0],
                         new Chamfer(chamferSizeY, chamferSizeX, chamferType){DZ1 = chamferDz1, DZ2 = chamferDz2}),
                     new ContourPoint(
-                        corners[1], 
+                        corners[1],
                         new Chamfer(chamferSizeX, chamferSizeY, chamferType){DZ1 = chamferDz1, DZ2 = chamferDz2}),
                     new ContourPoint(
-                        corners[2], 
+                        corners[2],
                         new Chamfer(chamferSizeY, chamferSizeX, chamferType){DZ1 = chamferDz1, DZ2 = chamferDz2}),
                     new ContourPoint(
-                        corners[3], 
+                        corners[3],
                         new Chamfer(chamferSizeX, chamferSizeY, chamferType){DZ1 = chamferDz1, DZ2 = chamferDz2})
                 }, "STIFFENER", $"PL{thickness}", material, @class: @class);
 

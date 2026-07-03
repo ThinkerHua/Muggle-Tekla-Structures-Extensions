@@ -1,4 +1,4 @@
-﻿/*==============================================================================
+/*==============================================================================
  *  Muggle TsExtensions - extensions for Tekla Structures
  *
  *  Copyright © 2024 Huang YongXing.                 
@@ -17,12 +17,12 @@ using System;
 using System.Collections.Generic;
 
 namespace Muggle.TsExtensions.Common {
-    
+
     /// <summary>
     /// 通用操作
     /// </summary>
     public static class Operation {
-        
+
         /// <summary>
         /// 极值枚举
         /// </summary>
@@ -31,13 +31,13 @@ namespace Muggle.TsExtensions.Common {
             /// 局部极小值
             /// </summary>
             LocalMinimum,
-            
+
             /// <summary>
             /// 局部极大值
             /// </summary>
             LocalMaximum,
         }
-        
+
         /// <summary>
         /// 找出数据集合 <paramref name="data"/> 中的局部极值，并返回其序号集合。
         /// </summary>
@@ -113,7 +113,7 @@ namespace Muggle.TsExtensions.Common {
 
             return result;
         }
-        
+
         /// <summary>
         /// 判断变化集合 <paramref name="variations"/> 是否符合极值分布。
         /// </summary>

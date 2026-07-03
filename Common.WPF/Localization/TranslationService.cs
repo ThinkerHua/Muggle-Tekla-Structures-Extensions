@@ -1,4 +1,4 @@
-﻿/*==============================================================================
+/*==============================================================================
  *  Muggle TsExtensions - extensions for Tekla Structures
  *
  *  Copyright © 2026 Huang YongXing.
@@ -27,7 +27,7 @@ public class TranslationService : INotifyPropertyChanged {
 
     private TranslationService() {
         _localization = new Tekla.Structures.Dialog.Localization();
-        
+
         var xsDataDir = string.Empty;
         TeklaStructuresSettings.GetAdvancedOption("XSDATADIR", ref xsDataDir);
         var path = Path.Combine(xsDataDir, "environments\\common\\extensions\\messages\\Muggle.TsExtensions\\Common.WPF.ail");

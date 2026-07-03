@@ -32,7 +32,7 @@ namespace Muggle.TsExtensions.Common.WPF.DataTemplates {
             get { return (string)GetValue(NameProperty); }
             set { SetValue(NameProperty, value); }
         }
-        
+
         /// <summary>
         /// 符号图像。
         /// </summary>

@@ -15,9 +15,9 @@
 using System;
 using System.Windows;
 using Muggle.TsExtensions.Common.WPF.Localization;
-using TsData = Tekla.Structures.Datatype;
 using Tekla.Structures.Dialog;
 using Tekla.Structures.Dialog.UIControls;
+using TsData = Tekla.Structures.Datatype;
 
 namespace Muggle.TsExtensions.DC4001 {
     public partial class View : PluginWindowBase {

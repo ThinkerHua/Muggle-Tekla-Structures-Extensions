@@ -1,12 +1,12 @@
-﻿using Tekla.Structures.Model;
+using Tekla.Structures.Model;
 
 namespace Muggle.TsExtensions.Common.Model {
-    
+
     /// <summary>
     /// <see cref="Tekla.Structures.Model"/>.<see cref="BaseWeld"/> 的扩展。
     /// </summary>
     public static class BaseWeldExtension {
-        
+
         /// <summary>
         /// 上下焊缝参数互换。
         /// </summary>

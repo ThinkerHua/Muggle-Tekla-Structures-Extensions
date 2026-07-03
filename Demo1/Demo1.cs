@@ -8,8 +8,8 @@ using Tekla.Structures.Geometry3d;
 using Tekla.Structures.Model;
 using Tekla.Structures.Model.UI;
 using Tekla.Structures.Plugins;
-using Win = System.Windows;
 using static Muggle.TsExtensions.Common.Operation;
+using Win = System.Windows;
 
 namespace Muggle.TsExtensions.Demo1;
 
@@ -257,10 +257,10 @@ public partial class Demo1 : PluginBase {
             stud.SecondPosition = secondary2.EndPoint;
             stud.Insert();
 
-            DontCreatStud: ;
+        DontCreatStud:;
 
             #endregion
-            
+
             return true;
         } catch (Exception e) {
             Win.MessageBox.Show(e.Message, "Error", Win.MessageBoxButton.OK, Win.MessageBoxImage.Error);

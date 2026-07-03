@@ -322,7 +322,7 @@ public partial class DC4001 : CustomPartBase {
                 break;
             }
 
-            SkipPlate10Plate13: ;
+        SkipPlate10Plate13:;
 
             #endregion
 
@@ -366,7 +366,7 @@ public partial class DC4001 : CustomPartBase {
             weld.Position = Weld.WeldPositionEnum.WELD_POSITION_PLUS_X;
             weld.Insert();
 
-            SkipPlate11Plate5: ;
+        SkipPlate11Plate5:;
 
             #endregion
 
@@ -390,7 +390,7 @@ public partial class DC4001 : CustomPartBase {
             weld.SecondaryObject = plate12;
             weld.Insert();
 
-            SkipPlate12: ;
+        SkipPlate12:;
 
             #endregion
 
