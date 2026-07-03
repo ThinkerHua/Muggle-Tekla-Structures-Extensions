@@ -193,16 +193,18 @@
                     <tsuc:WpfProfileCatalog Grid.Row="1"
                                             Grid.RowSpan="2"
                                             Grid.Column="9"
-                                            SelectClicked="PartPrimaryProfileSelectClicked"
-                                            SelectionDone="PartPrimaryProfileSelectionDone" />
+                                            Tag="PartPrimaryProfile"
+                                            SelectClicked="WpfProfileCatalog_SelectClicked"
+                                            SelectionDone="WpfProfileCatalog_SelectionDone" />
 
                     <tsuc:WpfFilterCheckBox Grid.Row="1" Grid.RowSpan="2" Grid.Column="10" AttributeName="PTPrimaryMATL" />
                     <TextBox Grid.Row="1" Grid.RowSpan="2" Grid.Column="11" Text="{Binding PartPrimaryMaterial, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                     <tsuc:WpfMaterialCatalog Grid.Row="1"
                                              Grid.RowSpan="2"
                                              Grid.Column="12"
-                                             SelectClicked="PartPrimaryMaterialSelectClicked"
-                                             SelectionDone="PartPrimaryMaterialSelectionDone" />
+                                             Tag="PartPrimaryMaterial"
+                                             SelectClicked="WpfMaterialCatalog_SelectClicked"
+                                             SelectionDone="WpfMaterialCatalog_SelectionDone" />
 
                     <tsuc:WpfFilterCheckBox Grid.Row="1" Grid.RowSpan="2" Grid.Column="13" AttributeName="PTPrimaryFNSH" />
                     <TextBox Grid.Row="1" Grid.RowSpan="2" Grid.Column="14" Text="{Binding PartPrimaryFinish, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
@@ -236,16 +238,18 @@
                     <tsuc:WpfProfileCatalog Grid.Row="3"
                                             Grid.RowSpan="2"
                                             Grid.Column="9"
-                                            SelectClicked="PartSecondaryProfileSelectClicked"
-                                            SelectionDone="PartSecondaryProfileSelectionDone" />
+                                            Tag="PartSecondaryProfile"
+                                            SelectClicked="WpfProfileCatalog_SelectClicked"
+                                            SelectionDone="WpfProfileCatalog_SelectionDone" />
 
                     <tsuc:WpfFilterCheckBox Grid.Row="3" Grid.RowSpan="2" Grid.Column="10" AttributeName="PTSecondaryMATL" />
                     <TextBox Grid.Row="3" Grid.RowSpan="2" Grid.Column="11" Text="{Binding PartSecondaryMaterial, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
                     <tsuc:WpfMaterialCatalog Grid.Row="3"
                                              Grid.RowSpan="2"
                                              Grid.Column="12"
-                                             SelectClicked="PartSecondaryMaterialSelectClicked"
-                                             SelectionDone="PartSecondaryMaterialSelectionDone" />
+                                             Tag="PartSecondaryMaterial"
+                                             SelectClicked="WpfMaterialCatalog_SelectClicked"
+                                             SelectionDone="WpfMaterialCatalog_SelectionDone" />
 
                     <tsuc:WpfFilterCheckBox Grid.Row="3" Grid.RowSpan="2" Grid.Column="13" AttributeName="PTSecondaryFNSH" />
                     <TextBox Grid.Row="3" Grid.RowSpan="2" Grid.Column="14" Text="{Binding PartSecondaryFinish, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
@@ -278,8 +282,9 @@
                     <tsuc:WpfMaterialCatalog Grid.Row="6"
                                              Grid.RowSpan="2"
                                              Grid.Column="12"
-                                             SelectClicked="PlateStiffenerMaterialSelectClicked"
-                                             SelectionDone="PlateStiffenerMaterialSelectionDone" />
+                                             Tag="PlateStiffenerMaterial"
+                                             SelectClicked="WpfMaterialCatalog_SelectClicked"
+                                             SelectionDone="WpfMaterialCatalog_SelectionDone" />
 
                     <tsuc:WpfFilterCheckBox Grid.Row="6" Grid.RowSpan="2" Grid.Column="13" AttributeName="PLStiffenerFNSH" />
                     <TextBox Grid.Row="6" Grid.RowSpan="2" Grid.Column="14" Text="{Binding PlateStiffenerFinish, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
@@ -318,8 +323,9 @@
                     <tsuc:WpfMaterialCatalog Grid.Row="8"
                                              Grid.RowSpan="2"
                                              Grid.Column="12"
-                                             SelectClicked="PlateSpliceMaterialSelectClicked"
-                                             SelectionDone="PlateSpliceMaterialSelectionDone" />
+                                             Tag="PlateSpliceMaterial"
+                                             SelectClicked="WpfMaterialCatalog_SelectClicked"
+                                             SelectionDone="WpfMaterialCatalog_SelectionDone" />
 
                     <tsuc:WpfFilterCheckBox Grid.Row="8" Grid.RowSpan="2" Grid.Column="13" AttributeName="PLSpliceFNSH" />
                     <TextBox Grid.Row="8" Grid.RowSpan="2" Grid.Column="14" Text="{Binding PlateSpliceFinish, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />

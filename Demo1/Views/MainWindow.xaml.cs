@@ -4,6 +4,7 @@ using Muggle.TsExtensions.Common.WPF.Localization;
 using Muggle.TsExtensions.Demo1.ViewModels;
 using Tekla.Structures.Dialog;
 using Tekla.Structures.Dialog.UIControls;
+using TsData = Tekla.Structures.Datatype;
 
 namespace Muggle.TsExtensions.Demo1.Views {
     /// <summary>
@@ -14,7 +15,7 @@ namespace Muggle.TsExtensions.Demo1.Views {
 
         public MainWindow(MainWindowViewModel dataContext) {
             TranslationService.Instance.ChangeLanguage(Localization.Language);
-            
+
             InitializeComponent();
             ViewModel = dataContext;
         }
@@ -44,112 +45,40 @@ namespace Muggle.TsExtensions.Demo1.Views {
             this.ToggleSelection();
         }
 
-        private void PartPrimaryProfileSelectClicked(object sender, EventArgs e) {
+        private void WpfMaterialCatalog_SelectClicked(object sender, EventArgs e) {
+            while (sender is not WpfMaterialCatalog) {
+                sender = LogicalTreeHelper.GetParent(sender as DependencyObject);
+            }
+
+            var catalog = sender as WpfMaterialCatalog;
+            catalog?.SelectedMaterial = ((TsData.String)ViewModel.GetType().GetProperty(catalog.Tag as string).GetValue(ViewModel)).Value;
+        }
+
+        private void WpfMaterialCatalog_SelectionDone(object sender, EventArgs e) {
+            while (sender is not WpfMaterialCatalog) {
+                sender = LogicalTreeHelper.GetParent(sender as DependencyObject);
+            }
+
+            var catalog = sender as WpfMaterialCatalog;
+            ViewModel.GetType().GetProperty(catalog.Tag as string).SetValue(ViewModel, new TsData.String(catalog?.SelectedMaterial));
+        }
+
+        private void WpfProfileCatalog_SelectClicked(object sender, EventArgs e) {
             while (sender is not WpfProfileCatalog) {
                 sender = LogicalTreeHelper.GetParent(sender as DependencyObject);
             }
 
             var catalog = sender as WpfProfileCatalog;
-            catalog.SelectedProfile = ViewModel.PartPrimaryProfile;
+            catalog?.SelectedProfile = ((TsData.String)ViewModel.GetType().GetProperty(catalog.Tag as string).GetValue(ViewModel)).Value;
         }
 
-        private void PartPrimaryProfileSelectionDone(object sender, EventArgs e) {
+        private void WpfProfileCatalog_SelectionDone(object sender, EventArgs e) {
             while (sender is not WpfProfileCatalog) {
                 sender = LogicalTreeHelper.GetParent(sender as DependencyObject);
             }
 
             var catalog = sender as WpfProfileCatalog;
-            ViewModel.PartPrimaryProfile = catalog.SelectedProfile;
-        }
-
-        private void PartPrimaryMaterialSelectClicked(object sender, EventArgs e) {
-            while (sender is not WpfMaterialCatalog) {
-                sender = LogicalTreeHelper.GetParent(sender as DependencyObject);
-            }
-
-            var catalog = sender as WpfMaterialCatalog;
-            catalog.SelectedMaterial = ViewModel.PartPrimaryMaterial;
-        }
-
-        private void PartPrimaryMaterialSelectionDone(object sender, EventArgs e) {
-            while (sender is not WpfMaterialCatalog) {
-                sender = LogicalTreeHelper.GetParent(sender as DependencyObject);
-            }
-
-            var catalog = sender as WpfMaterialCatalog;
-            ViewModel.PartPrimaryMaterial = catalog.SelectedMaterial;
-        }
-
-        private void PartSecondaryProfileSelectClicked(object sender, EventArgs e) {
-            while (sender is not WpfProfileCatalog) {
-                sender = LogicalTreeHelper.GetParent(sender as DependencyObject);
-            }
-
-            var catalog = sender as WpfProfileCatalog;
-            catalog.SelectedProfile = ViewModel.PartSecondaryProfile;
-        }
-
-        private void PartSecondaryProfileSelectionDone(object sender, EventArgs e) {
-            while (sender is not WpfProfileCatalog) {
-                sender = LogicalTreeHelper.GetParent(sender as DependencyObject);
-            }
-
-            var catalog = sender as WpfProfileCatalog;
-            ViewModel.PartSecondaryProfile = catalog.SelectedProfile;
-        }
-
-        private void PartSecondaryMaterialSelectClicked(object sender, EventArgs e) {
-            while (sender is not WpfMaterialCatalog) {
-                sender = LogicalTreeHelper.GetParent(sender as DependencyObject);
-            }
-
-            var catalog = sender as WpfMaterialCatalog;
-            catalog.SelectedMaterial = ViewModel.PartSecondaryMaterial;
-        }
-
-        private void PartSecondaryMaterialSelectionDone(object sender, EventArgs e) {
-            while (sender is not WpfMaterialCatalog) {
-                sender = LogicalTreeHelper.GetParent(sender as DependencyObject);
-            }
-
-            var catalog = sender as WpfMaterialCatalog;
-            ViewModel.PartSecondaryMaterial = catalog.SelectedMaterial;
-        }
-
-        private void PlateStiffenerMaterialSelectClicked(object sender, EventArgs e) {
-            while (sender is not WpfMaterialCatalog) {
-                sender = LogicalTreeHelper.GetParent(sender as DependencyObject);
-            }
-
-            var catalog = sender as WpfMaterialCatalog;
-            catalog.SelectedMaterial = ViewModel.PlateStiffenerMaterial;
-        }
-
-        private void PlateStiffenerMaterialSelectionDone(object sender, EventArgs e) {
-            while (sender is not WpfMaterialCatalog) {
-                sender = LogicalTreeHelper.GetParent(sender as DependencyObject);
-            }
-
-            var catalog = sender as WpfMaterialCatalog;
-            ViewModel.PlateStiffenerMaterial = catalog.SelectedMaterial;
-        }
-
-        private void PlateSpliceMaterialSelectClicked(object sender, EventArgs e) {
-            while (sender is not WpfMaterialCatalog) {
-                sender = LogicalTreeHelper.GetParent(sender as DependencyObject);
-            }
-
-            var catalog = sender as WpfMaterialCatalog;
-            catalog.SelectedMaterial = ViewModel.PlateSpliceMaterial;
-        }
-
-        private void PlateSpliceMaterialSelectionDone(object sender, EventArgs e) {
-            while (sender is not WpfMaterialCatalog) {
-                sender = LogicalTreeHelper.GetParent(sender as DependencyObject);
-            }
-
-            var catalog = sender as WpfMaterialCatalog;
-            ViewModel.PlateSpliceMaterial = catalog.SelectedMaterial;
+            ViewModel.GetType().GetProperty(catalog.Tag as string).SetValue(ViewModel, new TsData.String(catalog?.SelectedProfile));
         }
     }
 }
