@@ -26,13 +26,14 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 using Muggle.TsExtensions.CodingHelper.Generators.Information;
-using static Muggle.TsExtensions.CodingHelper.Generators.GeneratorHelper;
 using static Muggle.TsExtensions.CodingHelper.Diagnosers.InternalAttributesDiagnoser;
+using static Muggle.TsExtensions.CodingHelper.Generators.GeneratorHelper;
 
 namespace Muggle.TsExtensions.CodingHelper.Generators;
 
 [Generator]
 internal class PluginFieldDefaultValuesGenerator : IIncrementalGenerator {
+
     internal static readonly string[] ConcernedAttributes = [
         "Muggle.TsExtensions.CodingHelper.Generators.PartFieldDefaultValuesAttribute",
         "Muggle.TsExtensions.CodingHelper.Generators.PlateFieldDefaultValuesAttribute",
@@ -42,6 +43,8 @@ internal class PluginFieldDefaultValuesGenerator : IIncrementalGenerator {
         "Muggle.TsExtensions.CodingHelper.Generators.ChamferFieldDefaultValuesAttribute",
         "Muggle.TsExtensions.CodingHelper.Generators.GeneralFieldDefaultValuesAttribute"
     ];
+
+    private Version TsmVersion { get; set; }
 
     /// <summary>
     /// Dictionary of preset values.
@@ -55,31 +58,47 @@ internal class PluginFieldDefaultValuesGenerator : IIncrementalGenerator {
     ///     </item>
     /// </list>
     /// </summary>
-    private ReadOnlyDictionary<string, ReadOnlyDictionary<string, string>> PresetValues { get; }
-
-    public PluginFieldDefaultValuesGenerator() {
-        var dict = new Dictionary<string, ReadOnlyDictionary<string, string>>();
-
-        foreach (var text in GetAttributeSourceTexts(ConcernedAttributes.Take(ConcernedAttributes.Length - 1))) {
-            var defaultValues =
-                GetDefaultValuesFromSyntaxTree(CSharpSyntaxTree.ParseText(text), out var attributeName);
-            dict.Add(attributeName, new ReadOnlyDictionary<string, string>(defaultValues));
-        }
-
-        PresetValues = new ReadOnlyDictionary<string, ReadOnlyDictionary<string, string>>(dict);
-    }
+    private ReadOnlyDictionary<string, ReadOnlyDictionary<string, string>> PresetValues { get; set; }
 
     public void Initialize(IncrementalGeneratorInitializationContext context) {
-        context.RegisterPostInitializationOutput(ctx => {
-            foreach (var attribute in ConcernedAttributes) {
-                var shortName = attribute.Substring(attribute.LastIndexOf('.') + 1);
-                ctx.AddSource($"{shortName}.g.cs",
-                    SourceText.From(GetResourceAsString($"{shortName}.cs"), Encoding.UTF8));
+        var versionProvider = context.CompilationProvider.Select(static (compilation, _) => {
+            foreach (var reference in compilation.References) {
+                if (compilation.GetAssemblyOrModuleSymbol(reference) is not IAssemblySymbol assemblySymbol ||
+                    assemblySymbol.Name != "Tekla.Structures.Model" &&
+                    assemblySymbol.Identity.Name != "Tekla.Structures.Model") {
+                    continue;
+                }
+
+                return assemblySymbol.Identity.Version;
             }
+
+            return null;
         });
 
-        var provider = context.SyntaxProvider.CreateSyntaxProvider(Predicate, Transform)
-            .Where(x => x != default);
+
+        context.RegisterSourceOutput(versionProvider, (spc, version) => {
+            TsmVersion = version;
+
+            foreach (var attribute in ConcernedAttributes) {
+                var shortName = attribute.Substring(attribute.LastIndexOf('.') + 1);
+                spc.AddSource($"{shortName}.g.cs",
+                    SourceText.From(GetResourceAsString($"{shortName}.cs", version), Encoding.UTF8));
+            }
+
+            var dict = new Dictionary<string, ReadOnlyDictionary<string, string>>();
+
+            foreach (var text in GetAttributeSourceTexts(
+                         ConcernedAttributes.Take(ConcernedAttributes.Length - 1),
+                         version)) {
+                var defaultValues =
+                    GetDefaultValuesFromSyntaxTree(CSharpSyntaxTree.ParseText(text), out var attributeName);
+                dict.Add(attributeName, new ReadOnlyDictionary<string, string>(defaultValues));
+            }
+
+            PresetValues = new ReadOnlyDictionary<string, ReadOnlyDictionary<string, string>>(dict);
+        });
+
+        var provider = context.SyntaxProvider.CreateSyntaxProvider(Predicate, Transform).Where(x => x != default);
 
         var diagnostics = provider.SelectMany(static (x, _) => x.DiagnosticInfos);
         context.RegisterSourceOutput(diagnostics, static (spc, info) => {
@@ -103,7 +122,7 @@ internal class PluginFieldDefaultValuesGenerator : IIncrementalGenerator {
                );
     }
 
-    private GatheredInfo<PluginFieldDefaultValuesInfo> Transform(GeneratorSyntaxContext context,
+    private static GatheredInfo<PluginFieldDefaultValuesInfo> Transform(GeneratorSyntaxContext context,
         CancellationToken token) {
 
         var classDeclarationSyntax = (ClassDeclarationSyntax)context.Node;
@@ -138,7 +157,9 @@ internal class PluginFieldDefaultValuesGenerator : IIncrementalGenerator {
         }
 
         var dataClassAttArgs = dataMemberType.GetAttributes()
-            .Where(a => PluginDataFieldsGenerator.ConcernedAttributes.Contains(a.AttributeClass?.ToDisplayString()))
+            // .Where(a => PluginDataFieldsGenerator.ConcernedAttributes.Contains(a.AttributeClass?.ToDisplayString()))
+            .Where(a =>
+                PluginDataFieldsGenerator.ConcernedAttributes.Any(x => x.Contains(a.AttributeClass?.ToDisplayString())))
             .Select(a => {
                 var attName = a.AttributeClass!.ToDisplayString();
                 attName = attName.Substring(attName.LastIndexOf('.') + 1);
@@ -187,7 +208,7 @@ internal class PluginFieldDefaultValuesGenerator : IIncrementalGenerator {
                 AnalyzeGeneralFieldDefaultValues(attSyntax, dataClassAttArgs,
                     ref elementDict, ref diagnosticInfos);
             } else {
-                AnalyzeSeriesFieldDefaultValues(attSyntax, attName, dataClassAttArgs, PresetValues,
+                AnalyzeSeriesFieldDefaultValues(attSyntax, attName, dataClassAttArgs,
                     ref elementDict, ref diagnosticInfos);
             }
         }
@@ -407,7 +428,6 @@ internal class PluginFieldDefaultValuesGenerator : IIncrementalGenerator {
 
     private static void AnalyzeSeriesFieldDefaultValues(AttributeSyntax attSyntax, string attName,
         (string category, string[] attArgs)[] dataClassAttributeArguments,
-        ReadOnlyDictionary<string, ReadOnlyDictionary<string, string>> presetValues,
         ref DefaultValueDictionary elementDict,
         ref ImmutableArray<DiagnosticInfo> diagnosticInfos) {
 
@@ -453,7 +473,8 @@ internal class PluginFieldDefaultValuesGenerator : IIncrementalGenerator {
             if (paramName is not null) paramName = ToLocalVariableNameStyle(paramName);
 
             //  index-1 is safe here
-            paramName ??= presetValues[attName].ElementAt(index - 1).Key;
+            // paramName ??= presetValues[attName].ElementAt(index - 1).Key;
+            paramName ??= $"positionalParameter{index - 1}";
 
             valueDict.Add(paramName, paramValue);
         }
@@ -478,9 +499,11 @@ internal class PluginFieldDefaultValuesGenerator : IIncrementalGenerator {
             case "BoltCircleFieldDefaultValuesAttribute":
             case "ChamferFieldDefaultValuesAttribute":
                 seriesFieldStatementsBuilder.Append(
-                    GenerateSeriesFields(attName, kvp.Value, info.TargetType, info.TargetMemberName, PresetValues));
+                    GenerateSeriesFields(attName, kvp.Value, info.TargetType, info.TargetMemberName, PresetValues,
+                        TsmVersion));
                 creatorsBuilder.Append(
-                    GenerateCreatorsAndModifiers(attName, kvp.Value.Keys, info.TargetType, info.TargetMemberName));
+                    GenerateCreatorsAndModifiers(attName, kvp.Value.Keys, info.TargetType, info.TargetMemberName,
+                        TsmVersion));
                 break;
             case "GeneralFieldDefaultValuesAttribute":
                 generalFieldStatementsBuilder.Append(
@@ -541,15 +564,16 @@ internal class PluginFieldDefaultValuesGenerator : IIncrementalGenerator {
 
     private static string GenerateSeriesFields(string attName, DefaultValueDictionary defaultValueDict,
         AttributeTargets dataMemberType, string dataMemberName,
-        ReadOnlyDictionary<string, ReadOnlyDictionary<string, string>> presetValues) {
+        ReadOnlyDictionary<string, ReadOnlyDictionary<string, string>> presetValues,
+        Version tsmVersion) {
 
         var fieldInfos = attName switch {
-            "PartFieldDefaultValuesAttribute" => PluginDataFieldsGenerator.PartFieldInfos,
-            "PlateFieldDefaultValuesAttribute" => PluginDataFieldsGenerator.PlateFieldInfos,
-            "WeldFieldDefaultValuesAttribute" => PluginDataFieldsGenerator.WeldFieldInfos,
-            "BoltFieldDefaultValuesAttribute" => PluginDataFieldsGenerator.BoltFieldInfos,
-            "BoltCircleFieldDefaultValuesAttribute" => PluginDataFieldsGenerator.BoltCircleFieldInfos,
-            "ChamferFieldDefaultValuesAttribute" => PluginDataFieldsGenerator.ChamferFieldInfos,
+            "PartFieldDefaultValuesAttribute" => PluginDataFieldsGenerator.PartFieldInfos(tsmVersion),
+            "PlateFieldDefaultValuesAttribute" => PluginDataFieldsGenerator.PlateFieldInfos(tsmVersion),
+            "WeldFieldDefaultValuesAttribute" => PluginDataFieldsGenerator.WeldFieldInfos(tsmVersion),
+            "BoltFieldDefaultValuesAttribute" => PluginDataFieldsGenerator.BoltFieldInfos(tsmVersion),
+            "BoltCircleFieldDefaultValuesAttribute" => PluginDataFieldsGenerator.BoltCircleFieldInfos(tsmVersion),
+            "ChamferFieldDefaultValuesAttribute" => PluginDataFieldsGenerator.ChamferFieldInfos(tsmVersion),
             _ => []
         };
 
@@ -567,16 +591,21 @@ internal class PluginFieldDefaultValuesGenerator : IIncrementalGenerator {
 
         var builder = new StringBuilder();
 
+        var preset = presetValues[attName];
         foreach (var kvp in defaultValueDict) {
             var id = kvp.Key;
             var paramArgPair = kvp.Value;
 
-            foreach (var (propertyName, _, propertyDataType) in fieldInfos) {
-                var paramName = ToLocalVariableNameStyle(propertyName);
-                if (!paramArgPair.TryGetValue(paramName, out var defaultValue)) {
-                    if (!presetValues[attName].TryGetValue(paramName, out defaultValue))
-                        continue;
+            for (int i = 0; i < preset.Count; i++) {
+                var propertyName = preset.ElementAt(i).Key;
+
+                if (!paramArgPair.TryGetValue(propertyName, out var value) &&
+                    !paramArgPair.TryGetValue($"positionalParameter{i}", out value)) {
+                    value = preset.ElementAt(i).Value;
                 }
+
+                var propertyDataType = fieldInfos[i].Type;
+                propertyName = ToPropertyNameStyle(propertyName);
 
                 var fieldAccess = $"{memberAccess}{fieldPrefix}{ToPropertyNameStyle(id)}{propertyName}";
 
@@ -588,16 +617,18 @@ internal class PluginFieldDefaultValuesGenerator : IIncrementalGenerator {
                 }
 
                 builder.AppendLine(propertyDataType is "string"
-                    ? $"                {fieldAccess} = \"{defaultValue}\";"
-                    : $"                {fieldAccess} = {defaultValue};");
+                    ? $"                {fieldAccess} = \"{value}\";"
+                    : $"                {fieldAccess} = {value};");
             }
         }
 
         return builder.ToString();
     }
 
-    private static string GenerateCreatorsAndModifiers(string attName, ICollection<string> ids, AttributeTargets targetType,
-        string targetMemberName) {
+    private static string GenerateCreatorsAndModifiers(string attName, ICollection<string> ids,
+        AttributeTargets targetType,
+        string targetMemberName,
+        Version tsmVersion) {
 
         const string TsmNameSpace = "global::Tekla.Structures.Model";
         const string TsdNameSpace = "global::Tekla.Structures.Datatype";
@@ -633,7 +664,7 @@ internal class PluginFieldDefaultValuesGenerator : IIncrementalGenerator {
                     $"            part.PartNumber.StartNumber = {propertyAccess}PartStartNumber;\n" +
                     $"            return part;\n" +
                     $"        }}");
-                
+
                 builder.AppendLine(
                     $"        \n" +
                     $"        /// <summary>\n" +
@@ -862,7 +893,16 @@ internal class PluginFieldDefaultValuesGenerator : IIncrementalGenerator {
                     $"            bolt.Hole5 = {propertyAccess}Hole5 != 0;\n" +
                     $"            bolt.HoleType = ({TsmNameSpace}.BoltGroup.BoltHoleTypeEnum) global::System.Enum.Parse(typeof({TsmNameSpace}.BoltGroup.BoltHoleTypeEnum), {propertyAccess}HoleType.ToString(), true);\n" +
                     $"            bolt.SlottedHoleX = {propertyAccess}SlottedHoleX;\n" +
-                    $"            bolt.SlottedHoleY = {propertyAccess}SlottedHoleY;\n" +
+                    $"            bolt.SlottedHoleY = {propertyAccess}SlottedHoleY;\n");
+
+                if (tsmVersion.Major >= 2023) {
+                    builder.AppendLine(
+                        $"            bolt.SlotOffsetX = {propertyAccess}SlotOffsetX;\n" +
+                        $"            bolt.SlotOffsetY = {propertyAccess}SlotOffsetY;\n"
+                    );
+                }
+
+                builder.AppendLine(
                     $"            bolt.RotateSlots = ({TsmNameSpace}.BoltGroup.BoltRotateSlotsEnum) global::System.Enum.Parse(typeof({TsmNameSpace}.BoltGroup.BoltRotateSlotsEnum), {propertyAccess}RotateSlots.ToString(), true);\n" +
                     $"            bolt.Bolt = {propertyAccess}IsBolt != 0;\n" +
                     $"            bolt.Nut1 = {propertyAccess}UseNut1 != 0;\n" +
@@ -931,7 +971,16 @@ internal class PluginFieldDefaultValuesGenerator : IIncrementalGenerator {
                     $"            bolt.Hole5 = {propertyAccess}Hole5 != 0;\n" +
                     $"            bolt.HoleType = ({TsmNameSpace}.BoltGroup.BoltHoleTypeEnum) global::System.Enum.Parse(typeof({TsmNameSpace}.BoltGroup.BoltHoleTypeEnum), {propertyAccess}HoleType.ToString(), true);\n" +
                     $"            bolt.SlottedHoleX = {propertyAccess}SlottedHoleX;\n" +
-                    $"            bolt.SlottedHoleY = {propertyAccess}SlottedHoleY;\n" +
+                    $"            bolt.SlottedHoleY = {propertyAccess}SlottedHoleY;\n");
+
+                if (tsmVersion.Major >= 2023) {
+                    builder.AppendLine(
+                        $"            bolt.SlotOffsetX = {propertyAccess}SlotOffsetX;\n" +
+                        $"            bolt.SlotOffsetY = {propertyAccess}SlotOffsetY;\n"
+                    );
+                }
+
+                builder.AppendLine(
                     $"            bolt.RotateSlots = ({TsmNameSpace}.BoltGroup.BoltRotateSlotsEnum) global::System.Enum.Parse(typeof({TsmNameSpace}.BoltGroup.BoltRotateSlotsEnum), {propertyAccess}RotateSlots.ToString(), true);\n" +
                     $"            bolt.Bolt = {propertyAccess}IsBolt != 0;\n" +
                     $"            bolt.Nut1 = {propertyAccess}UseNut1 != 0;\n" +
@@ -995,7 +1044,16 @@ internal class PluginFieldDefaultValuesGenerator : IIncrementalGenerator {
                     $"            bolt.Hole5 = {propertyAccess}Hole5 != 0;\n" +
                     $"            bolt.HoleType = ({TsmNameSpace}.BoltGroup.BoltHoleTypeEnum) global::System.Enum.Parse(typeof({TsmNameSpace}.BoltGroup.BoltHoleTypeEnum), {propertyAccess}HoleType.ToString(), true);\n" +
                     $"            bolt.SlottedHoleX = {propertyAccess}SlottedHoleX;\n" +
-                    $"            bolt.SlottedHoleY = {propertyAccess}SlottedHoleY;\n" +
+                    $"            bolt.SlottedHoleY = {propertyAccess}SlottedHoleY;\n");
+
+                if (tsmVersion.Major >= 2023) {
+                    builder.AppendLine(
+                        $"            bolt.SlotOffsetX = {propertyAccess}SlotOffsetX;\n" +
+                        $"            bolt.SlotOffsetY = {propertyAccess}SlotOffsetY;\n"
+                    );
+                }
+
+                builder.AppendLine(
                     $"            bolt.RotateSlots = ({TsmNameSpace}.BoltGroup.BoltRotateSlotsEnum) global::System.Enum.Parse(typeof({TsmNameSpace}.BoltGroup.BoltRotateSlotsEnum), {propertyAccess}RotateSlots.ToString(), true);\n" +
                     $"            bolt.Bolt = {propertyAccess}IsBolt != 0;\n" +
                     $"            bolt.Nut1 = {propertyAccess}UseNut1 != 0;\n" +
@@ -1031,7 +1089,16 @@ internal class PluginFieldDefaultValuesGenerator : IIncrementalGenerator {
                     $"            bolt.Hole5 = {propertyAccess}Hole5 != 0;\n" +
                     $"            bolt.HoleType = ({TsmNameSpace}.BoltGroup.BoltHoleTypeEnum) global::System.Enum.Parse(typeof({TsmNameSpace}.BoltGroup.BoltHoleTypeEnum), {propertyAccess}HoleType.ToString(), true);\n" +
                     $"            bolt.SlottedHoleX = {propertyAccess}SlottedHoleX;\n" +
-                    $"            bolt.SlottedHoleY = {propertyAccess}SlottedHoleY;\n" +
+                    $"            bolt.SlottedHoleY = {propertyAccess}SlottedHoleY;\n");
+
+                if (tsmVersion.Major >= 2023) {
+                    builder.AppendLine(
+                        $"            bolt.SlotOffsetX = {propertyAccess}SlotOffsetX;\n" +
+                        $"            bolt.SlotOffsetY = {propertyAccess}SlotOffsetY;\n"
+                    );
+                }
+
+                builder.AppendLine(
                     $"            bolt.RotateSlots = ({TsmNameSpace}.BoltGroup.BoltRotateSlotsEnum) global::System.Enum.Parse(typeof({TsmNameSpace}.BoltGroup.BoltRotateSlotsEnum), {propertyAccess}RotateSlots.ToString(), true);\n" +
                     $"            bolt.Bolt = {propertyAccess}IsBolt != 0;\n" +
                     $"            bolt.Nut1 = {propertyAccess}UseNut1 != 0;\n" +

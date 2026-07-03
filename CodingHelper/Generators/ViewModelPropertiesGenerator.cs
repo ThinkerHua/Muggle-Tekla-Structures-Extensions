@@ -20,13 +20,11 @@ using System.Collections.Immutable;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
-using Muggle.TsExtensions.CodingHelper.Diagnosers;
 using Muggle.TsExtensions.CodingHelper.Generators.Information;
 using static Muggle.TsExtensions.CodingHelper.Diagnosers.InternalAttributesDiagnoser;
 using static Muggle.TsExtensions.CodingHelper.Generators.GeneratorHelper;
@@ -39,7 +37,7 @@ internal class ViewModelPropertiesGenerator : IIncrementalGenerator {
     private const string TsDatatype = "global::Tekla.Structures.Datatype";
     private const string TsDialog = "global::Tekla.Structures.Dialog";
 
-    internal static readonly string[] ConcernedAttributes = [
+    internal static string[] ConcernedAttributes => [
         "Muggle.TsExtensions.CodingHelper.Generators.PartPropertiesAttribute",
         "Muggle.TsExtensions.CodingHelper.Generators.PlatePropertiesAttribute",
         "Muggle.TsExtensions.CodingHelper.Generators.WeldPropertiesAttribute",
@@ -49,7 +47,7 @@ internal class ViewModelPropertiesGenerator : IIncrementalGenerator {
         "Muggle.TsExtensions.CodingHelper.Generators.GeneralPropertiesAttribute"
     ];
 
-    internal static readonly PropertyInfo[] PartPropertyInfos = [
+    internal static IReadOnlyList<PropertyInfo> PartPropertyInfos(Version tsmVersion) => [
         ("Profile", "PRF", "String", "string.IsNullOrEmpty(value)"),
         ("Material", "MATL", "String", "string.IsNullOrEmpty(value)"),
         ("Name", "NAME", "String", "string.IsNullOrEmpty(value)"),
@@ -61,7 +59,7 @@ internal class ViewModelPropertiesGenerator : IIncrementalGenerator {
         ("PartStartNumber", "PTN", "Integer", "value == int.MinValue"),
     ];
 
-    internal static readonly PropertyInfo[] PlatePropertyInfos = [
+    internal static IReadOnlyList<PropertyInfo> PlatePropertyInfos(Version tsmVersion) => [
         ("Thickness", "T", "Double", "value == int.MinValue"),
         ("Breadth", "B", "Double", "value == int.MinValue"),
         ("Height", "H", "Double", "value == int.MinValue"),
@@ -75,7 +73,7 @@ internal class ViewModelPropertiesGenerator : IIncrementalGenerator {
         ("PartStartNumber", "PTN", "Integer", "value == int.MinValue"),
     ];
 
-    internal static readonly PropertyInfo[] WeldPropertyInfos = [
+    internal static IReadOnlyList<PropertyInfo> WeldPropertyInfos(Version tsmVersion) => [
         ("TypeAbove", "TYPEA", "Integer", "value < 0 || value > 26"),
         ("TypeBelow", "TYPEB", "Integer", "value < 0 || value > 26"),
         ("SizeAbove", "SIZEA", "Double", "value == int.MinValue"),
@@ -106,73 +104,119 @@ internal class ViewModelPropertiesGenerator : IIncrementalGenerator {
         ("ReferenceText", "TEXT", "String", "string.IsNullOrEmpty(value)"),
     ];
 
-    internal static readonly PropertyInfo[] BoltPropertyInfos = [
-        ("Size", "SIZE", "Distance", "value.Millimeters == int.MinValue || value.Millimeters == 0.0"),
-        ("Standard", "STD", "String", "string.IsNullOrEmpty(value)"),
-        ("DistX", "DISTX", "DistanceList", "value.Count == 0"),
-        ("DistY", "DISTY", "DistanceList", "value.Count == 0"),
-        ("Type", "TYPE", "Integer", "value < 0 || value > 1"),
-        ("ThreadInMaterial", "THRD", "Integer", "value < 0 || value > 1"),
-        ("Length", "LEN", "Double", "value == int.MinValue"),
-        ("CutLength", "CLEN", "Double", "value == int.MinValue"),
-        ("ExtraLength", "XLEN", "Double", "value == int.MinValue"),
-        ("Tolerance", "TOL", "Double", "value == int.MinValue"),
-        ("PlainType", "PLAIN", "Integer", "value < 0 || value > 1"),
-        ("BlindHoleDepth", "DEPTH", "Double", "value == int.MinValue"),
-        ("Hole1", "HOLE1", "Integer", "value < 0 || value > 1"),
-        ("Hole2", "HOLE2", "Integer", "value < 0 || value > 1"),
-        ("Hole3", "HOLE3", "Integer", "value < 0 || value > 1"),
-        ("Hole4", "HOLE4", "Integer", "value < 0 || value > 1"),
-        ("Hole5", "HOLE5", "Integer", "value < 0 || value > 1"),
-        ("HoleType", "HOLTY", "Integer", "value < 0 || value > 2"),
-        ("SlottedHoleX", "SLOTX", "Double", "value == int.MinValue"),
-        ("SlottedHoleY", "SLOTY", "Double", "value == int.MinValue"),
-        ("RotateSlots", "RSLOT", "Integer", "value < 0 || value > 2"),
-        ("IsBolt", "ISBOT", "Integer", "value < 0 || value > 1"),
-        ("UseNut1", "NUT1", "Integer", "value < 0 || value > 1"),
-        ("UseNut2", "NUT2", "Integer", "value < 0 || value > 1"),
-        ("UseWasher1", "WSHR1", "Integer", "value < 0 || value > 1"),
-        ("UseWasher2", "WSHR2", "Integer", "value < 0 || value > 1"),
-        ("UseWasher3", "WSHR3", "Integer", "value < 0 || value > 1"),
-    ];
+    internal static IReadOnlyList<PropertyInfo> BoltPropertyInfos(Version tsmVersion) {
+        var result = new List<PropertyInfo> {
+            ("Size", "SIZE", "Distance", "value.Millimeters == int.MinValue || value.Millimeters == 0.0"),
+            ("Standard", "STD", "String", "string.IsNullOrEmpty(value)"),
+            ("DistX", "DISTX", "DistanceList", "value.Count == 0"),
+            ("DistY", "DISTY", "DistanceList", "value.Count == 0"),
+            ("Type", "TYPE", "Integer", "value < 0 || value > 1"),
+            ("ThreadInMaterial", "THRD", "Integer", "value < 0 || value > 1"),
+            ("Length", "LEN", "Double", "value == int.MinValue"),
+            ("CutLength", "CLEN", "Double", "value == int.MinValue"),
+            ("ExtraLength", "XLEN", "Double", "value == int.MinValue"),
+            ("Tolerance", "TOL", "Double", "value == int.MinValue"),
+            ("PlainType", "PLAIN", "Integer", "value < 0 || value > 1"),
+            ("BlindHoleDepth", "DEPTH", "Double", "value == int.MinValue"),
+            ("Hole1", "HOLE1", "Integer", "value < 0 || value > 1"),
+            ("Hole2", "HOLE2", "Integer", "value < 0 || value > 1"),
+            ("Hole3", "HOLE3", "Integer", "value < 0 || value > 1"),
+            ("Hole4", "HOLE4", "Integer", "value < 0 || value > 1"),
+            ("Hole5", "HOLE5", "Integer", "value < 0 || value > 1"),
+        };
 
-    internal static readonly PropertyInfo[] BoltCircleProperties = [
-        ("Size", "SIZE", "Distance", "value.Millimeters == int.MinValue || value.Millimeters == 0.0"),
-        ("Standard", "STD", "String", "string.IsNullOrEmpty(value)"),
-        ("NumberOfBolts", "NUM", "Integer", "value == int.MinValue"),
-        ("Diameter", "DIAM", "Double", "value == int.MinValue"),
-        ("Type", "TYPE", "Integer", "value < 0 || value > 1"),
-        ("ThreadInMaterial", "THRD", "Integer", "value < 0 || value > 1"),
-        ("Length", "LEN", "Double", "value == int.MinValue"),
-        ("CutLength", "CLEN", "Double", "value == int.MinValue"),
-        ("ExtraLength", "XLEN", "Double", "value == int.MinValue"),
-        ("Tolerance", "TOL", "Double", "value == int.MinValue"),
-        ("PlainType", "PLAIN", "Integer", "value < 0 || value > 1"),
-        ("BlindHoleDepth", "DEPTH", "Double", "value == int.MinValue"),
-        ("Hole1", "HOLE1", "Integer", "value < 0 || value > 1"),
-        ("Hole2", "HOLE2", "Integer", "value < 0 || value > 1"),
-        ("Hole3", "HOLE3", "Integer", "value < 0 || value > 1"),
-        ("Hole4", "HOLE4", "Integer", "value < 0 || value > 1"),
-        ("Hole5", "HOLE5", "Integer", "value < 0 || value > 1"),
-        ("HoleType", "HOLTY", "Integer", "value < 0 || value > 2"),
-        ("SlottedHoleX", "SLOTX", "Double", "value == int.MinValue"),
-        ("SlottedHoleY", "SLOTY", "Double", "value == int.MinValue"),
-        ("RotateSlots", "RSLOT", "Integer", "value < 0 || value > 2"),
-        ("IsBolt", "ISBOT", "Integer", "value < 0 || value > 1"),
-        ("UseNut1", "NUT1", "Integer", "value < 0 || value > 1"),
-        ("UseNut2", "NUT2", "Integer", "value < 0 || value > 1"),
-        ("UseWasher1", "WSHR1", "Integer", "value < 0 || value > 1"),
-        ("UseWasher2", "WSHR2", "Integer", "value < 0 || value > 1"),
-        ("UseWasher3", "WSHR3", "Integer", "value < 0 || value > 1"),
-    ];
+        if (tsmVersion is not null && tsmVersion.Major >= 2023) {
+            result.Add(("HoleType", "HOLTY", "Integer", "value < 0 || value > 3"));
+        } else {
+            result.Add(("HoleType", "HOLTY", "Integer", "value < 0 || value > 2"));
+        }
 
-    internal static readonly PropertyInfo[] ChamferPropertyInfos = [
+        result.AddRange([
+            ("SlottedHoleX", "SLOTX", "Double", "value == int.MinValue"),
+            ("SlottedHoleY", "SLOTY", "Double", "value == int.MinValue"),
+        ]);
+
+        if (tsmVersion is not null && tsmVersion.Major >= 2023) {
+            result.AddRange([
+                ("SlotOffsetX", "SOFFX", "Double", "value == int.MinValue"),
+                ("SlotOffsetY", "SOFFY", "Double", "value == int.MinValue"),
+            ]);
+        }
+
+        result.AddRange([
+            ("RotateSlots", "RSLOT", "Integer", "value < 0 || value > 2"),
+            ("IsBolt", "ISBOT", "Integer", "value < 0 || value > 1"),
+            ("UseNut1", "NUT1", "Integer", "value < 0 || value > 1"),
+            ("UseNut2", "NUT2", "Integer", "value < 0 || value > 1"),
+            ("UseWasher1", "WSHR1", "Integer", "value < 0 || value > 1"),
+            ("UseWasher2", "WSHR2", "Integer", "value < 0 || value > 1"),
+            ("UseWasher3", "WSHR3", "Integer", "value < 0 || value > 1"),
+        ]);
+
+        return result;
+    }
+
+    internal static IReadOnlyList<PropertyInfo> BoltCirclePropertyInfos(Version tsmVersion) {
+        var result = new List<PropertyInfo> {
+            ("Size", "SIZE", "Distance", "value.Millimeters == int.MinValue || value.Millimeters == 0.0"),
+            ("Standard", "STD", "String", "string.IsNullOrEmpty(value)"),
+            ("NumberOfBolts", "NUM", "Integer", "value == int.MinValue"),
+            ("Diameter", "DIAM", "Double", "value == int.MinValue"),
+            ("Type", "TYPE", "Integer", "value < 0 || value > 1"),
+            ("ThreadInMaterial", "THRD", "Integer", "value < 0 || value > 1"),
+            ("Length", "LEN", "Double", "value == int.MinValue"),
+            ("CutLength", "CLEN", "Double", "value == int.MinValue"),
+            ("ExtraLength", "XLEN", "Double", "value == int.MinValue"),
+            ("Tolerance", "TOL", "Double", "value == int.MinValue"),
+            ("PlainType", "PLAIN", "Integer", "value < 0 || value > 1"),
+            ("BlindHoleDepth", "DEPTH", "Double", "value == int.MinValue"),
+            ("Hole1", "HOLE1", "Integer", "value < 0 || value > 1"),
+            ("Hole2", "HOLE2", "Integer", "value < 0 || value > 1"),
+            ("Hole3", "HOLE3", "Integer", "value < 0 || value > 1"),
+            ("Hole4", "HOLE4", "Integer", "value < 0 || value > 1"),
+            ("Hole5", "HOLE5", "Integer", "value < 0 || value > 1"),
+        };
+
+        if (tsmVersion is not null && tsmVersion.Major >= 2023) {
+            result.Add(("HoleType", "HOLTY", "Integer", "value < 0 || value > 3"));
+        } else {
+            result.Add(("HoleType", "HOLTY", "Integer", "value < 0 || value > 2"));
+        }
+
+        result.AddRange([
+            ("SlottedHoleX", "SLOTX", "Double", "value == int.MinValue"),
+            ("SlottedHoleY", "SLOTY", "Double", "value == int.MinValue"),
+        ]);
+
+        if (tsmVersion is not null && tsmVersion.Major >= 2023) {
+            result.AddRange([
+                ("SlotOffsetX", "SOFFX", "Double", "value == int.MinValue"),
+                ("SlotOffsetY", "SOFFY", "Double", "value == int.MinValue"),
+            ]);
+        }
+
+        result.AddRange([
+            ("RotateSlots", "RSLOT", "Integer", "value < 0 || value > 2"),
+            ("IsBolt", "ISBOT", "Integer", "value < 0 || value > 1"),
+            ("UseNut1", "NUT1", "Integer", "value < 0 || value > 1"),
+            ("UseNut2", "NUT2", "Integer", "value < 0 || value > 1"),
+            ("UseWasher1", "WSHR1", "Integer", "value < 0 || value > 1"),
+            ("UseWasher2", "WSHR2", "Integer", "value < 0 || value > 1"),
+            ("UseWasher3", "WSHR3", "Integer", "value < 0 || value > 1"),
+        ]);
+
+        return result;
+    }
+
+    internal static IReadOnlyList<PropertyInfo> ChamferPropertyInfos(Version tsmVersion) => [
         ("Type", "TYPE", "Integer", "value < 0 || value > 7"),
         ("X", "X", "Double", "value == int.MinValue"),
         ("Y", "Y", "Double", "value == int.MinValue"),
         ("Dz1", "DZ1", "Double", "value == int.MinValue"),
         ("Dz2", "DZ2", "Double", "value == int.MinValue"),
     ];
+
+    private Version TsmVersion { get; set; }
 
     /// <summary>
     /// Dictionary of preset values.
@@ -186,23 +230,11 @@ internal class ViewModelPropertiesGenerator : IIncrementalGenerator {
     ///     </item>
     /// </list>
     /// </summary>
-    private ReadOnlyDictionary<string, ReadOnlyDictionary<string, string>> PresetValues { get; }
-
-    public ViewModelPropertiesGenerator() {
-        var dict = new Dictionary<string, ReadOnlyDictionary<string, string>>();
-
-        //  include 'GeneralPropertyWithDefaultValueAttribute'
-        foreach (var text in GetAttributeSourceTexts(ConcernedAttributes.Take(ConcernedAttributes.Length - 1))) {
-            var defaultValues =
-                GetDefaultValuesFromSyntaxTree(CSharpSyntaxTree.ParseText(text), out var attributeName);
-            dict.Add(attributeName, new ReadOnlyDictionary<string, string>(defaultValues));
-        }
-
-        PresetValues = new ReadOnlyDictionary<string, ReadOnlyDictionary<string, string>>(dict);
-    }
+    private ReadOnlyDictionary<string, ReadOnlyDictionary<string, string>> PresetValues { get; set; }
 
     public void Initialize(IncrementalGeneratorInitializationContext context) {
-        context.RegisterPostInitializationOutput(ctx => {
+
+        context.RegisterPostInitializationOutput(static ctx => {
             ctx.AddSource("NotificationObject.g.cs",
                 SourceText.From(GetResourceAsString("NotificationObject.cs"), Encoding.UTF8));
             ctx.AddSource("ConnectionViewModel.g.cs",
@@ -211,11 +243,42 @@ internal class ViewModelPropertiesGenerator : IIncrementalGenerator {
                 SourceText.From(GetResourceAsString("DetailViewModel.cs"), Encoding.UTF8));
             ctx.AddSource("CustomPartViewModel.g.cs",
                 SourceText.From(GetResourceAsString("CustomPartViewModel.cs"), Encoding.UTF8));
+        });
+
+        var versionProvider = context.CompilationProvider.Select(static (compilation, _) => {
+            foreach (var reference in compilation.References) {
+                if (compilation.GetAssemblyOrModuleSymbol(reference) is not IAssemblySymbol assemblySymbol ||
+                    assemblySymbol.Name != "Tekla.Structures.Model" &&
+                    assemblySymbol.Identity.Name != "Tekla.Structures.Model") {
+                    continue;
+                }
+
+                return assemblySymbol.Identity.Version;
+            }
+
+            return null;
+        });
+
+        context.RegisterSourceOutput(versionProvider, (spc, version) => {
+            TsmVersion = version;
+
             foreach (var attribute in ConcernedAttributes) {
                 var shortName = attribute.Substring(attribute.LastIndexOf('.') + 1);
-                ctx.AddSource($"{shortName}.g.cs",
-                    SourceText.From(GetResourceAsString($"{shortName}.cs"), Encoding.UTF8));
+                spc.AddSource($"{shortName}.g.cs",
+                    SourceText.From(GetResourceAsString($"{shortName}.cs", version), Encoding.UTF8));
             }
+
+            var dict = new Dictionary<string, ReadOnlyDictionary<string, string>>();
+
+            //  exclude 'GeneralPropertyWithDefaultValueAttribute'
+            foreach (var text
+                     in GetAttributeSourceTexts(ConcernedAttributes.Take(ConcernedAttributes.Length - 1), version)) {
+                var defaultValues =
+                    GetDefaultValuesFromSyntaxTree(CSharpSyntaxTree.ParseText(text), out var attributeName);
+                dict.Add(attributeName, new ReadOnlyDictionary<string, string>(defaultValues));
+            }
+
+            PresetValues = new ReadOnlyDictionary<string, ReadOnlyDictionary<string, string>>(dict);
         });
 
         var provider = context.SyntaxProvider.CreateSyntaxProvider(Predicate, Transform)
@@ -236,8 +299,8 @@ internal class ViewModelPropertiesGenerator : IIncrementalGenerator {
         return syntaxNode is ClassDeclarationSyntax { AttributeLists.Count: > 0 };
     }
 
-    private GatheredInfo<ViewModelPropertiesInfo>
-        Transform(GeneratorSyntaxContext context, CancellationToken token) {
+    private static GatheredInfo<ViewModelPropertiesInfo> Transform(
+        GeneratorSyntaxContext context, CancellationToken token) {
 
         var semanticModel = context.SemanticModel;
         var classDeclarationSyntax = (ClassDeclarationSyntax)context.Node;
@@ -302,7 +365,7 @@ internal class ViewModelPropertiesGenerator : IIncrementalGenerator {
                 AnalyzeGeneralProperties(attSyntax, attName,
                     ref diagnosticInfos, ref elementDict, ref generalPropertySet);
             } else {
-                AnalyzeSeriesProperties(attSyntax, attName, PresetValues, ref diagnosticInfos, ref elementDict);
+                AnalyzeSeriesProperties(attSyntax, attName, ref diagnosticInfos, ref elementDict);
             }
 
             result.DiagnosticInfos = diagnosticInfos;
@@ -368,7 +431,6 @@ internal class ViewModelPropertiesGenerator : IIncrementalGenerator {
             if (argSyntaxes.Count < 2) return;
         }
 
-        var maxLength = MaxLengthOfArgument(attName);
         for (int i = 0; i < argSyntaxes.Count / 2 * 2; i += 2) {
             var paramSyntax = argSyntaxes[i];
             var valueSyntax = argSyntaxes[i + 1];
@@ -382,8 +444,7 @@ internal class ViewModelPropertiesGenerator : IIncrementalGenerator {
             var param = paramSyntax.Token.ValueText;
             var value = valueSyntax.Token.ValueText;
 
-            if (!PluginDataFieldsGenerator.DiagnoseIdCharacters(param, attName, paramSyntax.GetLocation(), true,
-                    ref diagnosticInfos)) {
+            if (!DiagnoseIdCharacters(param, attName, paramSyntax.GetLocation(), true, ref diagnosticInfos)) {
                 continue;
             }
 
@@ -420,7 +481,6 @@ internal class ViewModelPropertiesGenerator : IIncrementalGenerator {
     }
 
     private static void AnalyzeSeriesProperties(AttributeSyntax attSyntax, string attName,
-        ReadOnlyDictionary<string, ReadOnlyDictionary<string, string>> presetValues,
         ref ImmutableArray<DiagnosticInfo> diagnosticInfos, ref DefaultValueDictionary elementDict) {
 
         var argSyntaxes = attSyntax.ArgumentList?.Arguments;
@@ -440,8 +500,7 @@ internal class ViewModelPropertiesGenerator : IIncrementalGenerator {
             if (paramName is null && index == 0 || paramName is "id") {
                 id = paramValue;
 
-                if (!PluginDataFieldsGenerator.DiagnoseIdCharacters(id, attName, argSyntax.GetLocation(), false,
-                        ref diagnosticInfos)) {
+                if (!DiagnoseIdCharacters(id, attName, argSyntax.GetLocation(), false, ref diagnosticInfos)) {
                     return;
                 }
 
@@ -459,7 +518,8 @@ internal class ViewModelPropertiesGenerator : IIncrementalGenerator {
             if (paramName is not null) paramName = ToLocalVariableNameStyle(paramName);
 
             //  index-1 is safe here
-            paramName ??= presetValues[attName].ElementAt(index - 1).Key;
+            // paramName ??= presetValues[attName].ElementAt(index - 1).Key;
+            paramName ??= $"positionalParameter{index - 1}";
 
             valueDict.Add(paramName, paramValue);
         }
@@ -477,7 +537,7 @@ internal class ViewModelPropertiesGenerator : IIncrementalGenerator {
             var attName = attDict.Key;
             var g = attName switch {
                 "GeneralPropertiesAttribute" => GenerateGeneralSource(attDict.Value),
-                _ => GenerateSeriesSource(attName, attDict.Value)
+                _ => GenerateSeriesSource(attName, attDict.Value, PresetValues, TsmVersion)
             };
 
             fieldsBuilder.Append(g.fields);
@@ -554,19 +614,21 @@ internal class ViewModelPropertiesGenerator : IIncrementalGenerator {
         return (fieldsBuilder.ToString(), propertiesBuilder.ToString());
     }
 
-    private (string fields, string properties) GenerateSeriesSource(string attributeName,
-        DefaultValueDictionary defaultValueDict) {
+    private static (string fields, string properties) GenerateSeriesSource(string attributeName,
+        DefaultValueDictionary defaultValueDict,
+        ReadOnlyDictionary<string, ReadOnlyDictionary<string, string>> presetValues,
+        Version tsmVersion) {
 
         var fieldsBuilder = new StringBuilder();
         var propertiesBuilder = new StringBuilder();
 
         var propertyInfos = attributeName switch {
-            "PartPropertiesAttribute" => PartPropertyInfos,
-            "PlatePropertiesAttribute" => PlatePropertyInfos,
-            "WeldPropertiesAttribute" => WeldPropertyInfos,
-            "BoltPropertiesAttribute" => BoltPropertyInfos,
-            "BoltCirclePropertiesAttribute" => BoltCircleProperties,
-            "ChamferPropertiesAttribute" => ChamferPropertyInfos,
+            "PartPropertiesAttribute" => PartPropertyInfos(tsmVersion),
+            "PlatePropertiesAttribute" => PlatePropertyInfos(tsmVersion),
+            "WeldPropertiesAttribute" => WeldPropertyInfos(tsmVersion),
+            "BoltPropertiesAttribute" => BoltPropertyInfos(tsmVersion),
+            "BoltCirclePropertiesAttribute" => BoltCirclePropertyInfos(tsmVersion),
+            "ChamferPropertiesAttribute" => ChamferPropertyInfos(tsmVersion),
             _ => []
         };
 
@@ -581,17 +643,18 @@ internal class ViewModelPropertiesGenerator : IIncrementalGenerator {
             _ => string.Empty
         };
 
-        var presetValues = PresetValues[attributeName];
+        var preset = presetValues[attributeName];
 
         foreach (var idDict in defaultValueDict) {
             var id = idDict.Key;
             var defaultValues = idDict.Value;
 
-            for (int i = 0; i < presetValues.Count; i++) {
-                var property = presetValues.ElementAt(i).Key;
+            for (int i = 0; i < preset.Count; i++) {
+                var property = preset.ElementAt(i).Key;
 
-                if (!defaultValues.TryGetValue(property, out var value)) {
-                    value = presetValues.ElementAt(i).Value;
+                if (!defaultValues.TryGetValue(property, out var value) &&
+                    !defaultValues.TryGetValue($"positionalParameter{i}", out value)) {
+                    value = preset.ElementAt(i).Value;
                 }
 
                 value = propertyInfos[i].Type switch {

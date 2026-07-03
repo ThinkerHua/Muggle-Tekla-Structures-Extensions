@@ -15,24 +15,23 @@
 
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 using Muggle.TsExtensions.CodingHelper.Generators.Information;
-using static Muggle.TsExtensions.CodingHelper.Generators.GeneratorHelper;
 using static Muggle.TsExtensions.CodingHelper.Diagnosers.InternalAttributesDiagnoser;
+using static Muggle.TsExtensions.CodingHelper.Generators.GeneratorHelper;
 using FieldInfo = (string Name, string AttributeName, string Type);
 
 namespace Muggle.TsExtensions.CodingHelper.Generators;
 
 [Generator]
 internal class PluginDataFieldsGenerator : IIncrementalGenerator {
+
     internal static readonly string[] ConcernedAttributes = [
         "Muggle.TsExtensions.CodingHelper.Generators.PartFieldsAttribute",
         "Muggle.TsExtensions.CodingHelper.Generators.PlateFieldsAttribute",
@@ -43,37 +42,37 @@ internal class PluginDataFieldsGenerator : IIncrementalGenerator {
         "Muggle.TsExtensions.CodingHelper.Generators.GeneralFieldsAttribute"
     ];
 
-    internal static readonly FieldInfo[] PartFieldInfos = [
-        ("Name", "NAME", "string"),
+    internal static IReadOnlyList<FieldInfo> PartFieldInfos(Version tsmVersion) => [
         ("Profile", "PRF", "string"),
         ("Material", "MATL", "string"),
+        ("Name", "NAME", "string"),
         ("Finish", "FNSH", "string"),
         ("Class", "CLS", "int"),
         ("AssemblyPrefix", "ASMP", "string"),
         ("AssemblyStartNumber", "ASMN", "int"),
         ("PartPrefix", "PTP", "string"),
-        ("PartStartNumber", "PTN", "int")
+        ("PartStartNumber", "PTN", "int"),
     ];
 
-    internal static readonly FieldInfo[] PlateFieldInfos = [
-        ("Name", "NAME", "string"),
+    internal static IReadOnlyList<FieldInfo> PlateFieldInfos(Version tsmVersion) => [
         ("Thickness", "T", "double"),
         ("Breadth", "B", "double"),
         ("Height", "H", "double"),
         ("Material", "MATL", "string"),
+        ("Name", "NAME", "string"),
         ("Finish", "FNSH", "string"),
         ("Class", "CLS", "int"),
         ("AssemblyPrefix", "ASMP", "string"),
         ("AssemblyStartNumber", "ASMN", "int"),
         ("PartPrefix", "PTP", "string"),
-        ("PartStartNumber", "PTN", "int")
+        ("PartStartNumber", "PTN", "int"),
     ];
 
-    internal static readonly FieldInfo[] WeldFieldInfos = [
-        ("SizeAbove", "SIZEA", "double"),
-        ("SizeBelow", "SIZEB", "double"),
+    internal static IReadOnlyList<FieldInfo> WeldFieldInfos(Version tsmVersion) => [
         ("TypeAbove", "TYPEA", "int"),
         ("TypeBelow", "TYPEB", "int"),
+        ("SizeAbove", "SIZEA", "double"),
+        ("SizeBelow", "SIZEB", "double"),
         ("AngleAbove", "ANGA", "double"),
         ("AngleBelow", "ANGB", "double"),
         ("ContourAbove", "CTRA", "int"),
@@ -97,85 +96,131 @@ internal class PluginDataFieldsGenerator : IIncrementalGenerator {
         ("Placement", "PLACE", "int"),
         ("Preparation", "PREP", "int"),
         ("Intermittent", "INTMI", "int"),
-        ("ReferenceText", "TEXT", "string")
+        ("ReferenceText", "TEXT", "string"),
     ];
 
-    internal static readonly FieldInfo[] BoltFieldInfos = [
-        ("Size", "SIZE", "double"),
-        ("Standard", "STD", "string"),
-        ("DistXText", "DISTX", "string"),
-        ("DistYText", "DISTY", "string"),
-        ("Type", "TYPE", "int"),
-        ("ThreadInMaterial", "THRD", "int"),
-        ("Length", "LEN", "double"),
-        ("CutLength", "CLEN", "double"),
-        ("ExtraLength", "XLEN", "double"),
-        ("Tolerance", "TOL", "double"),
-        ("PlainType", "PLAIN", "int"),
-        ("BlindHoleDepth", "DEPTH", "double"),
-        ("Hole1", "HOLE1", "int"),
-        ("Hole2", "HOLE2", "int"),
-        ("Hole3", "HOLE3", "int"),
-        ("Hole4", "HOLE4", "int"),
-        ("Hole5", "HOLE5", "int"),
-        ("HoleType", "HOLTY", "int"),
-        ("SlottedHoleX", "SLOTX", "double"),
-        ("SlottedHoleY", "SLOTY", "double"),
-        ("RotateSlots", "RSLOT", "int"),
-        ("IsBolt", "ISBOT", "int"),
-        ("UseNut1", "NUT1", "int"),
-        ("UseNut2", "NUT2", "int"),
-        ("UseWasher1", "WSHR1", "int"),
-        ("UseWasher2", "WSHR2", "int"),
-        ("UseWasher3", "WSHR3", "int"),
-    ];
+    internal static IReadOnlyList<FieldInfo> BoltFieldInfos(Version tsmVersion) {
+        var result = new List<FieldInfo> {
+            ("Size", "SIZE", "double"),
+            ("Standard", "STD", "string"),
+            ("DistXText", "DISTX", "string"),
+            ("DistYText", "DISTY", "string"),
+            ("Type", "TYPE", "int"),
+            ("ThreadInMaterial", "THRD", "int"),
+            ("Length", "LEN", "double"),
+            ("CutLength", "CLEN", "double"),
+            ("ExtraLength", "XLEN", "double"),
+            ("Tolerance", "TOL", "double"),
+            ("PlainType", "PLAIN", "int"),
+            ("BlindHoleDepth", "DEPTH", "double"),
+            ("Hole1", "HOLE1", "int"),
+            ("Hole2", "HOLE2", "int"),
+            ("Hole3", "HOLE3", "int"),
+            ("Hole4", "HOLE4", "int"),
+            ("Hole5", "HOLE5", "int"),
+            ("HoleType", "HOLTY", "int"),
+            ("SlottedHoleX", "SLOTX", "double"),
+            ("SlottedHoleY", "SLOTY", "double"),
+        };
 
-    internal static readonly FieldInfo[] BoltCircleFieldInfos = [
-        ("Size", "SIZE", "double"),
-        ("Standard", "STD", "string"),
-        ("NumberOfBolts", "NUM", "int"),
-        ("Diameter", "DIAM", "double"),
-        ("Type", "TYPE", "int"),
-        ("ThreadInMaterial", "THRD", "int"),
-        ("Length", "LEN", "double"),
-        ("CutLength", "CLEN", "double"),
-        ("ExtraLength", "XLEN", "double"),
-        ("Tolerance", "TOL", "double"),
-        ("PlainType", "PLAIN", "int"),
-        ("BlindHoleDepth", "DEPTH", "double"),
-        ("Hole1", "HOLE1", "int"),
-        ("Hole2", "HOLE2", "int"),
-        ("Hole3", "HOLE3", "int"),
-        ("Hole4", "HOLE4", "int"),
-        ("Hole5", "HOLE5", "int"),
-        ("HoleType", "HOLTY", "int"),
-        ("SlottedHoleX", "SLOTX", "double"),
-        ("SlottedHoleY", "SLOTY", "double"),
-        ("RotateSlots", "RSLOT", "int"),
-        ("IsBolt", "ISBOT", "int"),
-        ("UseNut1", "NUT1", "int"),
-        ("UseNut2", "NUT2", "int"),
-        ("UseWasher1", "WSHR1", "int"),
-        ("UseWasher2", "WSHR2", "int"),
-        ("UseWasher3", "WSHR3", "int")
-    ];
+        if (tsmVersion is not null && tsmVersion.Major >= 2023) {
+            result.AddRange([
+                ("SlotOffsetX", "SOFFX", "double"),
+                ("SlotOffsetY", "SOFFY", "double"),
+            ]);
+        }
 
-    internal static readonly FieldInfo[] ChamferFieldInfos = [
+        result.AddRange([
+            ("RotateSlots", "RSLOT", "int"),
+            ("IsBolt", "ISBOT", "int"),
+            ("UseNut1", "NUT1", "int"),
+            ("UseNut2", "NUT2", "int"),
+            ("UseWasher1", "WSHR1", "int"),
+            ("UseWasher2", "WSHR2", "int"),
+            ("UseWasher3", "WSHR3", "int"),
+        ]);
+
+        return result;
+    }
+
+    internal static IReadOnlyList<FieldInfo> BoltCircleFieldInfos(Version tsmVersion) {
+        var result = new List<FieldInfo> {
+            ("Size", "SIZE", "double"),
+            ("Standard", "STD", "string"),
+            ("NumberOfBolts", "NUM", "int"),
+            ("Diameter", "DIAM", "double"),
+            ("Type", "TYPE", "int"),
+            ("ThreadInMaterial", "THRD", "int"),
+            ("Length", "LEN", "double"),
+            ("CutLength", "CLEN", "double"),
+            ("ExtraLength", "XLEN", "double"),
+            ("Tolerance", "TOL", "double"),
+            ("PlainType", "PLAIN", "int"),
+            ("BlindHoleDepth", "DEPTH", "double"),
+            ("Hole1", "HOLE1", "int"),
+            ("Hole2", "HOLE2", "int"),
+            ("Hole3", "HOLE3", "int"),
+            ("Hole4", "HOLE4", "int"),
+            ("Hole5", "HOLE5", "int"),
+            ("HoleType", "HOLTY", "int"),
+            ("SlottedHoleX", "SLOTX", "double"),
+            ("SlottedHoleY", "SLOTY", "double"),
+        };
+
+        if (tsmVersion is not null && tsmVersion.Major >= 2023) {
+            result.AddRange([
+                ("SlotOffsetX", "SOFFX", "double"),
+                ("SlotOffsetY", "SOFFY", "double"),
+            ]);
+        }
+
+        result.AddRange([
+            ("RotateSlots", "RSLOT", "int"),
+            ("IsBolt", "ISBOT", "int"),
+            ("UseNut1", "NUT1", "int"),
+            ("UseNut2", "NUT2", "int"),
+            ("UseWasher1", "WSHR1", "int"),
+            ("UseWasher2", "WSHR2", "int"),
+            ("UseWasher3", "WSHR3", "int"),
+        ]);
+
+        return result;
+    }
+
+    internal static IReadOnlyList<FieldInfo> ChamferFieldInfos(Version tsmVersion) => [
         ("Type", "TYPE", "int"),
         ("X", "X", "double"),
         ("Y", "Y", "double"),
         ("Dz1", "DZ1", "double"),
-        ("Dz2", "DZ2", "double")
+        ("Dz2", "DZ2", "double"),
     ];
 
+    private Version TsmVersion { get; set; }
+
     public void Initialize(IncrementalGeneratorInitializationContext context) {
-        context.RegisterPostInitializationOutput(ctx => {
+        context.RegisterPostInitializationOutput(static ctx => {
             foreach (var attribute in ConcernedAttributes) {
                 var shortName = attribute.Substring(attribute.LastIndexOf('.') + 1);
                 ctx.AddSource($"{shortName}.g.cs",
                     SourceText.From(GetResourceAsString($"{shortName}.cs"), Encoding.UTF8));
             }
         });
+
+        var versionProvider = context.CompilationProvider.Select(static (compilation, _) => {
+            foreach (var reference in compilation.References) {
+                if (compilation.GetAssemblyOrModuleSymbol(reference) is not IAssemblySymbol assemblySymbol ||
+                    assemblySymbol.Name != "Tekla.Structures.Model" &&
+                    assemblySymbol.Identity.Name != "Tekla.Structures.Model") {
+                    continue;
+                }
+
+                return assemblySymbol.Identity.Version;
+            }
+
+            return null;
+        });
+
+        context.RegisterSourceOutput(versionProvider, (_, version) => TsmVersion = version);
 
         var provider = context.SyntaxProvider.CreateSyntaxProvider(Predicate, Transform).Where(x => x != default);
 
@@ -240,7 +285,7 @@ internal class PluginDataFieldsGenerator : IIncrementalGenerator {
                     .FirstOrDefault()?.Type;
                 var dataType = GetUnqualifiedName(datatypeSyntax?.ToString());
                 if (string.IsNullOrEmpty(dataType)) continue;
-                
+
                 var supportedDatatypes = SupportedDataTypes(attName);
                 if (!supportedDatatypes.Contains(dataType)) {
                     diagnosticInfos = diagnosticInfos.Add(
@@ -251,7 +296,7 @@ internal class PluginDataFieldsGenerator : IIncrementalGenerator {
                     );
                     continue;
                 }
-                
+
                 key = dataType;
             }
 
@@ -294,46 +339,13 @@ internal class PluginDataFieldsGenerator : IIncrementalGenerator {
         return result;
     }
 
-    internal static bool DiagnoseIdCharacters(string id, string attName, Location argSyntaxLocation,
-        bool isGeneralFieldsAttribute, ref ImmutableArray<DiagnosticInfo> diagnosticInfos) {
-
-        var pass = true;
-        if (id.Length == 0 || id.Length > MaxLengthOfArgument(attName)) {
-            diagnosticInfos = diagnosticInfos.Add(
-                new DiagnosticInfo(LengthExceedLimitation, argSyntaxLocation,
-                    [attName, PrefixSuffixExample(attName), MaxLengthOfArgument(attName)])
-            );
-            pass = false;
-        }
-
-        if (Regex.IsMatch(id, SpecialCharacterPattern)) {
-            diagnosticInfos = diagnosticInfos.Add(
-                new DiagnosticInfo(ContainsSpecialCharacters, argSyntaxLocation, [])
-            );
-            pass = false;
-        }
-
-        if (isGeneralFieldsAttribute && Regex.IsMatch(id, "^[0-9]")) {
-            diagnosticInfos = diagnosticInfos.Add(new DiagnosticInfo(NameStartsWithNumber, argSyntaxLocation, []));
-            pass = false;
-        }
-
-        if (Regex.IsMatch(id, UnsuggestedCharacterPattern)) {
-            diagnosticInfos = diagnosticInfos.Add(
-                new DiagnosticInfo(ContainsUnsuggestedCharacters, argSyntaxLocation, [])
-            );
-        }
-
-        return pass;
-    }
-
-    private static void Generate(SourceProductionContext context, PluginDataFieldsInfo fieldsInfo) {
+    private void Generate(SourceProductionContext context, PluginDataFieldsInfo fieldsInfo) {
         var singleFieldsBuilder = new StringBuilder();
         var seriesFieldsBuilder = new StringBuilder();
 
         foreach (var kvp in fieldsInfo.Arguments) {
             if (kvp.Key.EndsWith("FieldsAttribute")) {
-                seriesFieldsBuilder.Append(GenerateSeriesFields(kvp));
+                seriesFieldsBuilder.Append(GenerateSeriesFields(kvp, TsmVersion));
             } else {
                 singleFieldsBuilder.Append(GenerateGeneralFields(kvp));
             }
@@ -356,7 +368,7 @@ internal class PluginDataFieldsGenerator : IIncrementalGenerator {
         context.AddSource($"{classInfo.Name}.g.cs", SourceText.From(generatedSourceText, Encoding.UTF8));
     }
 
-    private static string GenerateSeriesFields(KeyValuePair<string, IdSet> kvp) {
+    private static string GenerateSeriesFields(KeyValuePair<string, IdSet> kvp, Version tsmVersion) {
         var attName = kvp.Key;
 
         //  PartFieldsAttribute => Part
@@ -374,12 +386,12 @@ internal class PluginDataFieldsGenerator : IIncrementalGenerator {
         if (attPrefix == string.Empty) { return string.Empty; }
 
         var infos = attName switch {
-            "PartFieldsAttribute" => PartFieldInfos,
-            "PlateFieldsAttribute" => PlateFieldInfos,
-            "WeldFieldsAttribute" => WeldFieldInfos,
-            "BoltFieldsAttribute" => BoltFieldInfos,
-            "BoltCircleFieldsAttribute" => BoltCircleFieldInfos,
-            "ChamferFieldsAttribute" => ChamferFieldInfos,
+            "PartFieldsAttribute" => PartFieldInfos(tsmVersion),
+            "PlateFieldsAttribute" => PlateFieldInfos(tsmVersion),
+            "WeldFieldsAttribute" => WeldFieldInfos(tsmVersion),
+            "BoltFieldsAttribute" => BoltFieldInfos(tsmVersion),
+            "BoltCircleFieldsAttribute" => BoltCircleFieldInfos(tsmVersion),
+            "ChamferFieldsAttribute" => ChamferFieldInfos(tsmVersion),
             _ => []
         };
 

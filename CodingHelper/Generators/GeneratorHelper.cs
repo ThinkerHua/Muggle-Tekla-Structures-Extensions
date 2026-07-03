@@ -24,16 +24,29 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace Muggle.TsExtensions.CodingHelper.Generators {
     internal static class GeneratorHelper {
-        
+
         internal static string GetAttributeQualifiedName(AttributeSyntax attributeSyntax, SemanticModel semanticModel) {
+            // 在初始化阶段就生成了特性，semanticModel可以获取完全限定名
+            // 在代码输出阶段生成特性，则获取不到完全限定名
             var attributeTypeInfo = semanticModel.GetTypeInfo(attributeSyntax);
-            return attributeTypeInfo.Type?.ToDisplayString();
+
+            var result = attributeTypeInfo.Type?.ToDisplayString();
+            if (result is not null && !result.EndsWith("Attribute")) result += "Attribute";
+
+            return result;
         }
 
         internal static string GetAttributeName(AttributeSyntax attributeSyntax, SemanticModel semanticModel) {
+            // 在初始化阶段就生成了特性，semanticModel可以获取完全限定名
+            // 在代码输出阶段生成特性，则获取不到完全限定名
             var attributeTypeInfo = semanticModel.GetTypeInfo(attributeSyntax);
+
             var qualifiedName = attributeTypeInfo.Type?.ToDisplayString();
-            return qualifiedName?.Substring(qualifiedName.LastIndexOf('.') + 1);
+            qualifiedName = qualifiedName?.Substring(qualifiedName.LastIndexOf('.') + 1);
+
+            if (qualifiedName is not null && !qualifiedName.EndsWith("Attribute")) qualifiedName += "Attribute";
+
+            return qualifiedName;
         }
 
         internal static string GetUnqualifiedName(string qualifiedName) {
@@ -88,7 +101,11 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
             ref AttributeSyntax[] attributeSyntaxes) {
             var query = attributeLists
                 .SelectMany(attListSyntax => attListSyntax.Attributes)
-                .Where(attSyntax => matchAttributes.Contains(GetAttributeQualifiedName(attSyntax, semanticModel)))
+                // 适用于在初始化阶段就生成了特性，semanticModel可以获取特性的完全限定名
+                // 在代码输出阶段生成特性则不适用，获取不到完全限定名
+                // .Where(attSyntax => matchAttributes.Contains(GetAttributeQualifiedName(attSyntax, semanticModel)))
+                .Where(attSyntax =>
+                    matchAttributes.Any(x => x.Contains(GetAttributeQualifiedName(attSyntax, semanticModel))))
                 .ToArray();
 
             if (!query.Any()) return false;
@@ -111,9 +128,46 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
             return reader.ReadToEnd();
         }
 
+        internal static string GetResourceAsString(string resourceName, Version tsVersion) {
+            var assembly = typeof(GeneratorHelper).Assembly;
+            var manifestResourceNames = assembly.GetManifestResourceNames();
+            var name = Path.GetFileNameWithoutExtension(resourceName);
+            var extension = Path.GetExtension(resourceName);
+
+            var version = 0;
+            var matchedResourceName = string.Empty;
+            foreach (var manifestResourceName in manifestResourceNames) {
+                var match = Regex.Match(
+                    manifestResourceName,
+                    $"Muggle.TsExtensions.CodingHelper.Resources.{name}(_V(?<v>\\d+))?{extension}",
+                    RegexOptions.IgnoreCase);
+                if (!match.Success) continue;
+
+                var v = 0;
+                if (match.Groups["v"].Success) v = int.Parse(match.Groups["v"].Value);
+
+                if (v < version || v > tsVersion?.Major) continue;
+
+                version = v;
+                matchedResourceName = manifestResourceName;
+            }
+
+            using var stream = assembly.GetManifestResourceStream(matchedResourceName) ??
+                               throw new InvalidOperationException(
+                                   $"Resource '{resourceName}' from version {tsVersion} not found.");
+            using var reader = new StreamReader(stream);
+
+            return reader.ReadToEnd();
+        }
+
         internal static IEnumerable<string> GetAttributeSourceTexts(IEnumerable<string> attributeQualifiedNames) =>
             attributeQualifiedNames.Select(name =>
                 GetResourceAsString($"{name.Substring(name.LastIndexOf('.') + 1)}.cs"));
+
+        internal static IEnumerable<string> GetAttributeSourceTexts(IEnumerable<string> attributeQualifiedNames,
+            Version tsVersion) =>
+            attributeQualifiedNames.Select(name =>
+                GetResourceAsString($"{name.Substring(name.LastIndexOf('.') + 1)}.cs", tsVersion));
 
         /// <summary>
         /// Get default value from a constructor declaration syntax of attribute.

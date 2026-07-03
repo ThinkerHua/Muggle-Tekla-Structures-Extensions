@@ -8,7 +8,7 @@
 		<PackageVersion Include="Microsoft.CodeAnalysis.Analyzers" Version="3.11.0" />
 		<PackageVersion Include="Microsoft.CodeAnalysis.CSharp" Version="5.0.0" />
 		<PackageVersion Include="Microsoft.Extensions.DependencyInjection" Version="9.0.5" />
-		<PackageVersion Include="Muggle.TsExtensions.CodingHelper" Version="2.0.0-beta.3" />
+		<PackageVersion Include="Muggle.TsExtensions.CodingHelper" Version="2.0.0-beta.4" />
 		<PackageVersion Include="Tekla.Structures" Version="$(TeklaVersion)" />
 		<PackageVersion Include="Tekla.Structures.Catalogs" Version="$(TeklaVersion)" />
 		<PackageVersion Include="Tekla.Structures.Datatype" Version="$(TeklaVersion)" />

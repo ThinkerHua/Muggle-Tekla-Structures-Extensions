@@ -24,8 +24,8 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 using Muggle.TsExtensions.CodingHelper.Generators.Information;
-using static Muggle.TsExtensions.CodingHelper.Generators.GeneratorHelper;
 using static Muggle.TsExtensions.CodingHelper.Diagnosers.InternalAttributesDiagnoser;
+using static Muggle.TsExtensions.CodingHelper.Generators.GeneratorHelper;
 
 namespace Muggle.TsExtensions.CodingHelper.Generators;
 
@@ -33,11 +33,31 @@ namespace Muggle.TsExtensions.CodingHelper.Generators;
 public class PluginFieldsGenerator : IIncrementalGenerator {
     internal const string ConcernedAttribute = "Muggle.TsExtensions.CodingHelper.Generators.FieldsFromAttribute";
 
+    private Version TsmVersion { get; set; }
+
     public void Initialize(IncrementalGeneratorInitializationContext context) {
-        context.RegisterPostInitializationOutput(ctx => {
+        context.RegisterPostInitializationOutput(static ctx => {
             var shortName = ConcernedAttribute.Substring(ConcernedAttribute.LastIndexOf('.') + 1);
             ctx.AddSource($"{shortName}.g.cs",
                 SourceText.From(GetResourceAsString($"{shortName}.cs"), Encoding.UTF8));
+        });
+
+        var versionProvider = context.CompilationProvider.Select(static (compilation, _) => {
+            foreach (var reference in compilation.References) {
+                if (compilation.GetAssemblyOrModuleSymbol(reference) is not IAssemblySymbol assemblySymbol ||
+                    assemblySymbol.Name != "Tekla.Structures.Model" &&
+                    assemblySymbol.Identity.Name != "Tekla.Structures.Model") {
+                    continue;
+                }
+
+                return assemblySymbol.Identity.Version;
+            }
+
+            return null;
+        });
+
+        context.RegisterSourceOutput(versionProvider, (_, version) => {
+            TsmVersion = version;
         });
 
         var provider = context.SyntaxProvider.ForAttributeWithMetadataName(ConcernedAttribute, Predicate, Transform)
@@ -151,9 +171,9 @@ public class PluginFieldsGenerator : IIncrementalGenerator {
         return result;
     }
 
-    private static void Generate(SourceProductionContext context, PluginFieldsInfo fieldsInfo) {
-        var fields = GenerateFields(fieldsInfo);
-        var method = GenerateGetFieldValuesFromMethod(fieldsInfo);
+    private void Generate(SourceProductionContext context, PluginFieldsInfo fieldsInfo) {
+        var fields = GenerateFields(fieldsInfo, TsmVersion);
+        var method = GenerateGetFieldValuesFromMethod(fieldsInfo, TsmVersion);
 
         var classInfo = fieldsInfo.ClassInfo;
         var generatedSourceText =
@@ -172,7 +192,7 @@ public class PluginFieldsGenerator : IIncrementalGenerator {
         context.AddSource($"{fieldsInfo.ClassInfo.Name}.g.cs", SourceText.From(generatedSourceText, Encoding.UTF8));
     }
 
-    private static string GenerateFields(PluginFieldsInfo info) {
+    private static string GenerateFields(PluginFieldsInfo info, Version tsmVersion) {
         var builder = new StringBuilder();
         var singleFieldsBuilder = new StringBuilder();
         var seriesFieldsBuilder = new StringBuilder();
@@ -187,7 +207,7 @@ public class PluginFieldsGenerator : IIncrementalGenerator {
 
         foreach (var kvp in info.Arguments) {
             if (kvp.Key.EndsWith("Attribute")) {
-                seriesFieldsBuilder.Append(GenerateSeriesFields(kvp));
+                seriesFieldsBuilder.Append(GenerateSeriesFields(kvp, tsmVersion));
             } else {
                 singleFieldsBuilder.Append(GenerateSingleFields(kvp));
             }
@@ -196,18 +216,18 @@ public class PluginFieldsGenerator : IIncrementalGenerator {
         return builder.Append(singleFieldsBuilder).Append(seriesFieldsBuilder).ToString();
     }
 
-    private static string GenerateSeriesFields(KeyValuePair<string, IdSet> kvp) {
+    private static string GenerateSeriesFields(KeyValuePair<string, IdSet> kvp, Version tsmVersion) {
         var attName = kvp.Key;
 
         var fieldPrefix = ToPrivateFieldNameStyle(attName.Substring(0, attName.Length - 15));
 
         var fieldInfos = attName switch {
-            "PartFieldsAttribute" => PluginDataFieldsGenerator.PartFieldInfos,
-            "PlateFieldsAttribute" => PluginDataFieldsGenerator.PlateFieldInfos,
-            "WeldFieldsAttribute" => PluginDataFieldsGenerator.WeldFieldInfos,
-            "BoltFieldsAttribute" => PluginDataFieldsGenerator.BoltFieldInfos,
-            "BoltCircleFieldsAttribute" => PluginDataFieldsGenerator.BoltCircleFieldInfos,
-            "ChamferFieldsAttribute" => PluginDataFieldsGenerator.ChamferFieldInfos,
+            "PartFieldsAttribute" => PluginDataFieldsGenerator.PartFieldInfos(tsmVersion),
+            "PlateFieldsAttribute" => PluginDataFieldsGenerator.PlateFieldInfos(tsmVersion),
+            "WeldFieldsAttribute" => PluginDataFieldsGenerator.WeldFieldInfos(tsmVersion),
+            "BoltFieldsAttribute" => PluginDataFieldsGenerator.BoltFieldInfos(tsmVersion),
+            "BoltCircleFieldsAttribute" => PluginDataFieldsGenerator.BoltCircleFieldInfos(tsmVersion),
+            "ChamferFieldsAttribute" => PluginDataFieldsGenerator.ChamferFieldInfos(tsmVersion),
             _ => []
         };
 
@@ -235,7 +255,7 @@ public class PluginFieldsGenerator : IIncrementalGenerator {
         return fieldsBuilder.ToString();
     }
 
-    private static string GenerateGetFieldValuesFromMethod(PluginFieldsInfo fieldsInfo) {
+    private static string GenerateGetFieldValuesFromMethod(PluginFieldsInfo fieldsInfo, Version tsmVersion) {
         var builder = new StringBuilder();
 
         var fieldSymbols = fieldsInfo.DataType.GetMembers().OfType<IFieldSymbol>()
@@ -256,19 +276,19 @@ public class PluginFieldsGenerator : IIncrementalGenerator {
                 }
             } else {
                 var fieldInfos = key switch {
-                    "PartFieldsAttribute" => PluginDataFieldsGenerator.PartFieldInfos,
-                    "PlateFieldsAttribute" => PluginDataFieldsGenerator.PlateFieldInfos,
-                    "WeldFieldsAttribute" => PluginDataFieldsGenerator.WeldFieldInfos,
-                    "BoltFieldsAttribute" => PluginDataFieldsGenerator.BoltFieldInfos,
-                    "BoltCircleFieldsAttribute" => PluginDataFieldsGenerator.BoltCircleFieldInfos,
-                    "ChamferFieldsAttribute" => PluginDataFieldsGenerator.ChamferFieldInfos,
+                    "PartFieldsAttribute" => PluginDataFieldsGenerator.PartFieldInfos(tsmVersion),
+                    "PlateFieldsAttribute" => PluginDataFieldsGenerator.PlateFieldInfos(tsmVersion),
+                    "WeldFieldsAttribute" => PluginDataFieldsGenerator.WeldFieldInfos(tsmVersion),
+                    "BoltFieldsAttribute" => PluginDataFieldsGenerator.BoltFieldInfos(tsmVersion),
+                    "BoltCircleFieldsAttribute" => PluginDataFieldsGenerator.BoltCircleFieldInfos(tsmVersion),
+                    "ChamferFieldsAttribute" => PluginDataFieldsGenerator.ChamferFieldInfos(tsmVersion),
                     _ => []
                 };
 
                 var modelObjectType = key.Substring(0, key.Length - 15);
 
-                foreach (var fieldInfo in fieldInfos) {
-                    foreach (var id in kvp.Value) {
+                foreach (var id in kvp.Value) {
+                    foreach (var fieldInfo in fieldInfos) {
                         builder.AppendLine(
                             $"            {ToPrivateFieldNameStyle(modelObjectType)}{ToPropertyNameStyle(id)}{fieldInfo.Name} = data.{modelObjectType}{ToPropertyNameStyle(id)}{fieldInfo.Name};");
                     }

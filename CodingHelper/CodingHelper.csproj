@@ -8,7 +8,7 @@
         <IsRoslynComponent>true</IsRoslynComponent>
         <PackageId>Muggle.TsExtensions.CodingHelper</PackageId>
         <Title>Tekla Structures OpenAPI development helper</Title>
-        <Version>2.0.0-beta.3</Version>
+        <Version>2.0.0-beta.4</Version>
         <Authors>Huang YongXing</Authors>
         <Description>Help to generate fields (with StructuresFieldAttribute) for plugin data, fields for plugin, and properties (with StructuresDialogAttribute) for view model which used by plugin WPF UI.</Description>
         <Copyright>© 2026 Huang YongXing</Copyright>
@@ -21,9 +21,9 @@
         <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
         <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
         <PackageReleaseNotes>
-            1. Add 'CustomPartViewModel' abstract class;
-            2. Add support for the 'Chamfer' fields and properties;
-            3. Complete the missing modification to the 'Preparation' property in the 'CreatWeld**' method and the 'ModifyToWeld**' method;
+            Automatically generates specific content based on the Tekla.Structures.Model version. 
+            Currently, for TSM 2023 and later versions, BoltGroup has SlotOffsetX and SlotOffsetY properties, and the HoleType property ranges from 0 to 3; 
+            for TSM versions before 2023, BoltGroup does not have SlotOffsetX and SlotOffsetY properties, and the HoleType property ranges from 0 to 2.
         </PackageReleaseNotes>
         <IncludeBuildOutput>false</IncludeBuildOutput>
     </PropertyGroup>

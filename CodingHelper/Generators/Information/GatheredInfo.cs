@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+using System;
 using System.Collections.Immutable;
 
 namespace Muggle.TsExtensions.CodingHelper.Generators.Information {

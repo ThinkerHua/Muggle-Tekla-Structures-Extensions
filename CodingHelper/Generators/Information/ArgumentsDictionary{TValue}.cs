@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -23,7 +23,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators.Information {
 
             if (ReferenceEquals(this, other)) return true;
 
-            return this.Count == other.Count && 
+            return this.Count == other.Count &&
                    this.Keys.All(key => other.ContainsKey(key) && this[key].Equals(other[key]));
         }
 

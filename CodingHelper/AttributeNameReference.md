@@ -9,6 +9,9 @@ Note:
 - "BoltGroup.**BoltDistX**" and "BoltGroup.**BoltDistY**" are not actual properties in OpenAPI, they map to 
   "**AddBoltDistX**" and "**AddBoltDistY**" methods of "BoltArray" or "BoltXYList".
 
+- "BoltGroup.**SlotOffsetX**", "BoltGroup.**SlotOffsetY**", "BoltCircle.**SlotOffsetX**" 
+  and "BoltCircle.**SlotOffsetY**" are only available for Tekla Structures 2023 and later version.
+
 | Properties                       | Attribute name patterns |
 |----------------------------------|-------------------------|
 | Part\.Name                       | PT\<Id>NAME             |
@@ -79,6 +82,8 @@ Note:
 | BoltGroup.HoleType               | B\<Id>HOLTY             |
 | BoltGroup.SlottedHoleX           | B\<Id>SLOTX             |
 | BoltGroup.SlottedHoleY           | B\<Id>SLOTY             |
+| BoltGroup.SlotOffsetX            | B\<Id>SOFFX             |
+| BoltGroup.SlotOffsetY            | B\<Id>SOFFY             |
 | BoltGroup.RotateSlots            | B\<Id>RSLOT             |
 | BoltGroup.Bolt                   | B\<Id>ISBOT             |
 | BoltGroup.Nut1                   | B\<Id>NUT1              |
@@ -106,6 +111,8 @@ Note:
 | BoltCircle.HoleType              | BC\<Id>HOLTY            |
 | BoltCircle.SlottedHoleX          | BC\<Id>SLOTX            |
 | BoltCircle.SlottedHoleY          | BC\<Id>SLOTY            |
+| BoltCircle.SlotOffsetX           | BC\<Id>SOFFX            |
+| BoltCircle.SlotOffsetY           | BC\<Id>SOFFY            |
 | BoltCircle.RotateSlots           | BC\<Id>RSLOT            |
 | BoltCircle.Bolt                  | BC\<Id>ISBOT            |
 | BoltCircle.Nut1                  | BC\<Id>NUT1             |

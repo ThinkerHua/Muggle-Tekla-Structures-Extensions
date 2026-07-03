@@ -17,14 +17,10 @@
 
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Linq;
 using System.Text.RegularExpressions;
 using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Diagnostics;
-using Muggle.TsExtensions.CodingHelper.Generators;
-using static Muggle.TsExtensions.CodingHelper.Generators.GeneratorHelper;
+using Muggle.TsExtensions.CodingHelper.Generators.Information;
 
 namespace Muggle.TsExtensions.CodingHelper.Diagnosers;
 
@@ -166,10 +162,10 @@ internal class InternalAttributesDiagnoser : DiagnosticAnalyzer {
     #endregion
 
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => [
-        NotPartial, NotImplementINotifyPropertyChanged, LengthExceedLimitation, ContainsSpecialCharacters, 
-        ContainsUnsuggestedCharacters, FieldsFromAttributeNotApplied, AppliedOnOverOnePlace, 
-        DataTypeDoesNotContainTheseFields, SetDefaultValueMultiTimes, NameStartsWithNumber, 
-        ArgumentsMustBePassedInPairs, NotSupportedDataType, NotExpectedDataType, RegisterFieldOrPropertyMultiTimes, 
+        NotPartial, NotImplementINotifyPropertyChanged, LengthExceedLimitation, ContainsSpecialCharacters,
+        ContainsUnsuggestedCharacters, FieldsFromAttributeNotApplied, AppliedOnOverOnePlace,
+        DataTypeDoesNotContainTheseFields, SetDefaultValueMultiTimes, NameStartsWithNumber,
+        ArgumentsMustBePassedInPairs, NotSupportedDataType, NotExpectedDataType, RegisterFieldOrPropertyMultiTimes,
         ShouldNotUseBooleanType
     ];
 
@@ -215,4 +211,37 @@ internal class InternalAttributesDiagnoser : DiagnosticAnalyzer {
             ["Integer", "Double", "Distance", "DistanceList", "String"],
         _ => []
     };
+
+    internal static bool DiagnoseIdCharacters(string id, string attName, Location argSyntaxLocation,
+        bool isGeneralFieldsAttribute, ref ImmutableArray<DiagnosticInfo> diagnosticInfos) {
+
+        var pass = true;
+        if (id.Length == 0 || id.Length > MaxLengthOfArgument(attName)) {
+            diagnosticInfos = diagnosticInfos.Add(
+                new DiagnosticInfo(LengthExceedLimitation, argSyntaxLocation,
+                    [attName, PrefixSuffixExample(attName), MaxLengthOfArgument(attName)])
+            );
+            pass = false;
+        }
+
+        if (Regex.IsMatch(id, SpecialCharacterPattern)) {
+            diagnosticInfos = diagnosticInfos.Add(
+                new DiagnosticInfo(ContainsSpecialCharacters, argSyntaxLocation, [])
+            );
+            pass = false;
+        }
+
+        if (isGeneralFieldsAttribute && Regex.IsMatch(id, "^[0-9]")) {
+            diagnosticInfos = diagnosticInfos.Add(new DiagnosticInfo(NameStartsWithNumber, argSyntaxLocation, []));
+            pass = false;
+        }
+
+        if (Regex.IsMatch(id, UnsuggestedCharacterPattern)) {
+            diagnosticInfos = diagnosticInfos.Add(
+                new DiagnosticInfo(ContainsUnsuggestedCharacters, argSyntaxLocation, [])
+            );
+        }
+
+        return pass;
+    }
 }
