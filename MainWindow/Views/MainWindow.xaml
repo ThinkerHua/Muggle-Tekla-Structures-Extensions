@@ -81,6 +81,11 @@
                                 <local:ConnectionStatusFilter />
                             </RadioButton.CommandParameter>
                         </RadioButton>
+                        <RadioButton Content="{dialog:Loc albl_locate_to_precise_position}" GroupName="menuBtn" Command="{Binding NavigateCommand}">
+                            <RadioButton.CommandParameter>
+                                <local:LocateToPrecisePosition/>
+                            </RadioButton.CommandParameter>
+                        </RadioButton>
                         <RadioButton Content="{dialog:Loc albl_extend_beam}" GroupName="menuBtn" Command="{Binding NavigateCommand}">
                             <RadioButton.CommandParameter>
                                 <local:ExtendBeam />

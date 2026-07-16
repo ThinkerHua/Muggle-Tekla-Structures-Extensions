@@ -44,7 +44,6 @@
         <Button Content="{dialog:Loc albl_reorder_contour_points}" Command="{Binding ReorderContourPointsCommand}" />
         <Button Content="{dialog:Loc albl_show_contour_order}" Command="{Binding ShowContourOrderCommand}" />
         <Button Content="{dialog:Loc albl_copy_with_direction}" Command="{Binding CopyWithDirectionCommand}" />
-        <Button Content="{dialog:Loc albl_locate_to_precise_position}" Command="{Binding LocateToPrecisePositionCommand}" />
         <Button Content="{dialog:Loc albl_align_column_control_points_with_centroid}" Command="{Binding AlignColumnControlPointsWithCentroidCommand}" />
 
     </StackPanel>

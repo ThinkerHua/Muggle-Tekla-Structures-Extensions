@@ -60,6 +60,9 @@ namespace Muggle.TsExtensions.MainWindow {
             _servicesBuilder.AddTransient<ConnectionStatusFilterViewModel>();
             _servicesBuilder.AddTransient<ConnectionStatusFilter>();
 
+            _servicesBuilder.AddTransient<LocateToPrecisePositionViewModel>();
+            _servicesBuilder.AddTransient<LocateToPrecisePosition>();
+
             _servicesBuilder.AddTransient<ExtendBeamViewModel>();
             _servicesBuilder.AddTransient<ExtendBeam>();
 

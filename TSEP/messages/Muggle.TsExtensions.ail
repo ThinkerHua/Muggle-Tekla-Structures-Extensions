@@ -168,6 +168,16 @@ string_utf8 albl_locate_to_precise_position {
     entry = ("chs", "定位到精确坐标");
 };
 
+string_utf8 albl_significance {
+    entry = ("enu", "Significance");
+    entry = ("chs", "舍入基数");
+};
+
+string_utf8 albl_relocate {
+    entry = ("enu", "Relocate");
+    entry = ("chs", "重定位");
+};
+
 string_utf8 albl_align_column_control_points_with_centroid {
     entry = ("enu", "Align column control points with centroid");
     entry = ("chs", "柱控制点对齐到中心");

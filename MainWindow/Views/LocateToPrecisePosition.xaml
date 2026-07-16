@@ -1,0 +1,74 @@
+﻿<!--==============================================================================
+ *  Muggle TsExtensions - extensions for Tekla Structures
+ *
+ *  Copyright © 2026 Huang YongXing.
+ *
+ *  This library is free software, licensed under the terms of the GNU
+ *  General Public License as published by the Free Software Foundation,
+ *  either version 3 of the License, or (at your option) any later version.
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program. If not, see<http://www.gnu.org/licenses/> .
+ *==============================================================================
+ *  LocateToPrecisePosition.xaml: view for the locate to precise position operation.
+ *  written by Huang YongXing - thinkerhua@hotmail.com
+ *==============================================================================-->
+<Page x:Class="Muggle.TsExtensions.MainWindow.Views.LocateToPrecisePosition"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:local="clr-namespace:Muggle.TsExtensions.MainWindow.Views"
+      xmlns:vm="clr-namespace:Muggle.TsExtensions.MainWindow.ViewModels"
+      xmlns:dialog="clr-namespace:Tekla.Structures.Dialog;assembly=Tekla.Structures.Dialog"
+      Title="{dialog:Loc albl_move_to_elevation}"
+      mc:Ignorable="d"
+      d:DesignHeight="100"
+      d:DesignWidth="300"
+      d:DataContext="{d:DesignInstance Type=vm:LocateToPrecisePositionViewModel}"
+      d:Background="AliceBlue">
+
+    <Page.Resources>
+        <ResourceDictionary>
+            <Style x:Key="Element" TargetType="FrameworkElement">
+                <Setter Property="Margin" Value="{StaticResource UniformMargin}" />
+                <Setter Property="VerticalAlignment" Value="Center" />
+            </Style>
+            <Style TargetType="TextBlock" BasedOn="{StaticResource Element}" />
+            <Style TargetType="TextBox" BasedOn="{StaticResource Element}">
+                <Setter Property="HorizontalContentAlignment" Value="Center" />
+                <Setter Property="VerticalContentAlignment" Value="Center" />
+                <Setter Property="Height" Value="20" />
+            </Style>
+            <Style TargetType="Button" BasedOn="{StaticResource Element}">
+                <Setter Property="Template" Value="{StaticResource ButtonStyle1}" />
+                <Setter Property="Padding" Value="4,2,4,2" />
+                <Setter Property="Height" Value="30" />
+            </Style>
+            <Style TargetType="RadioButton" BasedOn="{StaticResource Element}" />
+            <Style TargetType="Separator" BasedOn="{StaticResource Element}" />
+        </ResourceDictionary>
+    </Page.Resources>
+
+    <Grid Margin="5">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="auto" />
+            <ColumnDefinition Width="100" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Grid.Column="0" Text="{dialog:Loc albl_significance}" />
+        <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Significance, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+        <Button Grid.Row="1"
+                Grid.Column="0"
+                Grid.ColumnSpan="2"
+                MinWidth="100"
+                Padding="5,2,5,2"
+                HorizontalAlignment="Center"
+                Content="{dialog:Loc albl_relocate}"
+                Command="{Binding LocateToPrecisePositionCommand}" />
+    </Grid>
+</Page>
