@@ -23,7 +23,7 @@
                               xmlns:svs="clr-namespace:Muggle.TsExtensions.MainWindow.Services"
                               Title="{dialog:Loc albl_window_title}"
                               Width="520"
-                              Height="380"
+                              Height="420"
                               MinWidth="340"
                               MinHeight="300"
                               ShowInTaskbar="True"
