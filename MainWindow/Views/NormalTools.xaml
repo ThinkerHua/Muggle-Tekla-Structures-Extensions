@@ -45,6 +45,7 @@
         <Button Content="{dialog:Loc albl_show_contour_order}" Command="{Binding ShowContourOrderCommand}" />
         <Button Content="{dialog:Loc albl_copy_with_direction}" Command="{Binding CopyWithDirectionCommand}" />
         <Button Content="{dialog:Loc albl_align_column_control_points_with_centroid}" Command="{Binding AlignColumnControlPointsWithCentroidCommand}" />
+        <Button Content="{dialog:Loc albl_fit_end_to_plane}" Command="{Binding FitEndToPlaneCommand}" />
 
     </StackPanel>
 </Page>

@@ -274,5 +274,57 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
 
             model.CommitChanges();
         }
+
+        [RelayCommand]
+        private void FitEndToPlane() {
+            var globalTp = new TransformationPlane();
+            var currentTp = model.GetWorkPlaneHandler().GetCurrentTransformationPlane();
+            model.GetWorkPlaneHandler().SetCurrentTransformationPlane(globalTp);
+
+            try {
+            
+                var modelObjects = uiSelector.GetSelectedObjects();
+                if (modelObjects.GetSize() == 0) {
+                    try {
+                        modelObjects = picker.PickObjects(Picker.PickObjectsEnum.PICK_N_OBJECTS);
+                    } catch (Exception e) when (e.Message == App.UserInterrupt) {
+                        return;
+    }
+}
+
+                if (modelObjects.GetSize() == 0) return;
+
+                var pickInput = picker.PickFace();
+                ArrayList points = null;
+                foreach (InputItem inputItem in pickInput) {
+                    if (inputItem.GetInputType() is InputItem.InputTypeEnum.INPUT_POLYGON) {
+                        points = inputItem.GetData() as ArrayList;
+                        break;
+                    }
+                }
+
+                if (points is null) throw new Exception("Cannot get plane!");
+            
+                var p0 = points[0] as Point;
+                var p1 = points[1] as Point;
+                var p2 = points[points.Count - 1] as Point;
+            
+                var axisX = new Vector(p1 - p0);
+                var axisY = new Vector(p2 - p0);
+
+                var plane = new Plane { Origin = p0, AxisX = axisX, AxisY = axisY };
+                
+                foreach (ModelObject modelObject in modelObjects) {
+                    var fitting = new Fitting { Plane = plane, Father = modelObject };
+                    fitting.Insert();
+                }
+
+                model.CommitChanges();
+            } catch (Exception e) {
+                messageBoxService.ShowError(e.ToString());
+            } finally {
+                model.GetWorkPlaneHandler().SetCurrentTransformationPlane(currentTp);
+            }
+        }
     }
 }

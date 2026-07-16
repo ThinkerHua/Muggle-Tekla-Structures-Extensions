@@ -297,3 +297,8 @@ string_utf8 albl_action {
     entry = ("enu", "Action");
     entry = ("chs", "执行");
 };
+
+string_utf8 albl_fit_end_to_plane {
+    entry = ("enu", "Fit end to plane");
+    entry = ("chs", "末端对齐到平面");
+};
