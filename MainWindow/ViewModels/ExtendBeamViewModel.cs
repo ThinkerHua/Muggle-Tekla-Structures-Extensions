@@ -19,6 +19,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Muggle.TsExtensions.Common.Geometry3d;
 using Muggle.TsExtensions.MainWindow.Services;
+using Tekla.Structures;
 using Tekla.Structures.Geometry3d;
 using Tekla.Structures.Model;
 using Tekla.Structures.Model.UI;
@@ -59,7 +60,9 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
                 if (objects.GetSize() == 0) {
                     objects = picker.PickObjects(Picker.PickObjectsEnum.PICK_N_PARTS, "prompt_Pick_objects");
                 }
-            } catch { }
+            } catch {
+                // ignore
+            }
             if (objects.GetSize() == 0) return;
 
             var taskList = new List<Task>();
@@ -67,15 +70,14 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
                 if (obj is not Beam beam) continue;
                 if (!BeamNames.Contains(beam.Name.ToLower())) continue;
 
-                var beamLine = new Line(beam.StartPoint, beam.EndPoint);
+                taskList.Add(Task.Run(Action));
+                continue;
 
-                void action() {
-                    beam.StartPoint = DestinationPoint(beam.StartPoint, beam.EndPoint);
-                    beam.EndPoint = DestinationPoint(beam.EndPoint, beam.StartPoint);
+                void Action() {
+                    beam.StartPoint = DestinationPoint(beam.Identifier, beam.StartPoint, beam.EndPoint);
+                    beam.EndPoint = DestinationPoint(beam.Identifier, beam.EndPoint, beam.StartPoint);
                     beam.Modify();
                 }
-
-                taskList.Add(Task.Run(action));
             }
 
             Task.WaitAll([.. taskList]);
@@ -83,32 +85,35 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
             model.CommitChanges();
         }
 
-        private Point DestinationPoint(Point sourcePoint, Point anotherPoint) {
+        private Point DestinationPoint(Identifier identifier, Point sourcePoint, Point anotherPoint) {
             var boundingBoxExtent = new Vector(Tolerance, Tolerance, Tolerance);
 
             var beamLine = new Line(sourcePoint, anotherPoint);
-            var nearbyObjects = model.GetModelObjectSelector().GetObjectsByBoundingBox(sourcePoint - boundingBoxExtent, sourcePoint + boundingBoxExtent);
+            var nearbyObjects = model.GetModelObjectSelector()
+                .GetObjectsByBoundingBox(sourcePoint - boundingBoxExtent, sourcePoint + boundingBoxExtent);
 
-            var objects = new List<Beam>();
             var beams = new List<Beam>();
             foreach (var item in nearbyObjects) {
-                if (item is not Beam beam) continue;
+                if (item is not Beam beam || beam.Identifier.Equals(identifier)) continue;
 
-                objects.Add(beam);
+                beams.Add(beam);
             }
 
-            var column = objects.FirstOrDefault(b => ColumnNames.Contains(b.Name.ToLower()));
+            // extend to column
+            var column = beams.FirstOrDefault(b => 
+                b.Type is Beam.BeamTypeEnum.COLUMN || ColumnNames.Contains(b.Name.ToLower()));
             if (column != null) {
                 return NearestPointOnColumn(sourcePoint, anotherPoint, column);
             }
 
-            foreach (var beam in objects) {
-                var partCS = beam.GetCoordinateSystem();
-                var gPlane = new GeometricPlane(partCS);
+            // extend to beam
+            foreach (var beam in beams) {
+                var partCs = beam.GetCoordinateSystem();
+                var gPlane = new GeometricPlane(partCs);
 
                 var intersection = Intersection.LineToPlane(beamLine, gPlane);
                 if (intersection == null) {
-                    gPlane = new GeometricPlane(partCS.Origin, partCS.AxisX, partCS.AxisX.Cross(partCS.AxisY));
+                    gPlane = new GeometricPlane(partCs.Origin, partCs.AxisX, partCs.AxisX.Cross(partCs.AxisY));
                     intersection = Intersection.LineToPlane(beamLine, gPlane);
                 }
                 if (intersection == null) continue;
@@ -132,32 +137,34 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
 
             Point intersection = null;
 
-            var columnCS = column.GetCoordinateSystem();
+            var columnCs = column.GetCoordinateSystem();
             var beamLine = new Line(sourcePoint, anotherPoint);
 
             switch (ExtendToColumnPosition) {
             case ExtendToColumnPositionEnum.MiddlePlane:
-                var gPlane = new GeometricPlane(columnCS);
+                var gPlane = new GeometricPlane(columnCs);
                 intersection = Intersection.LineToPlane(beamLine, gPlane);
                 if (intersection == null) {
-                    gPlane = new GeometricPlane(columnCS.Origin, columnCS.AxisX, columnCS.AxisX.Cross(columnCS.AxisY));
+                    gPlane = new GeometricPlane(columnCs.Origin, columnCs.AxisX, columnCs.AxisX.Cross(columnCs.AxisY));
                     intersection = Intersection.LineToPlane(beamLine, gPlane);
                 }
                 break;
             case ExtendToColumnPositionEnum.BoundingBoxPlane:
-                var centerLine = column.GetCenterLine(false).Cast<Point>();
+                var centerLine = column.GetCenterLine(false).Cast<Point>().ToArray();
                 var centerPoint = (centerLine.First() + centerLine.Last()).Multiply(0.5);
 
-                var obb = new OBB(centerPoint, columnCS.AxisX, columnCS.AxisY, columnCS.AxisX.Cross(columnCS.AxisY),
+                var obb = new OBB(centerPoint, columnCs.AxisX, columnCs.AxisY, columnCs.AxisX.Cross(columnCs.AxisY),
                     length * 0.5, height * 0.5, width * 0.5);
 
-                intersection = obb.IntersectionPointsWith(beamLine).OrderBy(p => Distance.PointToPoint(sourcePoint, p)).FirstOrDefault();
+                intersection = obb.IntersectionPointsWith(beamLine)
+                    .OrderBy(p => Distance.PointToPoint(anotherPoint, p)).FirstOrDefault();
                 break;
             case ExtendToColumnPositionEnum.Surface:
                 var solid = column.GetSolid(Solid.SolidCreationTypeEnum.RAW);
                 var extraVector = new Vector(sourcePoint - anotherPoint).GetNormal(10000);
 
-                intersection = solid.Intersect(sourcePoint + extraVector, anotherPoint).Cast<Point>().OrderBy(p => Distance.PointToPoint(anotherPoint, p)).FirstOrDefault();
+                intersection = solid.Intersect(sourcePoint + extraVector, anotherPoint).Cast<Point>()
+                    .OrderBy(p => Distance.PointToPoint(anotherPoint, p)).FirstOrDefault();
                 break;
             default:
                 break;
