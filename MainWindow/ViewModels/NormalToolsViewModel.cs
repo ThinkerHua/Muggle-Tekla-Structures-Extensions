@@ -89,7 +89,8 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
             try {
                 if (!model.GetConnectionStatus()) throw new InvalidOperationException(App.NotConnected);
 
-                plate = picker.PickObject(Picker.PickObjectEnum.PICK_ONE_PART, "Select a contour plate:") as ContourPlate;
+                plate =
+                    picker.PickObject(Picker.PickObjectEnum.PICK_ONE_PART, "Select a contour plate:") as ContourPlate;
             } catch (Exception e) when (e.Message == App.UserInterrupt) {
                 return;
             } catch (Exception e) {
@@ -101,15 +102,35 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
                 Operation.DisplayPrompt("No contour plate selected.");
                 return;
             }
-            var point = picker.PickPoint("Select a point as the first point:");
 
-            var contour = plate.Contour.ContourPoints.Cast<ContourPoint>();
-            var index = contour
-                .Select((p, i) => (i, Distance.PointToPoint(p, point)))
-                .OrderBy(item => item.Item2).First().i;
+            var p1 = picker.PickPoint("Select a point as the first contour point:");
+            var p2 = picker.PickPoint("Select a point as the second contour point:");
 
-            var newContour = contour.Skip(index).Concat(contour.Take(index)).ToList();
-            plate.Contour.ContourPoints = new ArrayList(newContour);
+            var contour = plate.Contour.ContourPoints.Cast<ContourPoint>().ToArray();
+            var startIndex = contour
+                .Select((p, i) => (i, Distance.PointToPoint(p, p1)))
+                .OrderBy(pair => pair.Item2).First().i;
+
+            var pre = startIndex == 0 ? contour[contour.Length - 1] : contour[startIndex - 1];
+            var nxt = startIndex == contour.Length - 1 ? contour[0] : contour[startIndex + 1];
+
+            var reverse = Distance.PointToPoint(p2, pre) < Distance.PointToPoint(p2, nxt);
+
+            if (reverse) {
+                foreach (var cp in contour) {
+                    (cp.Chamfer.X, cp.Chamfer.Y) = (cp.Chamfer.Y, cp.Chamfer.X);
+                    (cp.Chamfer.DZ1, cp.Chamfer.DZ2) = (cp.Chamfer.DZ2, cp.Chamfer.DZ1);
+                }
+
+                Array.Reverse(contour);
+                contour = contour.Skip(contour.Length - 1 - startIndex)
+                    .Concat(contour.Take(contour.Length - 1 - startIndex))
+                    .ToArray();
+            } else {
+                contour = contour.Skip(startIndex).Concat(contour.Take(startIndex)).ToArray();
+            }
+
+            plate.Contour.ContourPoints = new ArrayList(contour);
             plate.Modify();
             model.CommitChanges();
         }
