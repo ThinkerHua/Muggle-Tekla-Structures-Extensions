@@ -1,17 +1,18 @@
 /*==============================================================================
  *  Muggle TsExtensions - extensions for Tekla Structures
  *
- *  Copyright © 2025 Huang YongXing.                 
+ *  Copyright © 2025 Huang YongXing.
  *
- *  This library is free software, licensed under the terms of the GNU 
- *  General Public License as published by the Free Software Foundation, 
- *  either version 3 of the License, or (at your option) any later version. 
- *  You should have received a copy of the GNU General Public License 
- *  along with this program. If not, see <http://www.gnu.org/licenses/>. 
+ *  This library is free software, licensed under the terms of the GNU
+ *  General Public License as published by the Free Software Foundation,
+ *  either version 3 of the License, or (at your option) any later version.
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program. If not, see <http://www.gnu.org/licenses/>.
  *==============================================================================
  *  NormalToolsViewModel.cs: view model for the normal tools.
  *  written by Huang YongXing - thinkerhua@hotmail.com
  *==============================================================================*/
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -69,10 +70,7 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
                 if (!model.GetConnectionStatus()) throw new InvalidOperationException(App.NotConnected);
 
                 var weld = picker.PickObject(Picker.PickObjectEnum.PICK_ONE_WELD) as BaseWeld;
-                var parts = new ArrayList {
-                    weld.MainObject,
-                    weld.SecondaryObject,
-                };
+                var parts = new ArrayList { weld.MainObject, weld.SecondaryObject, };
 
                 uiSelector.Select(parts, false);
                 model.CommitChanges();
@@ -141,7 +139,8 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
             try {
                 if (!model.GetConnectionStatus()) throw new InvalidOperationException(App.NotConnected);
 
-                plate = picker.PickObject(Picker.PickObjectEnum.PICK_ONE_PART, "Select a contour plate:") as ContourPlate;
+                plate =
+                    picker.PickObject(Picker.PickObjectEnum.PICK_ONE_PART, "Select a contour plate:") as ContourPlate;
             } catch (Exception e) when (e.Message == App.UserInterrupt) {
                 return;
             } catch (Exception e) {
@@ -193,6 +192,7 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
             } catch {
                 return;
             }
+
             var direction = new Vector(directionPoint - origin);
             if (direction.IsZero()) {
                 Operation.DisplayPrompt("The direction vector cannot be zero.");
@@ -289,8 +289,8 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
                         modelObjects = picker.PickObjects(Picker.PickObjectsEnum.PICK_N_OBJECTS);
                     } catch (Exception e) when (e.Message == App.UserInterrupt) {
                         return;
-    }
-}
+                    }
+                }
 
                 if (modelObjects.GetSize() == 0) return;
 
