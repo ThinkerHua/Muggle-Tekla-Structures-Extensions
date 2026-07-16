@@ -29,14 +29,15 @@ namespace Muggle.TsExtensions.Common.Geometry3d {
         /// <summary>
         /// 获取一个向量，其在XY平面上的投影与X轴之间的夹角，以及其与XY平面之间的夹角为给定值。
         /// </summary>
-        /// <param name="angle_between_X">在XY平面上的投影与X轴之间的夹角，弧度制</param>
-        /// <param name="angle_between_XY">与XY平面之间的夹角，弧度制</param>
+        /// <remarks>参数 <paramref name="radianBetweenXYPlane"/> 为 0.0 时，返回的向量是单位向量，否则不是。</remarks>
+        /// <param name="radianBetweenX">在XY平面上的投影与X轴之间的夹角，弧度制</param>
+        /// <param name="radianBetweenXYPlane">与XY平面之间的夹角，弧度制</param>
         /// <returns>向量，其在XY平面上的投影与X轴之间的夹角，以及其与XY平面之间的夹角为给定值。</returns>
-        public static Vector GetDirectionByAngle(double angle_between_X, double angle_between_XY = 0) {
+        public static Vector GetDirectionByRadian(double radianBetweenX, double radianBetweenXYPlane = 0) {
             Vector direction = new Vector {
-                X = Math.Cos(angle_between_X),
-                Y = Math.Sin(angle_between_X),
-                Z = Math.Sin(angle_between_XY)
+                X = Math.Cos(radianBetweenX),
+                Y = Math.Sin(radianBetweenX),
+                Z = Math.Tan(radianBetweenXYPlane)
             };
 
             return direction;
