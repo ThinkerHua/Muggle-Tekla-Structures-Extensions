@@ -1,17 +1,18 @@
 /*==============================================================================
  *  Muggle TsExtensions - extensions for Tekla Structures
  *
- *  Copyright © 2026 Huang YongXing.                 
+ *  Copyright © 2026 Huang YongXing.
  *
- *  This library is free software, licensed under the terms of the GNU 
- *  General Public License as published by the Free Software Foundation, 
- *  either version 3 of the License, or (at your option) any later version. 
- *  You should have received a copy of the GNU General Public License 
- *  along with this program. If not, see <http://www.gnu.org/licenses/>. 
+ *  This library is free software, licensed under the terms of the GNU
+ *  General Public License as published by the Free Software Foundation,
+ *  either version 3 of the License, or (at your option) any later version.
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program. If not, see <http://www.gnu.org/licenses/>.
  *==============================================================================
  *  ExtendBeamViewModel.cs: view model for the extend beam operation.
  *  written by Huang YongXing - thinkerhua@hotmail.com
  *==============================================================================*/
+
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -43,11 +44,9 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
 
         private readonly IMessageBoxService messageBoxService;
 
-        [ObservableProperty]
-        private double _tolerance = 100;
+        [ObservableProperty] private double _tolerance = 100;
 
-        [ObservableProperty]
-        private ExtendToColumnPositionEnum _extendToColumnPosition;
+        [ObservableProperty] private ExtendToColumnPositionEnum _extendToColumnPosition;
 
         public ExtendBeamViewModel(IMessageBoxService messageBoxService) {
             this.messageBoxService = messageBoxService;
@@ -63,6 +62,7 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
             } catch {
                 // ignore
             }
+
             if (objects.GetSize() == 0) return;
 
             var taskList = new List<Task>();
@@ -100,8 +100,19 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
             }
 
             // extend to column
-            var column = beams.FirstOrDefault(b => 
-                b.Type is Beam.BeamTypeEnum.COLUMN || ColumnNames.Contains(b.Name.ToLower()));
+            var columns = beams.Where(b =>
+                    b.Type is Beam.BeamTypeEnum.COLUMN ||
+                    ColumnNames.Any(n => n.Contains(b.Name, StringComparison.OrdinalIgnoreCase)))
+                .ToArray();
+            Beam column;
+            if (columns.Length == 1) {
+                column = columns[0];
+            } else {
+                column = columns.Select(c => (c, c.GetSolid()))
+                    .OrderBy(pair => pair.Item2.MaximumPoint.Z)
+                    .FirstOrDefault().c;
+            }
+
             if (column != null) {
                 return NearestPointOnColumn(sourcePoint, anotherPoint, column);
             }
@@ -116,6 +127,7 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
                     gPlane = new GeometricPlane(partCs.Origin, partCs.AxisX, partCs.AxisX.Cross(partCs.AxisY));
                     intersection = Intersection.LineToPlane(beamLine, gPlane);
                 }
+
                 if (intersection == null) continue;
 
                 return intersection;
@@ -148,6 +160,7 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
                     gPlane = new GeometricPlane(columnCs.Origin, columnCs.AxisX, columnCs.AxisX.Cross(columnCs.AxisY));
                     intersection = Intersection.LineToPlane(beamLine, gPlane);
                 }
+
                 break;
             case ExtendToColumnPositionEnum.BoundingBoxPlane:
                 var centerLine = column.GetCenterLine(false).Cast<Point>().ToArray();

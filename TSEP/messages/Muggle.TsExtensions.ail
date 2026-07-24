@@ -198,6 +198,11 @@ string_utf8 albl_global_Z {
     entry = ("chs", "全局Z向");
 };
 
+string_utf8 albl_make_top_surface_under_plane {
+    entry = ("enu", "Make top surface under plane");
+    entry = ("chs", "使顶面在平面以下");
+};
+
 string_utf8 albl_plane {
     entry = ("enu", "Plane");
     entry = ("chs", "平面");
