@@ -20,11 +20,11 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:vc="clr-namespace:Muggle.TsExtensions.Common.WPF.ValueConverters"
              xmlns:tr="clr-namespace:Muggle.TsExtensions.Common.WPF.Localization"
-             ToolTip="{tr:Translate albl_ClickToChangeState}"
-             mc:Ignorable="d"
              d:DesignHeight="109"
              d:DesignWidth="100"
-             d:Background="WhiteSmoke">
+             d:Background="WhiteSmoke"
+             ToolTip="{tr:Translate albl_ClickToChangeState}"
+             mc:Ignorable="d">
 
     <UserControl.Resources>
         <SolidColorBrush x:Key="PartFill" Color="#2e74d7" />

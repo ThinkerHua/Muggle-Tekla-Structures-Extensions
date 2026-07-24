@@ -13,15 +13,22 @@
  *  written by Huang YongXing - thinkerhua@hotmail.com
  *==============================================================================*/
 using System.ComponentModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace Muggle.TsExtensions.Common.WPF.Controls {
     /// <summary>
     /// BoltSpecialHole.xaml 的交互逻辑
     /// </summary>
     public partial class BoltSpecialHole : UserControl {
+
+        public enum DirectionEnum {
+            UP, DOWN, LEFT, RIGHT
+        }
+
         public BoltSpecialHole() {
             InitializeComponent();
             MouseLeftButtonDown += ChangeState;
@@ -92,18 +99,65 @@ namespace Muggle.TsExtensions.Common.WPF.Controls {
         public static readonly DependencyProperty SpecialHole5Property =
             DependencyProperty.Register(nameof(SpecialHole5), typeof(bool), typeof(BoltSpecialHole), new PropertyMetadata(false));
 
+        /// <summary>
+        /// Indicates the direction of the bolt special holes.
+        /// </summary>
+        [Category("Appearance"), Description("Indicates the direction of the bolt special holes.")]
+        public DirectionEnum Direction {
+            get { return (DirectionEnum)GetValue(DirectionProperty); }
+            set { SetValue(DirectionProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for Direction.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty DirectionProperty =
+            DependencyProperty.Register(nameof(Direction), typeof(DirectionEnum), typeof(BoltSpecialHole),
+                new PropertyMetadata(DirectionEnum.UP, new PropertyChangedCallback(OnDirectionChanged)));
+
 
         private void ChangeState(object sender, MouseButtonEventArgs e) {
             var control = (BoltSpecialHole)sender;
-            var height = control.ActualHeight;
 
-            var proportion = e.GetPosition(control).Y / height;
+            var totalSize = Direction switch {
+                DirectionEnum.UP or DirectionEnum.DOWN => control.ActualHeight,
+                _ => control.ActualWidth
+            };
+
+            var position = e.GetPosition(control);
+            var proportion = Direction switch {
+                DirectionEnum.UP => position.Y / totalSize,
+                DirectionEnum.DOWN => (totalSize - position.Y) / totalSize,
+                DirectionEnum.LEFT => position.X / totalSize,
+                _ => (totalSize - position.X) / totalSize
+            };
 
             if (proportion > 18 / 109.0 && proportion < 28 / 109.0) SpecialHole1 = !SpecialHole1;
             if (proportion > 30 / 109.0 && proportion < 40 / 109.0) SpecialHole2 = !SpecialHole2;
             if (proportion > 42 / 109.0 && proportion < 52 / 109.0) SpecialHole3 = !SpecialHole3;
             if (proportion > 54 / 109.0 && proportion < 64 / 109.0) SpecialHole4 = !SpecialHole4;
             if (proportion > 66 / 109.0 && proportion < 76 / 109.0) SpecialHole5 = !SpecialHole5;
+        }
+
+        private static void OnDirectionChanged(object sender, DependencyPropertyChangedEventArgs e) {
+            var control = (BoltSpecialHole)sender;
+            var direction = (DirectionEnum)e.NewValue;
+
+            var drawingImage = LogicalTreeHelper.GetChildren(control).OfType<Image>().Single().Source as DrawingImage;
+            var drawingGroup = drawingImage.Drawing as DrawingGroup;
+
+            switch (direction) {
+            case DirectionEnum.UP:
+                drawingGroup.Transform = new MatrixTransform(1, 0, 0, 1, 0, 0);
+                break;
+            case DirectionEnum.DOWN:
+                drawingGroup.Transform = new MatrixTransform(1, 0, 0, -1, 0, 0);
+                break;
+            case DirectionEnum.LEFT:
+                drawingGroup.Transform = new MatrixTransform(0, -1, 1, 0, 0, 0);
+                break;
+            case DirectionEnum.RIGHT:
+                drawingGroup.Transform = new MatrixTransform(0, 1, -1, 0, 0, 0);
+                break;
+            }
         }
     }
 }

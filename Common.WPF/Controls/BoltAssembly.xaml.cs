@@ -13,15 +13,22 @@
  *  written by Huang YongXing - thinkerhua@hotmail.com
  *==============================================================================*/
 using System.ComponentModel;
+using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace Muggle.TsExtensions.Common.WPF.Controls {
     /// <summary>
     /// BoltAssembly.xaml 的交互逻辑
     /// </summary>
     public partial class BoltAssembly : UserControl {
+
+        public enum DirectionEnum {
+            UP, DOWN, LEFT, RIGHT
+        }
+
         public BoltAssembly() {
             InitializeComponent();
             MouseLeftButtonDown += ChangeState;
@@ -105,12 +112,36 @@ namespace Muggle.TsExtensions.Common.WPF.Controls {
         public static readonly DependencyProperty Nut2Property =
             DependencyProperty.Register(nameof(Nut2), typeof(bool), typeof(BoltAssembly), new PropertyMetadata(false));
 
+        /// <summary>
+        /// Indicates the direction of the bolt assembly.
+        /// </summary>
+        [Category("Appearance"), Description("Indicates the direction of the bolt assembly.")]
+        public DirectionEnum Direction {
+            get { return (DirectionEnum)GetValue(DirectionProperty); }
+            set { SetValue(DirectionProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for Direction.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty DirectionProperty =
+            DependencyProperty.Register(nameof(Direction), typeof(DirectionEnum), typeof(BoltAssembly),
+                new PropertyMetadata(DirectionEnum.UP, new PropertyChangedCallback(OnDirectionChanged)));
+
 
         private void ChangeState(object sender, MouseButtonEventArgs e) {
             var control = (BoltAssembly)sender;
-            var height = control.ActualHeight;
 
-            var proportion = e.GetPosition(control).Y / height;
+            var totalSize = Direction switch {
+                DirectionEnum.UP or DirectionEnum.DOWN => control.ActualHeight,
+                _ => control.ActualWidth
+            };
+
+            var position = e.GetPosition(control);
+            var proportion = Direction switch {
+                DirectionEnum.UP => position.Y / totalSize,
+                DirectionEnum.DOWN => (totalSize - position.Y) / totalSize,
+                DirectionEnum.LEFT => position.X / totalSize,
+                _ => (totalSize - position.X) / totalSize
+            };
 
             if (proportion > 0 / 130.0 && proportion < 16 / 130.0) Bolt = !Bolt;
             if (proportion > 18 / 130.0 && proportion < 36 / 130.0) Washer1 = !Washer1;
@@ -119,6 +150,38 @@ namespace Muggle.TsExtensions.Common.WPF.Controls {
             if (proportion > 81 / 130.0 && proportion < 97 / 130.0) Nut1 = !Nut1;
             if (proportion > 99 / 130.0 && proportion < 115 / 130.0) Nut2 = !Nut2;
             if (proportion > 115 / 130.0 && proportion < 130 / 130.0) Bolt = !Bolt;
+        }
+
+        private static void OnDirectionChanged(object sender, DependencyPropertyChangedEventArgs e) {
+            var control = (BoltAssembly)sender;
+            // var oldDirection = (DirectionEnum)e.OldValue;
+            var direction = (DirectionEnum)e.NewValue;
+
+            /*if (oldDirection is DirectionEnum.UP or DirectionEnum.DOWN
+                && direction is DirectionEnum.LEFT or DirectionEnum.RIGHT
+                || oldDirection is DirectionEnum.LEFT or DirectionEnum.RIGHT
+                && direction is DirectionEnum.UP or DirectionEnum.DOWN) {
+                (control.Width, control.Height) = (control.Height, control.Width);
+            }*/
+
+            var drawingImage = LogicalTreeHelper.GetChildren(control).OfType<Image>().Single().Source as DrawingImage;
+            var drawingGroup = drawingImage.Drawing as DrawingGroup;
+
+            switch (direction) {
+            case DirectionEnum.UP:
+                drawingGroup.Transform = new MatrixTransform(1, 0, 0, 1, 0, 0);
+                break;
+            case DirectionEnum.DOWN:
+                //drawingGroup.Transform = new MatrixTransform(1, 0, 0, -1, 0, control.ActualHeight);
+                drawingGroup.Transform = new MatrixTransform(1, 0, 0, -1, 0, 0);
+                break;
+            case DirectionEnum.LEFT:
+                drawingGroup.Transform = new MatrixTransform(0, -1, 1, 0, 0, 0);
+                break;
+            case DirectionEnum.RIGHT:
+                drawingGroup.Transform = new MatrixTransform(0, 1, -1, 0, 0, 0);
+                break;
+            }
         }
     }
 }
