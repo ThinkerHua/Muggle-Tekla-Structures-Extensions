@@ -5,7 +5,7 @@
     <SolidColorBrush x:Key="Brush_JointPlateFill" Color="#FF898989" />
     <SolidColorBrush x:Key="Brush_JointPlateFill_Dark" Color="#FF5B5B5B" />
     <SolidColorBrush x:Key="Brush_JointPlateFill_Light" Color="#FFBDBDA5" />
-    <SolidColorBrush x:Key="Brush_JointPlate2Fill" Color="#FF44BEA4" />
+    <SolidColorBrush x:Key="Brush_JointPlateFill2" Color="#FF44BEA4" />
     <SolidColorBrush x:Key="Brush_PrimPartFill" Color="#FF316BB5" />
     <SolidColorBrush x:Key="Brush_SecdPartFill" Color="#FF2F94C4" />
     <SolidColorBrush x:Key="Brush_BoltFill" Color="#FFA8751F" />
@@ -16,7 +16,7 @@
     <SolidColorBrush x:Key="Brush_Break" Color="Black" />
     <SolidColorBrush x:Key="Brush_Axis" Color="Red" />
     <Pen x:Key="Pen_InstanceBorder" Thickness="0.5" Brush="{StaticResource Brush_InstanceBorder}" />
-    <Pen x:Key="Pen_HideInstanceBorder" Thickness="0.5" Brush="{StaticResource Brush_InstanceBorder}">
+    <Pen x:Key="Pen_InstanceBorder_Hide" Thickness="0.5" Brush="{StaticResource Brush_InstanceBorder}">
         <Pen.DashStyle>
             <DashStyle Dashes="20,10" />
         </Pen.DashStyle>
@@ -521,7 +521,7 @@
                     <PathGeometry Figures="M0,0 H140 V40 H0 V24 L5,22.1 V21.9 L-5,18.1 V17.9 L0,16 Z" />
                 </GeometryDrawing.Geometry>
             </GeometryDrawing>
-            <GeometryDrawing Pen="{StaticResource Pen_HideInstanceBorder}">
+            <GeometryDrawing Pen="{StaticResource Pen_InstanceBorder_Hide}">
                 <GeometryDrawing.Geometry>
                     <PathGeometry Figures="M140,19 H-2.6 M140,21 H2.6" />
                 </GeometryDrawing.Geometry>

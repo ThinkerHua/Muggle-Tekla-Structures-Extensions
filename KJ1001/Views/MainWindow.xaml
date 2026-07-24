@@ -89,7 +89,7 @@
         </TextBlock>
 
         <TabControl>
-            <TabItem Header="{tsd:Loc albl_parameters}">
+            <TabItem Header="{tr:Translate albl_Parameters}">
                 <DockPanel>
                     <Canvas Width="280" Height="450" DockPanel.Dock="Left">
                         <Image Width="280" Height="450" Margin="3,0,0,0">

@@ -19,7 +19,7 @@
     <SolidColorBrush x:Key="Brush_JointPlateFill" Color="#FF898989" />
     <SolidColorBrush x:Key="Brush_JointPlateFill_Dark" Color="#FF5B5B5B" />
     <SolidColorBrush x:Key="Brush_JointPlateFill_Light" Color="#FFBDBDA5" />
-    <SolidColorBrush x:Key="Brush_JointPlate2Fill" Color="#FF44BEA4" />
+    <SolidColorBrush x:Key="Brush_JointPlateFill2" Color="#FF44BEA4" />
     <SolidColorBrush x:Key="Brush_PrimPartFill" Color="#FF316BB5" />
     <SolidColorBrush x:Key="Brush_SecdPartFill" Color="#FF2F94C4" />
     <SolidColorBrush x:Key="Brush_BoltFill" Color="#FFA8751F" />

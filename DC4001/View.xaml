@@ -85,7 +85,7 @@
         </TextBlock>
 
         <TabControl>
-            <TabItem Header="{tsd:Loc albl_parameters}">
+            <TabItem Header="{tr:Translate albl_Parameters}">
                 <DockPanel LastChildFill="False">
 
                     <Canvas Width="540" Height="150" DockPanel.Dock="Top">
@@ -299,7 +299,7 @@
                 </DockPanel>
             </TabItem>
 
-            <TabItem Header="{tsd:Loc albl_chamfers}">
+            <TabItem Header="{tr:Translate albl_Chamfers}">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="auto" />
@@ -526,7 +526,7 @@
                 </Grid>
             </TabItem>
 
-            <TabItem Header="{tsd:Loc albl_parts}">
+            <TabItem Header="{tr:Translate albl_Parts}">
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="1*" />
@@ -1051,7 +1051,7 @@
                 </Grid>
             </TabItem>
 
-            <TabItem Header="{tsd:Loc albl_welds}">
+            <TabItem Header="{tr:Translate albl_Welds}">
                 <StackPanel Margin="2,0">
                     <StackPanel.Resources>
                         <ResourceDictionary>
