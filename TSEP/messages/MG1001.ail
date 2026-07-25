@@ -4,188 +4,137 @@
 	entry = ("chs", "MG1001 - 边柱与梁竖向连接");
 };
 
-string_utf8 albl_parameters_1
-{
-	entry = ("enu", "Parameters 1");
-	entry = ("chs", "参数1");
+string_utf8 albl_top_plate_is_horizontal {
+	entry = ("enu", "Top plate is horizontal");
+	entry = ("chs", "顶板水平");
 };
 
-string_utf8 albl_parameters_2
-{
-	entry = ("enu", "Parameters 2");
-	entry = ("chs", "参数2");
-};
-
-string_utf8 albl_prfStr_top_plate
-{
-	entry = ("enu", "Top plate's profile");
-	entry = ("chs", "顶板规格");
-};
-
-string_utf8 albl_top_plate_is_horizontal
-{
-	entry = ("enu", "Whether top plate is horizontal or not");
-	entry = ("chs", "顶板是否水平布置");
-};
-
-string_utf8 albl_diagonal_palte_profile
-{
-	entry = ("enu", "Diagonal plate's profile");
-	entry = ("chs", "对角板规格");
-};
-
-string_utf8 albl_diagonal_plate_position1
-{
-	entry = ("enu", "Diagonal plate's position 1");
+string_utf8 albl_diagonal_plate_position1 {
+	entry = ("enu", "Diagonal plate position 1");
 	entry = ("chs", "对角板定位1");
 };
 
-string_utf8 albl_diagonal_plate_position2
-{
-	entry = ("enu", "Diagonal plate's position 2");
+string_utf8 albl_diagonal_plate_position2 {
+	entry = ("enu", "Diagonal plate position 2");
 	entry = ("chs", "对角板定位2");
 };
 
-string_utf8 albl_diagonal_plate_chamfer_size
-{
-	entry = ("enu", "Chamfer size of diagonal plate");
-	entry = ("chs", "对角板倒角尺寸");
-};
-
-string_utf8 albl_horizontal_plate_profile
-{
-	entry = ("enu", "Horizontal plate's profile");
-	entry = ("chs", "水平板规格");
-};
-
-string_utf8 albl_horizontal_plate_chamfer_size
-{
-	entry = ("enu", "Chamfer size of horizontal plate");
-	entry = ("chs", "水平板倒角尺寸");
-};
-
-string_utf8 albl_thickened_plate_thickness
-{
-	entry = ("enu", "Thickened plate's thickness");
-	entry = ("chs", "加厚板厚度");
-};
-
-string_utf8 albl_thickened_plate_position
-{
-	entry = ("enu", "Thickened plate's position");
+string_utf8 albl_thickened_plate_position {
+	entry = ("enu", "Thickened plate position");
 	entry = ("chs", "加厚板定位");
 };
 
-string_utf8 albl_eave_plate_length
-{
-	entry = ("enu", "Eave plate's length");
-	entry = ("chs", "檐口板长度");
-};
-
-string_utf8 albl_eave_plate_height
-{
-	entry = ("enu", "Eave plate's height");
-	entry = ("chs", "檐口板高度");
-};
-
-string_utf8 albl_eave_plate_thickness
-{
-	entry = ("enu", "Eave plate's thickness");
-	entry = ("chs", "檐口板厚度");
-};
-
-string_utf8 albl_thickness_difference
-{
-	entry = ("enu", "Difference of thickness");
+string_utf8 albl_thickness_difference {
+	entry = ("enu", "Thickness difference");
 	entry = ("chs", "厚度差");
 };
 
-string_utf8 albl_slop
-{
-	entry = ("enu", "Slop");
-	entry = ("chs", "坡度");
+string_utf8 albl_groove_slope {
+	entry = ("enu", "Groove slope");
+	entry = ("chs", "槽坡度");
 };
 
-string_utf8 albl_endplate1_profile
-{
-	entry = ("enu", "Profile of end plate 1");
-	entry = ("chs", "端板1规格");
-};
-
-string_utf8 albl_endplate2_profile
-{
-	entry = ("enu", "Profile of end plate 2");
-	entry = ("chs", "端板2规格");
-};
-
-string_utf8 albl_endplate_position
-{
-	entry = ("enu", "End plate's position");
+string_utf8 albl_endplate_position {
+	entry = ("enu", "End plate position");
 	entry = ("chs", "端板定位");
 };
 
-string_utf8 albl_flange_stiffener_profile
-{
-	entry = ("enu", "Flange stiffener's profile");
-	entry = ("chs", "翼缘加劲板规格");
+string_utf8 albl_web_stiffeners_distance_list {
+	entry = ("enu", "Web stiffeners distance list");
+	entry = ("chs", "腹板加劲肋距离列表");
 };
 
-string_utf8 albl_web_stiffener_type
-{
-	entry = ("enu", "Web stiffener's type");
-	entry = ("chs", "腹板加劲板类型");
+string_utf8 albl_top_plate {
+	entry = ("enu", "Top plate");
+	entry = ("chs", "顶板");
 };
 
-string_utf8 albl_web_stiffener_profile
-{
-	entry = ("enu", "Web stiffener's profile");
-	entry = ("chs", "腹板加劲板规格");
+string_utf8 albl_diagonal_plate {
+	entry = ("enu", "Diagonal plate");
+	entry = ("chs", "对角板");
 };
 
-string_utf8 albl_web_stiffeners_distance_list
-{
-	entry = ("enu", "Web stiffeners's distance list");
-	entry = ("chs", "腹板加劲板距离列");
+string_utf8 albl_horizontal_plate {
+	entry = ("enu", "Horizontal plate");
+	entry = ("chs", "水平板");
 };
 
-string_utf8 albl_stiffener_chamfer_inside
-{
-	entry = ("enu", "Inside chamfer's size of stiffener");
-	entry = ("chs", "加劲板内倒角尺寸");
+string_utf8 albl_thickened_plate {
+	entry = ("enu", "Thickened plate");
+	entry = ("chs", "加厚板");
 };
 
-string_utf8 albl_stiffener_chamfer_outside
-{
-	entry = ("enu", "Outside chamfer's size of stiffener");
-	entry = ("chs", "加劲板外倒角尺寸");
+string_utf8 albl_eave_plate {
+	entry = ("enu", "Eave plate");
+	entry = ("chs", "檐板");
 };
 
-string_utf8 albl_bolt_distance_list_x
-{
-	entry = ("enu", "Bolt distance list X");
-	entry = ("chs", "螺栓X向距离列");
+string_utf8 albl_end_plate_1 {
+	entry = ("enu", "End plate 1");
+	entry = ("chs", "端板1");
 };
 
-string_utf8 albl_bolt_distance_list_y
-{
-	entry = ("enu", "Bolt distance list Y");
-	entry = ("chs", "螺栓Y向距离列");
+string_utf8 albl_end_plate_2 {
+	entry = ("enu", "End plate 2");
+	entry = ("chs", "端板2");
 };
 
-string_utf8 albl_bolt_standard
-{
-	entry = ("enu", "Bolt standard");
-	entry = ("chs", "螺栓等级");
+string_utf8 albl_flange_stiffener {
+	entry = ("enu", "Flange stiffener");
+	entry = ("chs", "翼缘加劲肋");
 };
 
-string_utf8 albl_bolt_size
-{
-	entry = ("enu", "Bolt size");
-	entry = ("chs", "螺栓尺寸");
+string_utf8 albl_web_stiffener {
+	entry = ("enu", "Web stiffener");
+	entry = ("chs", "腹板加劲肋");
 };
 
-string_utf8 albl_material
-{
-	entry = ("enu", "Material");
-	entry = ("chs", "材质");
+string_utf8 albl_flange_stiffener_kind {
+	entry = ("enu", "Flange stiffener kind");
+	entry = ("chs", "翼缘加劲肋类型");
+};
+
+string_utf8 albl_web_stiffener_kind {
+	entry = ("enu", "Web stiffener kind");
+	entry = ("chs", "腹板加劲肋类型");
+};
+
+string_utf8 albl_place {
+	entry = ("enu", "Place");
+	entry = ("chs", "位置");
+};
+
+string_utf8 albl_stiffener_inside {
+	entry = ("enu", "Stiffener inside");
+	entry = ("chs", "加劲肋内侧倒角");
+};
+
+string_utf8 albl_stiffener_outside {
+	entry = ("enu", "Stiffener outside");
+	entry = ("chs", "加劲肋外侧倒角");
+};
+
+string_utf8 albl_inside {
+	entry = ("enu", "Inside");
+	entry = ("chs", "内侧");
+};
+
+string_utf8 albl_outside {
+	entry = ("enu", "Outside");
+	entry = ("chs", "外侧");
+};
+
+string_utf8 albl_stiffener_kind_1 {
+	entry = ("enu", "Stiffener kind 1");
+	entry = ("chs", "加劲肋类型 1");
+};
+
+string_utf8 albl_stiffener_kind_2 {
+	entry = ("enu", "Stiffener kind 2");
+	entry = ("chs", "加劲肋类型 2");
+};
+
+string_utf8 albl_start_offset {
+	entry = ("enu", "Start offset");
+	entry = ("chs", "起始偏移");
 };

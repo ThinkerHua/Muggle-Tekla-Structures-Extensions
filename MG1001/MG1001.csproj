@@ -6,7 +6,7 @@
 		<AssemblyName>MG1001</AssemblyName>
 		<Authors>thinkerhua@hotmail.com</Authors>
 		<RootNamespace>Muggle.TsExtensions.MG1001</RootNamespace>
-		<Copyright>Copyright © 2024 thinkerhua@hotmail.com. All rights reserved.</Copyright>
+		<Copyright>Copyright © 2024-2026 thinkerhua@hotmail.com. All rights reserved.</Copyright>
 		<Configurations>D2021;D2024;R2021;R2024</Configurations>
         <Optimize Condition="$(Configuration.StartsWith('R'))">True</Optimize>
         <DefineConstants Condition="$(Configuration.StartsWith('D'))">TRACE;DEBUG</DefineConstants>
@@ -14,6 +14,7 @@
 	</PropertyGroup>
 	
 	<ItemGroup>
+		<PackageReference Include="CalcBinding" />
 		<PackageReference Include="Muggle.TsExtensions.CodingHelper" />
 		<PackageReference Include="Tekla.Structures" ExcludeAssets="runtime" />
 		<PackageReference Include="Tekla.Structures.Datatype" ExcludeAssets="runtime" />
@@ -25,16 +26,6 @@
 	<ItemGroup>
 		<ProjectReference Include="..\Common.WPF\Common.WPF.csproj" />
 		<ProjectReference Include="..\Common\Common.csproj" />
-	</ItemGroup>
-	
-	<ItemGroup>
-		<None Remove="Resources\3.png" />
-		<None Remove="Resources\4.png" />
-	</ItemGroup>
-	
-	<ItemGroup>
-		<Resource Include="Assets\3.png" />
-		<Resource Include="Assets\4.png" />
 	</ItemGroup>
 	
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
