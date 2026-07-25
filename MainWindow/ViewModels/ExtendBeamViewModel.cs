@@ -68,7 +68,7 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
             var taskList = new List<Task>();
             foreach (var obj in objects) {
                 if (obj is not Beam beam) continue;
-                if (!BeamNames.Contains(beam.Name.ToLower())) continue;
+                if (!BeamNames.Any(n => beam.Name.Contains(n, StringComparison.OrdinalIgnoreCase))) continue;
 
                 taskList.Add(Task.Run(Action));
                 continue;
@@ -102,7 +102,7 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
             // extend to column
             var columns = beams.Where(b =>
                     b.Type is Beam.BeamTypeEnum.COLUMN ||
-                    ColumnNames.Any(n => n.Contains(b.Name, StringComparison.OrdinalIgnoreCase)))
+                    ColumnNames.Any(n => b.Name.Contains(n, StringComparison.OrdinalIgnoreCase)))
                 .ToArray();
             Beam column;
             if (columns.Length == 1) {
@@ -119,6 +119,8 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
 
             // extend to beam
             foreach (var beam in beams) {
+                if (!BeamNames.Any(n => beam.Name.Contains(n, StringComparison.OrdinalIgnoreCase))) continue;
+
                 var partCs = beam.GetCoordinateSystem();
                 var gPlane = new GeometricPlane(partCs);
 
@@ -167,7 +169,7 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
                 var centerPoint = (centerLine.First() + centerLine.Last()).Multiply(0.5);
 
                 var obb = new OBB(centerPoint, columnCs.AxisX, columnCs.AxisY, columnCs.AxisX.Cross(columnCs.AxisY),
-                    length * 0.5, height * 0.5, width * 0.5);
+                    length * 0.5 + Tolerance, height * 0.5, width * 0.5);
 
                 intersection = obb.IntersectionPointsWith(beamLine)
                     .OrderBy(p => Distance.PointToPoint(anotherPoint, p)).FirstOrDefault();
