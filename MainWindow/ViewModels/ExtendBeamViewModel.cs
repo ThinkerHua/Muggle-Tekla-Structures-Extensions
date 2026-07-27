@@ -16,6 +16,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Muggle.TsExtensions.Common.Geometry3d;
@@ -92,20 +93,33 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
             var nearbyObjects = model.GetModelObjectSelector()
                 .GetObjectsByBoundingBox(sourcePoint - boundingBoxExtent, sourcePoint + boundingBoxExtent);
 
-            var beams = new List<Beam>();
-            foreach (var item in nearbyObjects) {
-                if (item is not Beam beam || beam.Identifier.Equals(identifier)) continue;
+            var columns = new List<Beam>();
+            var beams = new List<Part>();
+            foreach (ModelObject item in nearbyObjects) {
+                if (item.Identifier.Equals(identifier)) continue;
 
-                beams.Add(beam);
+                switch (item) {
+                case Beam beam:
+                    if (beam.Type is Beam.BeamTypeEnum.COLUMN ||
+                        ColumnNames.Any(n => beam.Name.Contains(n, StringComparison.OrdinalIgnoreCase))) {
+                        columns.Add(beam);
+                    } else if (BeamNames.Any(n => beam.Name.Contains(n, StringComparison.OrdinalIgnoreCase))) {
+                        beams.Add(beam);
+                    }
+
+                    break;
+                case PolyBeam polyBeam:
+                    if (BeamNames.Any(n => polyBeam.Name.Contains(n, StringComparison.OrdinalIgnoreCase))) {
+                        beams.Add(polyBeam);
+                    }
+
+                    break;
+                }
             }
 
             // extend to column
-            var columns = beams.Where(b =>
-                    b.Type is Beam.BeamTypeEnum.COLUMN ||
-                    ColumnNames.Any(n => b.Name.Contains(n, StringComparison.OrdinalIgnoreCase)))
-                .ToArray();
             Beam column;
-            if (columns.Length == 1) {
+            if (columns.Count == 1) {
                 column = columns[0];
             } else {
                 column = columns.Select(c => (c, c.GetSolid()))
@@ -118,10 +132,25 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
             }
 
             // extend to beam
-            foreach (var beam in beams) {
-                if (!BeamNames.Any(n => beam.Name.Contains(n, StringComparison.OrdinalIgnoreCase))) continue;
+            foreach (var part in beams) {
+                CoordinateSystem partCs;
+                switch (part) {
+                case Beam beam:
+                    partCs = beam.GetCoordinateSystem();
+                    break;
+                case PolyBeam polyBeam:
+                    var css = polyBeam.GetPolybeamCoordinateSystems().Cast<CoordinateSystem>().ToList();
+                    var index = css.Take(css.Count - 1)
+                        .Zip(css.Skip(1), (cs1, cs2) => new Line(cs1.Origin, cs2.Origin))
+                        .Select((l, i) => (l, i))
+                        .OrderBy(pair => Distance.PointToLine(sourcePoint, pair.l))
+                        .First().i;
+                    partCs = css[index];
+                    break;
+                default:
+                    continue;
+                }
 
-                var partCs = beam.GetCoordinateSystem();
                 var gPlane = new GeometricPlane(partCs);
 
                 var intersection = Intersection.LineToPlane(beamLine, gPlane);

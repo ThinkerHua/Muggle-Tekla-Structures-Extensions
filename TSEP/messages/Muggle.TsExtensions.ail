@@ -88,6 +88,11 @@ string_utf8 albl_tolerance {
     entry = ("chs", "容许误差");
 };
 
+string_utf8 albl_position_in_relation_to_beam {
+    entry = ("enu", "Position in relation to beam");
+    entry = ("chs", "相对于梁的位置");
+};
+
 string_utf8 albl_position_in_relation_to_column {
     entry = ("enu", "Position in relation to column");
     entry = ("chs", "相对于柱的位置");
