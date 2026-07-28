@@ -60,14 +60,16 @@
         <Separator />
 
         <TextBlock Text="{dialog:Loc albl_position_in_relation_to_beam}" />
-        <RadioButton Content="{dialog:Loc albl_middle_plane}" GroupName="Beam" IsChecked="True" />
+        <RadioButton Content="{dialog:Loc albl_middle_plane}" GroupName="Beam" IsChecked="{Binding ExtendToBeamPosition, Converter={StaticResource EnumToBool}, ConverterParameter={x:Static vm:ExtendBeamViewModel+ExtendPositionEnum.MiddlePlane}}" />
+        <RadioButton Content="{dialog:Loc albl_bounding_box_plane}" GroupName="Beam" IsChecked="{Binding ExtendToBeamPosition, Converter={StaticResource EnumToBool}, ConverterParameter={x:Static vm:ExtendBeamViewModel+ExtendPositionEnum.BoundingBoxPlane}}" />
+        <RadioButton Content="{dialog:Loc albl_surface}" GroupName="Beam" IsChecked="{Binding ExtendToBeamPosition, Converter={StaticResource EnumToBool}, ConverterParameter={x:Static vm:ExtendBeamViewModel+ExtendPositionEnum.Surface}}" />
 
         <Separator />
 
         <TextBlock Text="{dialog:Loc albl_position_in_relation_to_column}" />
-        <RadioButton Content="{dialog:Loc albl_middle_plane}" GroupName="Column" IsChecked="{Binding ExtendToColumnPosition, Converter={StaticResource EnumToBool}, ConverterParameter={x:Static vm:ExtendBeamViewModel+ExtendToColumnPositionEnum.MiddlePlane}}" />
-        <RadioButton Content="{dialog:Loc albl_bounding_box_plane}" GroupName="Column" IsChecked="{Binding ExtendToColumnPosition, Converter={StaticResource EnumToBool}, ConverterParameter={x:Static vm:ExtendBeamViewModel+ExtendToColumnPositionEnum.BoundingBoxPlane}}" />
-        <RadioButton Content="{dialog:Loc albl_surface}" GroupName="Column" IsChecked="{Binding ExtendToColumnPosition, Converter={StaticResource EnumToBool}, ConverterParameter={x:Static vm:ExtendBeamViewModel+ExtendToColumnPositionEnum.Surface}}" />
+        <RadioButton Content="{dialog:Loc albl_middle_plane}" GroupName="Column" IsChecked="{Binding ExtendToColumnPosition, Converter={StaticResource EnumToBool}, ConverterParameter={x:Static vm:ExtendBeamViewModel+ExtendPositionEnum.MiddlePlane}}" />
+        <RadioButton Content="{dialog:Loc albl_bounding_box_plane}" GroupName="Column" IsChecked="{Binding ExtendToColumnPosition, Converter={StaticResource EnumToBool}, ConverterParameter={x:Static vm:ExtendBeamViewModel+ExtendPositionEnum.BoundingBoxPlane}}" />
+        <RadioButton Content="{dialog:Loc albl_surface}" GroupName="Column" IsChecked="{Binding ExtendToColumnPosition, Converter={StaticResource EnumToBool}, ConverterParameter={x:Static vm:ExtendBeamViewModel+ExtendPositionEnum.Surface}}" />
 
         <Button Grid.Row="3"
                 Grid.Column="0"
