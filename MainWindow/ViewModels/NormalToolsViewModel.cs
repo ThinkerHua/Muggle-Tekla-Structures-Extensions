@@ -65,23 +65,6 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
         }
 
         [RelayCommand]
-        private void SelectWeldedObjects() {
-            try {
-                if (!model.GetConnectionStatus()) throw new InvalidOperationException(App.NotConnected);
-
-                var weld = picker.PickObject(Picker.PickObjectEnum.PICK_ONE_WELD) as BaseWeld;
-                var parts = new ArrayList { weld.MainObject, weld.SecondaryObject, };
-
-                uiSelector.Select(parts, false);
-                model.CommitChanges();
-            } catch (Exception e) when (e.Message == App.UserInterrupt) {
-
-            } catch (Exception e) {
-                messageBoxService.ShowError(e.ToString());
-            }
-        }
-
-        [RelayCommand]
         private void ReorderContourPoints() {
             ContourPlate plate;
             try {

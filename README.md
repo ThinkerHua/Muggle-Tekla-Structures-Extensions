@@ -20,7 +20,6 @@ Tools and plugins for Tekla Structures. Please use in accordance with the [Open 
 
 - [ShowModelObjectCoordinateSystem](#showmodelobjectcoordinatesystem)
 - [SelectBooleans](#selectbooleans)
-- [SelectWeldedModelObjects](#selectweldedmodelobjects)
 - [ReorderContourPoints](#reordercontourpoints)
 - [ShowContourOrder](#showcontourorder)
 - [CopyWithDirection](#copywithdirection)
@@ -148,14 +147,6 @@ Useful when modeling pipe truss, when there are many Boolean objects overlapped,
 在管桁架建模时很有用，当有很多布尔操作对象重叠在一起时，要选中某一个零件的布尔操作对象很困难，此工具可派上用场，即使视图中关闭了“切割”或“末端对齐”显示也依然能够选中。
 
 ![SelectBooleans](Resources/Introduction_SelectBooleans.gif)
-
-## SelectWeldedModelObjects
-
-## 选择焊缝的焊接对象
-
-Sometimes after creating a large number of weld, individual welds look strange, and it is hard to determine which two parts the weld is between, use this tool to solve this problem.
-
-有时创建了大量的焊缝后，个别焊缝看起来很奇怪，又很难确定是哪两个零件之间的焊缝，使用此工具可解决此问题。
 
 ## ReorderContourPoints
 

@@ -40,7 +40,6 @@
 
     <StackPanel Margin="0" HorizontalAlignment="Left" VerticalAlignment="Top">
         <Button Content="{dialog:Loc albl_show_model_object_coordinate_system}" Command="{Binding ShowModelObjectCoordinateSystemCommand}" />
-        <Button Content="{dialog:Loc albl_select_welded_objects}" Command="{Binding SelectWeldedObjectsCommand}" />
         <Button Content="{dialog:Loc albl_reorder_contour_points}" Command="{Binding ReorderContourPointsCommand}" />
         <Button Content="{dialog:Loc albl_show_contour_order}" Command="{Binding ShowContourOrderCommand}" />
         <Button Content="{dialog:Loc albl_copy_with_direction}" Command="{Binding CopyWithDirectionCommand}" />
