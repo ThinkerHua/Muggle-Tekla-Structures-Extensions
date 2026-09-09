@@ -9,9 +9,10 @@
  *  You should have received a copy of the GNU General Public License 
  *  along with this program. If not, see <http://www.gnu.org/licenses/>. 
  *==============================================================================
- *  ProjectBeamOntoPlane.xaml.cs: code behind for the view of ProjectBeamOntoPlane.
+ *  ProjectOntoPlane.xaml.cs: code behind for the view of ProjectOntoPlane.
  *  written by Huang YongXing - thinkerhua@hotmail.com
  *==============================================================================*/
+
 using System.Windows.Controls;
 using Microsoft.Extensions.DependencyInjection;
 using Muggle.TsExtensions.MainWindow.ViewModels;
@@ -20,10 +21,10 @@ namespace Muggle.TsExtensions.MainWindow.Views {
     /// <summary>
     /// ProjectBeamOntoPlane.xaml 的交互逻辑
     /// </summary>
-    public partial class ProjectBeamOntoPlane : Page {
-        public ProjectBeamOntoPlane() {
+    public partial class ProjectOntoPlane : Page {
+        public ProjectOntoPlane() {
             InitializeComponent();
-            DataContext = App.Current.Services.GetRequiredService<ProjectBeamOntoPlaneViewModel>();
+            DataContext = App.Current.Services.GetRequiredService<ProjectOntoPlaneViewModel>();
         }
     }
 }

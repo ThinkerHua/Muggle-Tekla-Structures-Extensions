@@ -9,7 +9,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program. If not, see <http://www.gnu.org/licenses/>.
  *==============================================================================
- *  ProjectBeamOntoPlaneViewModel.cs: view model for the project beam onto plane operation.
+ *  ProjectOntoPlaneViewModel.cs: view model for the project model object onto plane operation.
  *  written by Huang YongXing - thinkerhua@hotmail.com
  *==============================================================================*/
 
@@ -25,13 +25,13 @@ using Tekla.Structures.Geometry3d;
 using Tekla.Structures.Model;
 using Tekla.Structures.Model.UI;
 using ModelObjectSelector = Tekla.Structures.Model.UI.ModelObjectSelector;
-using Task = System.Threading.Tasks.Task;
 
 namespace Muggle.TsExtensions.MainWindow.ViewModels {
-    public partial class ProjectBeamOntoPlaneViewModel : ViewModelBase {
+    public partial class ProjectOntoPlaneViewModel : ViewModelBase {
         public enum ProjectionDirectionEnum {
             Perpendicular,
             GlobalZ,
+            Manually,
         }
 
         public enum WayToGetPlaneEnum {
@@ -48,21 +48,17 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
 
         [ObservableProperty] private WayToGetPlaneEnum _wayToGetPlane;
 
-        [ObservableProperty] private bool _makeTopSurfaceUnderPlane;
+        [ObservableProperty] private bool _makeSolidUnderPlane;
 
-        public ProjectBeamOntoPlaneViewModel(IMessageBoxService messageBox) {
+        public ProjectOntoPlaneViewModel(IMessageBoxService messageBox) {
             ProjectionDirection = ProjectionDirectionEnum.GlobalZ;
             WayToGetPlane = WayToGetPlaneEnum.PickFace;
-            MakeTopSurfaceUnderPlane = true;
+            MakeSolidUnderPlane = true;
 
             Model = new Model();
             Picker = new Picker();
             UiSelector = new ModelObjectSelector();
             MessageBox = messageBox;
-        }
-
-        private async Task ProjectBeamOntoPlaneAsync() {
-            await Task.Run(ProjectBeamOntoPlane);
         }
 
         [RelayCommand]
@@ -78,21 +74,25 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
 
                 if (selectedObjects.GetSize() == 0) return;
 
-                Point[] points = null;
+                Point[] points = new Point[3];
                 switch (WayToGetPlane) {
                 case WayToGetPlaneEnum.PickFace:
                     var input = Picker.PickFace();
 
                     foreach (InputItem item in input) {
                         if (item.GetInputType() != InputItem.InputTypeEnum.INPUT_POLYGON) continue;
-                        points = [.. (item.GetData() as ArrayList)!.Cast<Point>()];
+
+                        var array = (ArrayList)item.GetData();
+                        points[0] = (Point)array[0];
+                        points[1] = (Point)array[1];
+                        points[2] = (Point)array[array.Count - 1];
+
                         break;
                     }
 
                     break;
                 case WayToGetPlaneEnum.Pick3Points:
                 default:
-                    points = new Point[3];
 
                     points[0] = Picker.PickPoint();
                     for (int i = 1; i < 3; i++) {
@@ -103,14 +103,14 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
                 }
 
                 var plane = new GeometricPlane(
-                    points![0], new Vector(points[1] - points[0]), new Vector(points[2] - points[0]));
+                    points[0], new Vector(points[1] - points[0]), new Vector(points[2] - points[0]));
 
                 Vector direction;
                 switch (ProjectionDirection) {
                 case ProjectionDirectionEnum.Perpendicular:
                     direction = plane.Normal;
                     break;
-                default:
+                case ProjectionDirectionEnum.GlobalZ:
                     var z = new Vector(0, 0, 1000);
                     if (z.Dot(plane.GetNormal()) == 0.0) {
                         throw new Exception(
@@ -120,13 +120,29 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
 
                     direction = z;
                     break;
+                case ProjectionDirectionEnum.Manually:
+                default:
+                    var p0 = Picker.PickPoint(App.Current.Localization.GetText("albl_pick_origin_point"));
+                    var p1 = Picker.PickPoint(
+                        App.Current.Localization.GetText("albl_pick_end_point_to_define_the_direction"));
+                    direction = new Vector(p1 - p0);
+                    break;
                 }
 
                 foreach (var selectedObject in selectedObjects) {
-                    if (selectedObject is Beam beam) {
-                        ProjectBeam(beam, plane, direction, MakeTopSurfaceUnderPlane);
-                    } else if (selectedObject is PolyBeam polyBeam) {
-                        ProjectPolyBeam(polyBeam, plane, direction, MakeTopSurfaceUnderPlane);
+                    switch (selectedObject) {
+                    case Beam beam:
+                        ProjectBeam(beam, plane, direction,
+                            ProjectionDirection is ProjectionDirectionEnum.GlobalZ && MakeSolidUnderPlane);
+                        break;
+                    case PolyBeam polyBeam:
+                        ProjectPolyBeam(polyBeam, plane, direction,
+                            ProjectionDirection is ProjectionDirectionEnum.GlobalZ && MakeSolidUnderPlane);
+                        break;
+                    case ContourPlate contourPlate:
+                        ProjectContourPlate(contourPlate, plane, direction,
+                            ProjectionDirection is ProjectionDirectionEnum.GlobalZ && MakeSolidUnderPlane);
+                        break;
                     }
                 }
 
@@ -140,12 +156,30 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
             }
         }
 
-        private static void ProjectBeam(Beam beam, GeometricPlane plane, Vector direction, bool topSurfaceUnderPlane) {
+        private static void ProjectContourPlate(ContourPlate contourPlate, GeometricPlane plane, Vector direction,
+            bool solidUnderPlane) {
+            foreach (ContourPoint cp in contourPlate.Contour.ContourPoints) {
+                var point = IntersectionPoint(cp, direction, plane);
+                cp.X = point.X;
+                cp.Y = point.Y;
+                cp.Z = point.Z;
+            }
+
+            contourPlate.Modify();
+
+            if (solidUnderPlane) {
+                throw new NotImplementedException();
+            }
+        }
+
+        private static void ProjectBeam(Beam beam, GeometricPlane plane, Vector direction, bool solidUnderPlane) {
             beam.StartPoint = IntersectionPoint(beam.StartPoint, direction, plane);
             beam.EndPoint = IntersectionPoint(beam.EndPoint, direction, plane);
             beam.Modify();
 
-            if (topSurfaceUnderPlane) {
+            if (solidUnderPlane) {
+                throw new NotImplementedException();
+
                 var centerLine = beam.GetCenterLine(false).Cast<Point>().ToArray();
                 var p1 = centerLine[0];
                 var p2 = centerLine[centerLine.Length - 1];
@@ -153,12 +187,19 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
                 var solid = beam.GetSolid(Solid.SolidCreationTypeEnum.RAW);
                 var faces = solid.GetAllFaces();
 
+                var vs = new Vector(centerLine[0] - centerLine[1]);
+                var ve = new Vector(centerLine[centerLine.Length - 1] - centerLine[centerLine.Length - 2]);
+
                 var startFace = faces.Single(f =>
+                    Parallel.VectorToVector(f.Normal, vs) &&
+                    f.Normal.Dot(vs) > 0 &&
                     Distance.PointToPlane(p1, f.ToGeometricPlane()) <= GeometryConstants.DISTANCE_EPSILON);
                 var endFace = faces.Single(f =>
+                    Parallel.VectorToVector(f.Normal, ve) &&
+                    f.Normal.Dot(ve) > 0 &&
                     Distance.PointToPlane(p2, f.ToGeometricPlane()) <= GeometryConstants.DISTANCE_EPSILON);
 
-                var startDirection = startFace.GetAllVertexes()
+                var startTranslationVector = startFace.GetAllVertexes()
                     .Select(v => {
                         var line = new Line(v, direction);
                         return new Vector(Intersection.LineToPlane(line, plane) - v);
@@ -173,28 +214,30 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
                     .OrderBy(v => v.Dot(direction) < 0 ? v.GetLength() * -1 : v.GetLength())
                     .First();
 
-                beam.StartPoint += startDirection;
+                beam.StartPoint += startTranslationVector;
                 beam.EndPoint += endDirection;
                 beam.Modify();
             }
         }
 
         private static void ProjectPolyBeam(PolyBeam polyBeam, GeometricPlane plane, Vector direction,
-            bool topSurfaceUnderPlane) {
-            foreach (ContourPoint contourPoint in polyBeam.Contour.ContourPoints) {
-                var point = IntersectionPoint(contourPoint, direction, plane);
-                contourPoint.X = point.X;
-                contourPoint.Y = point.Y;
-                contourPoint.Z = point.Z;
+            bool solidUnderPlane) {
+            foreach (ContourPoint cp in polyBeam.Contour.ContourPoints) {
+                var point = IntersectionPoint(cp, direction, plane);
+                cp.X = point.X;
+                cp.Y = point.Y;
+                cp.Z = point.Z;
             }
 
             polyBeam.Modify();
 
-            if (topSurfaceUnderPlane) {
+            if (solidUnderPlane) {
+                throw new NotImplementedException();
+
                 var centerLine = polyBeam.GetCenterLine(false).Cast<Point>().ToArray();
                 var solid = polyBeam.GetSolid(Solid.SolidCreationTypeEnum.RAW);
                 var faces = solid.GetAllFaces();
-                var coordinateSystems = polyBeam.GetPolybeamCoordinateSystems().Cast<CoordinateSystem>().ToList();
+                var coordinateSystems = polyBeam.GetPolybeamCoordinateSystemsEx();
 
                 var contourPoints = polyBeam.Contour.ContourPoints;
                 for (int i = 0; i < contourPoints.Count; i++) {
@@ -206,9 +249,9 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
                             ? new Vector(centerLine[0] - centerLine[1])
                             : new Vector(centerLine[i] - centerLine[i - 1]);
                         var face = faces.Single(f =>
-                            Parallel.VectorToVector(f.Normal, v)
-                            && f.Normal.Dot(v) > 0
-                            && Distance.PointToPlane(contourPoint, f.ToGeometricPlane()) <=
+                            Parallel.VectorToVector(f.Normal, v) &&
+                            f.Normal.Dot(v) > 0 &&
+                            Distance.PointToPlane(contourPoint, f.ToGeometricPlane()) <=
                             GeometryConstants.DISTANCE_EPSILON);
                         points = face.GetAllVertexes();
                     } else {

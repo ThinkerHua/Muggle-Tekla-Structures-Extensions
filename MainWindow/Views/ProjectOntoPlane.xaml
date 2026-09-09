@@ -1,0 +1,93 @@
+﻿<!--==============================================================================
+ *  Muggle TsExtensions - extensions for Tekla Structures
+ *
+ *  Copyright © 2026 Huang YongXing.
+ *
+ *  This library is free software, licensed under the terms of the GNU
+ *  General Public License as published by the Free Software Foundation,
+ *  either version 3 of the License, or (at your option) any later version.
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program. If not, see<http://www.gnu.org/licenses/> .
+ *==============================================================================
+ *  ProjectOntoPlane.xaml: view for the project model object onto plane operation.
+ *  written by Huang YongXing - thinkerhua@hotmail.com
+ *==============================================================================-->
+<Page x:Class="Muggle.TsExtensions.MainWindow.Views.ProjectOntoPlane"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:local="clr-namespace:Muggle.TsExtensions.MainWindow.Views"
+      xmlns:vm="clr-namespace:Muggle.TsExtensions.MainWindow.ViewModels"
+      xmlns:dialog="clr-namespace:Tekla.Structures.Dialog;assembly=Tekla.Structures.Dialog"
+      Title="{dialog:Loc albl_project_beam_onto_plane}"
+      d:DesignHeight="300"
+      d:DesignWidth="300"
+      d:DataContext="{d:DesignInstance Type=vm:ProjectOntoPlaneViewModel}"
+      d:Background="AliceBlue"
+      mc:Ignorable="d">
+
+    <Page.Resources>
+        <ResourceDictionary>
+            <Style x:Key="Element" TargetType="FrameworkElement">
+                <Setter Property="Margin" Value="{StaticResource UniformMargin}" />
+                <Setter Property="VerticalAlignment" Value="Center" />
+            </Style>
+            <Style TargetType="TextBlock" BasedOn="{StaticResource Element}" />
+            <Style TargetType="TextBox" BasedOn="{StaticResource Element}">
+                <Setter Property="HorizontalContentAlignment" Value="Center" />
+                <Setter Property="VerticalContentAlignment" Value="Center" />
+                <Setter Property="Height" Value="20" />
+            </Style>
+            <Style TargetType="Button" BasedOn="{StaticResource Element}">
+                <Setter Property="Template" Value="{StaticResource ButtonStyle1}" />
+                <Setter Property="Padding" Value="4,2,4,2" />
+                <Setter Property="Height" Value="30" />
+                <Setter Property="HorizontalAlignment" Value="Center" />
+            </Style>
+            <Style TargetType="RadioButton" BasedOn="{StaticResource Element}">
+                <Setter Property="VerticalContentAlignment" Value="Center" />
+            </Style>
+            <Style TargetType="Separator" BasedOn="{StaticResource Element}" />
+            <Style TargetType="CheckBox" BasedOn="{StaticResource Element}">
+                <Setter Property="VerticalContentAlignment" Value="Center" />
+            </Style>
+        </ResourceDictionary>
+    </Page.Resources>
+
+    <StackPanel>
+        <TextBlock Text="{dialog:Loc albl_plane}" />
+        
+        <RadioButton GroupName="WayToGetPlane"
+                     Content="{dialog:Loc albl_pick_face}"
+                     IsChecked="{Binding WayToGetPlane, Converter={StaticResource EnumToBool}, ConverterParameter={x:Static vm:ProjectOntoPlaneViewModel+WayToGetPlaneEnum.PickFace}, Mode=TwoWay}" />
+        
+        <RadioButton GroupName="WayToGetPlane"
+                     Content="{dialog:Loc albl_pick_3_points}"
+                     IsChecked="{Binding WayToGetPlane, Converter={StaticResource EnumToBool}, ConverterParameter={x:Static vm:ProjectOntoPlaneViewModel+WayToGetPlaneEnum.Pick3Points}, Mode=TwoWay}" />
+        
+        <Separator />
+        
+        <TextBlock Text="{dialog:Loc albl_projection_direction}" />
+        
+        <RadioButton GroupName="ProjectionDirection"
+                     Content="{dialog:Loc albl_perpendicular}"
+                     IsChecked="{Binding ProjectionDirection, Converter={StaticResource EnumToBool}, ConverterParameter={x:Static vm:ProjectOntoPlaneViewModel+ProjectionDirectionEnum.Perpendicular}, Mode=TwoWay}" />
+        
+        <RadioButton GroupName="ProjectionDirection"
+                     Content="{dialog:Loc albl_global_Z}"
+                     IsChecked="{Binding ProjectionDirection, Converter={StaticResource EnumToBool}, ConverterParameter={x:Static vm:ProjectOntoPlaneViewModel+ProjectionDirectionEnum.GlobalZ}, Mode=TwoWay}" />
+        <CheckBox Margin="24,4,4,4"
+                  Content="{dialog:Loc albl_make_top_surface_under_plane}"
+                  IsChecked="{Binding MakeSolidUnderPlane}"
+                  IsEnabled="{Binding ProjectionDirection, Converter={StaticResource EnumToBool}, ConverterParameter={x:Static vm:ProjectOntoPlaneViewModel+ProjectionDirectionEnum.GlobalZ}}" />
+        
+        <RadioButton GroupName="ProjectionDirection"
+                     Content="{dialog:Loc albl_manually}"
+                     IsChecked="{Binding ProjectionDirection, Converter={StaticResource EnumToBool}, ConverterParameter={x:Static vm:ProjectOntoPlaneViewModel+ProjectionDirectionEnum.Manually}, Mode=TwoWay}" />
+
+        <Button Content="{dialog:Loc albl_project_beam_onto_plane}"
+                Command="{Binding ProjectBeamOntoPlaneCommand}" />
+
+    </StackPanel>
+</Page>
