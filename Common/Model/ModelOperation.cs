@@ -1348,7 +1348,7 @@ namespace Muggle.TsExtensions.Common.Model {
                 coordinateSystem = beam.GetCoordinateSystem();
                 break;
             case PolyBeam polyBeam: {
-                var css = polyBeam.GetPolybeamCoordinateSystems().Cast<CoordinateSystem>();
+                var css = polyBeam.GetPolybeamCoordinateSystemsEx();
                 coordinateSystem = css.First(cs => nearestSegLine.Origin.Equals(cs.Origin));
                 break;
             }
@@ -1487,7 +1487,7 @@ namespace Muggle.TsExtensions.Common.Model {
         /// 第一个元素在零件坐标系 Z 轴正向侧，第二个元素在零件坐标系 Z 轴负向侧。</returns>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="Exception">不支持的截面类型引发。</exception>
-        private static IEnumerable<ContourPlate> CreatStiffenersForTypeI(
+        private static ContourPlate[] CreatStiffenersForTypeI(
             Part part, Point position, double thickness, string material = "Q235B", string @class = "99",
             double rotationAroundY = 0.0, double rotationAroundZ = 0.0, double indent = 0.0, double clearance = 2.0,
             Chamfer.ChamferTypeEnum chamferType = 0, double chamferSizeX = 0.0, double chamferSizeY = 0.0,
@@ -1672,7 +1672,7 @@ namespace Muggle.TsExtensions.Common.Model {
         /// 第一个元素在零件坐标系 Z 轴正向侧，第二个元素在零件坐标系 Z 轴负向侧。</returns>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="Exception">不支持的截面类型引发。</exception>
-        private static IEnumerable<ContourPlate> CreatStiffenersForTypeT(
+        private static ContourPlate[] CreatStiffenersForTypeT(
             Part part, Point position, double thickness, string material = "Q235B", string @class = "99",
             double rotationAroundY = 0.0, double rotationAroundZ = 0.0, double indent = 0.0, double indent2 = 0.0,
             double clearance = 2.0,
@@ -2402,7 +2402,7 @@ namespace Muggle.TsExtensions.Common.Model {
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="ArgumentException"></exception>
         /// <exception cref="Exception">不支持的截面类型引发。</exception>
-        public static IEnumerable<ContourPlate> CreatStiffeners(
+        public static ContourPlate[] CreatStiffeners(
             Part part, Point position, double thickness, string material = "Q235B", string @class = "99",
             double rotationAroundY = 0.0, double rotationAroundZ = 0.0, double indent = 0.0, double indent2 = 0.0,
             double clearance = 2.0,
