@@ -12,6 +12,7 @@
  *  PluginsViewModel.cs: view model for the plugins.
  *  written by Huang YongXing - thinkerhua@hotmail.com
  *==============================================================================*/
+
 using System;
 using System.Collections;
 using System.Collections.Generic;

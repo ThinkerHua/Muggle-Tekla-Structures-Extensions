@@ -12,6 +12,7 @@
  *  SelectBooleansViewModel.cs: view model for the SelectBooleans tool.
  *  written by Huang YongXing - thinkerhua@hotmail.com
  *==============================================================================*/
+
 using System;
 using System.Collections;
 using CommunityToolkit.Mvvm.ComponentModel;

@@ -12,6 +12,7 @@
  *  MainWindowViewModel.cs: view model for all tools and plugins.
  *  written by Huang YongXing - thinkerhua@hotmail.com
  *==============================================================================*/
+
 using System;
 using System.Windows.Controls;
 using CommunityToolkit.Mvvm.Input;

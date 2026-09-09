@@ -12,6 +12,7 @@
  *  LocateToPrecisePosition.xaml.cs: code behind for the view of LocateToPrecisePosition.
  *  written by Huang YongXing - thinkerhua@hotmail.com
  *==============================================================================*/
+
 using System.Windows.Controls;
 using Microsoft.Extensions.DependencyInjection;
 using Muggle.TsExtensions.MainWindow.ViewModels;

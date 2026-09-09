@@ -12,6 +12,7 @@
  *  Plugins.xaml.cs: code behind for the view of Plugins.
  *  written by Huang YongXing - thinkerhua@hotmail.com
  *==============================================================================*/
+
 using System.Windows.Controls;
 using Microsoft.Extensions.DependencyInjection;
 using Muggle.TsExtensions.MainWindow.ViewModels;

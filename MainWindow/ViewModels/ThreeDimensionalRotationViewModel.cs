@@ -12,6 +12,7 @@
  *  ThreeDimensionalRotationViewModel.cs: view model for the ThreeDimensionalRotation tool.
  *  written by Huang YongXing - thinkerhua@hotmail.com
  *==============================================================================*/
+
 using System;
 using System.Collections;
 using CommunityToolkit.Mvvm.ComponentModel;

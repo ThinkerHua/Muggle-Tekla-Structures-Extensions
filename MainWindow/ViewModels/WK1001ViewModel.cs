@@ -12,6 +12,7 @@
  *  WK1001ViewModel.cs: view model for the WK1001 connection plugin
  *  written by Huang YongXing - thinkerhua@hotmail.com
  *==============================================================================*/
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
