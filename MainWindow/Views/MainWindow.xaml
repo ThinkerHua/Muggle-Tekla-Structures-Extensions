@@ -93,8 +93,12 @@
                         </RadioButton>
                         <RadioButton Content="{dialog:Loc albl_project_beam_onto_plane}" GroupName="menuBtn" Command="{Binding NavigateCommand}">
                             <RadioButton.CommandParameter>
-                                <local:ProjectBeamOntoPlane />
                                 <local:ProjectOntoPlane />
+                            </RadioButton.CommandParameter>
+                        </RadioButton>
+                        <RadioButton Content="{dialog:Loc albl_create_gradient_beams}" GroupName="menuBtn" Command="{Binding NavigateCommand}">
+                            <RadioButton.CommandParameter>
+                                <local:CreateGradientBeams />
                             </RadioButton.CommandParameter>
                         </RadioButton>
                     </StackPanel>
