@@ -12,6 +12,7 @@
  *  BoltSymbols.cs: sets of bolt symbol
  *  written by Huang YongXing - thinkerhua@hotmail.com
  *==============================================================================*/
+
 namespace Muggle.TsExtensions.Common.WPF.Assets;
 
 public static class BoltSymbols {

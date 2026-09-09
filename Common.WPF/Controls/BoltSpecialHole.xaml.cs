@@ -12,6 +12,7 @@
  *  BoltSpecialHole.xaml.cs: code behind for BoltSpecialHole user control.
  *  written by Huang YongXing - thinkerhua@hotmail.com
  *==============================================================================*/
+
 using System.ComponentModel;
 using System.Linq;
 using System.Windows;

@@ -13,6 +13,7 @@
  *      assembly witch loaded by system directly can use Tekla.Structures.Dialog.LocExtension
  *  written by Huang YongXing - thinkerhua@hotmail.com
  *==============================================================================*/
+
 using System;
 using System.ComponentModel;
 using System.Windows;

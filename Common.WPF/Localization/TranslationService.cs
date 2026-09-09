@@ -12,6 +12,7 @@
  *  TranslationService.cs: provide localization feature, used by share library
  *  written by Huang YongXing - thinkerhua@hotmail.com
  *==============================================================================*/
+
 using System.ComponentModel;
 using System.IO;
 using System.Runtime.CompilerServices;

@@ -12,6 +12,7 @@
  *  ItemsProvider.cs: provider that can provide localized symbol array
  *  written by Huang YongXing - thinkerhua@hotmail.com
  *==============================================================================*/
+
 using System;
 using System.ComponentModel;
 using System.Windows;

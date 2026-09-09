@@ -12,6 +12,7 @@
  *  WeldSymbols.cs: sets of weld symbol
  *  written by Huang YongXing - thinkerhua@hotmail.com
  *==============================================================================*/
+
 using System;
 using System.Windows;
 using System.Windows.Media;

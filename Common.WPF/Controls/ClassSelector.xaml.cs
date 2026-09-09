@@ -12,6 +12,7 @@
  *  ClassSelector.xaml.cs: code behind for ClassSelector user control.
  *  written by Huang YongXing - thinkerhua@hotmail.com
  *==============================================================================*/
+
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;

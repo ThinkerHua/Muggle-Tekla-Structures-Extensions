@@ -12,6 +12,7 @@
  *  Symbol.cs: represents a type or enum item, witch has a name and a drawing
  *  written by Huang YongXing - thinkerhua@hotmail.com
  *==============================================================================*/
+
 using System.Windows;
 using System.Windows.Media;
 
