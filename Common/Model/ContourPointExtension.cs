@@ -32,15 +32,64 @@ namespace Muggle.TsExtensions.Common.Model {
                 throw new ArgumentNullException(nameof(contourPoint));
             }
 
-            var point = new Point(contourPoint.X, contourPoint.Y, contourPoint.Z);
-            var chamfer = new Chamfer {
-                Type = contourPoint.Chamfer.Type,
-                X = contourPoint.Chamfer.X,
-                Y = contourPoint.Chamfer.Y,
-                DZ1 = contourPoint.Chamfer.DZ1,
-                DZ2 = contourPoint.Chamfer.DZ2,
+            return new ContourPoint {
+                X = contourPoint.X,
+                Y = contourPoint.Y,
+                Z = contourPoint.Z,
+                Chamfer = new Chamfer {
+                    Type = contourPoint.Chamfer.Type,
+                    X = contourPoint.Chamfer.X,
+                    Y = contourPoint.Chamfer.Y,
+                    DZ1 = contourPoint.Chamfer.DZ1,
+                    DZ2 = contourPoint.Chamfer.DZ2,
+                }
             };
-            return new ContourPoint(point, chamfer);
+        }
+        
+        /// <summary>
+        /// 计算此 <see cref="ContourPoint"/> 与 给定 <see cref="Vector"/> 的和。
+        /// </summary>
+        /// <param name="cp">此 <see cref="ContourPoint"/></param>
+        /// <param name="vector">给定 <see cref="Vector"/></param>
+        /// <returns>此 <see cref="ContourPoint"/> 与 给定 <see cref="Vector"/> 的和。</returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        public static ContourPoint Addition(this ContourPoint cp, Vector vector) {
+            if (cp == null) {
+                throw new ArgumentNullException(nameof(cp));
+            }
+
+            if (vector == null) {
+                throw new ArgumentNullException(nameof(vector));
+            }
+
+            var cp2 = cp.Clone();
+            cp2.X += vector.X;
+            cp2.Y += vector.Y;
+            cp2.Z += vector.Z;
+            return cp2;
+        }
+
+        /// <summary>
+        /// 计算此 <see cref="ContourPoint"/> 与 给定 <see cref="Vector"/> 的差。
+        /// </summary>
+        /// <param name="cp">此 <see cref="ContourPoint"/></param>
+        /// <param name="vector">给定 <see cref="Vector"/></param>
+        /// <returns>此 <see cref="ContourPoint"/> 与 给定 <see cref="Vector"/> 的差。</returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        public static ContourPoint Subtraction(this ContourPoint cp, Vector vector) {
+            if (cp == null) {
+                throw new ArgumentNullException(nameof(cp));
+            }
+
+            if (vector == null) {
+                throw new ArgumentNullException(nameof(vector));
+            }
+
+            var cp2 = cp.Clone();
+            cp2.X -= vector.X;
+            cp2.Y -= vector.Y;
+            cp2.Z -= vector.Z;
+            return cp2;
         }
     }
 }
