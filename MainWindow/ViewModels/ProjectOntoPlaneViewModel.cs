@@ -53,7 +53,7 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
         public ProjectOntoPlaneViewModel(IMessageBoxService messageBox) {
             ProjectionDirection = ProjectionDirectionEnum.GlobalZ;
             WayToGetPlane = WayToGetPlaneEnum.PickFace;
-            MakeSolidUnderPlane = true;
+            MakeSolidUnderPlane = false;
 
             Model = new Model();
             Picker = new Picker();
@@ -176,7 +176,8 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
             beam.StartPoint = IntersectionPoint(beam.StartPoint, direction, plane);
             beam.EndPoint = IntersectionPoint(beam.EndPoint, direction, plane);
             beam.Modify();
-
+        
+#if RELEASE
             if (solidUnderPlane) {
                 throw new NotImplementedException();
 
@@ -218,6 +219,7 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
                 beam.EndPoint += endDirection;
                 beam.Modify();
             }
+#endif
         }
 
         private static void ProjectPolyBeam(PolyBeam polyBeam, GeometricPlane plane, Vector direction,
@@ -231,6 +233,7 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
 
             polyBeam.Modify();
 
+#if RELEASE
             if (solidUnderPlane) {
                 throw new NotImplementedException();
 
@@ -283,6 +286,7 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
 
                 polyBeam.Modify();
             }
+#endif
         }
 
         private static Point IntersectionPoint(Point point, Vector vector, GeometricPlane plane) {

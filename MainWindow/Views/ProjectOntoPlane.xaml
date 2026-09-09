@@ -78,7 +78,8 @@
                      Content="{dialog:Loc albl_global_Z}"
                      IsChecked="{Binding ProjectionDirection, Converter={StaticResource EnumToBool}, ConverterParameter={x:Static vm:ProjectOntoPlaneViewModel+ProjectionDirectionEnum.GlobalZ}, Mode=TwoWay}" />
         <CheckBox Margin="24,4,4,4"
-                  Content="{dialog:Loc albl_make_top_surface_under_plane}"
+                  Visibility="Collapsed"
+                  Content="{dialog:Loc albl_make_solid_under_plane}"
                   IsChecked="{Binding MakeSolidUnderPlane}"
                   IsEnabled="{Binding ProjectionDirection, Converter={StaticResource EnumToBool}, ConverterParameter={x:Static vm:ProjectOntoPlaneViewModel+ProjectionDirectionEnum.GlobalZ}}" />
         
