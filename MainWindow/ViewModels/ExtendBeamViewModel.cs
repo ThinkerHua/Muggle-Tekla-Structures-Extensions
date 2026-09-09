@@ -19,6 +19,7 @@ using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Muggle.TsExtensions.Common.Geometry3d;
+using Muggle.TsExtensions.Common.Model;
 using Muggle.TsExtensions.MainWindow.Services;
 using Tekla.Structures;
 using Tekla.Structures.Geometry3d;
@@ -80,8 +81,10 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
                     continue;
 
                     void Action() {
-                        beam.StartPoint = DestinationPoint(beam.Identifier, beam.StartPoint, beam.EndPoint, beamCs);
-                        beam.EndPoint = DestinationPoint(beam.Identifier, beam.EndPoint, beam.StartPoint, beamCs);
+                        var startPoint = DestinationPoint(beam.Identifier, beam.StartPoint, beam.EndPoint, beamCs);
+                        var endPoint = DestinationPoint(beam.Identifier, beam.EndPoint, beam.StartPoint, beamCs);
+                        beam.StartPoint = startPoint;
+                        beam.EndPoint = endPoint;
                         beam.Modify();
                     }
                 }
@@ -98,29 +101,28 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
 
         private Point DestinationPoint(Identifier identifier, Point sourcePoint, Point anotherPoint,
             CoordinateSystem beamCs) {
+            var itSelfIsColumn = IsColumn(_model.SelectModelObject(identifier) as Beam);
 
             var boundingBoxExtent = new Vector(Tolerance, Tolerance, Tolerance);
-
             var nearbyObjects = _model.GetModelObjectSelector()
                 .GetObjectsByBoundingBox(sourcePoint - boundingBoxExtent, sourcePoint + boundingBoxExtent);
 
             var columns = new List<Beam>();
             var beams = new List<Part>();
             foreach (ModelObject obj in nearbyObjects) {
-                if (obj.Identifier.Equals(identifier)) continue;
+                if (obj is null || obj.Identifier.Equals(identifier)) continue;
 
                 switch (obj) {
                 case Beam beam:
-                    if (beam.Type is Beam.BeamTypeEnum.COLUMN ||
-                        ColumnNames.Any(n => beam.Name.Contains(n, StringComparison.OrdinalIgnoreCase))) {
+                    if (!itSelfIsColumn && IsColumn(beam)) {
                         columns.Add(beam);
-                    } else if (BeamNames.Any(n => beam.Name.Contains(n, StringComparison.OrdinalIgnoreCase))) {
+                    } else if (IsBeam(beam)) {
                         beams.Add(beam);
                     }
 
                     break;
                 case PolyBeam polyBeam:
-                    if (BeamNames.Any(n => polyBeam.Name.Contains(n, StringComparison.OrdinalIgnoreCase))) {
+                    if (IsBeam(polyBeam)) {
                         beams.Add(polyBeam);
                     }
 
@@ -129,51 +131,53 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
             }
 
             // extend to column
-            Beam column = null;
-            switch (columns.Count) {
-            case 0:
-                break;
-            case 1:
-                column = columns[0];
-                break;
-            default:
-                column = columns.Select(c => (c, c.GetSolid()))
-                    .OrderBy(pair => pair.Item2.MaximumPoint.Z)
-                    .FirstOrDefault().c;
-                break;
-            }
+            if (!itSelfIsColumn) {
+                Beam column = null;
+                switch (columns.Count) {
+                case 0:
+                    break;
+                case 1:
+                    column = columns[0];
+                    break;
+                default:
+                    column = columns.Select(c => (c, c.GetSolid()))
+                        .OrderBy(pair => pair.Item2.MaximumPoint.Z)
+                        .FirstOrDefault().c;
+                    break;
+                }
 
-            if (column != null) {
-                return DestinationPoint(sourcePoint, anotherPoint, column, column.GetCoordinateSystem(),
-                    Distance.PointToPoint(column.StartPoint, column.EndPoint), ExtendToColumnPosition);
+                if (column != null) {
+                    return DestinationPoint(sourcePoint, anotherPoint, column, column.GetCoordinateSystem(),
+                        Distance.PointToPoint(column.StartPoint, column.EndPoint), ExtendToColumnPosition);
+                }
             }
 
             if (beams.Count == 0) return sourcePoint;
-            
+
             // extend to beam
             var partCsAndLength = beams.Select(part => {
+                    var centerLine = part.GetCenterLine(false).Cast<Point>().ToList();
+
                     CoordinateSystem partCs = null;
-                    double partLength = 0.0;
+                    var partLength = 0.0;
 
                     switch (part) {
                     case Beam beam:
                         partCs = beam.GetCoordinateSystem();
-                        partLength = Distance.PointToPoint(beam.StartPoint, beam.EndPoint);
+                        partLength = Distance.PointToPoint(centerLine.First(), centerLine.Last());
                         break;
                     case PolyBeam polyBeam:
-                        var css = polyBeam.GetPolybeamCoordinateSystems().Cast<CoordinateSystem>().ToList();
-                        var index = css
-                            .Take(css.Count - 1)
-                            .Zip(css.Skip(1), (cs1, cs2) => new Line(cs1.Origin, cs2.Origin))
+                        var index = centerLine
+                            .Take(centerLine.Count - 1)
+                            .Zip(centerLine.Skip(1), (p1, p2) => new Line(p1, p2))
                             .Select((l, i) => (l, i))
                             .OrderBy(pair => Distance.PointToLine(sourcePoint, pair.l))
                             .First().i;
+
+                        var css = polyBeam.GetPolybeamCoordinateSystemsEx();
                         partCs = css[index];
 
-                        var centerLine = polyBeam.GetCenterLine(false);
-                        partLength = index == css.Count - 1
-                            ? Distance.PointToPoint(partCs.Origin, centerLine[centerLine.Count - 1] as Point)
-                            : Distance.PointToPoint(partCs.Origin, css[index + 1].Origin);
+                        partLength = Distance.PointToPoint(centerLine[index], centerLine[index + 1]);
                         break;
                     }
 
@@ -194,7 +198,6 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
 
         private Point DestinationPoint(Point sourcePoint, Point anotherPoint, Part nearbyPart,
             CoordinateSystem nearbyPartCs, double nearbyPartLength, ExtendPositionEnum extendPosition) {
-
             var beamLine = new Line(sourcePoint, anotherPoint);
 
             Point intersection = null;
@@ -218,8 +221,8 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
                     if (!nearbyPart.GetReportProperty("PROFILE.HEIGHT", ref height))
                         throw new Exception($"Cannot get \"PROFILE.HEIGHT\" value from beam {nearbyPart.Identifier}");
 
-                var centerLine = nearbyPart.GetCenterLine(false).Cast<Point>().ToArray();
-                var centerPoint = (centerLine.First() + centerLine.Last()).Multiply(0.5);
+                var nearbyPartLine = new Line(nearbyPartCs.Origin, nearbyPartCs.AxisX);
+                var centerPoint = IntersectionExtension.LineToLine(nearbyPartLine, beamLine).StartPoint;
 
                 var obb = new OBB(centerPoint, nearbyPartCs.AxisX, nearbyPartCs.AxisY,
                     nearbyPartCs.AxisX.Cross(nearbyPartCs.AxisY),
@@ -238,6 +241,21 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
             }
 
             return intersection ?? sourcePoint;
+        }
+
+        private static bool IsColumn(Beam beam) {
+            if (beam == null) {
+                throw new ArgumentNullException(nameof(beam));
+            }
+
+            return beam.Type is Beam.BeamTypeEnum.COLUMN ||
+                   ColumnNames.Any(n => beam.Name.Contains(n, StringComparison.OrdinalIgnoreCase));
+        }
+
+        private static bool IsBeam(Part part) {
+            return part == null
+                ? throw new ArgumentNullException(nameof(part))
+                : BeamNames.Any(n => part.Name.Contains(n, StringComparison.OrdinalIgnoreCase));
         }
     }
 }
