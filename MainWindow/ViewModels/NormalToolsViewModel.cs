@@ -20,6 +20,7 @@ using System.Linq;
 using CommunityToolkit.Mvvm.Input;
 using Muggle.TsExtensions.Common.Geometry3d;
 using Muggle.TsExtensions.Common.Internal;
+using Muggle.TsExtensions.Common.Model;
 using Muggle.TsExtensions.Common.ModelUI;
 using Muggle.TsExtensions.MainWindow.Services;
 using Tekla.Structures.Geometry3d;
@@ -286,13 +287,13 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
                 }
 
                 if (points is null) throw new Exception("Cannot get plane!");
-            
+                
                 var p0 = points[0] as Point;
                 var p1 = points[1] as Point;
                 var p2 = points[points.Count - 1] as Point;
             
-                var axisX = new Vector(p1 - p0);
-                var axisY = new Vector(p2 - p0);
+                var axisX = new Vector(p1 - p0).GetNormal(1000);
+                var axisY = new Vector(p2 - p0).GetNormal(1000);
 
                 var plane = new Plane { Origin = p0, AxisX = axisX, AxisY = axisY };
                 
