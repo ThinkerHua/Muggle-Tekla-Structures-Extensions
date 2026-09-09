@@ -32,7 +32,7 @@ using static Muggle.TsExtensions.CodingHelper.Generators.GeneratorHelper;
 namespace Muggle.TsExtensions.CodingHelper.Generators;
 
 [Generator]
-internal class PluginFieldDefaultValuesGenerator : IIncrementalGenerator {
+public class PluginFieldDefaultValuesGenerator : IIncrementalGenerator {
 
     internal static readonly string[] ConcernedAttributes = [
         "Muggle.TsExtensions.CodingHelper.Generators.PartFieldDefaultValuesAttribute",
@@ -132,11 +132,11 @@ internal class PluginFieldDefaultValuesGenerator : IIncrementalGenerator {
         if (classSymbol is null) return default;
 
         var result = new GatheredInfo<PluginFieldDefaultValuesInfo>(default, []);
-        var diagnosticInfos = result.DiagnosticInfos;
+        var builder = ImmutableArray.CreateBuilder<DiagnosticInfo>();
 
         AttributeSyntax[] attSyntaxes = null;
 
-        var placeCnt = AnalyzeAppliedPlaces(classDeclarationSyntax, semanticModel, ref attSyntaxes, ref diagnosticInfos,
+        var placeCnt = AnalyzeAppliedPlaces(classDeclarationSyntax, semanticModel, ref attSyntaxes, ref builder,
             out var appliedTarget, out var dataMemberType, out var targetMemberName);
 
         switch (placeCnt) {
@@ -144,15 +144,15 @@ internal class PluginFieldDefaultValuesGenerator : IIncrementalGenerator {
         case 0:
             return result;
         case > 0 when !classDeclarationSyntax.Modifiers.Any(m => m.IsKind(SyntaxKind.PartialKeyword)):
-            diagnosticInfos = diagnosticInfos.Add(
+            builder.Add(
                 new DiagnosticInfo(NotPartial, classDeclarationSyntax.Identifier.GetLocation(),
                     [classDeclarationSyntax.Identifier.ValueText])
             );
-            result.DiagnosticInfos = diagnosticInfos;
+            result.DiagnosticInfos = builder.ToImmutableArray();
             return result;
         // applied on over one place
         case > 1:
-            result.DiagnosticInfos = diagnosticInfos;
+            result.DiagnosticInfos = builder.ToImmutableArray();
             return result;
         }
 
@@ -206,16 +206,16 @@ internal class PluginFieldDefaultValuesGenerator : IIncrementalGenerator {
 
             if (attName == "GeneralFieldDefaultValuesAttribute") {
                 AnalyzeGeneralFieldDefaultValues(attSyntax, dataClassAttArgs,
-                    ref elementDict, ref diagnosticInfos);
+                    ref elementDict, ref builder);
             } else {
                 AnalyzeSeriesFieldDefaultValues(attSyntax, attName, dataClassAttArgs,
-                    ref elementDict, ref diagnosticInfos);
+                    ref elementDict, ref builder);
             }
         }
 
         if (attDict.Count == 0) {
-            result.DiagnosticInfos = diagnosticInfos;
-            return default;
+            result.DiagnosticInfos = builder.ToImmutableArray();
+            return result;
         }
 
         // use preset default values for missing ids
@@ -261,6 +261,7 @@ internal class PluginFieldDefaultValuesGenerator : IIncrementalGenerator {
 
         token.ThrowIfCancellationRequested();
 
+        result.DiagnosticInfos = builder.ToImmutableArray();
         result.Value = new PluginFieldDefaultValuesInfo {
             ClassInfo = new ClassInfo {
                 Name = classDeclarationSyntax.Identifier.Text,
@@ -272,14 +273,13 @@ internal class PluginFieldDefaultValuesGenerator : IIncrementalGenerator {
             TargetMemberName = targetMemberName,
             Arguments = attDict
         };
-        result.DiagnosticInfos = diagnosticInfos;
 
         return result;
 
     }
 
     private static int AnalyzeAppliedPlaces(ClassDeclarationSyntax classDclrSyntax, SemanticModel semanticModel,
-        ref AttributeSyntax[] attSyntaxes, ref ImmutableArray<DiagnosticInfo> diagnosticInfos,
+        ref AttributeSyntax[] attSyntaxes, ref ImmutableArray<DiagnosticInfo>.Builder builder,
         out AttributeTargets appliedTarget, out ITypeSymbol dataType, out string targetMemberName) {
 
         attSyntaxes ??= [];
@@ -298,7 +298,7 @@ internal class PluginFieldDefaultValuesGenerator : IIncrementalGenerator {
             if (!TryGetMatchedAttributes(classDclrSyntax.AttributeLists, semanticModel,
                     [PluginFieldsGenerator.ConcernedAttribute], ref fieldsFromAttSyntax)) {
                 foreach (var attSyntax in attSyntaxes) {
-                    diagnosticInfos = diagnosticInfos.Add(
+                    builder.Add(
                         new DiagnosticInfo(FieldsFromAttributeNotApplied, attSyntax.GetLocation(),
                             [attSyntax.Name.ToString()])
                     );
@@ -319,7 +319,7 @@ internal class PluginFieldDefaultValuesGenerator : IIncrementalGenerator {
 
                 if (placeCnt > 1) {
                     foreach (var attSyntax in attSyntaxes) {
-                        diagnosticInfos = diagnosticInfos.Add(
+                        builder.Add(
                             new DiagnosticInfo(AppliedOnOverOnePlace, attSyntax.GetLocation(), [attSyntax.Name])
                         );
                     }
@@ -337,7 +337,7 @@ internal class PluginFieldDefaultValuesGenerator : IIncrementalGenerator {
 
                 if (placeCnt > 1) {
                     foreach (var attSyntax in attSyntaxes) {
-                        diagnosticInfos = diagnosticInfos.Add(
+                        builder.Add(
                             new DiagnosticInfo(AppliedOnOverOnePlace, attSyntax.GetLocation(), [attSyntax.Name])
                         );
                     }
@@ -356,7 +356,7 @@ internal class PluginFieldDefaultValuesGenerator : IIncrementalGenerator {
     private static void AnalyzeGeneralFieldDefaultValues(AttributeSyntax attSyntax,
         (string category, string[] attArgs)[] dataClassAttributeArguments,
         ref DefaultValueDictionary elementDict,
-        ref ImmutableArray<DiagnosticInfo> diagnosticInfos) {
+        ref ImmutableArray<DiagnosticInfo>.Builder builder) {
 
         if (attSyntax.ArgumentList is null) return;
 
@@ -364,7 +364,7 @@ internal class PluginFieldDefaultValuesGenerator : IIncrementalGenerator {
         if (exprSyntaxes.Length == 0) return;
 
         if (exprSyntaxes.Length % 2 != 0) {
-            diagnosticInfos = diagnosticInfos.Add(
+            builder.Add(
                 new DiagnosticInfo(ArgumentsMustBePassedInPairs, exprSyntaxes.Last().GetLocation(), [])
             );
 
@@ -377,7 +377,7 @@ internal class PluginFieldDefaultValuesGenerator : IIncrementalGenerator {
             var valueSyntax = exprSyntaxes[i + 1];
 
             if (!nameSyntax.IsKind(SyntaxKind.StringLiteralExpression)) {
-                diagnosticInfos = diagnosticInfos.Add(
+                builder.Add(
                     new DiagnosticInfo(NotExpectedDataType, nameSyntax!.GetLocation(), ["string"])
                 );
                 continue;
@@ -391,7 +391,7 @@ internal class PluginFieldDefaultValuesGenerator : IIncrementalGenerator {
 
             //  data class doesnt have this field
             if (string.IsNullOrEmpty(type)) {
-                diagnosticInfos = diagnosticInfos.Add(
+                builder.Add(
                     new DiagnosticInfo(DataTypeDoesNotContainTheseFields, nameSyntax.GetLocation(), [])
                 );
                 continue;
@@ -405,7 +405,7 @@ internal class PluginFieldDefaultValuesGenerator : IIncrementalGenerator {
             };
 
             if (!isRightType) {
-                diagnosticInfos = diagnosticInfos.Add(
+                builder.Add(
                     new DiagnosticInfo(NotExpectedDataType, valueSyntax.GetLocation(), [type])
                 );
                 continue;
@@ -419,7 +419,7 @@ internal class PluginFieldDefaultValuesGenerator : IIncrementalGenerator {
             try {
                 valueDict.Add(name, value);
             } catch (ArgumentException) {
-                diagnosticInfos = diagnosticInfos.Add(
+                builder.Add(
                     new DiagnosticInfo(SetDefaultValueMultiTimes, nameSyntax.GetLocation(), [])
                 );
             }
@@ -429,7 +429,7 @@ internal class PluginFieldDefaultValuesGenerator : IIncrementalGenerator {
     private static void AnalyzeSeriesFieldDefaultValues(AttributeSyntax attSyntax, string attName,
         (string category, string[] attArgs)[] dataClassAttributeArguments,
         ref DefaultValueDictionary elementDict,
-        ref ImmutableArray<DiagnosticInfo> diagnosticInfos) {
+        ref ImmutableArray<DiagnosticInfo>.Builder builder) {
 
         var argSyntaxes = attSyntax.ArgumentList?.Arguments;
         if (argSyntaxes is null) return;
@@ -449,7 +449,7 @@ internal class PluginFieldDefaultValuesGenerator : IIncrementalGenerator {
                 id = paramValue;
 
                 if (elementDict.ContainsKey(id)) {
-                    diagnosticInfos = diagnosticInfos.Add(
+                    builder.Add(
                         new DiagnosticInfo(SetDefaultValueMultiTimes, argSyntax.GetLocation(), []));
                     return;
                 }
@@ -460,7 +460,7 @@ internal class PluginFieldDefaultValuesGenerator : IIncrementalGenerator {
                         //  PartFieldDefaultValuesAttribute => PartField
                         t.category.Substring(0, t.category.Length - 10) == attName.Substring(0, attName.Length - 22) &&
                         t.attArgs.Contains(id))) {
-                    diagnosticInfos = diagnosticInfos.Add(
+                    builder.Add(
                         new DiagnosticInfo(DataTypeDoesNotContainTheseFields, argSyntax.GetLocation(), []));
                     return;
                 }

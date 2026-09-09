@@ -33,7 +33,7 @@ using PropertyInfo = (string Name, string AttributeName, string Type, string Pre
 namespace Muggle.TsExtensions.CodingHelper.Generators;
 
 [Generator]
-internal class ViewModelPropertiesGenerator : IIncrementalGenerator {
+public class ViewModelPropertiesGenerator : IIncrementalGenerator {
     private const string TsDatatype = "global::Tekla.Structures.Datatype";
     private const string TsDialog = "global::Tekla.Structures.Dialog";
 
@@ -314,29 +314,28 @@ internal class ViewModelPropertiesGenerator : IIncrementalGenerator {
             return default;
 
         var result = new GatheredInfo<ViewModelPropertiesInfo>(default, []);
-        var diagnosticInfos = result.DiagnosticInfos;
+        var builder = ImmutableArray.CreateBuilder<DiagnosticInfo>();
 
         if (!classDeclarationSyntax.Modifiers.Any(SyntaxKind.PartialKeyword)) {
-            diagnosticInfos = diagnosticInfos.Add(
-                new DiagnosticInfo(
-                    NotPartial,
-                    classDeclarationSyntax.Identifier.GetLocation(),
-                    [classDeclarationSyntax.Identifier.ValueText])
-            );
-            result.DiagnosticInfos = diagnosticInfos;
+            builder.Add(new DiagnosticInfo(
+                NotPartial,
+                classDeclarationSyntax.Identifier.GetLocation(),
+                [classDeclarationSyntax.Identifier.ValueText]));
+            result.DiagnosticInfos = builder.ToImmutableArray();
             return result;
         }
 
         if (!classSymbol.AllInterfaces.Any(i =>
                 i.ToDisplayString() == "System.ComponentModel.INotifyPropertyChanged")) {
-            diagnosticInfos = attSyntaxes.Aggregate(diagnosticInfos,
-                (current, attSyntax) => current.Add(
+            foreach (var attSyntax in attSyntaxes) {
+                builder.Add(
                     new DiagnosticInfo(
                         NotImplementINotifyPropertyChanged,
                         attSyntax.Name.GetLocation(),
-                        [attSyntax.Name]))
-            );
-            result.DiagnosticInfos = diagnosticInfos;
+                        [attSyntax.Name]));
+            }
+
+            result.DiagnosticInfos = builder.ToImmutableArray();
             return result;
         }
 
@@ -363,18 +362,17 @@ internal class ViewModelPropertiesGenerator : IIncrementalGenerator {
 
             if (attName is "GeneralPropertiesAttribute") {
                 AnalyzeGeneralProperties(attSyntax, attName,
-                    ref diagnosticInfos, ref elementDict, ref generalPropertySet);
+                    ref builder, ref elementDict, ref generalPropertySet);
             } else {
-                AnalyzeSeriesProperties(attSyntax, attName, ref diagnosticInfos, ref elementDict);
+                AnalyzeSeriesProperties(attSyntax, attName, ref builder, ref elementDict);
             }
-
-            result.DiagnosticInfos = diagnosticInfos;
         }
 
         if (attDict.Count == 0) return result;
 
         token.ThrowIfCancellationRequested();
 
+        result.DiagnosticInfos = builder.ToImmutableArray();
         result.Value = new ViewModelPropertiesInfo {
             ClassInfo = new ClassInfo {
                 Name = classDeclarationSyntax.Identifier.Text,
@@ -389,7 +387,7 @@ internal class ViewModelPropertiesGenerator : IIncrementalGenerator {
     }
 
     private static void AnalyzeGeneralProperties(AttributeSyntax attSyntax, string attName,
-        ref ImmutableArray<DiagnosticInfo> diagnosticInfos,
+        ref ImmutableArray<DiagnosticInfo>.Builder builder,
         ref DefaultValueDictionary elementDict,
         ref HashSet<string> generalPropertySet) {
 
@@ -401,13 +399,13 @@ internal class ViewModelPropertiesGenerator : IIncrementalGenerator {
         var supportedDatatypes = SupportedDataTypes(attName);
 
         if (type is "Boolean") {
-            diagnosticInfos = diagnosticInfos.Add(
+            builder.Add(
                 new DiagnosticInfo(ShouldNotUseBooleanType, typeSyntax.GetLocation(), []));
             return;
         }
 
         if (!supportedDatatypes.Contains(type)) {
-            diagnosticInfos = diagnosticInfos.Add(
+            builder.Add(
                 new DiagnosticInfo(
                     NotSupportedDataType,
                     typeSyntax.GetLocation(),
@@ -426,7 +424,7 @@ internal class ViewModelPropertiesGenerator : IIncrementalGenerator {
         if (argSyntaxes.Count == 0) return;
 
         if (argSyntaxes.Count % 2 != 0) {
-            diagnosticInfos = diagnosticInfos.Add(
+            builder.Add(
                 new DiagnosticInfo(ArgumentsMustBePassedInPairs, argSyntaxes.Last().GetLocation(), []));
             if (argSyntaxes.Count < 2) return;
         }
@@ -436,7 +434,7 @@ internal class ViewModelPropertiesGenerator : IIncrementalGenerator {
             var valueSyntax = argSyntaxes[i + 1];
 
             if (!paramSyntax.IsKind(SyntaxKind.StringLiteralExpression)) {
-                diagnosticInfos = diagnosticInfos.Add(
+                builder.Add(
                     new DiagnosticInfo(NotExpectedDataType, paramSyntax!.GetLocation(), ["string"]));
                 continue;
             }
@@ -444,7 +442,7 @@ internal class ViewModelPropertiesGenerator : IIncrementalGenerator {
             var param = paramSyntax.Token.ValueText;
             var value = valueSyntax.Token.ValueText;
 
-            if (!DiagnoseIdCharacters(param, attName, paramSyntax.GetLocation(), true, ref diagnosticInfos)) {
+            if (!DiagnoseIdCharacters(param, attName, paramSyntax.GetLocation(), true, ref builder)) {
                 continue;
             }
 
@@ -456,7 +454,7 @@ internal class ViewModelPropertiesGenerator : IIncrementalGenerator {
                 _ => false
             };
             if (!isRightType) {
-                diagnosticInfos = diagnosticInfos.Add(
+                builder.Add(
                     new DiagnosticInfo(
                         NotExpectedDataType,
                         valueSyntax.GetLocation(),
@@ -474,14 +472,14 @@ internal class ViewModelPropertiesGenerator : IIncrementalGenerator {
             if (generalPropertySet.Add(param)) {
                 paramDict.Add(param, value);
             } else {
-                diagnosticInfos = diagnosticInfos.Add(
+                builder.Add(
                     new DiagnosticInfo(RegisterFieldOrPropertyMultiTimes, paramSyntax.GetLocation(), [param]));
             }
         }
     }
 
     private static void AnalyzeSeriesProperties(AttributeSyntax attSyntax, string attName,
-        ref ImmutableArray<DiagnosticInfo> diagnosticInfos, ref DefaultValueDictionary elementDict) {
+        ref ImmutableArray<DiagnosticInfo>.Builder builder, ref DefaultValueDictionary elementDict) {
 
         var argSyntaxes = attSyntax.ArgumentList?.Arguments;
         if (argSyntaxes is null) return;
@@ -500,12 +498,12 @@ internal class ViewModelPropertiesGenerator : IIncrementalGenerator {
             if (paramName is null && index == 0 || paramName is "id") {
                 id = paramValue;
 
-                if (!DiagnoseIdCharacters(id, attName, argSyntax.GetLocation(), false, ref diagnosticInfos)) {
+                if (!DiagnoseIdCharacters(id, attName, argSyntax.GetLocation(), false, ref builder)) {
                     return;
                 }
 
                 if (elementDict.ContainsKey(id)) {
-                    diagnosticInfos = diagnosticInfos.Add(
+                    builder.Add(
                         new DiagnosticInfo(RegisterFieldOrPropertyMultiTimes, argSyntax.GetLocation(), [id]));
                     return;
                 }

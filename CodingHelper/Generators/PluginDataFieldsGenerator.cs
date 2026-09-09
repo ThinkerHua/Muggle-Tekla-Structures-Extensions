@@ -15,6 +15,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -30,7 +31,7 @@ using FieldInfo = (string Name, string AttributeName, string Type);
 namespace Muggle.TsExtensions.CodingHelper.Generators;
 
 [Generator]
-internal class PluginDataFieldsGenerator : IIncrementalGenerator {
+public class PluginDataFieldsGenerator : IIncrementalGenerator {
 
     internal static readonly string[] ConcernedAttributes = [
         "Muggle.TsExtensions.CodingHelper.Generators.PartFieldsAttribute",
@@ -254,16 +255,16 @@ internal class PluginDataFieldsGenerator : IIncrementalGenerator {
             return default;
 
         var result = new GatheredInfo<PluginDataFieldsInfo>(default, []);
-        var diagnosticInfos = result.DiagnosticInfos;
+        var builder = ImmutableArray.CreateBuilder<DiagnosticInfo>();
 
         if (!classDeclarationSyntax.Modifiers.Any(m => m.IsKind(SyntaxKind.PartialKeyword))) {
-            diagnosticInfos = diagnosticInfos.Add(
+            builder.Add(
                 new DiagnosticInfo(
                     NotPartial,
                     classDeclarationSyntax.Identifier.GetLocation(),
                     [classDeclarationSyntax.Identifier.ValueText])
             );
-            result.DiagnosticInfos = diagnosticInfos;
+            result.DiagnosticInfos = builder.ToImmutableArray();
             return result;
         }
 
@@ -288,7 +289,7 @@ internal class PluginDataFieldsGenerator : IIncrementalGenerator {
 
                 var supportedDatatypes = SupportedDataTypes(attName);
                 if (!supportedDatatypes.Contains(dataType)) {
-                    diagnosticInfos = diagnosticInfos.Add(
+                    builder.Add(
                         new DiagnosticInfo(
                             NotSupportedDataType,
                             datatypeSyntax!.GetLocation(),
@@ -312,11 +313,11 @@ internal class PluginDataFieldsGenerator : IIncrementalGenerator {
                 var id = argSyntax.Token.ValueText;
 
                 var pass = DiagnoseIdCharacters(id, attName, argSyntax.GetLocation(), key != attName,
-                    ref diagnosticInfos);
+                    ref builder);
                 if (!pass) continue;
 
                 if (!idSet.Add(id)) {
-                    diagnosticInfos = diagnosticInfos.Add(
+                    builder.Add(
                         new DiagnosticInfo(RegisterFieldOrPropertyMultiTimes, argSyntax.GetLocation(), [id])
                     );
                 }
@@ -325,6 +326,7 @@ internal class PluginDataFieldsGenerator : IIncrementalGenerator {
 
         token.ThrowIfCancellationRequested();
 
+        result.DiagnosticInfos = builder.ToImmutableArray();
         result.Value = new PluginDataFieldsInfo {
             ClassInfo = new ClassInfo {
                 NameSpace = classSymbol.ContainingNamespace.ToDisplayString(),
@@ -334,7 +336,6 @@ internal class PluginDataFieldsGenerator : IIncrementalGenerator {
             },
             Arguments = attArguments
         };
-        result.DiagnosticInfos = diagnosticInfos;
 
         return result;
     }

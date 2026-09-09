@@ -213,11 +213,11 @@ internal class InternalAttributesDiagnoser : DiagnosticAnalyzer {
     };
 
     internal static bool DiagnoseIdCharacters(string id, string attName, Location argSyntaxLocation,
-        bool isGeneralFieldsAttribute, ref ImmutableArray<DiagnosticInfo> diagnosticInfos) {
+        bool isGeneralFieldsAttribute, ref ImmutableArray<DiagnosticInfo>.Builder builder) {
 
         var pass = true;
         if (id.Length == 0 || id.Length > MaxLengthOfArgument(attName)) {
-            diagnosticInfos = diagnosticInfos.Add(
+            builder.Add(
                 new DiagnosticInfo(LengthExceedLimitation, argSyntaxLocation,
                     [attName, PrefixSuffixExample(attName), MaxLengthOfArgument(attName)])
             );
@@ -225,19 +225,19 @@ internal class InternalAttributesDiagnoser : DiagnosticAnalyzer {
         }
 
         if (Regex.IsMatch(id, SpecialCharacterPattern)) {
-            diagnosticInfos = diagnosticInfos.Add(
+            builder.Add(
                 new DiagnosticInfo(ContainsSpecialCharacters, argSyntaxLocation, [])
             );
             pass = false;
         }
 
         if (isGeneralFieldsAttribute && Regex.IsMatch(id, "^[0-9]")) {
-            diagnosticInfos = diagnosticInfos.Add(new DiagnosticInfo(NameStartsWithNumber, argSyntaxLocation, []));
+            builder.Add(new DiagnosticInfo(NameStartsWithNumber, argSyntaxLocation, []));
             pass = false;
         }
 
         if (Regex.IsMatch(id, UnsuggestedCharacterPattern)) {
-            diagnosticInfos = diagnosticInfos.Add(
+            builder.Add(
                 new DiagnosticInfo(ContainsUnsuggestedCharacters, argSyntaxLocation, [])
             );
         }

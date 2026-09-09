@@ -15,6 +15,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -89,12 +90,14 @@ public class PluginFieldsGenerator : IIncrementalGenerator {
         if (classSymbol is null) return default;
 
         var result = new GatheredInfo<PluginFieldsInfo>(default, []);
+        var builder = ImmutableArray.CreateBuilder<DiagnosticInfo>();
 
         if (!classDeclarationSyntax!.Modifiers.Any(m => m.IsKind(SyntaxKind.PartialKeyword))) {
-            result.DiagnosticInfos = result.DiagnosticInfos.Add(
+            builder.Add(
                 new DiagnosticInfo(NotPartial, classDeclarationSyntax.Identifier.GetLocation(),
                     [classDeclarationSyntax.Identifier.ValueText])
             );
+            result.DiagnosticInfos = builder.ToImmutableArray();
             return result;
         }
 
@@ -157,6 +160,7 @@ public class PluginFieldsGenerator : IIncrementalGenerator {
 
         token.ThrowIfCancellationRequested();
 
+        result.DiagnosticInfos = builder.ToImmutableArray();
         result.Value = new PluginFieldsInfo {
             ClassInfo = new ClassInfo {
                 NameSpace = classSymbol.ContainingNamespace.ToDisplayString(),
