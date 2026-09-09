@@ -23,6 +23,28 @@ namespace Muggle.TsExtensions.Common.Geometry3d {
     public static class MatrixExtension {
 
         /// <summary>
+        /// 确定两个矩阵实例是否相等。
+        /// </summary>
+        /// <param name="a">当前矩阵</param>
+        /// <param name="b">要与当前矩阵进行比较的矩阵</param>
+        /// <returns>相等则返回 <see langword="true"/>，否则返回 <see langword="false"/>。</returns>
+        /// <exception cref="ArgumentNullException"></exception>
+        public static bool Equals(this Matrix a, Matrix b) {
+            if (a == null) {
+                throw new ArgumentNullException(nameof(a));
+            }
+
+            if (b == null) {
+                throw new ArgumentNullException(nameof(b));
+            }
+
+            return a[0, 0] == b[0, 0] && a[0, 1] == b[0, 1] && a[0, 2] == b[0, 2] &&
+                   a[1, 0] == b[1, 0] && a[1, 1] == b[1, 1] && a[1, 2] == b[1, 2] &&
+                   a[2, 0] == b[2, 0] && a[2, 1] == b[2, 1] && a[2, 2] == b[2, 2] &&
+                   a[3, 0] == b[3, 0] && a[3, 1] == b[3, 1] && a[3, 2] == b[3, 2];
+        }
+
+        /// <summary>
         /// 计算矩阵的行列式。
         /// </summary>
         /// <remarks><b>* 非方阵行列式未定义，此处忽略矩阵的平移部分。</b></remarks>
