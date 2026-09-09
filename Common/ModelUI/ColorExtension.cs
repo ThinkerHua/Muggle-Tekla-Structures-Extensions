@@ -12,6 +12,7 @@
  *  ColorExtension.cs: extension of Tekla.Structures.Model.UI.Color
  *  written by Huang YongXing - thinkerhua@hotmail.com
  *==============================================================================*/
+
 using System;
 using Tekla.Structures.Model.UI;
 

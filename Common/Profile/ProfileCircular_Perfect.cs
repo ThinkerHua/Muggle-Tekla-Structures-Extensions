@@ -12,6 +12,7 @@
  *  ProfileCircular_Perfect.cs: profile of perfect circular
  *  written by Huang YongXing - thinkerhua@hotmail.com
  *==============================================================================*/
+
 using System.Text.RegularExpressions;
 
 namespace Muggle.TsExtensions.Common.Profile {

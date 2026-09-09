@@ -12,6 +12,7 @@
  *  ProjectionExtension.cs: extension of Tekla.Structures.Geometry3d.Projection
  *  written by Huang YongXing - thinkerhua@hotmail.com
  *==============================================================================*/
+
 using System;
 using Tekla.Structures.Geometry3d;
 

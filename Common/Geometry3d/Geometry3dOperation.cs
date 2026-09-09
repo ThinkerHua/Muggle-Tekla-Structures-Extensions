@@ -12,6 +12,7 @@
  *  Geometry3dOperation.cs: solver of geometric problems
  *  written by Huang YongXing - thinkerhua@hotmail.com
  *==============================================================================*/
+
 using System;
 using System.Collections;
 using System.Collections.Generic;

@@ -12,6 +12,7 @@
  *  PointsInterval.cs: a solution to the points interval problem
  *  written by Huang YongXing - thinkerhua@hotmail.com
  *==============================================================================*/
+
 using System;
 using System.Collections;
 using System.Collections.Generic;

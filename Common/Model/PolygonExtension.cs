@@ -12,6 +12,7 @@
  *  PolygonExtension.cs: extension of Tekla.Structures.Model.Polygon
  *  written by Huang YongXing - thinkerhua@hotmail.com
  *==============================================================================*/
+
 using System;
 using Tekla.Structures.Geometry3d;
 using Tekla.Structures.Model;

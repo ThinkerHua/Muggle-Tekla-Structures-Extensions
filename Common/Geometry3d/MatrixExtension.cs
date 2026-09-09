@@ -1,17 +1,18 @@
 ﻿/*==============================================================================
  *  Muggle TsExtensions - extensions for Tekla Structures
  *
- *  Copyright © 2024 Huang YongXing.                 
+ *  Copyright © 2024 Huang YongXing.
  *
- *  This library is free software, licensed under the terms of the GNU 
- *  General Public License as published by the Free Software Foundation, 
- *  either version 3 of the License, or (at your option) any later version. 
- *  You should have received a copy of the GNU General Public License 
- *  along with this program. If not, see <http://www.gnu.org/licenses/>. 
+ *  This library is free software, licensed under the terms of the GNU
+ *  General Public License as published by the Free Software Foundation,
+ *  either version 3 of the License, or (at your option) any later version.
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program. If not, see <http://www.gnu.org/licenses/>.
  *==============================================================================
  *  MatrixExtension.cs: extension of Tekla.Structures.Geometry3d.Matrix
  *  written by Huang YongXing - thinkerhua@hotmail.com
  *==============================================================================*/
+
 using System;
 using Tekla.Structures.Geometry3d;
 
@@ -62,7 +63,7 @@ namespace Muggle.TsExtensions.Common.Geometry3d {
             //      -M00 * M12 * M21 - M01 * M10 * M22 - M02 * M11 * M20
             for (int i = 0; i < 3; i++) {
                 det += matrix[0, (i + 0) % 3] * matrix[1, (i + 1) % 3] * matrix[2, (i + 2) % 3]
-                     - matrix[0, (i + 0) % 3] * matrix[1, (i + 2) % 3] * matrix[2, (i + 1) % 3];
+                       - matrix[0, (i + 0) % 3] * matrix[1, (i + 2) % 3] * matrix[2, (i + 1) % 3];
             }
 
             return det;
@@ -88,18 +89,21 @@ namespace Muggle.TsExtensions.Common.Geometry3d {
             for (int i = 0; i < 3; i++) {
                 m[i, 0] = matrix[3, i];
             }
+
             var det1 = m.Determinant();
 
             for (int i = 0; i < 3; i++) {
                 m[i, 0] = matrix[i, 0];
                 m[i, 1] = matrix[3, i];
             }
+
             var det2 = m.Determinant();
 
             for (int i = 0; i < 3; i++) {
                 m[i, 1] = matrix[i, 1];
                 m[i, 2] = matrix[3, i];
             }
+
             var det3 = m.Determinant();
 
             return new Point(det1 / det, det2 / det, det3 / det);
@@ -120,22 +124,26 @@ namespace Muggle.TsExtensions.Common.Geometry3d {
             if (matrix is null) {
                 throw new ArgumentNullException(nameof(matrix));
             }
+
             var det = matrix.Determinant();
             if (det == 0) {
                 throw new InvalidOperationException("Matrix is singular and cannot be inverted.");
             }
+
             var m = new Matrix();
             //计算伴随矩阵
             for (int i = 0; i < 3; i++) {
                 for (int j = 0; j < 3; j++) {
                     m[j, i] = ((matrix[(i + 1) % 3, (j + 1) % 3] * matrix[(i + 2) % 3, (j + 2) % 3])
-                             - (matrix[(i + 1) % 3, (j + 2) % 3] * matrix[(i + 2) % 3, (j + 1) % 3])) / det;
+                               - (matrix[(i + 1) % 3, (j + 2) % 3] * matrix[(i + 2) % 3, (j + 1) % 3])) / det;
                 }
             }
+
             //计算平移部分
             for (int i = 0; i < 3; i++) {
                 m[3, i] = -(m[0, i] * matrix[3, 0] + m[1, i] * matrix[3, 1] + m[2, i] * matrix[3, 2]);
             }
+
             return m;
         }
 

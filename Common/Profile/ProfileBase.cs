@@ -12,6 +12,7 @@
  *  ProfileBase.cs: the base class for all profile classes
  *  written by Huang YongXing - thinkerhua@hotmail.com
  *==============================================================================*/
+
 using System;
 
 namespace Muggle.TsExtensions.Common.Profile {

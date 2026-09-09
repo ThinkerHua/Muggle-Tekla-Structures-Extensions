@@ -12,6 +12,7 @@
  *  ProfileCircular.cs: profile of circular
  *  written by Huang YongXing - thinkerhua@hotmail.com
  *==============================================================================*/
+
 using System.Text.RegularExpressions;
 
 namespace Muggle.TsExtensions.Common.Profile {

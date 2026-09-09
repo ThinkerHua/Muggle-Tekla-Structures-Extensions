@@ -12,6 +12,7 @@
  *  Internal.cs: class used for testing during development
  *  written by Huang YongXing - thinkerhua@hotmail.com
  *==============================================================================*/
+
 using System;
 using Muggle.TsExtensions.Common.Geometry3d;
 using Muggle.TsExtensions.Common.ModelUI;

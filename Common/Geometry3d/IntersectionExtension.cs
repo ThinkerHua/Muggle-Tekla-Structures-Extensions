@@ -12,6 +12,7 @@
  *  IntersectionExtension.cs: extension of Tekla.Structures.Geometry3d.Intersection
  *  written by Huang YongXing - thinkerhua@hotmail.com
  *==============================================================================*/
+
 using System;
 using System.Collections.Generic;
 using System.Linq;

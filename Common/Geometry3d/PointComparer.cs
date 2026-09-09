@@ -12,6 +12,7 @@
  *  PointComparer.cs: comparer of Tekla.Structures.Geometry3d.Point
  *  written by Huang YongXing - thinkerhua@hotmail.com
  *==============================================================================*/
+
 using System.Collections.Generic;
 using Tekla.Structures.Geometry3d;
 

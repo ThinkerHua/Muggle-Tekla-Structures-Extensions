@@ -12,6 +12,7 @@
  *  UnAcceptableProfileException.cs: exception of unacceptable profile
  *  written by Huang YongXing - thinkerhua@hotmail.com
  *==============================================================================*/
+
 using System;
 
 namespace Muggle.TsExtensions.Common.Profile {

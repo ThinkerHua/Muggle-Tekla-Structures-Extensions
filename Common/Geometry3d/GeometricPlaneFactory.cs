@@ -12,6 +12,7 @@
  *  GeometricPlaneFactory.cs: factory of Tekla.Structures.Geometry3d.GeometricPlane
  *  written by Huang YongXing - thinkerhua@hotmail.com
  *==============================================================================*/
+
 using System;
 using Tekla.Structures.Geometry3d;
 using Tekla.Structures.Model;

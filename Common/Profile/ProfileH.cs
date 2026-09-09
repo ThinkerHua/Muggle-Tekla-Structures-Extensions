@@ -12,6 +12,7 @@
  *  ProfileH.cs: profile of H
  *  written by Huang YongXing - thinkerhua@hotmail.com
  *==============================================================================*/
+
 using System.Text.RegularExpressions;
 
 namespace Muggle.TsExtensions.Common.Profile {

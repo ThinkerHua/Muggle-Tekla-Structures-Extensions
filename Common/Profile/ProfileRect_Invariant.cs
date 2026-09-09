@@ -12,6 +12,7 @@
  *  ProfileRect_Invariant.cs: profile of invariant rect
  *  written by Huang YongXing - thinkerhua@hotmail.com
  *==============================================================================*/
+
 namespace Muggle.TsExtensions.Common.Profile {
     /// <summary>
     /// 矩形管（等截面形式）。适用如下形式：

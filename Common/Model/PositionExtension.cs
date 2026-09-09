@@ -12,6 +12,7 @@
  *  PositionExtension.cs: extension of Tekla.Structures.Model.Position
  *  written by Huang YongXing - thinkerhua@hotmail.com
  *==============================================================================*/
+
 using System;
 using Tekla.Structures.Model;
 
