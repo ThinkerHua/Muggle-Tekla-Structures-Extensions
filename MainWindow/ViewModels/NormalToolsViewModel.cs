@@ -42,15 +42,14 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
 
         [RelayCommand]
         private void ShowModelObjectCoordinateSystem() {
-            ModelObject obj;
             try {
                 if (!model.GetConnectionStatus()) throw new InvalidOperationException(App.NotConnected);
 
                 while (true) {
-                    obj = picker.PickObject(Picker.PickObjectEnum.PICK_ONE_OBJECT);
+                    var obj = picker.PickObject(Picker.PickObjectEnum.PICK_ONE_OBJECT);
                     if (obj is PolyBeam polyBeam) {
-                        var css = polyBeam.GetPolybeamCoordinateSystems();
-                        foreach (CoordinateSystem cs in css) {
+                        var polyCss = polyBeam.GetPolybeamCoordinateSystemsEx();
+                        foreach (var cs in polyCss) {
                             Internal.ShowCoordinateSystem(cs);
                         }
                     } else {
