@@ -55,10 +55,9 @@ namespace Muggle.TsExtensions.Common.Geometry3d {
                 throw new ArgumentNullException(nameof(p));
             }
 
-            if (Math.Abs(p.X) <= epsilon && Math.Abs(p.Y) <= epsilon && Math.Abs(p.Z) <= epsilon)
-                return true;
-            else
-                return false;
+            return Math.Abs(p.X) <= Math.Abs(epsilon) 
+                   && Math.Abs(p.Y) <= Math.Abs(epsilon) 
+                   && Math.Abs(p.Z) <= Math.Abs(epsilon);
         }
         /// <summary>
         /// 点与标量的乘法。
