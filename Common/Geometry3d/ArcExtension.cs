@@ -44,7 +44,7 @@ namespace Muggle.TsExtensions.Common.Geometry3d {
                 throw new ArgumentException($"{nameof(vector)} 不应是零向量，且不应与 {nameof(arc)} 的法向平行。", nameof(vector));
 
             var v = ProjectionExtension.VectorToPlane(vector, new GeometricPlane(arc.CenterPoint, arc.Normal));
-            var angle = arc.StartDirection.GetAngleBetween_WithDirection(v, arc.Normal);
+            var angle = arc.StartDirection.GetAngleBetweenWithDirection(v, arc.Normal);
             if (angle > arc.Angle) return null;
 
             v.Normalize(arc.Radius);
@@ -106,8 +106,8 @@ namespace Muggle.TsExtensions.Common.Geometry3d {
             endVector = ProjectionExtension.VectorToPlane(endVector, gPlane);
             startVector.Normalize(arc.Radius);
             endVector.Normalize(arc.Radius);
-            var angleStart = arc.StartDirection.GetAngleBetween_WithDirection(startVector, arc.Normal);
-            var angleEnd = arc.StartDirection.GetAngleBetween_WithDirection(endVector, arc.Normal);
+            var angleStart = arc.StartDirection.GetAngleBetweenWithDirection(startVector, arc.Normal);
+            var angleEnd = arc.StartDirection.GetAngleBetweenWithDirection(endVector, arc.Normal);
 
             //  情形1：angleStart <= angleEnd, 区间为 [ angleStart, Min(angleEnd, arc.Angle) ]
             //  情形2：angleStart >  angleEnd, 区间为 [ 0, Min(angleEnd, arc.Angle) ] + [ angleStart, arc.Angle ]
@@ -119,7 +119,7 @@ namespace Muggle.TsExtensions.Common.Geometry3d {
             double angleCurrent;
             Point point;
             bool inAngleRange;
-            double angleRange = startVector.GetAngleBetween_WithDirection(endVector, gPlane.Normal);
+            double angleRange = startVector.GetAngleBetweenWithDirection(endVector, gPlane.Normal);
             angleRange += angleRange == 0 ? Math.PI * 2 : 0;
             var uBound = angleEnd < arc.Angle ? angleEnd : arc.Angle;
             var rotationMatrix = MatrixFactory.Rotate(-stepRadians, gPlane.Normal);
@@ -129,7 +129,7 @@ namespace Muggle.TsExtensions.Common.Geometry3d {
 
                 inAngleRange = false;
 
-                angleCurrent = arc.StartDirection.GetAngleBetween_WithDirection(currentVector, gPlane.Normal);
+                angleCurrent = arc.StartDirection.GetAngleBetweenWithDirection(currentVector, gPlane.Normal);
                 if (angleStart > angleEnd) {
                     //  不需要判断是否大于等于0
                     if (angleCurrent <= uBound || angleCurrent >= angleStart && angleCurrent <= arc.Angle)

@@ -159,7 +159,7 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
                     }
                 }
 
-                var radians = directionStart.GetAngleBetween_WithDirection(directionEnd, axis.Direction);
+                var radians = directionStart.GetAngleBetweenWithDirection(directionEnd, axis.Direction);
                 matrix = MatrixFactoryExtension.Rotate(axis, radians);
                 break;
             default:

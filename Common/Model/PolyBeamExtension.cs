@@ -69,7 +69,7 @@ namespace Muggle.TsExtensions.Common.Model {
             if (!Parallel.VectorToVector(partCs.AxisY, polyCss[0].AxisY)
                 || partCs.AxisY.Dot(polyCss[0].AxisY) < 0.0) {
 
-                var angle = partCs.AxisY.GetAngleBetween_WithDirection(polyCss[0].AxisY, partCs.AxisX);
+                var angle = partCs.AxisY.GetAngleBetweenWithDirection(polyCss[0].AxisY, partCs.AxisX);
 
                 foreach (var cs in polyCss) {
                     var matrix = MatrixFactory.Rotate(angle, cs.AxisX);

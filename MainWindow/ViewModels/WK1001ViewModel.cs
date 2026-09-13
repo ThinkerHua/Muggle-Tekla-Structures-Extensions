@@ -83,7 +83,7 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
                 }
 
                 partNormal = new Vector(thisProjectedNormal.GetNormal() + anotherProjectedNormal.GetNormal());
-                degree = partNormal.GetAngleBetween_WithDirection(partCS.AxisY, partCS.AxisX) / Math.PI * 180.0 + 45.0;
+                degree = partNormal.GetAngleBetweenWithDirection(partCS.AxisY, partCS.AxisX) / Math.PI * 180.0 + 45.0;
                 degree = degree % 90.0 - 45.0;
                 beam.Position.RotationOffset -= degree;
                 beam.Modify();

@@ -39,6 +39,7 @@ namespace Muggle.TsExtensions.Common.Geometry3d {
 
             return v;
         }
+
         /// <summary>
         /// 获取向量之间更精确的角度。
         /// </summary>
@@ -52,9 +53,12 @@ namespace Muggle.TsExtensions.Common.Geometry3d {
         /// </remarks>
         /// <param name="v">当前向量</param>
         /// <param name="vector">给定向量</param>
+        /// <param name="epsilon">用于比较数值的最小标量，小于此值将视为 0.0</param>
         /// <returns>向量之间的角度,取值范围 [0.0, π]。</returns>
         /// <exception cref="ArgumentNullException"></exception>
-        public static double GetAngleBetween_Precisely(this Vector v, Vector vector) {
+        public static double GetAngleBetweenPrecisely(this Vector v, Vector vector, 
+            double epsilon = GeometryConstants.ANGULAR_EPSILON) {
+            
             if (v is null) {
                 throw new ArgumentNullException(nameof(v));
             }
@@ -63,8 +67,13 @@ namespace Muggle.TsExtensions.Common.Geometry3d {
                 throw new ArgumentNullException(nameof(vector));
             }
 
-            if (vector.IsZero() || v.IsZero()) return Math.PI * 0.5;
-
+            if (vector.IsZero(epsilon) || v.IsZero(epsilon)) return Math.PI * 0.5;
+            
+            v = v.GetNormal();
+            vector = vector.GetNormal();
+            
+            if (v.Cross(vector).IsZero(epsilon)) return v.Dot(vector) > 0 ? 0 : Math.PI;
+            
             return Math.Acos(v.Dot(vector) / (v.GetLength() * vector.GetLength()));
         }
         /// <summary>
@@ -77,7 +86,7 @@ namespace Muggle.TsExtensions.Common.Geometry3d {
         /// <param name="normal">法向（仅需指示大致方向）</param>
         /// <returns>向量之间具有方向性的角度（弧度制），取值范围 [0.0, 2π)。</returns>
         /// <exception cref="ArgumentNullException"></exception>
-        public static double GetAngleBetween_WithDirection(this Vector v, Vector vector, Vector normal) {
+        public static double GetAngleBetweenWithDirection(this Vector v, Vector vector, Vector normal) {
             if (v is null) {
                 throw new ArgumentNullException(nameof(v));
             }
@@ -90,7 +99,7 @@ namespace Muggle.TsExtensions.Common.Geometry3d {
                 throw new ArgumentNullException(nameof(normal));
             }
 
-            var angle = v.GetAngleBetween_Precisely(vector);
+            var angle = v.GetAngleBetweenPrecisely(vector);
             var cross = v.Cross(vector);
             var dot = Vector.Dot(cross, normal);
 
