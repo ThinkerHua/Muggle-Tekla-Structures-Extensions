@@ -41,7 +41,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
         /// <summary>
         /// Register preset default values by the given id.
         /// </summary>
-        /// <remarks>The preset default values is: Size = 8.0, Standard = "A", DistXText = "", DistYText = "",
+        /// <remarks>The preset default values is: Size = 8.0, Standard = "A", DistXText = "0.0", DistYText = "0.0",
         /// Type = 0, ThreadInMaterial = 1, Length = 40.0, CutLength = 100.0, ExtraLength = 0.0, Tolerance = 2.0,
         /// PlainType = 0, BlindHoleDepth = 0.0, Hole1 = 1, Hole2 = 1, Hole3 = 0, Hole4 = 0, Hole5 = 0, HoleType = 0,
         /// SlottedHoleX = 0.0, SlottedHoleY = 0.0, RotateSlots = 2, IsBolt = 1, UseNut1 = 1, UseNut2 = 0,
@@ -51,8 +51,8 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
             Id = id.ToString();
             Size = 8.0;
             Standard = "A";
-            DistXText = "";
-            DistYText = "";
+            DistXText = "0.0";
+            DistYText = "0.0";
             Type = 0;
             ThreadInMaterial = 1;
             Length = 40.0;
@@ -81,7 +81,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
         /// <summary>
         /// Register preset default values by the given id.
         /// </summary>
-        /// <remarks>The preset default values is: Size = 8.0, Standard = "A", DistXText = "", DistYText = "",
+        /// <remarks>The preset default values is: Size = 8.0, Standard = "A", DistXText = "0.0", DistYText = "0.0",
         /// Type = 0, ThreadInMaterial = 1, Length = 40.0, CutLength = 100.0, ExtraLength = 0.0, Tolerance = 2.0,
         /// PlainType = 0, BlindHoleDepth = 0.0, Hole1 = 1, Hole2 = 1, Hole3 = 0, Hole4 = 0, Hole5 = 0, HoleType = 0,
         /// SlottedHoleX = 0.0, SlottedHoleY = 0.0, RotateSlots = 2, IsBolt = 1, UseNut1 = 1, UseNut2 = 0,
@@ -91,8 +91,8 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
             Id = id;
             Size = 8.0;
             Standard = "A";
-            DistXText = "";
-            DistYText = "";
+            DistXText = "0.0";
+            DistYText = "0.0";
             Type = 0;
             ThreadInMaterial = 1;
             Length = 40.0;
@@ -150,7 +150,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
         /// <param name="useWasher2">The default value for the "Washer2" property of "BoltGroup".</param>
         /// <param name="useWasher3">The default value for the "Washer3" property of "BoltGroup".</param>
         public BoltFieldDefaultValuesAttribute(
-            uint id, double size = 8.0, string standard = "A", string distXText = "", string distYText = "",
+            uint id, double size = 8.0, string standard = "A", string distXText = "0.0", string distYText = "0.0",
             int type = 0, int threadInMaterial = 1, double length = 40.0, double cutLength = 100.0,
             double extraLength = 0.0, double tolerance = 2.0, int plainType = 0, double blindHoleDepth = 0.0,
             int hole1 = 1, int hole2 = 1, int hole3 = 0, int hole4 = 0, int hole5 = 0, int holeType = 0,
@@ -219,7 +219,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
         /// <param name="useWasher2">The default value for the "Washer2" property of "BoltGroup".</param>
         /// <param name="useWasher3">The default value for the "Washer3" property of "BoltGroup".</param>
         public BoltFieldDefaultValuesAttribute(
-            string id, double size = 8.0, string standard = "A", string distXText = "", string distYText = "",
+            string id, double size = 8.0, string standard = "A", string distXText = "0.0", string distYText = "0.0",
             int type = 0, int threadInMaterial = 1, double length = 40.0, double cutLength = 100.0,
             double extraLength = 0.0, double tolerance = 2.0, int plainType = 0, double blindHoleDepth = 0.0,
             int hole1 = 1, int hole2 = 1, int hole3 = 0, int hole4 = 0, int hole5 = 0, int holeType = 0,

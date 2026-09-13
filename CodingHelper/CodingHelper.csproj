@@ -22,6 +22,10 @@
         <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
         <PackageReleaseNotes>
 Includes all beta updates and some improvements：
+
+Improvements:
+Adjust the way to collect diagnostic information.
+The default value of BoltDistX and BoltDistY has been changed from "" to "0.0".
             
 2.0.0-beta.4
 Automatically generates specific content based on the Tekla.Structures.Model version.
