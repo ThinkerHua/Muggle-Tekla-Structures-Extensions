@@ -71,7 +71,6 @@ namespace Muggle.TsExtensions.Common.Geometry3d {
         /// <returns>
         ///     弧线上的点的集合，是弧线上区间 [ <paramref name="startPoint"/>, <paramref name="endPoint"/> ] 与 
         ///     [ <see cref="Arc.StartPoint"/>, <see cref="Arc.EndPoint"/> ] 的<b>交集</b>的<b>子集</b>。
-        ///     没有有效值则返回null。
         /// </returns>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="ArgumentException">输入点在圆弧平面上投影与弧中心点重合。</exception>
@@ -114,7 +113,7 @@ namespace Muggle.TsExtensions.Common.Geometry3d {
             //  此情形第一个区间段必然有效，第二个区间段当angleStart<arc.Angle时存在
 
             //  无有效区间
-            if (angleStart <= angleEnd && angleStart > arc.Angle) return null;
+            if (angleStart <= angleEnd && angleStart > arc.Angle) return new List<Point>();
 
             double angleCurrent;
             Point point;
