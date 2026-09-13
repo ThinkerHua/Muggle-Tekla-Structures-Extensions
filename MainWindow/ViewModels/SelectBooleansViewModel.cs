@@ -26,15 +26,15 @@ using TSMUI = Tekla.Structures.Model.UI;
 namespace Muggle.TsExtensions.MainWindow.ViewModels {
     public partial class SelectBooleansViewModel : ViewModelBase {
         [Flags]
-        public enum BooleanTypeEnum {
+        public enum BooleanFilters {
             None = 0,
             Add = 1 << 0,
             Cut = 1 << 1,
-            WELDPREP = 1 << 2,
-            CUTPLANE = 1 << 3,
-            EDGECHAMFER = 1 << 4,
-            FITTING = 1 << 5,
-            ALL = -1
+            WeldPrep = 1 << 2,
+            CutPlane = 1 << 3,
+            EdgeChamfer = 1 << 4,
+            Fitting = 1 << 5,
+            All = -1
         }
 
         private readonly Model model = new Model();
@@ -61,13 +61,13 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
         [ObservableProperty]
         private bool matchFitting = false;
 
-        public BooleanTypeEnum BooleanType => BooleanTypeEnum.None |
-                (MatchBooleanAdd ? BooleanTypeEnum.Add : BooleanTypeEnum.None) |
-                (MatchBooleanCut ? BooleanTypeEnum.Cut : BooleanTypeEnum.None) |
-                (MatchWeldPrep ? BooleanTypeEnum.WELDPREP : BooleanTypeEnum.None) |
-                (MatchCutPlane ? BooleanTypeEnum.CUTPLANE : BooleanTypeEnum.None) |
-                (MatchEdgeChamfer ? BooleanTypeEnum.EDGECHAMFER : BooleanTypeEnum.None) |
-                (MatchFitting ? BooleanTypeEnum.FITTING : BooleanTypeEnum.None);
+        public BooleanFilters Filter => BooleanFilters.None |
+                (MatchBooleanAdd ? BooleanFilters.Add : BooleanFilters.None) |
+                (MatchBooleanCut ? BooleanFilters.Cut : BooleanFilters.None) |
+                (MatchWeldPrep ? BooleanFilters.WeldPrep : BooleanFilters.None) |
+                (MatchCutPlane ? BooleanFilters.CutPlane : BooleanFilters.None) |
+                (MatchEdgeChamfer ? BooleanFilters.EdgeChamfer : BooleanFilters.None) |
+                (MatchFitting ? BooleanFilters.Fitting : BooleanFilters.None);
 
         public SelectBooleansViewModel(IMessageBoxService messageBoxService) {
             this.messageBoxService = messageBoxService;
@@ -92,26 +92,26 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
 
             var objects = new ArrayList();
             var objectEnumerator = part.GetBooleans();
-            BooleanTypeEnum type;
+            BooleanFilters type;
             foreach (TSM.Boolean obj in objectEnumerator) {
                 if (obj is BooleanPart booleanPart) {
                     type = booleanPart.Type switch {
-                        BooleanPart.BooleanTypeEnum.BOOLEAN_ADD => BooleanTypeEnum.Add,
-                        BooleanPart.BooleanTypeEnum.BOOLEAN_CUT => BooleanTypeEnum.Cut,
-                        BooleanPart.BooleanTypeEnum.BOOLEAN_WELDPREP => BooleanTypeEnum.WELDPREP,
-                        _ => BooleanTypeEnum.None,
+                        BooleanPart.BooleanTypeEnum.BOOLEAN_ADD => BooleanFilters.Add,
+                        BooleanPart.BooleanTypeEnum.BOOLEAN_CUT => BooleanFilters.Cut,
+                        BooleanPart.BooleanTypeEnum.BOOLEAN_WELDPREP => BooleanFilters.WeldPrep,
+                        _ => BooleanFilters.None,
                     };
                 } else if (obj is CutPlane) {
-                    type = BooleanTypeEnum.CUTPLANE;
+                    type = BooleanFilters.CutPlane;
                 } else if (obj is EdgeChamfer) {
-                    type = BooleanTypeEnum.EDGECHAMFER;
+                    type = BooleanFilters.EdgeChamfer;
                 } else if (obj is Fitting) {
-                    type = BooleanTypeEnum.FITTING;
+                    type = BooleanFilters.Fitting;
                 } else {
-                    type = BooleanTypeEnum.None;
+                    type = BooleanFilters.None;
                 }
 
-                if (BooleanType.HasFlag(type)) {
+                if (Filter.HasFlag(type)) {
                     objects.Add(obj);
                 }
             }

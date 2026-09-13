@@ -21,19 +21,21 @@ namespace Muggle.TsExtensions.Common.Geometry3d {
     /// <see cref="Tekla.Structures.Geometry3d"/>.<see cref="Line"/> 的扩展。
     /// </summary>
     public static class LineExtension {
+        
         /// <summary>
         /// 偏移方向。
         /// </summary>
-        public enum OffsetDirectionEnum {
+        public enum OffsetDirection {
             /// <summary>
             /// 向左偏移。
             /// </summary>
-            LEFT,
+            Left,
             /// <summary>
             /// 向右偏移。
             /// </summary>
-            RIGHT,
+            Right,
         }
+        
         /// <summary>
         /// 获取当前直线偏移后的直线，适用于XY平面。
         /// </summary>
@@ -42,7 +44,7 @@ namespace Muggle.TsExtensions.Common.Geometry3d {
         /// <param name="direction">偏移方向，向左或向右。</param>
         /// <returns>偏移后的直线。</returns>
         /// <exception cref="ArgumentNullException"></exception>
-        public static Line Offset(this Line line, double distance, OffsetDirectionEnum direction) {
+        public static Line Offset(this Line line, double distance, OffsetDirection direction) {
             if (line is null) {
                 throw new ArgumentNullException(nameof(line));
             }
@@ -52,6 +54,7 @@ namespace Muggle.TsExtensions.Common.Geometry3d {
 
             return Offset(line, vector);
         }
+        
         /// <summary>
         /// 获取当前直线偏移后的直线，适用于三维坐标系。
         /// </summary>

@@ -29,18 +29,18 @@
 
     <Page.Resources>
         <ResourceDictionary>
-            <Style x:Key="element" TargetType="FrameworkElement">
+            <Style x:Key="Element" TargetType="FrameworkElement">
                 <Setter Property="Margin" Value="2" />
                 <Setter Property="VerticalAlignment" Value="Center" />
             </Style>
-            <Style TargetType="GroupBox" BasedOn="{StaticResource element}">
+            <Style TargetType="GroupBox" BasedOn="{StaticResource Element}">
                 <Setter Property="Padding" Value="2" />
             </Style>
-            <Style TargetType="RadioButton" BasedOn="{StaticResource element}" />
-            <Style TargetType="Button" BasedOn="{StaticResource element}">
+            <Style TargetType="RadioButton" BasedOn="{StaticResource Element}" />
+            <Style TargetType="Button" BasedOn="{StaticResource Element}">
                 <Setter Property="Template" Value="{StaticResource ButtonStyle1}" />
             </Style>
-            <Style TargetType="TextBox" BasedOn="{StaticResource element}">
+            <Style TargetType="TextBox" BasedOn="{StaticResource Element}">
                 <Setter Property="Height" Value="20" />
             </Style>
         </ResourceDictionary>
@@ -49,10 +49,10 @@
     <StackPanel Margin="5">
         <GroupBox Header="{dialog:Loc albl_rotation_axis}">
             <StackPanel>
-                <RadioButton Content="{dialog:Loc albl_X_axis_of_part_coordinate_system}" IsChecked="{Binding Axis, Converter={StaticResource EnumToBool}, ConverterParameter={x:Static vm:ThreeDimensionalRotationViewModel+AxisEnum.PartCS_AxisX}}" />
-                <RadioButton Content="{dialog:Loc albl_Y_axis_of_part_coordinate_system}" IsChecked="{Binding Axis, Converter={StaticResource EnumToBool}, ConverterParameter={x:Static vm:ThreeDimensionalRotationViewModel+AxisEnum.PartCS_AxisY}}" />
-                <RadioButton Content="{dialog:Loc albl_Z_axis_of_part_coordinate_system}" IsChecked="{Binding Axis, Converter={StaticResource EnumToBool}, ConverterParameter={x:Static vm:ThreeDimensionalRotationViewModel+AxisEnum.PartCS_AxisZ}}" />
-                <RadioButton Content="{dialog:Loc albl_manually_specify}" IsChecked="{Binding Axis, Converter={StaticResource EnumToBool}, ConverterParameter={x:Static vm:ThreeDimensionalRotationViewModel+AxisEnum.ManualSelect}}" />
+                <RadioButton Content="{dialog:Loc albl_X_axis_of_part_coordinate_system}" IsChecked="{Binding AxisType, Converter={StaticResource EnumToBool}, ConverterParameter={x:Static vm:ThreeDimensionalRotationViewModel+Axis.PartCsAxisX}}" />
+                <RadioButton Content="{dialog:Loc albl_Y_axis_of_part_coordinate_system}" IsChecked="{Binding AxisType, Converter={StaticResource EnumToBool}, ConverterParameter={x:Static vm:ThreeDimensionalRotationViewModel+Axis.PartCsAxisY}}" />
+                <RadioButton Content="{dialog:Loc albl_Z_axis_of_part_coordinate_system}" IsChecked="{Binding AxisType, Converter={StaticResource EnumToBool}, ConverterParameter={x:Static vm:ThreeDimensionalRotationViewModel+Axis.PartCsAxisZ}}" />
+                <RadioButton Content="{dialog:Loc albl_manually_specify}" IsChecked="{Binding AxisType, Converter={StaticResource EnumToBool}, ConverterParameter={x:Static vm:ThreeDimensionalRotationViewModel+Axis.ManualSelect}}" />
             </StackPanel>
         </GroupBox>
 
@@ -68,7 +68,7 @@
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
-                <RadioButton Grid.Row="0" Grid.Column="0" Content="{dialog:Loc albl_angle_value}" IsChecked="{Binding Angle, Converter={StaticResource EnumToBool}, ConverterParameter={x:Static vm:ThreeDimensionalRotationViewModel+AngleEnum.AngleValue}}" />
+                <RadioButton Grid.Row="0" Grid.Column="0" Content="{dialog:Loc albl_angle_value}" IsChecked="{Binding AngleType, Converter={StaticResource EnumToBool}, ConverterParameter={x:Static vm:ThreeDimensionalRotationViewModel+Angle.AngleValue}}" />
                 <TextBox Grid.Row="0"
                          Grid.Column="1"
                          HorizontalContentAlignment="Center"
@@ -78,14 +78,14 @@
                              Grid.Column="0"
                              Grid.ColumnSpan="2"
                              Content="{dialog:Loc albl_manually_specify_start_and_end_direction}"
-                             IsChecked="{Binding Angle, Converter={StaticResource EnumToBool}, ConverterParameter={x:Static vm:ThreeDimensionalRotationViewModel+AngleEnum.ManualSelect}}" />
+                             IsChecked="{Binding AngleType, Converter={StaticResource EnumToBool}, ConverterParameter={x:Static vm:ThreeDimensionalRotationViewModel+Angle.ManualSelect}}" />
                 <CheckBox Grid.Row="2"
                           Grid.Column="0"
                           Grid.ColumnSpan="2"
                           Margin="16,5,5,5"
                           Content="{dialog:Loc albl_end_direction_is_normal_of_plane}"
                           IsChecked="{Binding TargetDirectionIsNormalOfPlane, Mode=TwoWay}"
-                          IsEnabled="{Binding Angle, Converter={StaticResource EnumToBool}, ConverterParameter={x:Static vm:ThreeDimensionalRotationViewModel+AngleEnum.ManualSelect}}" />
+                          IsEnabled="{Binding AngleType, Converter={StaticResource EnumToBool}, ConverterParameter={x:Static vm:ThreeDimensionalRotationViewModel+Angle.ManualSelect}}" />
             </Grid>
         </GroupBox>
 

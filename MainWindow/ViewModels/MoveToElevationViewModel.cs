@@ -28,45 +28,45 @@ using UISelector = Tekla.Structures.Model.UI.ModelObjectSelector;
 
 namespace Muggle.TsExtensions.MainWindow.ViewModels {
     public partial class MoveToElevationViewModel : ViewModelBase {
-        public enum ElevationTypeEnum {
+        public enum Elevation {
             Top,
             Bottom,
             Middle
         }
 
-        private readonly TransformationPlane globalTP = new TransformationPlane();
-        private readonly Model model = new Model();
-        private readonly Picker picker = new Picker();
-        private readonly UISelector uiSelector = new UISelector();
-        private readonly IMessageBoxService messageBoxService;
+        private readonly TransformationPlane _globalTp = new TransformationPlane();
+        private readonly Model _model = new Model();
+        private readonly Picker _picker = new Picker();
+        private readonly UISelector _uiSelector = new UISelector();
+        private readonly IMessageBoxService _messageBoxService;
 
-        private readonly Localization localLization = App.Current.Localization;
-
-        [ObservableProperty]
-        private double targetElevation = 0.0;
+        private readonly Localization _localization = App.Current.Localization;
 
         [ObservableProperty]
-        private bool isAbsolutely = true;
+        private double _targetElevation = 0.0;
 
         [ObservableProperty]
-        private ElevationTypeEnum elevationType = ElevationTypeEnum.Top;
+        private bool _isAbsolutely = true;
+
+        [ObservableProperty]
+        private Elevation _elevationType = Elevation.Top;
 
         public MoveToElevationViewModel(IMessageBoxService messageBoxService) {
-            this.messageBoxService = messageBoxService;
+            this._messageBoxService = messageBoxService;
         }
 
         [RelayCommand]
         private void MoveToElevation() {
-            if (!model.GetConnectionStatus()) throw new InvalidOperationException(App.NotConnected);
+            if (!_model.GetConnectionStatus()) throw new InvalidOperationException(App.NotConnected);
 
-            var mobjects = uiSelector.GetSelectedObjects();
+            var mobjects = _uiSelector.GetSelectedObjects();
             if (mobjects.GetSize() == 0) {
                 try {
-                    mobjects = picker.PickObjects(Picker.PickObjectsEnum.PICK_N_OBJECTS, localLization.GetText("prompt_Pick_objects"));
+                    mobjects = _picker.PickObjects(Picker.PickObjectsEnum.PICK_N_OBJECTS, _localization.GetText("prompt_Pick_objects"));
                 } catch (Exception e) when (e.Message == App.UserInterrupt) {
                     return;
                 } catch (Exception e) {
-                    messageBoxService.ShowError(e.ToString());
+                    _messageBoxService.ShowError(e.ToString());
                     return;
                 }
             }
@@ -76,16 +76,15 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
             var elevation = 0.0;
             foreach (ModelObject obj in mobjects) {
                 switch (ElevationType) {
-                case ElevationTypeEnum.Top:
+                case Elevation.Top:
                     if (!obj.GetLevel(IsAbsolutely, true, out elevation)) continue;
                     break;
-                case ElevationTypeEnum.Bottom:
+                case Elevation.Bottom:
                     if (!obj.GetLevel(IsAbsolutely, false, out elevation)) continue;
                     break;
-                case ElevationTypeEnum.Middle:
+                case Elevation.Middle:
                     if (!obj.GetLevel(IsAbsolutely, true, out elevation)) continue;
-                    var bottomElevation = 0.0;
-                    if (!obj.GetLevel(IsAbsolutely, false, out bottomElevation)) continue;
+                    if (!obj.GetLevel(IsAbsolutely, false, out var bottomElevation)) continue;
 
                     elevation = (elevation + bottomElevation) * 0.5;
                     break;
@@ -94,11 +93,11 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
                 }
 
                 var vector = new Vector(0.0, 0.0, TargetElevation - elevation);
-                if (IsAbsolutely) vector = vector.TransformFrom(globalTP);
+                if (IsAbsolutely) vector = vector.TransformFrom(_globalTp);
                 Operation.MoveObject(obj, vector);
             }
 
-            model.CommitChanges();
+            _model.CommitChanges();
         }
     }
 }

@@ -26,7 +26,7 @@ namespace Muggle.TsExtensions.Common {
         /// <summary>
         /// 极值枚举
         /// </summary>
-        public enum ExtremeTypeEnum {
+        public enum ExtremeType {
             /// <summary>
             /// 局部极小值
             /// </summary>
@@ -50,7 +50,7 @@ namespace Muggle.TsExtensions.Common {
         /// <exception cref="ArgumentException">数据集合 <paramref name="data"/> 为空时引发。</exception>
         public static List<int> GetLocalExtremeIndexes<T>(
             IList<T> data,
-            ExtremeTypeEnum type,
+            ExtremeType type,
             int interval = 3)
             where T : IComparable<T> {
 
@@ -117,7 +117,7 @@ namespace Muggle.TsExtensions.Common {
         /// <summary>
         /// 判断变化集合 <paramref name="variations"/> 是否符合极值分布。
         /// </summary>
-        /// <remarks>是 <see cref="GetLocalExtremeIndexes{T}(IList{T}, ExtremeTypeEnum, int)"/> 的配套方法。
+        /// <remarks>是 <see cref="GetLocalExtremeIndexes{T}(IList{T}, ExtremeType, int)"/> 的配套方法。
         /// <paramref name="variations"/> 元素数量必定为大于等于 2 的偶数。</remarks>
         /// <param name="variations">给定数据集合。</param>
         /// <param name="type">极值类型。</param>
@@ -131,7 +131,7 @@ namespace Muggle.TsExtensions.Common {
         //            +   -   +           -   +                 
         //          +       -               =                   
         //        +                                             
-        private static bool MaybeExtreme(List<int> variations, ExtremeTypeEnum type) {
+        private static bool MaybeExtreme(List<int> variations, ExtremeType type) {
             if (variations is null) {
                 throw new ArgumentNullException(nameof(variations));
             }
@@ -143,7 +143,7 @@ namespace Muggle.TsExtensions.Common {
             if (variations[half - 1] == 0 && variations[half] == 0) return false;
 
             switch (type) {
-            case ExtremeTypeEnum.LocalMinimum:
+            case ExtremeType.LocalMinimum:
                 for (int i = 0; i < half; i++) {
                     //  左边不允许正值,右边不允许负值
                     if (variations[i] > 0 || variations[cnt - 1 - i] < 0) return false;
@@ -151,7 +151,7 @@ namespace Muggle.TsExtensions.Common {
                     if ((variations[i] == 0 || variations[cnt - 1 - i] == 0) && i != half - 1) return false;
                 }
                 break;
-            case ExtremeTypeEnum.LocalMaximum:
+            case ExtremeType.LocalMaximum:
                 for (int i = 0; i < half; i++) {
                     //  左边不允许负值,右边不允许正值
                     if (variations[i] < 0 || variations[cnt - 1 - i] > 0) return false;

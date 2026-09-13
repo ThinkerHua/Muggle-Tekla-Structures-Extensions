@@ -28,13 +28,13 @@ using ModelObjectSelector = Tekla.Structures.Model.UI.ModelObjectSelector;
 
 namespace Muggle.TsExtensions.MainWindow.ViewModels {
     public partial class ProjectOntoPlaneViewModel : ViewModelBase {
-        public enum ProjectionDirectionEnum {
+        public enum ProjectionDirection {
             Perpendicular,
             GlobalZ,
             Manually,
         }
 
-        public enum WayToGetPlaneEnum {
+        public enum WayToGetPlane {
             PickFace,
             Pick3Points,
         }
@@ -44,15 +44,15 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
         private ModelObjectSelector UiSelector { get; }
         private IMessageBoxService MessageBox { get; }
 
-        [ObservableProperty] private ProjectionDirectionEnum _projectionDirection;
+        [ObservableProperty] private ProjectionDirection _directionType;
 
-        [ObservableProperty] private WayToGetPlaneEnum _wayToGetPlane;
+        [ObservableProperty] private WayToGetPlane _getPlaneType;
 
         [ObservableProperty] private bool _makeSolidUnderPlane;
 
         public ProjectOntoPlaneViewModel(IMessageBoxService messageBox) {
-            ProjectionDirection = ProjectionDirectionEnum.GlobalZ;
-            WayToGetPlane = WayToGetPlaneEnum.PickFace;
+            DirectionType = ProjectionDirection.GlobalZ;
+            GetPlaneType = WayToGetPlane.PickFace;
             MakeSolidUnderPlane = false;
 
             Model = new Model();
@@ -75,8 +75,8 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
                 if (selectedObjects.GetSize() == 0) return;
 
                 Point[] points = new Point[3];
-                switch (WayToGetPlane) {
-                case WayToGetPlaneEnum.PickFace:
+                switch (GetPlaneType) {
+                case WayToGetPlane.PickFace:
                     var input = Picker.PickFace();
 
                     foreach (InputItem item in input) {
@@ -91,7 +91,7 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
                     }
 
                     break;
-                case WayToGetPlaneEnum.Pick3Points:
+                case WayToGetPlane.Pick3Points:
                 default:
 
                     points[0] = Picker.PickPoint();
@@ -106,11 +106,11 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
                     points[0], new Vector(points[1] - points[0]), new Vector(points[2] - points[0]));
 
                 Vector direction;
-                switch (ProjectionDirection) {
-                case ProjectionDirectionEnum.Perpendicular:
+                switch (DirectionType) {
+                case ProjectionDirection.Perpendicular:
                     direction = plane.Normal;
                     break;
-                case ProjectionDirectionEnum.GlobalZ:
+                case ProjectionDirection.GlobalZ:
                     var z = new Vector(0, 0, 1000);
                     if (z.Dot(plane.GetNormal()) == 0.0) {
                         throw new Exception(
@@ -120,7 +120,7 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
 
                     direction = z;
                     break;
-                case ProjectionDirectionEnum.Manually:
+                case ProjectionDirection.Manually:
                 default:
                     var p0 = Picker.PickPoint(App.Current.Localization.GetText("albl_pick_origin_point"));
                     var p1 = Picker.PickPoint(
@@ -133,15 +133,15 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
                     switch (selectedObject) {
                     case Beam beam:
                         ProjectBeam(beam, plane, direction,
-                            ProjectionDirection is ProjectionDirectionEnum.GlobalZ && MakeSolidUnderPlane);
+                            DirectionType is ProjectionDirection.GlobalZ && MakeSolidUnderPlane);
                         break;
                     case PolyBeam polyBeam:
                         ProjectPolyBeam(polyBeam, plane, direction,
-                            ProjectionDirection is ProjectionDirectionEnum.GlobalZ && MakeSolidUnderPlane);
+                            DirectionType is ProjectionDirection.GlobalZ && MakeSolidUnderPlane);
                         break;
                     case ContourPlate contourPlate:
                         ProjectContourPlate(contourPlate, plane, direction,
-                            ProjectionDirection is ProjectionDirectionEnum.GlobalZ && MakeSolidUnderPlane);
+                            DirectionType is ProjectionDirection.GlobalZ && MakeSolidUnderPlane);
                         break;
                     }
                 }

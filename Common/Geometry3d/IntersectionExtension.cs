@@ -172,7 +172,7 @@ namespace Muggle.TsExtensions.Common.Geometry3d {
             foreach (var point in points) {
                 disList.Add(Distance.PointToLine(point, line));
             }
-            var minExtremeIndexs = Operation.GetLocalExtremeIndexes(disList, Operation.ExtremeTypeEnum.LocalMinimum);
+            var minExtremeIndexs = Operation.GetLocalExtremeIndexes(disList, Operation.ExtremeType.LocalMinimum);
             var minExtremePoints = new List<Point>();//  极小值点集合
             foreach (var index in minExtremeIndexs) {
                 minExtremePoints.Add(points[index]);
@@ -207,7 +207,7 @@ namespace Muggle.TsExtensions.Common.Geometry3d {
                     disList.Add(Distance.PointToLine(point, line));
                 }
 
-                minExtremeIndexs = Operation.GetLocalExtremeIndexes(disList, Operation.ExtremeTypeEnum.LocalMinimum);
+                minExtremeIndexs = Operation.GetLocalExtremeIndexes(disList, Operation.ExtremeType.LocalMinimum);
                 minExtremePoints.Clear();
                 foreach (var index in minExtremeIndexs) {
                     minExtremePoints.Add(points[index]);

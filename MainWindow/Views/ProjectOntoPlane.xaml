@@ -60,11 +60,11 @@
         
         <RadioButton GroupName="WayToGetPlane"
                      Content="{dialog:Loc albl_pick_face}"
-                     IsChecked="{Binding WayToGetPlane, Converter={StaticResource EnumToBool}, ConverterParameter={x:Static vm:ProjectOntoPlaneViewModel+WayToGetPlaneEnum.PickFace}, Mode=TwoWay}" />
+                     IsChecked="{Binding GetPlaneType, Converter={StaticResource EnumToBool}, ConverterParameter={x:Static vm:ProjectOntoPlaneViewModel+WayToGetPlane.PickFace}, Mode=TwoWay}" />
         
         <RadioButton GroupName="WayToGetPlane"
                      Content="{dialog:Loc albl_pick_3_points}"
-                     IsChecked="{Binding WayToGetPlane, Converter={StaticResource EnumToBool}, ConverterParameter={x:Static vm:ProjectOntoPlaneViewModel+WayToGetPlaneEnum.Pick3Points}, Mode=TwoWay}" />
+                     IsChecked="{Binding GetPlaneType, Converter={StaticResource EnumToBool}, ConverterParameter={x:Static vm:ProjectOntoPlaneViewModel+WayToGetPlane.Pick3Points}, Mode=TwoWay}" />
         
         <Separator />
         
@@ -72,20 +72,20 @@
         
         <RadioButton GroupName="ProjectionDirection"
                      Content="{dialog:Loc albl_perpendicular}"
-                     IsChecked="{Binding ProjectionDirection, Converter={StaticResource EnumToBool}, ConverterParameter={x:Static vm:ProjectOntoPlaneViewModel+ProjectionDirectionEnum.Perpendicular}, Mode=TwoWay}" />
+                     IsChecked="{Binding DirectionType, Converter={StaticResource EnumToBool}, ConverterParameter={x:Static vm:ProjectOntoPlaneViewModel+ProjectionDirection.Perpendicular}, Mode=TwoWay}" />
         
         <RadioButton GroupName="ProjectionDirection"
                      Content="{dialog:Loc albl_global_Z}"
-                     IsChecked="{Binding ProjectionDirection, Converter={StaticResource EnumToBool}, ConverterParameter={x:Static vm:ProjectOntoPlaneViewModel+ProjectionDirectionEnum.GlobalZ}, Mode=TwoWay}" />
+                     IsChecked="{Binding DirectionType, Converter={StaticResource EnumToBool}, ConverterParameter={x:Static vm:ProjectOntoPlaneViewModel+ProjectionDirection.GlobalZ}, Mode=TwoWay}" />
         <CheckBox Margin="24,4,4,4"
                   Visibility="Collapsed"
                   Content="{dialog:Loc albl_make_solid_under_plane}"
                   IsChecked="{Binding MakeSolidUnderPlane}"
-                  IsEnabled="{Binding ProjectionDirection, Converter={StaticResource EnumToBool}, ConverterParameter={x:Static vm:ProjectOntoPlaneViewModel+ProjectionDirectionEnum.GlobalZ}}" />
+                  IsEnabled="{Binding DirectionType, Converter={StaticResource EnumToBool}, ConverterParameter={x:Static vm:ProjectOntoPlaneViewModel+ProjectionDirection.GlobalZ}}" />
         
         <RadioButton GroupName="ProjectionDirection"
                      Content="{dialog:Loc albl_manually}"
-                     IsChecked="{Binding ProjectionDirection, Converter={StaticResource EnumToBool}, ConverterParameter={x:Static vm:ProjectOntoPlaneViewModel+ProjectionDirectionEnum.Manually}, Mode=TwoWay}" />
+                     IsChecked="{Binding DirectionType, Converter={StaticResource EnumToBool}, ConverterParameter={x:Static vm:ProjectOntoPlaneViewModel+ProjectionDirection.Manually}, Mode=TwoWay}" />
 
         <Button Content="{dialog:Loc albl_project_beam_onto_plane}"
                 Command="{Binding ProjectBeamOntoPlaneCommand}" />

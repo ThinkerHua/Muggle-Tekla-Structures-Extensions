@@ -27,7 +27,7 @@ using TSMUI = Tekla.Structures.Model.UI;
 namespace Muggle.TsExtensions.MainWindow.ViewModels {
     public partial class ConnectionStatusFilterViewModel : ViewModelBase {
         [Flags]
-        public enum ConnectionStatusFilterFlag {
+        public enum ConnectionStatuses {
             GreenSymbol = 1,
             YellowSymbol = 2,
             RedSymbol = 4,
@@ -55,11 +55,11 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
         [ObservableProperty]
         private bool manualSelection = false;
 
-        private ConnectionStatusFilterFlag Filter =>
-            (FilterGreenSymbol ? ConnectionStatusFilterFlag.GreenSymbol : 0) |
-            (FilterYellowSymbol ? ConnectionStatusFilterFlag.YellowSymbol : 0) |
-            (FilterRedSymbol ? ConnectionStatusFilterFlag.RedSymbol : 0) |
-            (FilterNotPassDesignCheck ? ConnectionStatusFilterFlag.NotPassDesignCheck : 0);
+        private ConnectionStatuses Filter =>
+            (FilterGreenSymbol ? ConnectionStatuses.GreenSymbol : 0) |
+            (FilterYellowSymbol ? ConnectionStatuses.YellowSymbol : 0) |
+            (FilterRedSymbol ? ConnectionStatuses.RedSymbol : 0) |
+            (FilterNotPassDesignCheck ? ConnectionStatuses.NotPassDesignCheck : 0);
 
         public ConnectionStatusFilterViewModel(IMessageBoxService messageBoxService) {
             model = new Model();
@@ -108,10 +108,10 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
         }
 
         private bool IsMatchStatus(ConnectionStatusEnum status) {
-            return status == ConnectionStatusEnum.STATUS_OK && Filter.HasFlag(ConnectionStatusFilterFlag.GreenSymbol) ||
-                   status == ConnectionStatusEnum.STATUS_WARNING && Filter.HasFlag(ConnectionStatusFilterFlag.YellowSymbol) ||
-                   status == ConnectionStatusEnum.STATUS_ERROR && Filter.HasFlag(ConnectionStatusFilterFlag.RedSymbol) ||
-                   status == ConnectionStatusEnum.STATUS_UNKNOWN && Filter.HasFlag(ConnectionStatusFilterFlag.NotPassDesignCheck);
+            return status == ConnectionStatusEnum.STATUS_OK && Filter.HasFlag(ConnectionStatuses.GreenSymbol) ||
+                   status == ConnectionStatusEnum.STATUS_WARNING && Filter.HasFlag(ConnectionStatuses.YellowSymbol) ||
+                   status == ConnectionStatusEnum.STATUS_ERROR && Filter.HasFlag(ConnectionStatuses.RedSymbol) ||
+                   status == ConnectionStatusEnum.STATUS_UNKNOWN && Filter.HasFlag(ConnectionStatuses.NotPassDesignCheck);
         }
     }
 }

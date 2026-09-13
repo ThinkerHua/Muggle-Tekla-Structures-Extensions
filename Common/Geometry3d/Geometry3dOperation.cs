@@ -503,7 +503,7 @@ namespace Muggle.TsExtensions.Common.Geometry3d {
                 distances.Add(Math.Abs(Distance.PointToPoint(vertex1, vertex2) - edge3));
             }
 
-            var minExtremeIndexes = Operation.GetLocalExtremeIndexes(distances, Operation.ExtremeTypeEnum.LocalMinimum);
+            var minExtremeIndexes = Operation.GetLocalExtremeIndexes(distances, Operation.ExtremeType.LocalMinimum);
 
             if (minExtremeIndexes.Count > 10) {
                 minExtremeIndexes = distances.Select((dis, index) => (dis, index))

@@ -29,23 +29,23 @@
 
     <Page.Resources>
         <ResourceDictionary>
-            <Style x:Key="element" TargetType="FrameworkElement">
+            <Style x:Key="Element" TargetType="FrameworkElement">
                 <Setter Property="Margin" Value="{StaticResource UniformMargin}" />
                 <Setter Property="VerticalAlignment" Value="Center" />
             </Style>
-            <Style TargetType="TextBlock" BasedOn="{StaticResource element}" />
-            <Style TargetType="TextBox" BasedOn="{StaticResource element}">
+            <Style TargetType="TextBlock" BasedOn="{StaticResource Element}" />
+            <Style TargetType="TextBox" BasedOn="{StaticResource Element}">
                 <Setter Property="HorizontalContentAlignment" Value="Center" />
                 <Setter Property="VerticalContentAlignment" Value="Center" />
                 <Setter Property="Height" Value="20" />
             </Style>
-            <Style TargetType="Button" BasedOn="{StaticResource element}">
+            <Style TargetType="Button" BasedOn="{StaticResource Element}">
                 <Setter Property="Template" Value="{StaticResource ButtonStyle1}" />
                 <Setter Property="Padding" Value="4,2,4,2" />
                 <Setter Property="Height" Value="30" />
             </Style>
-            <Style TargetType="RadioButton" BasedOn="{StaticResource element}" />
-            <Style TargetType="Separator" BasedOn="{StaticResource element}" />
+            <Style TargetType="RadioButton" BasedOn="{StaticResource Element}" />
+            <Style TargetType="Separator" BasedOn="{StaticResource Element}" />
         </ResourceDictionary>
     </Page.Resources>
 
@@ -85,19 +85,19 @@
                      Grid.ColumnSpan="2"
                      HorizontalAlignment="Left"
                      Content="{dialog:Loc albl_top}"
-                     IsChecked="{Binding ElevationType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource EnumToBool}, ConverterParameter={x:Static vm:MoveToElevationViewModel+ElevationTypeEnum.Top}}" />
+                     IsChecked="{Binding ElevationType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource EnumToBool}, ConverterParameter={x:Static vm:MoveToElevationViewModel+Elevation.Top}}" />
         <RadioButton Grid.Row="3"
                      Grid.Column="0"
                      Grid.ColumnSpan="2"
                      HorizontalAlignment="Center"
                      Content="{dialog:Loc albl_middle}"
-                     IsChecked="{Binding ElevationType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource EnumToBool}, ConverterParameter={x:Static vm:MoveToElevationViewModel+ElevationTypeEnum.Middle}}" />
+                     IsChecked="{Binding ElevationType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource EnumToBool}, ConverterParameter={x:Static vm:MoveToElevationViewModel+Elevation.Middle}}" />
         <RadioButton Grid.Row="3"
                      Grid.Column="0"
                      Grid.ColumnSpan="2"
                      HorizontalAlignment="Right"
                      Content="{dialog:Loc albl_bottom}"
-                     IsChecked="{Binding ElevationType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource EnumToBool}, ConverterParameter={x:Static vm:MoveToElevationViewModel+ElevationTypeEnum.Bottom}}" />
+                     IsChecked="{Binding ElevationType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource EnumToBool}, ConverterParameter={x:Static vm:MoveToElevationViewModel+Elevation.Bottom}}" />
 
         <Button Grid.Row="4"
                 Grid.Column="0"

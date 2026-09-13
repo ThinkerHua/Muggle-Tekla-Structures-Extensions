@@ -30,7 +30,7 @@ using UiSelector = Tekla.Structures.Model.UI.ModelObjectSelector;
 
 namespace Muggle.TsExtensions.MainWindow.ViewModels {
     public partial class ExtendBeamViewModel : ViewModelBase {
-        public enum ExtendPositionEnum {
+        public enum ExtendPosition {
             MiddlePlane,
             BoundingBoxPlane,
             Surface,
@@ -47,9 +47,9 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
 
         [ObservableProperty] private double _tolerance;
 
-        [ObservableProperty] private ExtendPositionEnum _extendToBeamPosition;
+        [ObservableProperty] private ExtendPosition _extendToBeamPosition;
 
-        [ObservableProperty] private ExtendPositionEnum _extendToColumnPosition;
+        [ObservableProperty] private ExtendPosition _extendToColumnPosition;
 
         public ExtendBeamViewModel(IMessageBoxService messageBoxService) {
             this._messageBoxService = messageBoxService;
@@ -58,8 +58,8 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
             _picker = new Picker();
             _uiSelector = new UiSelector();
             Tolerance = 100;
-            ExtendToBeamPosition = ExtendPositionEnum.MiddlePlane;
-            ExtendToColumnPosition = ExtendPositionEnum.BoundingBoxPlane;
+            ExtendToBeamPosition = ExtendPosition.MiddlePlane;
+            ExtendToColumnPosition = ExtendPosition.BoundingBoxPlane;
         }
 
         [RelayCommand]
@@ -197,12 +197,12 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
         }
 
         private Point DestinationPoint(Point sourcePoint, Point anotherPoint, Part nearbyPart,
-            CoordinateSystem nearbyPartCs, double nearbyPartLength, ExtendPositionEnum extendPosition) {
+            CoordinateSystem nearbyPartCs, double nearbyPartLength, ExtendPosition extendPosition) {
             var beamLine = new Line(sourcePoint, anotherPoint);
 
             Point intersection = null;
             switch (extendPosition) {
-            case ExtendPositionEnum.MiddlePlane:
+            case ExtendPosition.MiddlePlane:
                 var gPlane = new GeometricPlane(nearbyPartCs);
                 intersection = Intersection.LineToPlane(beamLine, gPlane);
                 if (intersection == null) {
@@ -212,7 +212,7 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
                 }
 
                 break;
-            case ExtendPositionEnum.BoundingBoxPlane:
+            case ExtendPosition.BoundingBoxPlane:
                 double width = 0, height = 0;
                 if (!nearbyPart.GetReportProperty("WIDTH", ref width))
                     if (!nearbyPart.GetReportProperty("PROFILE.WIDTH", ref width))
@@ -231,7 +231,7 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
                 intersection = obb.IntersectionPointsWith(beamLine)
                     .OrderBy(p => Distance.PointToPoint(anotherPoint, p)).FirstOrDefault();
                 break;
-            case ExtendPositionEnum.Surface:
+            case ExtendPosition.Surface:
                 var solid = nearbyPart.GetSolid(Solid.SolidCreationTypeEnum.RAW);
                 var extraVector = new Vector(sourcePoint - anotherPoint).GetNormal(10000);
 

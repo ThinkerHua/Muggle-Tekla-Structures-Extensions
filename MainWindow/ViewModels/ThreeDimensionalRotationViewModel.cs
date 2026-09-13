@@ -29,14 +29,14 @@ using TSMUI = Tekla.Structures.Model.UI;
 namespace Muggle.TsExtensions.MainWindow.ViewModels {
     public partial class ThreeDimensionalRotationViewModel : ViewModelBase {
 
-        public enum AxisEnum {
-            PartCS_AxisX,
-            PartCS_AxisY,
-            PartCS_AxisZ,
+        public enum Axis {
+            PartCsAxisX,
+            PartCsAxisY,
+            PartCsAxisZ,
             ManualSelect,
         }
 
-        public enum AngleEnum {
+        public enum Angle {
             AngleValue,
             ManualSelect,
         }
@@ -48,10 +48,10 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
         private readonly IMessageBoxService messageBoxService;
 
         [ObservableProperty]
-        private AxisEnum axis = AxisEnum.PartCS_AxisX;
+        private Axis axisType = Axis.PartCsAxisX;
 
         [ObservableProperty]
-        private AngleEnum angle = AngleEnum.AngleValue;
+        private Angle angleType = Angle.AngleValue;
 
         [ObservableProperty]
         private double degrees = 90.0;
@@ -67,7 +67,7 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
         private void ThreeDimensionalRotation() {
             try {
                 while (true) {
-                    Action(Axis, Angle, Degrees, TargetDirectionIsNormalOfPlane);
+                    Action(AxisType, AngleType, Degrees, TargetDirectionIsNormalOfPlane);
                 }
             } catch (Exception e) when (e.Message == App.UserInterrupt) {
 
@@ -76,7 +76,7 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
             }
         }
 
-        private void Action(AxisEnum axisEnum, AngleEnum angleEnum, double degrees, bool targetDirectionIsNormalOfPlane) {
+        private void Action(Axis axis, Angle angle, double degrees, bool targetDirectionIsNormalOfPlane) {
             if (!model.GetConnectionStatus()) throw new InvalidOperationException(App.NotConnected);
 
             var selectedObjects = picker.PickObjects(Picker.PickObjectsEnum.PICK_N_OBJECTS, "选择要旋转的对象。");
@@ -87,11 +87,11 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
 
             ModelObject modelObject;
             CoordinateSystem partCS;
-            Line axis = null;
+            Line line = null;
             Matrix matrix = null;
             Point origin = null, directionPoint = null;
-            switch (axisEnum) {
-            case AxisEnum.ManualSelect:
+            switch (axis) {
+            case Axis.ManualSelect:
                 origin = picker.PickPoint("选择旋转轴的起点。");
                 directionPoint = picker.PickPoint("选择旋转轴的方向。", origin);
                 var direction = new Vector(directionPoint - origin);
@@ -100,7 +100,7 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
                     return;
                 }
 
-                axis = new Line(origin, direction);
+                line = new Line(origin, direction);
                 break;
             default:
                 selectedObjects.MoveNext();
@@ -108,15 +108,15 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
                 selectedObjects.Reset();
 
                 partCS = modelObject.GetCoordinateSystem();
-                switch (axisEnum) {
-                case AxisEnum.PartCS_AxisX:
-                    axis = new Line(partCS.Origin, partCS.AxisX);
+                switch (axis) {
+                case Axis.PartCsAxisX:
+                    line = new Line(partCS.Origin, partCS.AxisX);
                     break;
-                case AxisEnum.PartCS_AxisY:
-                    axis = new Line(partCS.Origin, partCS.AxisY);
+                case Axis.PartCsAxisY:
+                    line = new Line(partCS.Origin, partCS.AxisY);
                     break;
-                case AxisEnum.PartCS_AxisZ:
-                    axis = new Line(partCS.Origin, partCS.AxisX.Cross(partCS.AxisY));
+                case Axis.PartCsAxisZ:
+                    line = new Line(partCS.Origin, partCS.AxisX.Cross(partCS.AxisY));
                     break;
                 default:
                     break;
@@ -124,13 +124,13 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
                 break;
             }
 
-            switch (angleEnum) {
-            case AngleEnum.AngleValue:
-                matrix = MatrixFactoryExtension.Rotate(axis, degrees * Math.PI / 180.0);
+            switch (angle) {
+            case Angle.AngleValue:
+                matrix = MatrixFactoryExtension.Rotate(line, degrees * Math.PI / 180.0);
                 break;
-            case AngleEnum.ManualSelect:
+            case Angle.ManualSelect:
                 var pointStart = picker.PickPoint("选择旋转起始方向。", directionPoint);
-                var directionStart = new Vector(pointStart - Projection.PointToLine(pointStart, axis));
+                var directionStart = new Vector(pointStart - Projection.PointToLine(pointStart, line));
                 if (directionStart.IsZero()) {
                     Operation.DisplayPrompt("旋转起始方向不能为零向量。");
                     return;
@@ -139,7 +139,7 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
 
                 if (!targetDirectionIsNormalOfPlane) {
                     var pointEnd = picker.PickPoint("选择旋转结束方向。", pointStart);
-                    directionEnd = new Vector(pointEnd - Projection.PointToLine(pointEnd, axis));
+                    directionEnd = new Vector(pointEnd - Projection.PointToLine(pointEnd, line));
                     if (directionEnd.IsZero()) {
                         Operation.DisplayPrompt("旋转结束方向不能为零向量。");
                         return;
@@ -159,8 +159,8 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
                     }
                 }
 
-                var radians = directionStart.GetAngleBetweenWithDirection(directionEnd, axis.Direction);
-                matrix = MatrixFactoryExtension.Rotate(axis, radians);
+                var radians = directionStart.GetAngleBetweenWithDirection(directionEnd, line.Direction);
+                matrix = MatrixFactoryExtension.Rotate(line, radians);
                 break;
             default:
                 break;
