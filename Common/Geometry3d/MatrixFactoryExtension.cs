@@ -71,7 +71,7 @@ namespace Muggle.TsExtensions.Common.Geometry3d {
             var rotatedVector = MatrixExtension.Transform(rM.GetTranspose(), currentVector);
 
             // currentVector + translateVector = rotatedVector
-            var tM = MatrixFactoryExtension.Translate(new Vector(rotatedVector - currentVector));
+            var tM = Translate(new Vector(rotatedVector - currentVector));
 
             return rM * tM;
         }
@@ -100,7 +100,7 @@ namespace Muggle.TsExtensions.Common.Geometry3d {
             normal = normal.GetNormal();
 
             var v = Vector.Dot(normal, new Vector(point)) * normal;
-            var translate = MatrixFactoryExtension.Translate(v * 2);
+            var translate = Translate(v * 2);
             var mirror = new Matrix();
             mirror[0, 0] = 1 - 2 * normal.X * normal.X; mirror[0, 1] = -2 * normal.X * normal.Y; mirror[0, 2] = -2 * normal.X * normal.Z;
             mirror[1, 0] = -2 * normal.Y * normal.X; mirror[1, 1] = 1 - 2 * normal.Y * normal.Y; mirror[1, 2] = -2 * normal.Y * normal.Z;
@@ -128,7 +128,7 @@ namespace Muggle.TsExtensions.Common.Geometry3d {
 
             normal = normal.GetNormal();
             ;
-            var translate = MatrixFactoryExtension.Translate(normal * distance * 2);
+            var translate = Translate(normal * distance * 2);
             var mirror = new Matrix();
             mirror[0, 0] = 1 - 2 * normal.X * normal.X; mirror[0, 1] = -2 * normal.X * normal.Y; mirror[0, 2] = -2 * normal.X * normal.Z;
             mirror[1, 0] = -2 * normal.Y * normal.X; mirror[1, 1] = 1 - 2 * normal.Y * normal.Y; mirror[1, 2] = -2 * normal.Y * normal.Z;
@@ -140,18 +140,26 @@ namespace Muggle.TsExtensions.Common.Geometry3d {
         /// <summary>
         /// 创建切变矩阵。
         /// </summary>
-        /// <param name="xY">沿X轴切变，Y轴切变值</param>
-        /// <param name="xZ">沿X轴切变，Z轴切变值</param>
-        /// <param name="yX">沿Y轴切变，X轴切变值</param>
-        /// <param name="yZ">沿Y轴切变，Z轴切变值</param>
-        /// <param name="zX">沿Z轴切变，X轴切变值</param>
-        /// <param name="zY">沿Z轴切变，Y轴切变值</param>
+        /// <param name="axisIndex">切变轴索引：0 - X 轴；1 - Y 轴；2 - Z 轴。</param>
+        /// <param name="s">切变值</param>
+        /// <param name="t">切变值</param>
         /// <returns>切变矩阵。</returns>
-        public static Matrix Shear(double xY = 0, double xZ = 0, double yX = 0, double yZ = 0, double zX = 0, double zY = 0) {
+        /// <exception cref="ArgumentOutOfRangeException"></exception>
+        public static Matrix Shear(int axisIndex, double s, double t) {
             var matrix = new Matrix();
-            matrix[0, 0] = 1.0; matrix[0, 1] = yX; matrix[0, 2] = zX;
-            matrix[1, 0] = xY; matrix[1, 1] = 1.0; matrix[1, 2] = zY;
-            matrix[2, 0] = xZ; matrix[2, 1] = yZ; matrix[2, 2] = 1.0;
+            switch (axisIndex) {
+            case 0:
+                matrix[0, 1] = s; matrix[0, 2] = t;
+                break;
+            case 1:
+                matrix[1, 0] = s; matrix[1, 2] = t;
+                break;
+            case 2:
+                matrix[2, 0] = s; matrix[2, 1] = t;
+                break;
+            default:
+                throw new ArgumentOutOfRangeException(nameof(axisIndex));
+            }
 
             return matrix;
         }
