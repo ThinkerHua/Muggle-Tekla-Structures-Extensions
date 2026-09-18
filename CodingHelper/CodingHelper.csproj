@@ -8,9 +8,9 @@
         <IsRoslynComponent>true</IsRoslynComponent>
         <PackageId>Muggle.TsExtensions.CodingHelper</PackageId>
         <Title>Tekla Structures OpenAPI development helper</Title>
-        <Version>2.0.0</Version>
+        <Version>2.1.0-beta.1</Version>
         <Authors>Huang YongXing</Authors>
-        <Description>Help to generate fields (with StructuresFieldAttribute) for plugin data, fields for plugin, and properties (with StructuresDialogAttribute) for view model which used by plugin WPF UI.</Description>
+        <Description>Generate fields for plugin data class, fields and utility methods for plugin class, properties for view model class, and a simple user interface for plugin.</Description>
         <Copyright>© 2026 Huang YongXing</Copyright>
         <PackageIcon>Assets/logo.png</PackageIcon>
         <PackageProjectUrl>https://github.com/ThinkerHua/Muggle-Tekla-Structures-Extensions</PackageProjectUrl>
@@ -21,31 +21,14 @@
         <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
         <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
         <PackageReleaseNotes>
-Includes all beta updates and some improvements：
-
-Improvements:
-Adjust the way to collect diagnostic information.
-The default value of BoltDistX and BoltDistY has been changed from "" to "0.0".
-            
-2.0.0-beta.4
-Automatically generates specific content based on the Tekla.Structures.Model version.
-Currently, for TSM 2023 and later versions, BoltGroup has SlotOffsetX and SlotOffsetY properties, and the HoleType property ranges from 0 to 3;
-for TSM versions before 2023, BoltGroup does not have SlotOffsetX and SlotOffsetY properties, and the HoleType property ranges from 0 to 2.
-
-2.0.0-beta.3
-1. Add 'CustomPartViewModel' abstract class;
-2. Add support for the 'Chamfer' fields and properties;
-3. Complete the missing modification to the 'Preparation' property in the 'CreatWeld**' method and the 'ModifyToWeld**' method;
-
-2.0.0-beta.1
-Destructive update:
-1. '**PropertiesWithDefaultValuesAttribute' was renamed and replaced the old '**PropertiesAttribute' (the original name was too long and inconvenient to use).
-Feature improvement update:
-1. Added some 'Creat**' methods which only need to pass in generic parameter to automatically use the associated fields to create model object.
-2. Added some 'ModifyTo**' methods which only need to pass in existing object to automatically use the associated fields to modify it.
-3. In previous versions, the code for analysis to collect information needed for generation and the code for diagnostics had many similarities, now the two have been integrated together.
-4. Supports using attributes by specifying property equal to value like 'Property = value'.
-5. If at least one '**FieldDefaultValuesAttribute' is used, other fields without specified default value will also be registered use the preset value.
+Added a user interface generator, which on one hand makes debugging easier during the core logic development stage, 
+and on the other hand reduces workload during the UI development stage because you can edit based on the generated files. 
+Currently, it only supports WPF, but INP and WinForm will be supported later.
+Note: Since the official implementation of source generators can't output files with non-.cs extensions, 
+this generator bypasses the official method to output a WpfUi.xaml file in the project directory 
+(although it is possible write WPF UIs purely in C# code, but doing that would lose the convenience mentioned in the second point). 
+However, this approach also introduces a drawback – when you no longer need the WPF UI, 
+you'll have to manually delete the WpfUi.xaml file.
         </PackageReleaseNotes>
         <IncludeBuildOutput>false</IncludeBuildOutput>
     </PropertyGroup>
@@ -78,6 +61,7 @@ Feature improvement update:
 
     <ItemGroup>
         <Compile Remove="Resources\*.cs"/>
+        <Compile Include="Resources\UserInterfaceType.cs" />
         <EmbeddedResource Include="Resources\*.cs"/>
     </ItemGroup>
 

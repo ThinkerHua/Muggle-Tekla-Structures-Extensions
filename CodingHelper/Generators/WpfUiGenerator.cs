@@ -1,0 +1,1115 @@
+/*==============================================================================
+ *  Muggle TsExtensions - extensions for Tekla Structures
+ *
+ *  Copyright © 2026 Huang YongXing.
+ *
+ *  This library is free software, licensed under the terms of the GNU
+ *  General Public License as published by the Free Software Foundation,
+ *  either version 3 of the License, or (at your option) any later version.
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program. If not, see <http://www.gnu.org/licenses/>.
+ *==============================================================================
+ *  WpfUiGenerator.cs: Implement a WPF-type user interface generator.
+ *  written by Huang YongXing - thinkerhua@hotmail.com
+ *==============================================================================*/
+
+using System;
+using System.IO;
+using System.Linq;
+using System.Text;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.Text;
+using Muggle.TsExtensions.CodingHelper.Generators.Information;
+using static Muggle.TsExtensions.CodingHelper.Generators.GeneratorHelper;
+
+namespace Muggle.TsExtensions.CodingHelper.Generators {
+    internal class WpfUiGenerator : IUserInterfaceGenerator {
+        public static WpfUiGenerator Instance { get; } = new();
+        
+        private WpfUiGenerator() { }
+
+        public void Generate(SourceProductionContext context, UserInterfaceInfo info, string projectDir) {
+            var pluginDataInfo = info.PluginDataFieldsInfo;
+            var viewModelQualifiedName = info.ViewModelQualifiedName;
+
+            var builder = new StringBuilder();
+            builder.Append(XamlMainBodyHead(pluginDataInfo, viewModelQualifiedName));
+            builder.Append(XamlGeneralParametersBody(pluginDataInfo));
+            builder.Append(XamlPartsAndPlatesBody(pluginDataInfo));
+            builder.Append(XamlChamfersBody(pluginDataInfo));
+            builder.Append(XamlBoltsBody(pluginDataInfo));
+            builder.Append(XamlBoltCirclesBody(pluginDataInfo));
+            builder.Append(XamlWeldsBody(pluginDataInfo));
+            builder.Append(XamlMainBodyTail());
+
+            using (var fileStream =
+                   new FileStream(Path.Combine(projectDir, "WpfUi.xaml"), FileMode.Create, FileAccess.Write)) {
+                var data = Encoding.UTF8.GetBytes(builder.ToString());
+                fileStream.Write(data, 0, data.Length);
+            }
+
+            context.AddSource("WpfUi.g.xaml.cs",
+                SourceText.From(XamlBehindCode(info.PluginDataFieldsInfo, viewModelQualifiedName), Encoding.UTF8));
+        }
+
+        private static string XamlMainBodyHead(PluginDataFieldsInfo info, string viewModelQualifiedName) {
+            var nameSpace = info.ClassInfo.NameSpace;
+            var viewModelNamespace = viewModelQualifiedName.Substring(0, viewModelQualifiedName.LastIndexOf('.'));
+            var viewModelName = viewModelQualifiedName.Substring(viewModelQualifiedName.LastIndexOf('.') + 1);
+            var builder = new StringBuilder();
+
+            builder.AppendLine(
+                $"<tsdlg:PluginWindowBase x:Class=\"{nameSpace}.WpfUi\"\r\n" +
+                $"                        xmlns=\"http://schemas.microsoft.com/winfx/2006/xaml/presentation\"\r\n" +
+                $"                        xmlns:x=\"http://schemas.microsoft.com/winfx/2006/xaml\"\r\n" +
+                $"                        xmlns:d=\"http://schemas.microsoft.com/expression/blend/2008\"\r\n" +
+                $"                        xmlns:mc=\"http://schemas.openxmlformats.org/markup-compatibility/2006\"\r\n" +
+                $"                        xmlns:sys=\"clr-namespace:System;assembly=mscorlib\"\r\n" +
+                $"                        xmlns:tsdlg=\"clr-namespace:Tekla.Structures.Dialog;assembly=Tekla.Structures.Dialog\"\r\n" +
+                $"                        xmlns:tsuic=\"clr-namespace:Tekla.Structures.Dialog.UIControls;assembly=Tekla.Structures.Dialog\"\r\n" +
+                $"                        xmlns:vm=\"clr-namespace:{viewModelNamespace}\"\r\n" +
+                $"                        Title=\"WpfUi\"\r\n" +
+                $"                        Background=\"#F3F3F7\"\r\n" +
+                $"                        ResizeMode=\"NoResize\"\r\n" +
+                $"                        SizeToContent=\"WidthAndHeight\"\r\n" +
+                $"                        UseDefaultStyle=\"False\"\r\n" +
+                $"                        mc:Ignorable=\"d\">\r\n" +
+                $"\r\n" +
+                $"    <tsdlg:PluginWindowBase.DataContext>\r\n" +
+                $"        <vm:{viewModelName} />\r\n" +
+                $"    </tsdlg:PluginWindowBase.DataContext>\r\n" +
+                $"\r\n" +
+                $"    <tsdlg:PluginWindowBase.Resources>\r\n" +
+                $"        <ResourceDictionary>\r\n" +
+                $"            <Style x:Key=\"Element\" TargetType=\"FrameworkElement\">\r\n" +
+                $"                <Setter Property=\"Margin\" Value=\"2\" />\r\n" +
+                $"                <Setter Property=\"VerticalAlignment\" Value=\"Center\" />\r\n" +
+                $"            </Style>\r\n" +
+                $"            <Style x:Key=\"ContainingTextBoxElement\" TargetType=\"FrameworkElement\" BasedOn=\"{{StaticResource Element}}\">\r\n" +
+                $"                <Setter Property=\"Height\" Value=\"20\" />\r\n" +
+                $"            </Style>\r\n" +
+                $"            <Style BasedOn=\"{{StaticResource Element}}\" TargetType=\"TextBlock\" />\r\n" +
+                $"            <Style BasedOn=\"{{StaticResource Element}}\" TargetType=\"CheckBox\" />\r\n" +
+                $"            <Style BasedOn=\"{{StaticResource ContainingTextBoxElement}}\" TargetType=\"TextBox\">\r\n" +
+                $"                <Setter Property=\"HorizontalContentAlignment\" Value=\"Center\" />\r\n" +
+                $"                <Setter Property=\"VerticalContentAlignment\" Value=\"Center\" />\r\n" +
+                $"            </Style>\r\n" +
+                $"            <Style BasedOn=\"{{StaticResource ContainingTextBoxElement}}\" TargetType=\"ComboBox\" />\r\n" +
+                $"            <Style BasedOn=\"{{StaticResource Element}}\" TargetType=\"tsuic:WpfFilterCheckBox\" />\r\n" +
+                $"            <Style BasedOn=\"{{StaticResource Element}}\" TargetType=\"tsuic:WpfProfileCatalog\" />\r\n" +
+                $"            <Style BasedOn=\"{{StaticResource Element}}\" TargetType=\"tsuic:WpfMaterialCatalog\" />\r\n" +
+                $"            <Style BasedOn=\"{{StaticResource ContainingTextBoxElement}}\" TargetType=\"tsuic:WpfBoltCatalogSize\" />\r\n" +
+                $"            <Style BasedOn=\"{{StaticResource ContainingTextBoxElement}}\" TargetType=\"tsuic:WpfBoltCatalogStandard\" />\r\n" +
+                $"\r\n" +
+                $"            <x:Array x:Key=\"ChamferTypeSet\" Type=\"sys:String\">\r\n" +
+                $"                <sys:String>None</sys:String>\r\n" +
+                $"                <sys:String>Line</sys:String>\r\n" +
+                $"                <sys:String>Rounding</sys:String>\r\n" +
+                $"                <sys:String>Arc</sys:String>\r\n" +
+                $"                <sys:String>ArcPoint</sys:String>\r\n" +
+                $"                <sys:String>Square</sys:String>\r\n" +
+                $"                <sys:String>SquareParallel</sys:String>\r\n" +
+                $"                <sys:String>LineAndArc</sys:String>\r\n" +
+                $"            </x:Array>\r\n" +
+                $"\r\n" +
+                $"            <x:Array x:Key=\"BoltTypeSet\" Type=\"sys:String\">\r\n" +
+                $"                <sys:String>Site</sys:String>\r\n" +
+                $"                <sys:String>WorkShop</sys:String>\r\n" +
+                $"            </x:Array>\r\n" +
+                $"\r\n" +
+                $"            <x:Array x:Key=\"BoltThreadInMaterialSet\" Type=\"sys:String\">\r\n" +
+                $"                <sys:String>No</sys:String>\r\n" +
+                $"                <sys:String>Yes</sys:String>\r\n" +
+                $"            </x:Array>\r\n" +
+                $"\r\n" +
+                $"            <x:Array x:Key=\"BoltPlainHoleTypeSet\" Type=\"sys:String\">\r\n" +
+                $"                <sys:String>Through</sys:String>\r\n" +
+                $"                <sys:String>Blind</sys:String>\r\n" +
+                $"            </x:Array>\r\n" +
+                $"\r\n" +
+                $"            <x:Array x:Key=\"BoltSpecialHoleTypeSet\" Type=\"sys:String\">\r\n" +
+                $"                <sys:String>Oversized</sys:String>\r\n" +
+                $"                <sys:String>Slotted</sys:String>\r\n" +
+                $"                <sys:String>NoHole</sys:String>\r\n" +
+                $"                <sys:String>Tapped</sys:String>\r\n" +
+                $"            </x:Array>\r\n" +
+                $"\r\n" +
+                $"            <x:Array x:Key=\"BoltRotateSlotsSet\" Type=\"sys:String\">\r\n" +
+                $"                <sys:String>Odd</sys:String>\r\n" +
+                $"                <sys:String>Even</sys:String>\r\n" +
+                $"                <sys:String>Parallel</sys:String>\r\n" +
+                $"            </x:Array>\r\n" +
+                $"\r\n" +
+                $"            <x:Array x:Key=\"AroundWeldSet\" Type=\"sys:String\">\r\n" +
+                $"                <sys:String>Edge</sys:String>\r\n" +
+                $"                <sys:String>Around</sys:String>\r\n" +
+                $"            </x:Array>\r\n" +
+                $"\r\n" +
+                $"            <x:Array x:Key=\"ShopWeldSet\" Type=\"sys:String\">\r\n" +
+                $"                <sys:String>Site</sys:String>\r\n" +
+                $"                <sys:String>Workshop</sys:String>\r\n" +
+                $"            </x:Array>\r\n" +
+                $"\r\n" +
+                $"            <x:Array x:Key=\"WeldContourSet\" Type=\"sys:String\">\r\n" +
+                $"                <sys:String>None</sys:String>\r\n" +
+                $"                <sys:String>Flush</sys:String>\r\n" +
+                $"                <sys:String>Convex</sys:String>\r\n" +
+                $"                <sys:String>Concave</sys:String>\r\n" +
+                $"            </x:Array>\r\n" +
+                $"\r\n" +
+                $"            <x:Array x:Key=\"WeldIntermittentSet\" Type=\"sys:String\">\r\n" +
+                $"                <sys:String>Continuous</sys:String>\r\n" +
+                $"                <sys:String>ChainIntermittent</sys:String>\r\n" +
+                $"                <sys:String>StaggeredIntermittent</sys:String>\r\n" +
+                $"            </x:Array>\r\n" +
+                $"\r\n" +
+                $"            <x:Array x:Key=\"WeldFinishSet\" Type=\"sys:String\">\r\n" +
+                $"                <sys:String>None</sys:String>\r\n" +
+                $"                <sys:String>Grind</sys:String>\r\n" +
+                $"                <sys:String>Machine</sys:String>\r\n" +
+                $"                <sys:String>Chip</sys:String>\r\n" +
+                $"                <sys:String>FinishedWeld</sys:String>\r\n" +
+                $"                <sys:String>SmoothTransition</sys:String>\r\n" +
+                $"            </x:Array>\r\n" +
+                $"\r\n" +
+                $"            <x:Array x:Key=\"WeldTypeSet\" Type=\"sys:String\">\r\n" +
+                $"                <sys:String>None</sys:String>\r\n" +
+                $"                <sys:String>EdgeFlange</sys:String>\r\n" +
+                $"                <sys:String>SquareGrooveSquareButt</sys:String>\r\n" +
+                $"                <sys:String>BevelGrooveSingleVButt</sys:String>\r\n" +
+                $"                <sys:String>BevelGrooveSingleBevelButt</sys:String>\r\n" +
+                $"                <sys:String>SingleVButtWithBroadRootFace</sys:String>\r\n" +
+                $"                <sys:String>SingleBevelButtWithBroadRootFace</sys:String>\r\n" +
+                $"                <sys:String>UGrooveSingleUButt</sys:String>\r\n" +
+                $"                <sys:String>JGrooveJButt</sys:String>\r\n" +
+                $"                <sys:String>BevelBacking</sys:String>\r\n" +
+                $"                <sys:String>Fillet</sys:String>\r\n" +
+                $"                <sys:String>Plug</sys:String>\r\n" +
+                $"                <sys:String>Spot</sys:String>\r\n" +
+                $"                <sys:String>Seam</sys:String>\r\n" +
+                $"                <sys:String>Slot</sys:String>\r\n" +
+                $"                <sys:String>FlareBevelGroove</sys:String>\r\n" +
+                $"                <sys:String>FlareVGroove</sys:String>\r\n" +
+                $"                <sys:String>CornerFlange</sys:String>\r\n" +
+                $"                <sys:String>PartialPenetrationSingleBevelButtPlusFillet</sys:String>\r\n" +
+                $"                <sys:String>PartialPenetrationSquareGroovePlusFillet</sys:String>\r\n" +
+                $"                <sys:String>MeltThrough</sys:String>\r\n" +
+                $"                <sys:String>SteepFlankedBevelGrooveSingleVButt</sys:String>\r\n" +
+                $"                <sys:String>SteepFlankedBevelGrooveSingleBevelButt</sys:String>\r\n" +
+                $"                <sys:String>Edge</sys:String>\r\n" +
+                $"                <sys:String>IsoSurfacing</sys:String>\r\n" +
+                $"                <sys:String>Fold</sys:String>\r\n" +
+                $"                <sys:String>Inclined</sys:String>\r\n" +
+                $"            </x:Array>\r\n" +
+                $"\r\n" +
+                $"            <x:Array x:Key=\"WeldConnectAsSet\" Type=\"sys:String\">\r\n" +
+                $"                <sys:String>AsSecondaryPart</sys:String>\r\n" +
+                $"                <sys:String>AsSubAssembly</sys:String>\r\n" +
+                $"            </x:Array>\r\n" +
+                $"\r\n" +
+                $"            <x:Array x:Key=\"WeldPlacementSet\" Type=\"sys:String\">\r\n" +
+                $"                <sys:String>Auto</sys:String>\r\n" +
+                $"                <sys:String>MainPart</sys:String>\r\n" +
+                $"                <sys:String>SecondaryPart</sys:String>\r\n" +
+                $"            </x:Array>\r\n" +
+                $"\r\n" +
+                $"            <x:Array x:Key=\"WeldPreparationSet\" Type=\"sys:String\">\r\n" +
+                $"                <sys:String>None</sys:String>\r\n" +
+                $"                <sys:String>Auto</sys:String>\r\n" +
+                $"                <sys:String>MainPart</sys:String>\r\n" +
+                $"                <sys:String>SecondaryPart</sys:String>\r\n" +
+                $"            </x:Array>\r\n" +
+                $"        </ResourceDictionary>\r\n" +
+                $"    </tsdlg:PluginWindowBase.Resources>\r\n" +
+                $"\r\n" +
+                $"    <DockPanel LastChildFill=\"True\">\r\n" +
+                $"        <tsuic:WpfSaveLoad DockPanel.Dock=\"Top\" />\r\n" +
+                $"        <tsuic:WpfOkApplyModifyGetOnOffCancel DockPanel.Dock=\"Bottom\"\r\n" +
+                $"                                              ApplyClicked=\"WPFOkApplyModifyGetOnOffCancel_ApplyClicked\"\r\n" +
+                $"                                              CancelClicked=\"WPFOkApplyModifyGetOnOffCancel_CancelClicked\"\r\n" +
+                $"                                              GetClicked=\"WPFOkApplyModifyGetOnOffCancel_GetClicked\"\r\n" +
+                $"                                              ModifyClicked=\"WPFOkApplyModifyGetOnOffCancel_ModifyClicked\"\r\n" +
+                $"                                              OkClicked=\"WPFOkApplyModifyGetOnOffCancel_OkClicked\"\r\n" +
+                $"                                              OnOffClicked=\"WPFOkApplyModifyGetOnOffCancel_OnOffClicked\" />\r\n" +
+                $"\r\n" +
+                $"        <TabControl Margin=\"2,0\">\r\n");
+            return builder.ToString();
+        }
+
+        private static string XamlMainBodyTail() {
+            var builder = new StringBuilder();
+            builder.AppendLine(
+                $"        </TabControl>\r\n" +
+                $"\r\n" +
+                $"    </DockPanel>\r\n" +
+                $"</tsdlg:PluginWindowBase>\r\n");
+
+            return builder.ToString();
+        }
+
+        private static string XamlGeneralParametersBody(PluginDataFieldsInfo info) {
+            var builder = new StringBuilder();
+
+            var parameters = info.Arguments
+                .Where(kvp => kvp.Key is "int" or "double" or "string")
+                .SelectMany(kvp => kvp.Value)
+                .ToArray();
+            if (!parameters.Any()) {
+                return builder.ToString();
+            }
+
+            builder.AppendLine(
+                $"            <TabItem Header=\"Parameters\">\r\n" +
+                $"                <Grid>\r\n" +
+                $"                    <Grid.ColumnDefinitions>\r\n" +
+                $"                        <ColumnDefinition Width=\"Auto\" />\r\n" +
+                $"                        <ColumnDefinition Width=\"22\" />\r\n" +
+                $"                        <ColumnDefinition Width=\"22\" />\r\n" +
+                $"                        <ColumnDefinition Width=\"80\" />\r\n" +
+                $"                    </Grid.ColumnDefinitions>\r\n" +
+                $"                    <Grid.RowDefinitions>");
+            for (int i = 0; i < parameters.Length; i++) {
+                builder.AppendLine("                        <RowDefinition Height=\"Auto\" />");
+            }
+
+            builder.AppendLine(
+                $"                    </Grid.RowDefinitions>\r\n");
+
+            for (int i = 0; i < parameters.Length; i++) {
+                var attribute = parameters[i];
+                var property = ToPropertyNameStyle(attribute);
+                builder.AppendLine(
+                    $"                    <TextBlock Grid.Row=\"{i}\" Grid.Column=\"0\" Text=\"{property}\" />\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"{i}\" Grid.Column=\"2\" AttributeName=\"{attribute}\" />\r\n" +
+                    $"                    <TextBox Grid.Row=\"{i}\" Grid.Column=\"3\" Text=\"{{Binding {property}, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n");
+            }
+
+            builder.AppendLine(
+                $"                </Grid>\r\n" +
+                $"            </TabItem>\r\n");
+
+            return builder.ToString();
+        }
+
+        private static string XamlPartsAndPlatesBody(PluginDataFieldsInfo info) {
+            var builder = new StringBuilder();
+
+            var parts = info.Arguments
+                .Where(kvp => kvp.Key is "PartFieldsAttribute")
+                .SelectMany(kvp => kvp.Value)
+                .ToArray();
+            var plates = info.Arguments
+                .Where(kvp => kvp.Key is "PlateFieldsAttribute")
+                .SelectMany(kvp => kvp.Value)
+                .ToArray();
+            if (!parts.Any() && !plates.Any()) {
+                return builder.ToString();
+            }
+
+            builder.AppendLine(
+                $"            <TabItem Header=\"Parts\">\r\n" +
+                $"                <Grid>\r\n" +
+                $"                    <Grid.ColumnDefinitions>\r\n" +
+                $"                        <ColumnDefinition Width=\"1*\" />\r\n" +
+                $"                        <ColumnDefinition Width=\"22\" />\r\n" +
+                $"                        <ColumnDefinition Width=\"60\" />\r\n" +
+                $"                        <ColumnDefinition Width=\"22\" />\r\n" +
+                $"                        <ColumnDefinition Width=\"40\" />\r\n" +
+                $"                        <ColumnDefinition Width=\"22\" />\r\n" +
+                $"                        <ColumnDefinition Width=\"40\" />\r\n" +
+                $"                        <ColumnDefinition Width=\"22\" />\r\n" +
+                $"                        <ColumnDefinition Width=\"40\" />\r\n" +
+                $"                        <ColumnDefinition Width=\"30\" />\r\n" +
+                $"                        <ColumnDefinition Width=\"22\" />\r\n" +
+                $"                        <ColumnDefinition Width=\"60\" />\r\n" +
+                $"                        <ColumnDefinition Width=\"30\" />\r\n" +
+                $"                        <ColumnDefinition Width=\"22\" />\r\n" +
+                $"                        <ColumnDefinition Width=\"60\" />\r\n" +
+                $"                        <ColumnDefinition Width=\"22\" />\r\n" +
+                $"                        <ColumnDefinition Width=\"60\" />\r\n" +
+                $"                        <ColumnDefinition Width=\"22\" />\r\n" +
+                $"                        <ColumnDefinition Width=\"60\" />\r\n" +
+                $"                        <ColumnDefinition Width=\"22\" />\r\n" +
+                $"                        <ColumnDefinition Width=\"40\" />\r\n" +
+                $"                    </Grid.ColumnDefinitions>\r\n" +
+                $"                    <Grid.RowDefinitions>");
+
+            for (int i = 0; i < (parts.Length + plates.Length) * 2 + 1; i++) {
+                builder.AppendLine($"                        <RowDefinition Height=\"Auto\" />");
+            }
+
+            builder.AppendLine(
+                $"                    </Grid.RowDefinitions>\r\n" +
+                $"\r\n" +
+                $"                    <TextBlock Grid.Row=\"0\" Grid.Column=\"0\" HorizontalAlignment=\"Center\" Text=\"Id\" />\r\n" +
+                $"                    <TextBlock Grid.Row=\"0\" Grid.Column=\"2\" HorizontalAlignment=\"Center\" Text=\"Name\" />\r\n" +
+                $"                    <TextBlock Grid.Row=\"0\" Grid.Column=\"4\" HorizontalAlignment=\"Center\" Text=\"t\" />\r\n" +
+                $"                    <TextBlock Grid.Row=\"0\" Grid.Column=\"6\" HorizontalAlignment=\"Center\" Text=\"b\" />\r\n" +
+                $"                    <TextBlock Grid.Row=\"0\" Grid.Column=\"8\" HorizontalAlignment=\"Center\" Text=\"h\" />\r\n" +
+                $"                    <TextBlock Grid.Row=\"0\" Grid.Column=\"11\" HorizontalAlignment=\"Center\" Text=\"Material\" />\r\n" +
+                $"                    <TextBlock Grid.Row=\"0\" Grid.Column=\"14\" HorizontalAlignment=\"Center\" Text=\"Finish\" />\r\n" +
+                $"                    <TextBlock Grid.Row=\"0\" Grid.Column=\"16\" HorizontalAlignment=\"Center\" Text=\"Class\" />\r\n" +
+                $"                    <TextBlock Grid.Row=\"0\" Grid.Column=\"18\" HorizontalAlignment=\"Center\" Text=\"Pos\" />\r\n" +
+                $"                    <TextBlock Grid.Row=\"0\" Grid.Column=\"20\" HorizontalAlignment=\"Center\" Text=\"No\" />\r\n");
+
+            for (int i = 0; i < parts.Length; i++) {
+                var attribute = parts[i];
+                var property = ToPropertyNameStyle(attribute);
+
+                var row = i * 2 + 1;
+                builder.AppendLine(
+                    $"                    <TextBlock Grid.Row=\"{row}\" Grid.RowSpan=\"2\" Grid.Column=\"0\" Text=\"{property}\" />\r\n" +
+                    $"\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"{row}\" Grid.RowSpan=\"2\" Grid.Column=\"1\" AttributeName=\"PT{property}Name\" />\r\n" +
+                    $"                    <TextBox Grid.Row=\"{row}\" Grid.RowSpan=\"2\" Grid.Column=\"2\" Text=\"{{Binding Part{property}Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
+                    $"\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"{row}\" Grid.RowSpan=\"2\" Grid.Column=\"3\" AttributeName=\"PT{property}PRF\" />\r\n" +
+                    $"                    <TextBox Grid.Row=\"{row}\"\r\n" +
+                    $"                             Grid.RowSpan=\"2\"\r\n" +
+                    $"                             Grid.Column=\"4\"\r\n" +
+                    $"                             Grid.ColumnSpan=\"5\"\r\n" +
+                    $"                             Text=\"{{Binding Part{property}Profile, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
+                    $"                    <tsuic:WpfProfileCatalog Grid.Row=\"{row}\"\r\n" +
+                    $"                                             Grid.RowSpan=\"2\"\r\n" +
+                    $"                                             Grid.Column=\"9\"\r\n" +
+                    $"                                             Tag=\"Part{property}Profile\"\r\n" +
+                    $"                                             SelectClicked=\"WpfProfileCatalog_SelectClicked\"\r\n" +
+                    $"                                             SelectionDone=\"WpfProfileCatalog_SelectionDone\" />\r\n" +
+                    $"\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"{row}\" Grid.RowSpan=\"2\" Grid.Column=\"10\" AttributeName=\"PT{property}MATL\" />\r\n" +
+                    $"                    <TextBox Grid.Row=\"{row}\" Grid.RowSpan=\"2\" Grid.Column=\"11\" Text=\"{{Binding Part{property}Material, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
+                    $"                    <tsuic:WpfMaterialCatalog Grid.Row=\"{row}\"\r\n" +
+                    $"                                              Grid.RowSpan=\"2\"\r\n" +
+                    $"                                              Grid.Column=\"12\"\r\n" +
+                    $"                                              Tag=\"Part{property}Material\"\r\n" +
+                    $"                                              SelectClicked=\"WpfMaterialCatalog_SelectClicked\"\r\n" +
+                    $"                                              SelectionDone=\"WpfMaterialCatalog_SelectionDone\" />\r\n" +
+                    $"\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"{row}\" Grid.RowSpan=\"2\" Grid.Column=\"13\" AttributeName=\"PT{property}FNSH\" />\r\n" +
+                    $"                    <TextBox Grid.Row=\"{row}\" Grid.RowSpan=\"2\" Grid.Column=\"14\" Text=\"{{Binding Part{property}Finish, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
+                    $"\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"{row}\" Grid.RowSpan=\"2\" Grid.Column=\"15\" AttributeName=\"PT{property}CLS\" />\r\n" +
+                    $"                    <TextBox Grid.Row=\"{row}\" Grid.RowSpan=\"2\" Grid.Column=\"16\" Text=\"{{Binding Part{property}Class, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
+                    $"\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"{row}\" Grid.Column=\"17\" AttributeName=\"PT{property}PTP\" />\r\n" +
+                    $"                    <TextBox Grid.Row=\"{row}\" Grid.Column=\"18\" Text=\"{{Binding Part{property}PartPrefix, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
+                    $"\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"{row}\" Grid.Column=\"19\" AttributeName=\"PT{property}PTN\" />\r\n" +
+                    $"                    <TextBox Grid.Row=\"{row}\" Grid.Column=\"20\" Text=\"{{Binding Part{property}PartStartNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
+                    $"\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"{row + 1}\" Grid.Column=\"17\" AttributeName=\"PT{property}ASMP\" />\r\n" +
+                    $"                    <TextBox Grid.Row=\"{row + 1}\" Grid.Column=\"18\" Text=\"{{Binding Part{property}AssemblyPrefix, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
+                    $"\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"{row + 1}\" Grid.Column=\"19\" AttributeName=\"PT{property}ASMN\" />\r\n" +
+                    $"                    <TextBox Grid.Row=\"{row + 1}\" Grid.Column=\"20\" Text=\"{{Binding Part{property}AssemblyStartNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n");
+            }
+
+            for (int i = 0; i < plates.Length; i++) {
+                var attribute = plates[i];
+                var property = ToPropertyNameStyle(attribute);
+
+                var row = i * 2 + parts.Length * 2 + 1;
+                builder.AppendLine(
+                    $"                    <TextBlock Grid.Row=\"{row}\" Grid.RowSpan=\"2\" Grid.Column=\"0\" Text=\"{property}\" />\r\n" +
+                    $"\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"{row}\" Grid.RowSpan=\"2\" Grid.Column=\"1\" AttributeName=\"PL{property}Name\" />\r\n" +
+                    $"                    <TextBox Grid.Row=\"{row}\" Grid.RowSpan=\"2\" Grid.Column=\"2\" Text=\"{{Binding Plate{property}Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
+                    $"\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"{row}\" Grid.RowSpan=\"2\" Grid.Column=\"3\" AttributeName=\"PL{property}T\" />\r\n" +
+                    $"                    <TextBox Grid.Row=\"{row}\" Grid.RowSpan=\"2\" Grid.Column=\"4\" Text=\"{{Binding Plate{property}Thickness, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
+                    $"\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"{row}\" Grid.RowSpan=\"2\" Grid.Column=\"5\" AttributeName=\"PL{property}B\" />\r\n" +
+                    $"                    <TextBox Grid.Row=\"{row}\" Grid.RowSpan=\"2\" Grid.Column=\"6\" Text=\"{{Binding Plate{property}Breadth, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
+                    $"\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"{row}\" Grid.RowSpan=\"2\" Grid.Column=\"7\" AttributeName=\"PL{property}H\" />\r\n" +
+                    $"                    <TextBox Grid.Row=\"{row}\" Grid.RowSpan=\"2\" Grid.Column=\"8\" Text=\"{{Binding Plate{property}Height, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
+                    $"\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"{row}\" Grid.RowSpan=\"2\" Grid.Column=\"10\" AttributeName=\"PL{property}MATL\" />\r\n" +
+                    $"                    <TextBox Grid.Row=\"{row}\" Grid.RowSpan=\"2\" Grid.Column=\"11\" Text=\"{{Binding Plate{property}Material, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
+                    $"                    <tsuic:WpfMaterialCatalog Grid.Row=\"{row}\"\r\n" +
+                    $"                                              Grid.RowSpan=\"2\"\r\n" +
+                    $"                                              Grid.Column=\"12\"\r\n" +
+                    $"                                              Tag=\"Plate{property}Material\"\r\n" +
+                    $"                                              SelectClicked=\"WpfMaterialCatalog_SelectClicked\"\r\n" +
+                    $"                                              SelectionDone=\"WpfMaterialCatalog_SelectionDone\" />\r\n" +
+                    $"\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"{row}\" Grid.RowSpan=\"2\" Grid.Column=\"13\" AttributeName=\"PL{property}FNSH\" />\r\n" +
+                    $"                    <TextBox Grid.Row=\"{row}\" Grid.RowSpan=\"2\" Grid.Column=\"14\" Text=\"{{Binding Plate{property}Finish, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
+                    $"\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"{row}\" Grid.RowSpan=\"2\" Grid.Column=\"15\" AttributeName=\"PL{property}CLS\" />\r\n" +
+                    $"                    <TextBox Grid.Row=\"{row}\" Grid.RowSpan=\"2\" Grid.Column=\"16\" Text=\"{{Binding Plate{property}Class, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
+                    $"\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"{row}\" Grid.Column=\"17\" AttributeName=\"PL{property}PTP\" />\r\n" +
+                    $"                    <TextBox Grid.Row=\"{row}\" Grid.Column=\"18\" Text=\"{{Binding Plate{property}PartPrefix, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
+                    $"\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"{row}\" Grid.Column=\"19\" AttributeName=\"PL{property}PTN\" />\r\n" +
+                    $"                    <TextBox Grid.Row=\"{row}\" Grid.Column=\"20\" Text=\"{{Binding Plate{property}PartStartNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
+                    $"\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"{row + 1}\" Grid.Column=\"17\" AttributeName=\"PL{property}ASMP\" />\r\n" +
+                    $"                    <TextBox Grid.Row=\"{row + 1}\" Grid.Column=\"18\" Text=\"{{Binding Plate{property}AssemblyPrefix, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
+                    $"\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"{row + 1}\" Grid.Column=\"19\" AttributeName=\"PL{property}ASMN\" />\r\n" +
+                    $"                    <TextBox Grid.Row=\"{row + 1}\" Grid.Column=\"20\" Text=\"{{Binding Plate{property}AssemblyStartNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n");
+            }
+
+            builder.AppendLine(
+                $"                </Grid>\r\n" +
+                $"            </TabItem>\r\n");
+
+            return builder.ToString();
+        }
+
+        private static string XamlChamfersBody(PluginDataFieldsInfo info) {
+            var builder = new StringBuilder();
+
+            var chamfers = info.Arguments
+                .Where(kvp => kvp.Key is "ChamferFieldsAttribute")
+                .SelectMany(kvp => kvp.Value)
+                .ToArray();
+            if (!chamfers.Any()) {
+                return builder.ToString();
+            }
+
+            builder.AppendLine(
+                $"            <TabItem Header=\"Chamfers\">\r\n" +
+                $"                <Grid>\r\n" +
+                $"                    <Grid.ColumnDefinitions>\r\n" +
+                $"                        <ColumnDefinition Width=\"1*\" />\r\n" +
+                $"                        <ColumnDefinition Width=\"22\" />\r\n" +
+                $"                        <ColumnDefinition Width=\"60\" />\r\n" +
+                $"                        <ColumnDefinition Width=\"22\" />\r\n" +
+                $"                        <ColumnDefinition Width=\"60\" />\r\n" +
+                $"                        <ColumnDefinition Width=\"22\" />\r\n" +
+                $"                        <ColumnDefinition Width=\"60\" />\r\n" +
+                $"                        <ColumnDefinition Width=\"22\" />\r\n" +
+                $"                        <ColumnDefinition Width=\"60\" />\r\n" +
+                $"                        <ColumnDefinition Width=\"22\" />\r\n" +
+                $"                        <ColumnDefinition Width=\"60\" />\r\n" +
+                $"                    </Grid.ColumnDefinitions>\r\n" +
+                $"                    <Grid.RowDefinitions>");
+
+            for (int i = 0; i < chamfers.Length + 1; i++) {
+                builder.AppendLine($"                            <RowDefinition Height=\"Auto\" />");
+            }
+
+            builder.AppendLine($"                    </Grid.RowDefinitions>\r\n" +
+                               $"\r\n" +
+                               $"                    <TextBlock Grid.Row=\"0\" Grid.Column=\"0\" HorizontalAlignment=\"Center\" Text=\"Id\" />\r\n" +
+                               $"                    <TextBlock Grid.Row=\"0\" Grid.Column=\"2\" HorizontalAlignment=\"Center\" Text=\"Type\" />\r\n" +
+                               $"                    <TextBlock Grid.Row=\"0\" Grid.Column=\"4\" HorizontalAlignment=\"Center\" Text=\"X\" />\r\n" +
+                               $"                    <TextBlock Grid.Row=\"0\" Grid.Column=\"6\" HorizontalAlignment=\"Center\" Text=\"Y\" />\r\n" +
+                               $"                    <TextBlock Grid.Row=\"0\" Grid.Column=\"8\" HorizontalAlignment=\"Center\" Text=\"Dz1\" />\r\n" +
+                               $"                    <TextBlock Grid.Row=\"0\" Grid.Column=\"10\" HorizontalAlignment=\"Center\" Text=\"Dz2\" />\r\n");
+
+            for (int i = 0; i < chamfers.Length; i++) {
+                var attribute = chamfers[i];
+                var property = ToPropertyNameStyle(attribute);
+
+                var row = i + 1;
+                builder.AppendLine(
+                    $"                    <TextBlock Grid.Row=\"{row}\" Grid.Column=\"0\" Text=\"{property}\" />\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"{row}\" Grid.Column=\"1\" AttributeName=\"CF{property}TYPE\" />\r\n" +
+                    $"                    <ComboBox Grid.Row=\"{row}\" Grid.Column=\"2\" SelectedIndex=\"{{Binding Chamfer{property}Type, Mode=TwoWay}}\" ItemsSource=\"{{StaticResource ChamferTypeSet}}\" />\r\n" +
+                    $"\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"{row}\" Grid.Column=\"3\" AttributeName=\"CF{property}X\" />\r\n" +
+                    $"                    <TextBox Grid.Row=\"{row}\" Grid.Column=\"4\" Text=\"{{Binding Chamfer{property}X, Mode=TwoWay}}\" />\r\n" +
+                    $"\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"{row}\" Grid.Column=\"5\" AttributeName=\"CF{property}Y\" />\r\n" +
+                    $"                    <TextBox Grid.Row=\"{row}\" Grid.Column=\"6\" Text=\"{{Binding Chamfer{property}Y, Mode=TwoWay}}\" />\r\n" +
+                    $"\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"{row}\" Grid.Column=\"7\" AttributeName=\"CF{property}DZ1\" />\r\n" +
+                    $"                    <TextBox Grid.Row=\"{row}\" Grid.Column=\"8\" Text=\"{{Binding Chamfer{property}Dz1, Mode=TwoWay}}\" />\r\n" +
+                    $"\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"{row}\" Grid.Column=\"9\" AttributeName=\"CF{property}DZ2\" />\r\n" +
+                    $"                    <TextBox Grid.Row=\"{row}\" Grid.Column=\"10\" Text=\"{{Binding Chamfer{property}Dz2, Mode=TwoWay}}\" />\r\n");
+            }
+
+            builder.AppendLine(
+                $"                </Grid>\r\n" +
+                $"            </TabItem>\r\n");
+
+            return builder.ToString();
+        }
+
+        private static string XamlBoltsBody(PluginDataFieldsInfo info) {
+            var builder = new StringBuilder();
+
+            var bolts = info.Arguments
+                .Where(kvp => kvp.Key is "BoltFieldsAttribute")
+                .SelectMany(kvp => kvp.Value)
+                .ToArray();
+            if (!bolts.Any()) {
+                return builder.ToString();
+            }
+
+            var onlyOne = bolts.Length == 1;
+            for (int i = 0; i < bolts.Length; i++) {
+                var attribute = bolts[i];
+                var property = ToPropertyNameStyle(attribute);
+
+                builder.AppendLine(
+                    $"            <TabItem Header=\"Bolt{(onlyOne ? "" : " " + attribute)}\">\r\n" +
+                    $"                <Grid>\r\n" +
+                    $"                    <Grid.ColumnDefinitions>\r\n" +
+                    $"                        <ColumnDefinition Width=\"Auto\" />\r\n" +
+                    $"                        <ColumnDefinition Width=\"22\" />\r\n" +
+                    $"                        <ColumnDefinition Width=\"100\" />\r\n" +
+                    $"                        <ColumnDefinition Width=\"10\" />\r\n" +
+                    $"                        <ColumnDefinition Width=\"Auto\" />\r\n" +
+                    $"                        <ColumnDefinition Width=\"22\" />\r\n" +
+                    $"                        <ColumnDefinition Width=\"100\" />\r\n" +
+                    $"                        <ColumnDefinition Width=\"10\" />\r\n" +
+                    $"                    </Grid.ColumnDefinitions>\r\n" +
+                    $"                    <Grid.RowDefinitions>\r\n" +
+                    $"                        <RowDefinition Height=\"Auto\" />\r\n" +
+                    $"                        <RowDefinition Height=\"Auto\" />\r\n" +
+                    $"                        <RowDefinition Height=\"Auto\" />\r\n" +
+                    $"                        <RowDefinition Height=\"Auto\" />\r\n" +
+                    $"                        <RowDefinition Height=\"Auto\" />\r\n" +
+                    $"                        <RowDefinition Height=\"Auto\" />\r\n" +
+                    $"                        <RowDefinition Height=\"Auto\" />\r\n" +
+                    $"                        <RowDefinition Height=\"Auto\" />\r\n" +
+                    $"                        <RowDefinition Height=\"Auto\" />\r\n" +
+                    $"                        <RowDefinition Height=\"Auto\" />\r\n" +
+                    $"                        <RowDefinition Height=\"Auto\" />\r\n" +
+                    $"                        <RowDefinition Height=\"Auto\" />\r\n" +
+                    $"                        <RowDefinition Height=\"Auto\" />\r\n" +
+                    $"                    </Grid.RowDefinitions>\r\n" +
+                    $"\r\n" +
+                    $"                    <TextBlock Grid.Row=\"0\" Grid.Column=\"0\" Text=\"Size\" />\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"0\" Grid.Column=\"1\" AttributeName=\"B{property}SIZE\" />\r\n" +
+                    $"                    <tsuic:WpfBoltCatalogSize Grid.Row=\"0\" Grid.Column=\"2\" SelectedItem=\"{{Binding Bolt{property}Size, Mode=TwoWay}}\" ItemsSource=\"{{Binding Path=BoltSizes, ElementName=Bolt{property}StdCatalog}}\" />\r\n" +
+                    $"\r\n" +
+                    $"                    <TextBlock Grid.Row=\"1\" Grid.Column=\"0\" Text=\"Standard\" />\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"1\" Grid.Column=\"1\" AttributeName=\"B{property}STD\" />\r\n" +
+                    $"                    <tsuic:WpfBoltCatalogStandard x:Name=\"Bolt{property}StdCatalog\" Grid.Row=\"1\" Grid.Column=\"2\" SelectedItem=\"{{Binding Bolt{property}Standard, Mode=TwoWay}}\" />\r\n" +
+                    $"\r\n" +
+                    $"                    <TextBlock Grid.Row=\"2\" Grid.Column=\"0\" Text=\"Bolt type\" />\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"2\" Grid.Column=\"1\" AttributeName=\"B{property}TYPE\" />\r\n" +
+                    $"                    <ComboBox Grid.Row=\"2\" Grid.Column=\"2\" SelectedIndex=\"{{Binding Bolt{property}Type, Mode=TwoWay}}\" ItemsSource=\"{{StaticResource BoltTypeSet}}\" />\r\n" +
+                    $"\r\n" +
+                    $"                    <TextBlock Grid.Row=\"3\" Grid.Column=\"0\" Text=\"Thread in material\" />\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"3\" Grid.Column=\"1\" AttributeName=\"B{property}THRD\" />\r\n" +
+                    $"                    <ComboBox Grid.Row=\"3\" Grid.Column=\"2\" SelectedIndex=\"{{Binding Bolt{property}ThreadInMaterial, Mode=TwoWay}}\" ItemsSource=\"{{StaticResource BoltThreadInMaterialSet}}\" />\r\n" +
+                    $"\r\n" +
+                    $"                    <TextBlock Grid.Row=\"4\" Grid.Column=\"0\" Text=\"Cut length\" />\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"4\" Grid.Column=\"1\" AttributeName=\"B{property}CLEN\" />\r\n" +
+                    $"                    <TextBox Grid.Row=\"4\" Grid.Column=\"2\" Text=\"{{Binding Bolt{property}CutLength, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
+                    $"\r\n" +
+                    $"                    <TextBlock Grid.Row=\"5\" Grid.Column=\"0\" Text=\"Extra length\" />\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"5\" Grid.Column=\"1\" AttributeName=\"B{property}XLEN\" />\r\n" +
+                    $"                    <TextBox Grid.Row=\"5\" Grid.Column=\"2\" Text=\"{{Binding Bolt{property}ExtraLength, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
+                    $"\r\n" +
+                    $"                    <TextBlock Grid.Row=\"6\" Grid.Column=\"0\" Text=\"Tolerance\" />\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"6\" Grid.Column=\"1\" AttributeName=\"B{property}TOL\" />\r\n" +
+                    $"                    <TextBox Grid.Row=\"6\" Grid.Column=\"2\" Text=\"{{Binding Bolt{property}Tolerance, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
+                    $"\r\n" +
+                    $"                    <TextBlock Grid.Row=\"7\" Grid.Column=\"0\" Text=\"Plain hole type\" />\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"7\" Grid.Column=\"1\" AttributeName=\"B{property}PLAIN\" />\r\n" +
+                    $"                    <ComboBox Grid.Row=\"7\" Grid.Column=\"2\" SelectedIndex=\"{{Binding Bolt{property}PlainType, Mode=TwoWay}}\" ItemsSource=\"{{StaticResource BoltPlainHoleTypeSet}}\" />\r\n" +
+                    $"\r\n" +
+                    $"                    <TextBlock Grid.Row=\"8\" Grid.Column=\"0\" Text=\"Hole depth\" />\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"8\" Grid.Column=\"1\" AttributeName=\"B{property}DEPTH\" />\r\n" +
+                    $"                    <TextBox Grid.Row=\"8\" Grid.Column=\"2\" Text=\"{{Binding Bolt{property}BlindHoleDepth, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
+                    $"\r\n" +
+                    $"                    <TextBlock Grid.Row=\"9\" Grid.Column=\"0\" Text=\"Special hole type\" />\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"9\" Grid.Column=\"1\" AttributeName=\"B{property}HOLTY\" />\r\n" +
+                    $"                    <ComboBox Grid.Row=\"9\" Grid.Column=\"2\" SelectedIndex=\"{{Binding Bolt{property}HoleType, Mode=TwoWay}}\" ItemsSource=\"{{StaticResource BoltSpecialHoleTypeSet}}\" />\r\n" +
+                    $"\r\n" +
+                    $"                    <TextBlock Grid.Row=\"10\" Grid.Column=\"0\" Text=\"Slotted hole X\" />\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"10\" Grid.Column=\"1\" AttributeName=\"B{property}SLOTX\" />\r\n" +
+                    $"                    <TextBox Grid.Row=\"10\" Grid.Column=\"2\" Text=\"{{Binding Bolt{property}SlottedHoleX, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
+                    $"\r\n" +
+                    $"                    <TextBlock Grid.Row=\"11\" Grid.Column=\"0\" Text=\"Slotted hole Y\" />\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"11\" Grid.Column=\"1\" AttributeName=\"B{property}SLOTY\" />\r\n" +
+                    $"                    <TextBox Grid.Row=\"11\" Grid.Column=\"2\" Text=\"{{Binding Bolt{property}SlottedHoleY, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
+                    $"\r\n" +
+                    $"                    <TextBlock Grid.Row=\"12\" Grid.Column=\"0\" Text=\"Rotate slots\" />\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"12\" Grid.Column=\"1\" AttributeName=\"B{property}RSLOT\" />\r\n" +
+                    $"                    <ComboBox Grid.Row=\"12\" Grid.Column=\"2\" SelectedIndex=\"{{Binding Bolt{property}RotateSlots, Mode=TwoWay}}\" ItemsSource=\"{{StaticResource BoltRotateSlotsSet}}\" />\r\n" +
+                    $"\r\n" +
+                    $"                    <TextBlock Grid.Row=\"0\" Grid.Column=\"4\" Text=\"Dist X\" />\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"0\" Grid.Column=\"5\" AttributeName=\"B{property}DISTX\" />\r\n" +
+                    $"                    <TextBox Grid.Row=\"0\" Grid.Column=\"6\" Text=\"{{Binding Bolt{property}DistX, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
+                    $"\r\n" +
+                    $"                    <TextBlock Grid.Row=\"1\" Grid.Column=\"4\" Text=\"Dist Y\" />\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"1\" Grid.Column=\"5\" AttributeName=\"B{property}DISTY\" />\r\n" +
+                    $"                    <TextBox Grid.Row=\"1\" Grid.Column=\"6\" Text=\"{{Binding Bolt{property}DistY, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
+                    $"\r\n" +
+                    $"                    <TextBlock Grid.Row=\"2\" Grid.Column=\"4\" Text=\"Bolt\" />\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"2\" Grid.Column=\"5\" AttributeName=\"B{property}ISBOT\" />\r\n" +
+                    $"                    <CheckBox Grid.Row=\"2\" Grid.Column=\"6\" IsChecked=\"{{Binding Bolt{property}IsBolt, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
+                    $"\r\n" +
+                    $"                    <TextBlock Grid.Row=\"3\" Grid.Column=\"4\" Text=\"Washer 1\" />\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"3\" Grid.Column=\"5\" AttributeName=\"B{property}WSHR1\" />\r\n" +
+                    $"                    <CheckBox Grid.Row=\"3\" Grid.Column=\"6\" IsChecked=\"{{Binding Bolt{property}UseWasher1, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
+                    $"\r\n" +
+                    $"                    <TextBlock Grid.Row=\"4\" Grid.Column=\"4\" Text=\"Washer 2\" />\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"4\" Grid.Column=\"5\" AttributeName=\"B{property}WSHR2\" />\r\n" +
+                    $"                    <CheckBox Grid.Row=\"4\" Grid.Column=\"6\" IsChecked=\"{{Binding Bolt{property}UseWasher2, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
+                    $"\r\n" +
+                    $"                    <TextBlock Grid.Row=\"5\" Grid.Column=\"4\" Text=\"Washer 3\" />\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"5\" Grid.Column=\"5\" AttributeName=\"B{property}WSHR3\" />\r\n" +
+                    $"                    <CheckBox Grid.Row=\"5\" Grid.Column=\"6\" IsChecked=\"{{Binding Bolt{property}UseWasher3, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
+                    $"\r\n" +
+                    $"                    <TextBlock Grid.Row=\"6\" Grid.Column=\"4\" Text=\"Nut 1\" />\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"6\" Grid.Column=\"5\" AttributeName=\"B{property}NUT1\" />\r\n" +
+                    $"                    <CheckBox Grid.Row=\"6\" Grid.Column=\"6\" IsChecked=\"{{Binding Bolt{property}UseNut1, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
+                    $"\r\n" +
+                    $"                    <TextBlock Grid.Row=\"7\" Grid.Column=\"4\" Text=\"Nut 2\" />\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"7\" Grid.Column=\"5\" AttributeName=\"B{property}NUT2\" />\r\n" +
+                    $"                    <CheckBox Grid.Row=\"7\" Grid.Column=\"6\" IsChecked=\"{{Binding Bolt{property}UseNut2, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
+                    $"\r\n" +
+                    $"                    <TextBlock Grid.Row=\"8\" Grid.Column=\"4\" Text=\"Hole 1\" />\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"8\" Grid.Column=\"5\" AttributeName=\"B{property}HOLE1\" />\r\n" +
+                    $"                    <CheckBox Grid.Row=\"8\" Grid.Column=\"6\" IsChecked=\"{{Binding Bolt{property}Hole1, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
+                    $"\r\n" +
+                    $"                    <TextBlock Grid.Row=\"9\" Grid.Column=\"4\" Text=\"Hole 2\" />\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"9\" Grid.Column=\"5\" AttributeName=\"B{property}HOLE2\" />\r\n" +
+                    $"                    <CheckBox Grid.Row=\"9\" Grid.Column=\"6\" IsChecked=\"{{Binding Bolt{property}Hole2, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
+                    $"\r\n" +
+                    $"                    <TextBlock Grid.Row=\"10\" Grid.Column=\"4\" Text=\"Hole 3\" />\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"10\" Grid.Column=\"5\" AttributeName=\"B{property}HOLE3\" />\r\n" +
+                    $"                    <CheckBox Grid.Row=\"10\" Grid.Column=\"6\" IsChecked=\"{{Binding Bolt{property}Hole3, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
+                    $"\r\n" +
+                    $"                    <TextBlock Grid.Row=\"11\" Grid.Column=\"4\" Text=\"Hole 4\" />\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"11\" Grid.Column=\"5\" AttributeName=\"B{property}HOLE4\" />\r\n" +
+                    $"                    <CheckBox Grid.Row=\"11\" Grid.Column=\"6\" IsChecked=\"{{Binding Bolt{property}Hole4, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
+                    $"\r\n" +
+                    $"                    <TextBlock Grid.Row=\"12\" Grid.Column=\"4\" Text=\"Hole 5\" />\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"12\" Grid.Column=\"5\" AttributeName=\"B{property}HOLE5\" />\r\n" +
+                    $"                    <CheckBox Grid.Row=\"12\" Grid.Column=\"6\" IsChecked=\"{{Binding Bolt{property}Hole5, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
+                    $"                </Grid>\r\n" +
+                    $"            </TabItem>\r\n");
+            }
+
+            return builder.ToString();
+        }
+
+        private static string XamlBoltCirclesBody(PluginDataFieldsInfo info) {
+            var builder = new StringBuilder();
+
+            var bolts = info.Arguments
+                .Where(kvp => kvp.Key is "BoltCircleFieldsAttribute")
+                .SelectMany(kvp => kvp.Value)
+                .ToArray();
+            if (!bolts.Any()) {
+                return builder.ToString();
+            }
+
+            var onlyOne = bolts.Length == 1;
+            for (int i = 0; i < bolts.Length; i++) {
+                var attribute = bolts[i];
+                var property = ToPropertyNameStyle(attribute);
+
+                builder.AppendLine(
+                    $"            <TabItem Header=\"BoltCircle{(onlyOne ? "" : " " + attribute)}\">\r\n" +
+                    $"                <Grid>\r\n" +
+                    $"                    <Grid.ColumnDefinitions>\r\n" +
+                    $"                        <ColumnDefinition Width=\"Auto\" />\r\n" +
+                    $"                        <ColumnDefinition Width=\"22\" />\r\n" +
+                    $"                        <ColumnDefinition Width=\"100\" />\r\n" +
+                    $"                        <ColumnDefinition Width=\"10\" />\r\n" +
+                    $"                        <ColumnDefinition Width=\"Auto\" />\r\n" +
+                    $"                        <ColumnDefinition Width=\"22\" />\r\n" +
+                    $"                        <ColumnDefinition Width=\"100\" />\r\n" +
+                    $"                        <ColumnDefinition Width=\"10\" />\r\n" +
+                    $"                    </Grid.ColumnDefinitions>\r\n" +
+                    $"                    <Grid.RowDefinitions>\r\n" +
+                    $"                        <RowDefinition Height=\"Auto\" />\r\n" +
+                    $"                        <RowDefinition Height=\"Auto\" />\r\n" +
+                    $"                        <RowDefinition Height=\"Auto\" />\r\n" +
+                    $"                        <RowDefinition Height=\"Auto\" />\r\n" +
+                    $"                        <RowDefinition Height=\"Auto\" />\r\n" +
+                    $"                        <RowDefinition Height=\"Auto\" />\r\n" +
+                    $"                        <RowDefinition Height=\"Auto\" />\r\n" +
+                    $"                        <RowDefinition Height=\"Auto\" />\r\n" +
+                    $"                        <RowDefinition Height=\"Auto\" />\r\n" +
+                    $"                        <RowDefinition Height=\"Auto\" />\r\n" +
+                    $"                        <RowDefinition Height=\"Auto\" />\r\n" +
+                    $"                        <RowDefinition Height=\"Auto\" />\r\n" +
+                    $"                        <RowDefinition Height=\"Auto\" />\r\n" +
+                    $"                    </Grid.RowDefinitions>\r\n" +
+                    $"\r\n" +
+                    $"                    <TextBlock Grid.Row=\"0\" Grid.Column=\"0\" Text=\"Size\" />\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"0\" Grid.Column=\"1\" AttributeName=\"B{property}SIZE\" />\r\n" +
+                    $"                    <tsuic:WpfBoltCatalogSize Grid.Row=\"0\" Grid.Column=\"2\" SelectedItem=\"{{Binding Bolt{property}Size, Mode=TwoWay}}\" ItemsSource=\"{{Binding Path=BoltSizes, ElementName=Bolt{property}StdCatalog}}\" />\r\n" +
+                    $"\r\n" +
+                    $"                    <TextBlock Grid.Row=\"1\" Grid.Column=\"0\" Text=\"Standard\" />\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"1\" Grid.Column=\"1\" AttributeName=\"B{property}STD\" />\r\n" +
+                    $"                    <tsuic:WpfBoltCatalogStandard x:Name=\"Bolt{property}StdCatalog\" Grid.Row=\"1\" Grid.Column=\"2\" SelectedItem=\"{{Binding Bolt{property}Standard, Mode=TwoWay}}\" />\r\n" +
+                    $"\r\n" +
+                    $"                    <TextBlock Grid.Row=\"2\" Grid.Column=\"0\" Text=\"Bolt type\" />\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"2\" Grid.Column=\"1\" AttributeName=\"B{property}TYPE\" />\r\n" +
+                    $"                    <ComboBox Grid.Row=\"2\" Grid.Column=\"2\" SelectedIndex=\"{{Binding Bolt{property}Type, Mode=TwoWay}}\" ItemsSource=\"{{StaticResource BoltTypeSet}}\" />\r\n" +
+                    $"\r\n" +
+                    $"                    <TextBlock Grid.Row=\"3\" Grid.Column=\"0\" Text=\"Thread in material\" />\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"3\" Grid.Column=\"1\" AttributeName=\"B{property}THRD\" />\r\n" +
+                    $"                    <ComboBox Grid.Row=\"3\" Grid.Column=\"2\" SelectedIndex=\"{{Binding Bolt{property}ThreadInMaterial, Mode=TwoWay}}\" ItemsSource=\"{{StaticResource BoltThreadInMaterialSet}}\" />\r\n" +
+                    $"\r\n" +
+                    $"                    <TextBlock Grid.Row=\"4\" Grid.Column=\"0\" Text=\"Cut length\" />\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"4\" Grid.Column=\"1\" AttributeName=\"B{property}CLEN\" />\r\n" +
+                    $"                    <TextBox Grid.Row=\"4\" Grid.Column=\"2\" Text=\"{{Binding Bolt{property}CutLength, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
+                    $"\r\n" +
+                    $"                    <TextBlock Grid.Row=\"5\" Grid.Column=\"0\" Text=\"Extra length\" />\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"5\" Grid.Column=\"1\" AttributeName=\"B{property}XLEN\" />\r\n" +
+                    $"                    <TextBox Grid.Row=\"5\" Grid.Column=\"2\" Text=\"{{Binding Bolt{property}ExtraLength, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
+                    $"\r\n" +
+                    $"                    <TextBlock Grid.Row=\"6\" Grid.Column=\"0\" Text=\"Tolerance\" />\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"6\" Grid.Column=\"1\" AttributeName=\"B{property}TOL\" />\r\n" +
+                    $"                    <TextBox Grid.Row=\"6\" Grid.Column=\"2\" Text=\"{{Binding Bolt{property}Tolerance, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
+                    $"\r\n" +
+                    $"                    <TextBlock Grid.Row=\"7\" Grid.Column=\"0\" Text=\"Plain hole type\" />\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"7\" Grid.Column=\"1\" AttributeName=\"B{property}PLAIN\" />\r\n" +
+                    $"                    <ComboBox Grid.Row=\"7\" Grid.Column=\"2\" SelectedIndex=\"{{Binding Bolt{property}PlainType, Mode=TwoWay}}\" ItemsSource=\"{{StaticResource BoltPlainHoleTypeSet}}\" />\r\n" +
+                    $"\r\n" +
+                    $"                    <TextBlock Grid.Row=\"8\" Grid.Column=\"0\" Text=\"Hole depth\" />\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"8\" Grid.Column=\"1\" AttributeName=\"B{property}DEPTH\" />\r\n" +
+                    $"                    <TextBox Grid.Row=\"8\" Grid.Column=\"2\" Text=\"{{Binding Bolt{property}BlindHoleDepth, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
+                    $"\r\n" +
+                    $"                    <TextBlock Grid.Row=\"9\" Grid.Column=\"0\" Text=\"Special hole type\" />\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"9\" Grid.Column=\"1\" AttributeName=\"B{property}HOLTY\" />\r\n" +
+                    $"                    <ComboBox Grid.Row=\"9\" Grid.Column=\"2\" SelectedIndex=\"{{Binding Bolt{property}HoleType, Mode=TwoWay}}\" ItemsSource=\"{{StaticResource BoltSpecialHoleTypeSet}}\" />\r\n" +
+                    $"\r\n" +
+                    $"                    <TextBlock Grid.Row=\"10\" Grid.Column=\"0\" Text=\"Slotted hole X\" />\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"10\" Grid.Column=\"1\" AttributeName=\"B{property}SLOTX\" />\r\n" +
+                    $"                    <TextBox Grid.Row=\"10\" Grid.Column=\"2\" Text=\"{{Binding Bolt{property}SlottedHoleX, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
+                    $"\r\n" +
+                    $"                    <TextBlock Grid.Row=\"11\" Grid.Column=\"0\" Text=\"Slotted hole Y\" />\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"11\" Grid.Column=\"1\" AttributeName=\"B{property}SLOTY\" />\r\n" +
+                    $"                    <TextBox Grid.Row=\"11\" Grid.Column=\"2\" Text=\"{{Binding Bolt{property}SlottedHoleY, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
+                    $"\r\n" +
+                    $"                    <TextBlock Grid.Row=\"12\" Grid.Column=\"0\" Text=\"Rotate slots\" />\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"12\" Grid.Column=\"1\" AttributeName=\"B{property}RSLOT\" />\r\n" +
+                    $"                    <ComboBox Grid.Row=\"12\" Grid.Column=\"2\" SelectedIndex=\"{{Binding Bolt{property}RotateSlots, Mode=TwoWay}}\" ItemsSource=\"{{StaticResource BoltRotateSlotsSet}}\" />\r\n" +
+                    $"\r\n" +
+                    $"                    <TextBlock Grid.Row=\"0\" Grid.Column=\"4\" Text=\"Number of bolts\" />\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"0\" Grid.Column=\"5\" AttributeName=\"B{property}NUM\" />\r\n" +
+                    $"                    <TextBox Grid.Row=\"0\" Grid.Column=\"6\" Text=\"{{Binding Bolt{property}NumberOfBolts, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
+                    $"\r\n" +
+                    $"                    <TextBlock Grid.Row=\"1\" Grid.Column=\"4\" Text=\"Diameter\" />\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"1\" Grid.Column=\"5\" AttributeName=\"B{property}DIAM\" />\r\n" +
+                    $"                    <TextBox Grid.Row=\"1\" Grid.Column=\"6\" Text=\"{{Binding Bolt{property}Diameter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
+                    $"\r\n" +
+                    $"                    <TextBlock Grid.Row=\"2\" Grid.Column=\"4\" Text=\"Bolt\" />\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"2\" Grid.Column=\"5\" AttributeName=\"B{property}ISBOT\" />\r\n" +
+                    $"                    <CheckBox Grid.Row=\"2\" Grid.Column=\"6\" IsChecked=\"{{Binding Bolt{property}IsBolt, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
+                    $"\r\n" +
+                    $"                    <TextBlock Grid.Row=\"3\" Grid.Column=\"4\" Text=\"Washer 1\" />\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"3\" Grid.Column=\"5\" AttributeName=\"B{property}WSHR1\" />\r\n" +
+                    $"                    <CheckBox Grid.Row=\"3\" Grid.Column=\"6\" IsChecked=\"{{Binding Bolt{property}UseWasher1, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
+                    $"\r\n" +
+                    $"                    <TextBlock Grid.Row=\"4\" Grid.Column=\"4\" Text=\"Washer 2\" />\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"4\" Grid.Column=\"5\" AttributeName=\"B{property}WSHR2\" />\r\n" +
+                    $"                    <CheckBox Grid.Row=\"4\" Grid.Column=\"6\" IsChecked=\"{{Binding Bolt{property}UseWasher2, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
+                    $"\r\n" +
+                    $"                    <TextBlock Grid.Row=\"5\" Grid.Column=\"4\" Text=\"Washer 3\" />\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"5\" Grid.Column=\"5\" AttributeName=\"B{property}WSHR3\" />\r\n" +
+                    $"                    <CheckBox Grid.Row=\"5\" Grid.Column=\"6\" IsChecked=\"{{Binding Bolt{property}UseWasher3, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
+                    $"\r\n" +
+                    $"                    <TextBlock Grid.Row=\"6\" Grid.Column=\"4\" Text=\"Nut 1\" />\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"6\" Grid.Column=\"5\" AttributeName=\"B{property}NUT1\" />\r\n" +
+                    $"                    <CheckBox Grid.Row=\"6\" Grid.Column=\"6\" IsChecked=\"{{Binding Bolt{property}UseNut1, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
+                    $"\r\n" +
+                    $"                    <TextBlock Grid.Row=\"7\" Grid.Column=\"4\" Text=\"Nut 2\" />\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"7\" Grid.Column=\"5\" AttributeName=\"B{property}NUT2\" />\r\n" +
+                    $"                    <CheckBox Grid.Row=\"7\" Grid.Column=\"6\" IsChecked=\"{{Binding Bolt{property}UseNut2, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
+                    $"\r\n" +
+                    $"                    <TextBlock Grid.Row=\"8\" Grid.Column=\"4\" Text=\"Hole 1\" />\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"8\" Grid.Column=\"5\" AttributeName=\"B{property}HOLE1\" />\r\n" +
+                    $"                    <CheckBox Grid.Row=\"8\" Grid.Column=\"6\" IsChecked=\"{{Binding Bolt{property}Hole1, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
+                    $"\r\n" +
+                    $"                    <TextBlock Grid.Row=\"9\" Grid.Column=\"4\" Text=\"Hole 2\" />\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"9\" Grid.Column=\"5\" AttributeName=\"B{property}HOLE2\" />\r\n" +
+                    $"                    <CheckBox Grid.Row=\"9\" Grid.Column=\"6\" IsChecked=\"{{Binding Bolt{property}Hole2, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
+                    $"\r\n" +
+                    $"                    <TextBlock Grid.Row=\"10\" Grid.Column=\"4\" Text=\"Hole 3\" />\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"10\" Grid.Column=\"5\" AttributeName=\"B{property}HOLE3\" />\r\n" +
+                    $"                    <CheckBox Grid.Row=\"10\" Grid.Column=\"6\" IsChecked=\"{{Binding Bolt{property}Hole3, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
+                    $"\r\n" +
+                    $"                    <TextBlock Grid.Row=\"11\" Grid.Column=\"4\" Text=\"Hole 4\" />\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"11\" Grid.Column=\"5\" AttributeName=\"B{property}HOLE4\" />\r\n" +
+                    $"                    <CheckBox Grid.Row=\"11\" Grid.Column=\"6\" IsChecked=\"{{Binding Bolt{property}Hole4, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
+                    $"\r\n" +
+                    $"                    <TextBlock Grid.Row=\"12\" Grid.Column=\"4\" Text=\"Hole 5\" />\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"12\" Grid.Column=\"5\" AttributeName=\"B{property}HOLE5\" />\r\n" +
+                    $"                    <CheckBox Grid.Row=\"12\" Grid.Column=\"6\" IsChecked=\"{{Binding Bolt{property}Hole5, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
+                    $"                </Grid>\r\n" +
+                    $"            </TabItem>\r\n");
+            }
+
+            return builder.ToString();
+        }
+
+        private static string XamlWeldsBody(PluginDataFieldsInfo info) {
+            var builder = new StringBuilder();
+
+            var welds = info.Arguments
+                .Where(kvp => kvp.Key is "WeldFieldsAttribute")
+                .SelectMany(kvp => kvp.Value)
+                .ToArray();
+            if (!welds.Any()) {
+                return builder.ToString();
+            }
+
+            builder.AppendLine(
+                $"            <TabItem Header=\"Welds\">\r\n" +
+                $"                <Grid>\r\n" +
+                $"                    <Grid.ColumnDefinitions>\r\n" +
+                $"                        <ColumnDefinition Width=\"1*\" />\r\n" +
+                $"                        <ColumnDefinition Width=\"22\" />\r\n" +
+                $"                        <ColumnDefinition Width=\"60\" />\r\n" +
+                $"                        <ColumnDefinition Width=\"22\" />\r\n" +
+                $"                        <ColumnDefinition Width=\"60\" />\r\n" +
+                $"                        <ColumnDefinition Width=\"22\" />\r\n" +
+                $"                        <ColumnDefinition Width=\"60\" />\r\n" +
+                $"                        <ColumnDefinition Width=\"22\" />\r\n" +
+                $"                        <ColumnDefinition Width=\"60\" />\r\n" +
+                $"                        <ColumnDefinition Width=\"22\" />\r\n" +
+                $"                        <ColumnDefinition Width=\"60\" />\r\n" +
+                $"                        <ColumnDefinition Width=\"22\" />\r\n" +
+                $"                        <ColumnDefinition Width=\"60\" />\r\n" +
+                $"                        <ColumnDefinition Width=\"22\" />\r\n" +
+                $"                        <ColumnDefinition Width=\"60\" />\r\n" +
+                $"                        <ColumnDefinition Width=\"22\" />\r\n" +
+                $"                        <ColumnDefinition Width=\"60\" />\r\n" +
+                $"                        <ColumnDefinition Width=\"22\" />\r\n" +
+                $"                        <ColumnDefinition Width=\"60\" />\r\n" +
+                $"                        <ColumnDefinition Width=\"22\" />\r\n" +
+                $"                        <ColumnDefinition Width=\"60\" />\r\n" +
+                $"                        <ColumnDefinition Width=\"22\" />\r\n" +
+                $"                        <ColumnDefinition Width=\"60\" />\r\n" +
+                $"                        <ColumnDefinition Width=\"22\" />\r\n" +
+                $"                        <ColumnDefinition Width=\"60\" />\r\n" +
+                $"                        <ColumnDefinition Width=\"22\" />\r\n" +
+                $"                        <ColumnDefinition Width=\"60\" />\r\n" +
+                $"                        <ColumnDefinition Width=\"22\" />\r\n" +
+                $"                        <ColumnDefinition Width=\"40\" />\r\n" +
+                $"                        <ColumnDefinition Width=\"22\" />\r\n" +
+                $"                        <ColumnDefinition Width=\"60\" />\r\n" +
+                $"                        <ColumnDefinition Width=\"22\" />\r\n" +
+                $"                        <ColumnDefinition Width=\"60\" />\r\n" +
+                $"                        <ColumnDefinition Width=\"22\" />\r\n" +
+                $"                        <ColumnDefinition Width=\"60\" />\r\n" +
+                $"                    </Grid.ColumnDefinitions>\r\n" +
+                $"                    <Grid.RowDefinitions>");
+
+            for (int i = 0; i < welds.Length * 2 + 1; i++) {
+                builder.AppendLine($"                        <RowDefinition Height=\"Auto\" />");
+            }
+
+            builder.AppendLine(
+                $"                    </Grid.RowDefinitions>\r\n" +
+                $"\r\n" +
+                $"                    <TextBlock Grid.Row=\"0\" Grid.Column=\"0\" HorizontalAlignment=\"Center\" Text=\"No\" />\r\n" +
+                $"                    <TextBlock Grid.Row=\"0\" Grid.Column=\"2\" HorizontalAlignment=\"Center\" Text=\"Size\" />\r\n" +
+                $"                    <TextBlock Grid.Row=\"0\" Grid.Column=\"4\" HorizontalAlignment=\"Center\" Text=\"Type\" />\r\n" +
+                $"                    <TextBlock Grid.Row=\"0\" Grid.Column=\"6\" HorizontalAlignment=\"Center\" Text=\"Angle\" />\r\n" +
+                $"                    <TextBlock Grid.Row=\"0\" Grid.Column=\"8\" HorizontalAlignment=\"Center\" Text=\"Contour\" />\r\n" +
+                $"                    <TextBlock Grid.Row=\"0\" Grid.Column=\"10\" HorizontalAlignment=\"Center\" Text=\"Finish\" />\r\n" +
+                $"                    <TextBlock Grid.Row=\"0\" Grid.Column=\"12\" HorizontalAlignment=\"Center\" Text=\"R.face\" />\r\n" +
+                $"                    <TextBlock Grid.Row=\"0\" Grid.Column=\"14\" HorizontalAlignment=\"Center\" Text=\"Eff.thr\" />\r\n" +
+                $"                    <TextBlock Grid.Row=\"0\" Grid.Column=\"16\" HorizontalAlignment=\"Center\" Text=\"R.opng\" />\r\n" +
+                $"                    <TextBlock Grid.Row=\"0\" Grid.Column=\"18\" HorizontalAlignment=\"Center\" Text=\"Ed./Ar.\" />\r\n" +
+                $"                    <TextBlock Grid.Row=\"0\" Grid.Column=\"20\" HorizontalAlignment=\"Center\" Text=\"Si./Wo.\" />\r\n" +
+                $"                    <TextBlock Grid.Row=\"0\" Grid.Column=\"22\" HorizontalAlignment=\"Center\" Text=\"Place.\" />\r\n" +
+                $"                    <TextBlock Grid.Row=\"0\" Grid.Column=\"24\" HorizontalAlignment=\"Center\" Text=\"Prepa.\" />\r\n" +
+                $"                    <TextBlock Grid.Row=\"0\" Grid.Column=\"26\" HorizontalAlignment=\"Center\" Text=\"Intermi.\" />\r\n" +
+                $"                    <TextBlock Grid.Row=\"0\" Grid.Column=\"28\" HorizontalAlignment=\"Center\" Text=\"#\" />\r\n" +
+                $"                    <TextBlock Grid.Row=\"0\" Grid.Column=\"30\" HorizontalAlignment=\"Center\" Text=\"Length\" />\r\n" +
+                $"                    <TextBlock Grid.Row=\"0\" Grid.Column=\"32\" HorizontalAlignment=\"Center\" Text=\"Pitch\" />\r\n" +
+                $"                    <TextBlock Grid.Row=\"0\" Grid.Column=\"34\" HorizontalAlignment=\"Center\" Text=\"Ref.\" />\r\n" +
+                $"\r\n");
+
+            for (int i = 0; i < welds.Length; i++) {
+                var attribute = welds[i];
+                var property = ToPropertyNameStyle(attribute);
+
+                var row = i * 2 + 1;
+                builder.AppendLine(
+                    $"                    <TextBlock Grid.Row=\"{row}\" Grid.RowSpan=\"2\" Grid.Column=\"0\" Text=\"{property}\" />\r\n" +
+                    $"\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"{row}\" Grid.Column=\"1\" AttributeName=\"W{property}SIZEA\" />\r\n" +
+                    $"                    <TextBox Grid.Row=\"{row}\" Grid.Column=\"2\" Text=\"{{Binding Weld{property}SizeAbove, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"{row + 1}\" Grid.Column=\"1\" AttributeName=\"W{property}SIZEB\" />\r\n" +
+                    $"                    <TextBox Grid.Row=\"{row + 1}\" Grid.Column=\"2\" Text=\"{{Binding Weld{property}SizeBelow, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
+                    $"\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"{row}\" Grid.Column=\"3\" AttributeName=\"W{property}TYPEA\" />\r\n" +
+                    $"                    <ComboBox Grid.Row=\"{row}\" Grid.Column=\"4\" SelectedIndex=\"{{Binding Weld{property}TypeAbove, Mode=TwoWay}}\" ItemsSource=\"{{StaticResource WeldTypeSet}}\" />\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"{row + 1}\" Grid.Column=\"3\" AttributeName=\"W{property}TYPEB\" />\r\n" +
+                    $"                    <ComboBox Grid.Row=\"{row + 1}\" Grid.Column=\"4\" SelectedIndex=\"{{Binding Weld{property}TypeBelow, Mode=TwoWay}}\" ItemsSource=\"{{StaticResource WeldTypeSet}}\" />\r\n" +
+                    $"\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"{row}\" Grid.Column=\"5\" AttributeName=\"W{property}ANGA\" />\r\n" +
+                    $"                    <TextBox Grid.Row=\"{row}\" Grid.Column=\"6\" Text=\"{{Binding Weld{property}AngleAbove, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"{row + 1}\" Grid.Column=\"5\" AttributeName=\"W{property}ANGB\" />\r\n" +
+                    $"                    <TextBox Grid.Row=\"{row + 1}\" Grid.Column=\"6\" Text=\"{{Binding Weld{property}AngleBelow, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
+                    $"\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"{row}\" Grid.Column=\"7\" AttributeName=\"W{property}CTRA\" />\r\n" +
+                    $"                    <ComboBox Grid.Row=\"{row}\" Grid.Column=\"8\" SelectedIndex=\"{{Binding Weld{property}ContourAbove, Mode=TwoWay}}\" ItemsSource=\"{{StaticResource WeldContourSet}}\" />\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"{row + 1}\" Grid.Column=\"7\" AttributeName=\"W{property}CTRB\" />\r\n" +
+                    $"                    <ComboBox Grid.Row=\"{row + 1}\" Grid.Column=\"8\" SelectedIndex=\"{{Binding Weld{property}ContourBelow, Mode=TwoWay}}\" ItemsSource=\"{{StaticResource WeldContourSet}}\" />\r\n" +
+                    $"\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"{row}\" Grid.Column=\"9\" AttributeName=\"W{property}FNSHA\" />\r\n" +
+                    $"                    <ComboBox Grid.Row=\"{row}\" Grid.Column=\"10\" SelectedIndex=\"{{Binding Weld{property}FinishAbove, Mode=TwoWay}}\" ItemsSource=\"{{StaticResource WeldFinishSet}}\" />\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"{row + 1}\" Grid.Column=\"9\" AttributeName=\"W{property}FNSHB\" />\r\n" +
+                    $"                    <ComboBox Grid.Row=\"{row + 1}\" Grid.Column=\"10\" SelectedIndex=\"{{Binding Weld{property}FinishBelow, Mode=TwoWay}}\" ItemsSource=\"{{StaticResource WeldFinishSet}}\" />\r\n" +
+                    $"\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"{row}\" Grid.Column=\"11\" AttributeName=\"W{property}FACEA\" />\r\n" +
+                    $"                    <TextBox Grid.Row=\"{row}\" Grid.Column=\"12\" Text=\"{{Binding Weld{property}RootFaceAbove, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"{row + 1}\" Grid.Column=\"11\" AttributeName=\"W{property}FACEB\" />\r\n" +
+                    $"                    <TextBox Grid.Row=\"{row + 1}\" Grid.Column=\"12\" Text=\"{{Binding Weld{property}RootFaceBelow, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
+                    $"\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"{row}\" Grid.Column=\"13\" AttributeName=\"W{property}THROA\" />\r\n" +
+                    $"                    <TextBox Grid.Row=\"{row}\" Grid.Column=\"14\" Text=\"{{Binding Weld{property}EffectiveThroatAbove, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"{row + 1}\" Grid.Column=\"13\" AttributeName=\"W{property}THROB\" />\r\n" +
+                    $"                    <TextBox Grid.Row=\"{row + 1}\" Grid.Column=\"14\" Text=\"{{Binding Weld{property}EffectiveThroatBelow, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
+                    $"\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"{row}\" Grid.Column=\"15\" AttributeName=\"W{property}OPNGA\" />\r\n" +
+                    $"                    <TextBox Grid.Row=\"{row}\" Grid.Column=\"16\" Text=\"{{Binding Weld{property}RootOpeningAbove, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"{row + 1}\" Grid.Column=\"15\" AttributeName=\"W{property}OPNGB\" />\r\n" +
+                    $"                    <TextBox Grid.Row=\"{row + 1}\" Grid.Column=\"16\" Text=\"{{Binding Weld{property}RootOpeningBelow, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
+                    $"\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"{row}\" Grid.RowSpan=\"2\" Grid.Column=\"17\" AttributeName=\"W{property}ARND\" />\r\n" +
+                    $"                    <ComboBox Grid.Row=\"{row}\"\r\n" +
+                    $"                              Grid.RowSpan=\"2\"\r\n" +
+                    $"                              Grid.Column=\"18\"\r\n" +
+                    $"                              SelectedIndex=\"{{Binding Weld{property}Around, Mode=TwoWay}}\"\r\n" +
+                    $"                              ItemsSource=\"{{StaticResource AroundWeldSet}}\" />\r\n" +
+                    $"\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"{row}\" Grid.RowSpan=\"2\" Grid.Column=\"19\" AttributeName=\"W{property}SHOP\" />\r\n" +
+                    $"                    <ComboBox Grid.Row=\"{row}\"\r\n" +
+                    $"                              Grid.RowSpan=\"2\"\r\n" +
+                    $"                              Grid.Column=\"20\"\r\n" +
+                    $"                              SelectedIndex=\"{{Binding Weld{property}Shop, Mode=TwoWay}}\"\r\n" +
+                    $"                              ItemsSource=\"{{StaticResource ShopWeldSet}}\" />\r\n" +
+                    $"\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"{row}\" Grid.RowSpan=\"2\" Grid.Column=\"21\" AttributeName=\"W{property}PLACE\" />\r\n" +
+                    $"                    <ComboBox Grid.Row=\"{row}\"\r\n" +
+                    $"                              Grid.RowSpan=\"2\"\r\n" +
+                    $"                              Grid.Column=\"22\"\r\n" +
+                    $"                              ItemTemplate=\"{{x:Null}}\"\r\n" +
+                    $"                              SelectedIndex=\"{{Binding Weld{property}Placement, Mode=TwoWay}}\"\r\n" +
+                    $"                              ItemsSource=\"{{StaticResource WeldPlacementSet}}\" />\r\n" +
+                    $"\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"{row}\" Grid.RowSpan=\"2\" Grid.Column=\"23\" AttributeName=\"W{property}PREP\" />\r\n" +
+                    $"                    <ComboBox Grid.Row=\"{row}\"\r\n" +
+                    $"                              Grid.RowSpan=\"2\"\r\n" +
+                    $"                              Grid.Column=\"24\"\r\n" +
+                    $"                              ItemTemplate=\"{{x:Null}}\"\r\n" +
+                    $"                              SelectedIndex=\"{{Binding Weld{property}Preparation, Mode=TwoWay}}\"\r\n" +
+                    $"                              ItemsSource=\"{{StaticResource WeldPreparationSet}}\" />\r\n" +
+                    $"\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"{row}\" Grid.RowSpan=\"2\" Grid.Column=\"25\" AttributeName=\"W{property}INTMI\" />\r\n" +
+                    $"                    <ComboBox Grid.Row=\"{row}\"\r\n" +
+                    $"                              Grid.RowSpan=\"2\"\r\n" +
+                    $"                              Grid.Column=\"26\"\r\n" +
+                    $"                              SelectedIndex=\"{{Binding Weld{property}Intermittent, Mode=TwoWay}}\"\r\n" +
+                    $"                              ItemsSource=\"{{StaticResource WeldIntermittentSet}}\" />\r\n" +
+                    $"\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"{row}\" Grid.Column=\"27\" AttributeName=\"W{property}INCRA\" />\r\n" +
+                    $"                    <TextBox Grid.Row=\"{row}\" Grid.Column=\"28\" Text=\"{{Binding Weld{property}IncrementAmountAbove, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"{row + 1}\" Grid.Column=\"27\" AttributeName=\"W{property}INCRB\" />\r\n" +
+                    $"                    <TextBox Grid.Row=\"{row + 1}\" Grid.Column=\"28\" Text=\"{{Binding Weld{property}IncrementAmountBelow, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
+                    $"\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"{row}\" Grid.Column=\"29\" AttributeName=\"W{property}LENA\" />\r\n" +
+                    $"                    <TextBox Grid.Row=\"{row}\" Grid.Column=\"30\" Text=\"{{Binding Weld{property}LengthAbove, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"{row + 1}\" Grid.Column=\"29\" AttributeName=\"W{property}LENB\" />\r\n" +
+                    $"                    <TextBox Grid.Row=\"{row + 1}\" Grid.Column=\"30\" Text=\"{{Binding Weld{property}LengthBelow, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
+                    $"\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"{row}\" Grid.Column=\"31\" AttributeName=\"W{property}PITA\" />\r\n" +
+                    $"                    <TextBox Grid.Row=\"{row}\" Grid.Column=\"32\" Text=\"{{Binding Weld{property}PitchAbove, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"{row + 1}\" Grid.Column=\"31\" AttributeName=\"W{property}PITB\" />\r\n" +
+                    $"                    <TextBox Grid.Row=\"{row + 1}\" Grid.Column=\"32\" Text=\"{{Binding Weld{property}PitchBelow, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
+                    $"\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"{row}\" Grid.RowSpan=\"2\" Grid.Column=\"33\" AttributeName=\"W{property}TEXT\" />\r\n" +
+                    $"                    <TextBox Grid.Row=\"{row}\" Grid.RowSpan=\"2\" Grid.Column=\"34\" Text=\"{{Binding Weld{property}ReferenceText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n");
+            }
+
+            builder.AppendLine(
+                $"                </Grid>\r\n" +
+                $"            </TabItem>\r\n");
+
+            return builder.ToString();
+        }
+
+        private static string XamlBehindCode(PluginDataFieldsInfo info, string viewModelQualifiedName) {
+            return
+#if DEBUG
+                $"//  <auto-generated> at {DateTime.Now}\r\n" +
+#else
+                $"//  <auto-generated>\r\n" +
+#endif
+                $"namespace {info.ClassInfo.NameSpace} {{\r\n" +
+                $"    public partial class WpfUi : Tekla.Structures.Dialog.PluginWindowBase {{\r\n" +
+                $"        \r\n" +
+                $"        private {viewModelQualifiedName} ViewModel {{ get; }}\r\n" +
+                $"        \r\n" +
+                $"        public WpfUi({viewModelQualifiedName} dataContext) {{\r\n" +
+                $"            InitializeComponent();\r\n" +
+                $"            ViewModel = dataContext;\r\n" +
+                $"        }}\r\n" +
+                $"        private void WPFOkApplyModifyGetOnOffCancel_ApplyClicked(object sender, System.EventArgs e) {{\r\n" +
+                $"            this.Apply();\r\n" +
+                $"        }}\r\n" +
+                $"        \r\n" +
+                $"        private void WPFOkApplyModifyGetOnOffCancel_CancelClicked(object sender, System.EventArgs e) {{\r\n" +
+                $"            this.Close();\r\n" +
+                $"        }}\r\n" +
+                $"        \r\n" +
+                $"        private void WPFOkApplyModifyGetOnOffCancel_GetClicked(object sender, System.EventArgs e) {{\r\n" +
+                $"            this.Get();\r\n" +
+                $"        }}\r\n" +
+                $"        \r\n" +
+                $"        private void WPFOkApplyModifyGetOnOffCancel_ModifyClicked(object sender, System.EventArgs e) {{\r\n" +
+                $"            this.Modify();\r\n" +
+                $"        }}\r\n" +
+                $"        \r\n" +
+                $"        private void WPFOkApplyModifyGetOnOffCancel_OkClicked(object sender, System.EventArgs e) {{\r\n" +
+                $"            this.Apply();\r\n" +
+                $"            this.Close();\r\n" +
+                $"        }}\r\n" +
+                $"        \r\n" +
+                $"        private void WPFOkApplyModifyGetOnOffCancel_OnOffClicked(object sender, System.EventArgs e) {{\r\n" +
+                $"            this.ToggleSelection();\r\n" +
+                $"        }}\r\n" +
+                $"        \r\n" +
+                $"        private void WpfMaterialCatalog_SelectClicked(object sender, System.EventArgs e) {{\r\n" +
+                $"            while (sender is not Tekla.Structures.Dialog.UIControls.WpfMaterialCatalog) {{\r\n" +
+                $"                sender = System.Windows.LogicalTreeHelper.GetParent((System.Windows.DependencyObject)sender);\r\n" +
+                $"            }}\r\n" +
+                $"        \r\n" +
+                $"            var catalog = sender as Tekla.Structures.Dialog.UIControls.WpfMaterialCatalog;\r\n" +
+                $"            catalog?.SelectedMaterial = ((Tekla.Structures.Datatype.String)ViewModel.GetType().GetProperty(catalog.Tag as string).GetValue(ViewModel)).Value;\r\n" +
+                $"        }}\r\n" +
+                $"        \r\n" +
+                $"        private void WpfMaterialCatalog_SelectionDone(object sender, System.EventArgs e) {{\r\n" +
+                $"            while (sender is not Tekla.Structures.Dialog.UIControls.WpfMaterialCatalog) {{\r\n" +
+                $"                sender = System.Windows.LogicalTreeHelper.GetParent((System.Windows.DependencyObject)sender);\r\n" +
+                $"            }}\r\n" +
+                $"        \r\n" +
+                $"            var catalog = sender as Tekla.Structures.Dialog.UIControls.WpfMaterialCatalog;\r\n" +
+                $"            ViewModel.GetType().GetProperty(catalog.Tag as string).SetValue(ViewModel, new Tekla.Structures.Datatype.String(catalog?.SelectedMaterial));\r\n" +
+                $"        }}\r\n" +
+                $"        \r\n" +
+                $"        private void WpfProfileCatalog_SelectClicked(object sender, System.EventArgs e) {{\r\n" +
+                $"            while (sender is not Tekla.Structures.Dialog.UIControls.WpfProfileCatalog) {{\r\n" +
+                $"                sender = System.Windows.LogicalTreeHelper.GetParent((System.Windows.DependencyObject)sender);\r\n" +
+                $"            }}\r\n" +
+                $"        \r\n" +
+                $"            var catalog = sender as Tekla.Structures.Dialog.UIControls.WpfProfileCatalog;\r\n" +
+                $"            catalog?.SelectedProfile = ((Tekla.Structures.Datatype.String)ViewModel.GetType().GetProperty(catalog.Tag as string).GetValue(ViewModel)).Value;\r\n" +
+                $"        }}\r\n" +
+                $"        \r\n" +
+                $"        private void WpfProfileCatalog_SelectionDone(object sender, System.EventArgs e) {{\r\n" +
+                $"            while (sender is not Tekla.Structures.Dialog.UIControls.WpfProfileCatalog) {{\r\n" +
+                $"                sender = System.Windows.LogicalTreeHelper.GetParent((System.Windows.DependencyObject)sender);\r\n" +
+                $"            }}\r\n" +
+                $"        \r\n" +
+                $"            var catalog = sender as Tekla.Structures.Dialog.UIControls.WpfProfileCatalog;\r\n" +
+                $"            ViewModel.GetType().GetProperty(catalog.Tag as string).SetValue(ViewModel, new Tekla.Structures.Datatype.String(catalog?.SelectedProfile));\r\n" +
+                $"        }}\r\n" +
+                $"    }}\r\n" +
+                $"}}";
+        }
+    }
+}

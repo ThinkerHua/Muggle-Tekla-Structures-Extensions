@@ -159,6 +159,14 @@ internal class InternalAttributesDiagnoser : DiagnosticAnalyzer {
         DiagnosticSeverity.Error,
         true);
 
+    internal static readonly DiagnosticDescriptor NeedViewModelQualifiedName = new(
+        "MTSECH022",
+        "Need view model qualified name",
+        "Should pass a valid view model qualified name for WPF-type user interface",
+        Category,
+        DiagnosticSeverity.Error,
+        true);
+
     #endregion
 
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => [
@@ -166,7 +174,7 @@ internal class InternalAttributesDiagnoser : DiagnosticAnalyzer {
         ContainsUnsuggestedCharacters, FieldsFromAttributeNotApplied, AppliedOnOverOnePlace,
         DataTypeDoesNotContainTheseFields, SetDefaultValueMultiTimes, NameStartsWithNumber,
         ArgumentsMustBePassedInPairs, NotSupportedDataType, NotExpectedDataType, RegisterFieldOrPropertyMultiTimes,
-        ShouldNotUseBooleanType
+        ShouldNotUseBooleanType, NeedViewModelQualifiedName
     ];
 
     public override void Initialize(AnalysisContext context) {

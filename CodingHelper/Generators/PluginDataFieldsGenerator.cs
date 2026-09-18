@@ -243,9 +243,27 @@ public class PluginDataFieldsGenerator : IIncrementalGenerator {
 
     private static GatheredInfo<PluginDataFieldsInfo> Transform(GeneratorSyntaxContext syntaxContext,
         CancellationToken token) {
-
         var classDeclarationSyntax = (ClassDeclarationSyntax)syntaxContext.Node;
         var semanticModel = syntaxContext.SemanticModel;
+        var gatheredInfo = Transform(classDeclarationSyntax, semanticModel, token);
+
+        return gatheredInfo == default
+            ? default
+            : new GatheredInfo<PluginDataFieldsInfo>(gatheredInfo.Item1, gatheredInfo.Item2.ToImmutableArray());
+    }
+
+    internal static (PluginDataFieldsInfo, ImmutableArray<DiagnosticInfo>.Builder) Transform(
+        ClassDeclarationSyntax classDeclarationSyntax,
+        SemanticModel semanticModel,
+        CancellationToken token) {
+        if (classDeclarationSyntax == null) {
+            throw new ArgumentNullException(nameof(classDeclarationSyntax));
+        }
+
+        if (semanticModel == null) {
+            throw new ArgumentNullException(nameof(semanticModel));
+        }
+
         var classSymbol = semanticModel.GetDeclaredSymbol(classDeclarationSyntax);
         if (classSymbol is null) return default;
 
@@ -254,7 +272,6 @@ public class PluginDataFieldsGenerator : IIncrementalGenerator {
                 ref attSyntaxes))
             return default;
 
-        var result = new GatheredInfo<PluginDataFieldsInfo>(default, []);
         var builder = ImmutableArray.CreateBuilder<DiagnosticInfo>();
 
         if (!classDeclarationSyntax.Modifiers.Any(m => m.IsKind(SyntaxKind.PartialKeyword))) {
@@ -264,8 +281,7 @@ public class PluginDataFieldsGenerator : IIncrementalGenerator {
                     classDeclarationSyntax.Identifier.GetLocation(),
                     [classDeclarationSyntax.Identifier.ValueText])
             );
-            result.DiagnosticInfos = builder.ToImmutableArray();
-            return result;
+            return (default, builder);
         }
 
         //  Key - for 'GeneralFieldsAttribute' is 'int' or 'double' or 'string'
@@ -326,8 +342,7 @@ public class PluginDataFieldsGenerator : IIncrementalGenerator {
 
         token.ThrowIfCancellationRequested();
 
-        result.DiagnosticInfos = builder.ToImmutableArray();
-        result.Value = new PluginDataFieldsInfo {
+        var pluginDataFieldsInfo = new PluginDataFieldsInfo {
             ClassInfo = new ClassInfo {
                 NameSpace = classSymbol.ContainingNamespace.ToDisplayString(),
                 Accessibility = classSymbol.DeclaredAccessibility,
@@ -337,7 +352,7 @@ public class PluginDataFieldsGenerator : IIncrementalGenerator {
             Arguments = attArguments
         };
 
-        return result;
+        return (pluginDataFieldsInfo, builder);
     }
 
     private void Generate(SourceProductionContext context, PluginDataFieldsInfo fieldsInfo) {

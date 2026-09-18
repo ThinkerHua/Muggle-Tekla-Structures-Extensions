@@ -1,21 +1,23 @@
 # Muggle.TsExtensions.CodingHelper
 
 ---
-
-## Table of Contents
-
-* [Generator for plugin data class](#generator-for-plugin-data-class)
-  * [Example](#example)
-* [Generator for plugin class](#generator-for-plugin-class)
-  * [Fields and "GetFieldValuesFrom" method](#fields-and-getfieldvaluesfrom-method)
-    * [Example](#example-1)
-  * ["SetDataToDefaultIfUnset" method, "Creat\*\*" methods and "ModifyTo\*\*" methods](#setdatatodefaultifunset-method-creat-methods-and-modifyto-methods)
-    * [Example](#example-2)
-* [Generator for view model class](#generator-for-view-model-class)
-  * [System preset properties](#system-preset-properties)
-  * [Specific properties](#specific-properties)
-    * [Example](#example-3)
-* [Demo](#demo)
+<!-- TOC -->
+* [Muggle.TsExtensions.CodingHelper](#muggletsextensionscodinghelper)
+  * [Generator for plugin data class](#generator-for-plugin-data-class)
+    * [Example](#example)
+  * [Generator for plugin class](#generator-for-plugin-class)
+    * [Fields and "GetFieldValuesFrom" method](#fields-and-getfieldvaluesfrom-method)
+      * [Example](#example-1)
+    * ["SetDataToDefaultIfUnset" method, "Creat\*\*" methods and "ModifyTo\*\*" methods](#setdatatodefaultifunset-method-creat-methods-and-modifyto-methods)
+      * [Example](#example-2)
+  * [Generator for view model class](#generator-for-view-model-class)
+    * [System preset properties](#system-preset-properties)
+    * [Specific properties](#specific-properties)
+      * [Example](#example-3)
+  * [Generator for user interface](#generator-for-user-interface)
+    * [Example](#example-4)
+  * [Demo](#demo)
+<!-- TOC -->
 ---
 
 ## Generator for plugin data class
@@ -538,6 +540,50 @@ public partial class MainWindowViewModel {
             OnPropertyChanged();
         }
     }
+}
+~~~
+
+---
+
+## Generator for user interface
+
+Apply "UserInterfaceAttribute" to plugin data class to generate a simple UI for plugin.
+On one hand it makes debugging easier during the core logic development stage, and on the other hand 
+it reduces workload during the UI development stage because you can edit based on the generated files.
+
+Currently, it only supports WPF, but INP and WinForm will be supported later.
+
+> ***Note***: Since the official implementation of source generators can't output files with non-.cs extensions,
+> this generator bypasses the official method to output a "WpfUi.xaml" file in the project directory
+> (although it is possible write WPF UIs purely in C# code, but doing that would lose the convenience mentioned in the second point).
+> However, this approach also introduces a drawback – when you no longer need the generated WPF UI,
+> you'll have to manually delete the "WpfUi.xaml" file.
+
+### Example
+
+~~~CSharp
+// in PluginData.cs
+
+using Muggle.TsExtensions.CodingHelper.Generators;
+
+[GeneralFields(typeof(int), "num")]
+[PlateFields("Stiffener")]
+// [UserInterface(UserInterfaceType.INP, "")]
+// [UserInterface(UserInterfaceType.WinForm, "")]
+[UserInterface(UserInterfaceType.WPF, "Plugin.MainWindowViewModel")]
+public partial class PluginData { }
+
+
+// in Plugin.cs
+
+using Muggle.TsExtensions.CodingHelper.Generators;
+
+[Plugin("Plugin")]
+// [PluginUserInterface(InpUi.Definition)]
+// [PluginUserInterface("Plugin.WinFormUi")]
+[PluginUserInterface("Plugin.WpfUi")]
+public partial class Plugin : PluginBase {
+    /* ... */
 }
 ~~~
 
