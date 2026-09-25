@@ -1,3 +1,8 @@
+string_utf8 exception_ShouldHaveSameNumberOfElements {
+    entry = ("enu", "{0} and {1} should have the same number of elements");
+    entry = ("chs", "{0}与{1}包含的元素数量应相同");
+};
+
 string_utf8 albl_General {
     entry = ("enu", "General");
     entry = ("chs", "通用");

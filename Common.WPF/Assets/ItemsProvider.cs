@@ -33,7 +33,10 @@ public static class ItemsProvider {
         }
 
         if (names.Length != drawings.Length) {
-            throw new ArgumentException($"Length of {nameof(names)} and {nameof(drawings)} doesn't match.");
+            throw new ArgumentException(string.Format(
+                TranslationService.Instance["exception_ShouldHaveSameNumberOfElements"], 
+                nameof(names),
+                nameof(drawings)));
         }
 
         var symbols = new Symbol[names.Length];
