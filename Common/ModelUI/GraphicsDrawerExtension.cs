@@ -15,6 +15,7 @@
 
 using System;
 using Muggle.TsExtensions.Common.Geometry3d;
+using Muggle.TsExtensions.Common.Resources;
 using Tekla.Structures.Geometry3d;
 using Tekla.Structures.Model.UI;
 
@@ -33,7 +34,7 @@ namespace Muggle.TsExtensions.Common.ModelUI {
         /// <param name="type">线型，默认值 <see cref="GraphicPolyLine.LineType.Solid"/>。</param>
         /// <param name="accuracy">模拟圆弧的精细程度，即每多少弧长画一条直线，默认值 10.0。不建议设置为太小的数值，会十分影响性能。</param>
         /// <exception cref="ArgumentNullException"></exception>
-        /// <exception cref="ArgumentException"><paramref name="width"/> 是有效值"1, 2, 4"以外的数值，
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="width"/> 是有效值"1, 2, 4"以外的数值，
         /// 或 <paramref name="accuracy"/> 小于等于 0.0 时引发。</exception>
         public static void DrawArc(this GraphicsDrawer drawer,
             Arc arc,
@@ -50,10 +51,10 @@ namespace Muggle.TsExtensions.Common.ModelUI {
             }
 
             if (width != 1 && width != 2 && width != 4)
-                throw new ArgumentException($"根据官方文档，“{nameof(width)}”有效值仅为 1 或 2 或 4。");
+                throw new ArgumentOutOfRangeException(nameof(width));
 
             if (accuracy <= 0)
-                throw new ArgumentException($"“{nameof(accuracy)}”不应小于等于 0.0。");
+                throw new ArgumentOutOfRangeException(Language.ShouldNotEqualOrLessThanZero, nameof(accuracy));
 
             var points = arc.GetPointsMeasure(accuracy);
             //必须包含圆弧终点，避免产生缺口
@@ -74,7 +75,7 @@ namespace Muggle.TsExtensions.Common.ModelUI {
         /// <param name="type">线型，默认值 <see cref="GraphicPolyLine.LineType.Solid"/>。</param>
         /// <param name="size">点大小，默认值 50.0。</param>
         /// <exception cref="ArgumentNullException"></exception>
-        /// <exception cref="ArgumentException"><paramref name="width"/> 是有效值"1, 2, 4"以外的数值，
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="width"/> 是有效值"1, 2, 4"以外的数值，
         /// 或 <paramref name="size"/> 小于等于 0.0 时引发。</exception>
         public static void DrawPoint(this GraphicsDrawer drawer,
             Point point,
@@ -91,10 +92,10 @@ namespace Muggle.TsExtensions.Common.ModelUI {
             }
 
             if (width != 1 && width != 2 && width != 4)
-                throw new ArgumentException($"根据官方文档，“{nameof(width)}”有效值仅为 1 或 2 或 4。");
+                throw new ArgumentOutOfRangeException(nameof(width));
 
             if (size <= 0)
-                throw new ArgumentException($"“{nameof(size)}”不应小于等于0.0。");
+                throw new ArgumentOutOfRangeException(Language.ShouldNotEqualOrLessThanZero, nameof(size));
 
             Point outLT = new Point(-size, size, 0), outRT = new Point(size, size, 0);
             Point outLB = new Point(-size, -size, 0), outRB = new Point(size, -size, 0);
@@ -131,7 +132,7 @@ namespace Muggle.TsExtensions.Common.ModelUI {
         /// <param name="point">基准控制点，默认值为直线原点。</param>
         /// <param name="length">要画出的长度，默认值 5000.0。</param>
         /// <exception cref="ArgumentNullException"></exception>
-        /// <exception cref="ArgumentException"><paramref name="line"/> 的 <see cref="Line.Direction"/> 属性为零向量，
+        /// <exception cref="ArgumentOutOfRangeException"><paramref name="line"/> 的 <see cref="Line.Direction"/> 属性为零向量，
         /// 或 <paramref name="length"/> 小于等于 0.0，或 <paramref name="width"/> 是有效值"1, 2, 4"以外的数值时引发。</exception>
         public static void DrawLine(this GraphicsDrawer drawer,
             Line line,
@@ -149,15 +150,15 @@ namespace Muggle.TsExtensions.Common.ModelUI {
             }
 
             if (line.Direction.IsZero())
-                throw new ArgumentException($"“{nameof(line)}”.Direction 不应为零向量。");
+                throw new ArgumentOutOfRangeException(Language.DirectionOfLineShouldNotBeZeroVector, nameof(line));
 
             if (length <= 0)
-                throw new ArgumentException($"“{nameof(length)}”不应小于等于0.0。");
+                throw new ArgumentOutOfRangeException(Language.ShouldNotEqualOrLessThanZero, nameof(length));
 
             if (width != 1 && width != 2 && width != 4)
-                throw new ArgumentException($"根据官方文档，“{nameof(width)}”有效值仅为 1 或 2 或 4。");
+                throw new ArgumentOutOfRangeException(string.Format(Language.InvalidValueAndValidValuesAre, string.Join(", ", [1, 2, 4])), nameof(width));
 
-            if (point == default) point = line.Origin;
+            if (point == null) point = line.Origin;
             var p1 = Projection.PointToLine(point, line);
             var p2 = new Point(p1);
 

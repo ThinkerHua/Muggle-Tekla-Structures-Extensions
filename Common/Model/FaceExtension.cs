@@ -73,17 +73,18 @@ public static class FaceExtension {
             throw new ArgumentNullException(nameof(face));
         }
 
+        Point origin = null;
+        
         var loopEnumerator = face.GetLoopEnumerator();
         if (loopEnumerator.MoveNext()) {
             var loop = loopEnumerator.Current;
 
             var vertexEnumerator = loop.GetVertexEnumerator();
             if (vertexEnumerator.MoveNext()) {
-                var p1 = vertexEnumerator.Current;
-                return new GeometricPlane(p1, face.Normal);
+                origin = vertexEnumerator.Current;
             }
         }
 
-        throw new InvalidOperationException("Cannot convert face to GeometricPlane");
+        return new GeometricPlane(origin, face.Normal);
     }
 }

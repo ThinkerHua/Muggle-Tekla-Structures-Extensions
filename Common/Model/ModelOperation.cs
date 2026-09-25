@@ -18,6 +18,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Muggle.TsExtensions.Common.Geometry3d;
+using Muggle.TsExtensions.Common.Resources;
 using Tekla.Structures.Geometry3d;
 using Tekla.Structures.Model;
 using static Muggle.TsExtensions.Common.Profile.ProfileOperation;
@@ -33,20 +34,20 @@ namespace Muggle.TsExtensions.Common.Model {
         /// <summary>
         /// 用给定轮廓点集合创建布尔操作多边形。
         /// </summary>
+        /// <remarks>应自行执行 Insert() 操作。</remarks>
         /// <param name="contourPoints">轮廓点集合</param>
         /// <param name="thickness">厚度</param>
         /// <returns>布尔操作多边形。</returns>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="thickness"/> 不能是 <see cref="double.NaN"/>，
         /// 也不应小于等于 0.0。</exception>
-        /// <exception cref="Exception">对象插入数据库失败时引发。</exception>
         public static ContourPlate CreatBooleanOperationPolygon(ArrayList contourPoints, double thickness) {
             if (contourPoints is null) {
                 throw new ArgumentNullException(nameof(contourPoints));
             }
 
             if (double.IsNaN(thickness) || thickness <= 0) {
-                throw new ArgumentOutOfRangeException($"“{nameof(thickness)}”不能是 double.NaN，也不应小于等于 0.0。");
+                throw new ArgumentOutOfRangeException(Language.ShouldNotBeNanOrZero, nameof(thickness));
             }
 
             ContourPlate contourPlate = new ContourPlate {
@@ -55,8 +56,6 @@ namespace Muggle.TsExtensions.Common.Model {
                 Material = { MaterialString = "ANTIMATERIAL" },
                 Class = BooleanPart.BooleanOperativeClassName,
             };
-            if (!contourPlate.Insert())
-                throw new Exception("Failed to insert BooleanOperationPolygon.");
 
             return contourPlate;
         }
@@ -64,20 +63,20 @@ namespace Muggle.TsExtensions.Common.Model {
         /// <summary>
         /// 用给定点集合创建布尔操作多边形。倒角为 <see cref="Chamfer.ChamferTypeEnum.CHAMFER_NONE"/>。
         /// </summary>
+        /// <remarks>应自行执行 Insert() 操作。</remarks>
         /// <param name="points">点集合</param>
         /// <param name="thickness">厚度</param>
         /// <returns>布尔操作多边形。</returns>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="thickness"/> 不能是 <see cref="double.NaN"/>，
         /// 也不应小于等于 0.0。</exception>
-        /// <exception cref="Exception">对象插入数据库失败时引发。</exception>
         public static ContourPlate CreatBooleanOperationPolygon(IEnumerable<Point> points, double thickness) {
             if (points is null) {
                 throw new ArgumentNullException(nameof(points));
             }
 
             if (double.IsNaN(thickness) || thickness <= 0) {
-                throw new ArgumentOutOfRangeException($"“{nameof(thickness)}”不能是 double.NaN，也不应小于等于 0.0。");
+                throw new ArgumentOutOfRangeException(Language.ShouldNotBeNanOrZero, nameof(thickness));
             }
 
             var chamfer = new Chamfer();
@@ -92,8 +91,6 @@ namespace Muggle.TsExtensions.Common.Model {
                 Material = { MaterialString = "ANTIMATERIAL" },
                 Class = BooleanPart.BooleanOperativeClassName,
             };
-            if (!contourPlate.Insert())
-                throw new Exception("Failed to insert BooleanOperationPolygon.");
 
             return contourPlate;
         }
@@ -101,10 +98,10 @@ namespace Muggle.TsExtensions.Common.Model {
         /// <summary>
         /// 用给定多边形板创建布尔操作多边形。
         /// </summary>
+        /// <remarks>应自行执行 Insert() 操作。</remarks>
         /// <param name="sourceContourPlate">用作布尔操作的多边形板</param>
         /// <returns>布尔操作多边形</returns>
         /// <exception cref="ArgumentNullException"></exception>
-        /// <exception cref="Exception">对象插入数据库失败时引发。</exception>
         public static ContourPlate CreatBooleanOperationPolygon(ContourPlate sourceContourPlate) {
             if (sourceContourPlate is null) {
                 throw new ArgumentNullException(nameof(sourceContourPlate));
@@ -119,10 +116,11 @@ namespace Muggle.TsExtensions.Common.Model {
                 Contour = { ContourPoints = cps },
                 Profile = { ProfileString = sourceContourPlate.Profile.ProfileString },
                 Material = { MaterialString = "ANTIMATERIAL" },
+                Position = {
+                    Depth = sourceContourPlate.Position.Depth, DepthOffset = sourceContourPlate.Position.DepthOffset
+                },
                 Class = BooleanPart.BooleanOperativeClassName,
             };
-            if (!contourPlate.Insert())
-                throw new Exception("Failed to insert BooleanOperationPolygon.");
 
             return contourPlate;
         }
@@ -163,6 +161,7 @@ namespace Muggle.TsExtensions.Common.Model {
         /// <summary>
         /// 创建梁。
         /// </summary>
+        /// <remarks>应自行执行 Insert() 操作。</remarks>
         /// <param name="startPoint">梁起点</param>
         /// <param name="endPoint">梁终点</param>
         /// <param name="name">梁名称，默认值 "BEAM"</param>
@@ -181,8 +180,7 @@ namespace Muggle.TsExtensions.Common.Model {
         /// <param name="rotationOffset">位置属性的旋转偏移，默认值 0.0</param>
         /// <returns>创建的梁</returns>
         /// <exception cref="ArgumentNullException"></exception>
-        /// <exception cref="Exception">对象插入数据库失败时引发。</exception>
-        public static Beam CreatBeam(
+        internal static Beam CreatBeam(
             Point startPoint, Point endPoint,
             string name = "BEAM", string profileStr = "HM244*175*7*11", string materialStr = "Q345B",
             string assemblyPrefix = "GL-", int assemblyStartNumber = 1, string partPrefix = "P",
@@ -237,8 +235,6 @@ namespace Muggle.TsExtensions.Common.Model {
                     RotationOffset = rotationOffset,
                 }
             };
-            if (!beam.Insert())
-                throw new Exception("Failed to insert Beam.");
 
             return beam;
         }
@@ -246,6 +242,7 @@ namespace Muggle.TsExtensions.Common.Model {
         /// <summary>
         /// 用给定轮廓点集合创建折梁。
         /// </summary>
+        /// <remarks>应自行执行 Insert() 操作。</remarks>
         /// <param name="contour">折梁的轮廓</param>
         /// <param name="name">折梁名称，默认值 "BEAM"</param>
         /// <param name="profileStr">折梁截面，默认值 "HM244*175*7*11"</param>
@@ -263,8 +260,7 @@ namespace Muggle.TsExtensions.Common.Model {
         /// <param name="rotationOffset">位置属性的旋转偏移，默认值 0.0</param>
         /// <returns>创建的折梁</returns>
         /// <exception cref="ArgumentNullException"></exception>
-        /// <exception cref="Exception">对象插入数据库失败时引发。</exception>
-        public static PolyBeam CreatPolyBeam(
+        internal static PolyBeam CreatPolyBeam(
             Contour contour,
             string name = "BEAM", string profileStr = "HM244*175*7*11", string materialStr = "Q345B",
             string assemblyPrefix = "GL-", int assemblyStartNumber = 1, string partPrefix = "P",
@@ -314,8 +310,6 @@ namespace Muggle.TsExtensions.Common.Model {
                     RotationOffset = rotationOffset,
                 }
             };
-            if (!polyBeam.Insert())
-                throw new Exception("Failed to insert Beam.");
 
             return polyBeam;
         }
@@ -323,6 +317,7 @@ namespace Muggle.TsExtensions.Common.Model {
         /// <summary>
         /// 用给定点集合创建折梁，各轮廓点倒角均为 <see cref="Chamfer.ChamferTypeEnum.CHAMFER_NONE"/>。
         /// </summary>
+        /// <remarks>应自行执行 Insert() 操作。</remarks>
         /// <param name="points">折梁的控制点集合</param>
         /// <param name="name">折梁名称，默认值 "BEAM"</param>
         /// <param name="profileStr">折梁截面，默认值 "HM244*175*7*11"</param>
@@ -340,8 +335,7 @@ namespace Muggle.TsExtensions.Common.Model {
         /// <param name="rotationOffset">位置属性的旋转偏移，默认值 0.0</param>
         /// <returns>创建的折梁</returns>
         /// <exception cref="ArgumentNullException"></exception>
-        /// <exception cref="Exception">对象插入数据库失败时引发。</exception>
-        public static PolyBeam CreatPolyBeam(
+        internal static PolyBeam CreatPolyBeam(
             IEnumerable<Point> points,
             string name = "BEAM", string profileStr = "HM244*175*7*11", string materialStr = "Q345B",
             string assemblyPrefix = "GL-", int assemblyStartNumber = 1, string partPrefix = "P",
@@ -396,8 +390,6 @@ namespace Muggle.TsExtensions.Common.Model {
                     RotationOffset = rotationOffset,
                 }
             };
-            if (!polyBeam.Insert())
-                throw new Exception("Failed to insert Beam.");
 
             return polyBeam;
         }
@@ -405,6 +397,7 @@ namespace Muggle.TsExtensions.Common.Model {
         /// <summary>
         /// 用给定轮廓点集合创建多边形板。
         /// </summary>
+        /// <remarks>应自行执行 Insert() 操作。</remarks>
         /// <param name="contourPoints">板轮廓点</param>
         /// <param name="name">名称，默认值 "PLATE"</param>
         /// <param name="profileStr">截面，默认值 "PL10"</param>
@@ -418,8 +411,7 @@ namespace Muggle.TsExtensions.Common.Model {
         /// <param name="depthOffset">位置属性的深度偏移，默认值 0.0</param>
         /// <returns>创建的多边形板。</returns>
         /// <exception cref="ArgumentNullException"></exception>
-        /// <exception cref="Exception">对象插入数据库失败时引发。</exception>
-        public static ContourPlate CreatContourPlate(
+        internal static ContourPlate CreatContourPlate(
             ArrayList contourPoints,
             string name = "PLATE", string profileStr = "PL10", string materialStr = "Q345B",
             string assemblyPrefix = "PLATE", int assemblyStartNumber = 1, string partPrefix = "P",
@@ -431,7 +423,7 @@ namespace Muggle.TsExtensions.Common.Model {
             }
 
             if (contourPoints.Count == 0) {
-                throw new ArgumentException($"“{nameof(contourPoints)}”元素数量不应为 0。");
+                throw new ArgumentException(Language.ShouldNotBeEmptyList, nameof(contourPoints));
             }
 
             if (name == null) {
@@ -465,15 +457,13 @@ namespace Muggle.TsExtensions.Common.Model {
                 Position = { Depth = depthEnum, DepthOffset = depthOffset },
             };
 
-            if (!contourPlate.Insert())
-                throw new Exception("Failed to insert ContourPlate.");
-
             return contourPlate;
         }
 
         /// <summary>
         /// 用给定点集合创建多边形板。倒角为 <see cref="Chamfer.ChamferTypeEnum.CHAMFER_NONE"/>。
         /// </summary>
+        /// <remarks>应自行执行 Insert() 操作。</remarks>
         /// <param name="points">点集合</param>
         /// <param name="name">名称，默认值 "PLATE"</param>
         /// <param name="profileStr">截面，默认值 "PL10"</param>
@@ -488,8 +478,7 @@ namespace Muggle.TsExtensions.Common.Model {
         /// <returns>创建的多边形板。</returns>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="ArgumentException"><paramref name="points"/>元素数量为 0 时引发。</exception>
-        /// <exception cref="Exception">对象插入数据库失败时引发。</exception>
-        public static ContourPlate CreatContourPlate(
+        internal static ContourPlate CreatContourPlate(
             IEnumerable<Point> points,
             string name = "PLATE", string profileStr = "PL10", string materialStr = "Q345B",
             string assemblyPrefix = "PLATE", int assemblyStartNumber = 1, string partPrefix = "P",
@@ -502,7 +491,7 @@ namespace Muggle.TsExtensions.Common.Model {
 
             var pointArr = points as IList<Point> ?? [.. points];
             if (!pointArr.Any()) {
-                throw new ArgumentException($"“{nameof(points)}”元素数量不应为 0。", nameof(points));
+                throw new ArgumentException(Language.ShouldNotBeEmptyList, nameof(points));
             }
 
             if (name == null) {
@@ -541,8 +530,6 @@ namespace Muggle.TsExtensions.Common.Model {
                 Class = @class,
                 Position = { Depth = depthEnum, DepthOffset = depthOffset },
             };
-            if (!contourPlate.Insert())
-                throw new Exception("Failed to insert ContourPlate.");
 
             return contourPlate;
         }
@@ -550,6 +537,7 @@ namespace Muggle.TsExtensions.Common.Model {
         /// <summary>
         /// 创建焊缝。
         /// </summary>
+        /// <remarks>应自行执行 Insert() 操作。</remarks>
         /// <param name="mainObject">焊接到对象</param>
         /// <param name="secondaryObject">焊接对象</param>
         /// <param name="aroundWeld">环焊缝(true)或边缘焊缝(false)，默认值 true</param>
@@ -564,8 +552,7 @@ namespace Muggle.TsExtensions.Common.Model {
         /// <param name="angleBelow">下焊缝角度，默认值 0.0</param>
         /// <returns>创建的焊缝</returns>
         /// <exception cref="ArgumentNullException"></exception>
-        /// <exception cref="Exception">对象插入数据库失败时引发。</exception>
-        public static Weld CreatWeld(
+        internal static Weld CreatWeld(
             ModelObject mainObject, ModelObject secondaryObject,
             bool aroundWeld = true, bool shopWeld = true,
             Weld.WeldPositionEnum position = Weld.WeldPositionEnum.WELD_POSITION_PLUS_X,
@@ -596,8 +583,6 @@ namespace Muggle.TsExtensions.Common.Model {
                 SizeBelow = sizeBelow,
                 AngleBelow = angleBelow,
             };
-            if (!weld.Insert())
-                throw new Exception("Failed to insert Weld.");
 
             return weld;
         }
@@ -605,6 +590,7 @@ namespace Muggle.TsExtensions.Common.Model {
         /// <summary>
         /// 创建多边形焊缝。
         /// </summary>
+        /// <remarks>应自行执行 Insert() 操作。</remarks>
         /// <param name="mainObject">焊接到对象</param>
         /// <param name="secondaryObject">焊接的对象</param>
         /// <param name="polygon">多边形</param>
@@ -619,8 +605,7 @@ namespace Muggle.TsExtensions.Common.Model {
         /// <param name="angleBelow">下焊缝角度，默认值 0.0</param>
         /// <returns>创建的多边形焊缝</returns>
         /// <exception cref="ArgumentNullException"></exception>
-        /// <exception cref="Exception">对象插入数据库失败时引发。</exception>
-        public static PolygonWeld CreatPolygonWeld(
+        internal static PolygonWeld CreatPolygonWeld(
             ModelObject mainObject, ModelObject secondaryObject, Polygon polygon,
             bool aroundWeld = false, bool shopWeld = true,
             BaseWeld.WeldPreparationTypeEnum preparation = BaseWeld.WeldPreparationTypeEnum.PREPARATION_NONE,
@@ -654,8 +639,6 @@ namespace Muggle.TsExtensions.Common.Model {
                 SizeBelow = sizeBelow,
                 AngleBelow = angleBelow,
             };
-            if (!pw.Insert())
-                throw new Exception("Failed to insert PolygonWeld.");
 
             return pw;
         }
@@ -663,6 +646,7 @@ namespace Muggle.TsExtensions.Common.Model {
         /// <summary>
         /// 创建阵列螺栓组。
         /// </summary>
+        /// <remarks>应自行执行 Insert() 操作。</remarks>
         /// <param name="boltTo">栓接到的零件</param>
         /// <param name="beBolted">要栓接的零件</param>
         /// <param name="otherBeBolted">其他要栓接的零件集合</param>
@@ -687,8 +671,7 @@ namespace Muggle.TsExtensions.Common.Model {
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="ArgumentException"><paramref name="boltDistX"/> 或 <paramref name="boltDistY"/>
         /// 中元素数量为 0 时引发。</exception>
-        /// <exception cref="Exception">对象插入数据库失败时引发。</exception>
-        public static BoltArray CreatBoltArray(
+        internal static BoltArray CreatBoltArray(
             Part boltTo, Part beBolted, IEnumerable<Part> otherBeBolted, Point firstPosition, Point secondPosition,
             IEnumerable<Distance> boltDistX,
             IEnumerable<Distance> boltDistY,
@@ -712,11 +695,11 @@ namespace Muggle.TsExtensions.Common.Model {
 
             var boltDistXList = boltDistX as IList<Distance> ?? boltDistX.ToList();
             if (!boltDistXList.Any())
-                throw new ArgumentException($"“{nameof(boltDistX)}”中项目数至少需要1个。");
+                throw new ArgumentException(string.Format(Language.NeedAtLeastNElements, 1), nameof(boltDistX));
 
             var boltDistYList = boltDistY as IList<Distance> ?? boltDistY.ToList();
             if (!boltDistYList.Any())
-                throw new ArgumentException($"“{nameof(boltDistY)}”中项目数至少需要1个。");
+                throw new ArgumentException(string.Format(Language.NeedAtLeastNElements, 1), nameof(boltDistY));
 
             position ??= new Position { Rotation = Position.RotationEnum.TOP };
 
@@ -757,12 +740,13 @@ namespace Muggle.TsExtensions.Common.Model {
                 boltArray.AddBoltDistY(d.Value);
             }
 
-            return boltArray.Insert() ? boltArray : throw new Exception("Failed to insert BoltArray.");
+            return boltArray;
         }
 
         /// <summary>
         /// 创建环形螺栓组。
         /// </summary>
+        /// <remarks>应自行执行 Insert() 操作。</remarks>
         /// <param name="boltTo">栓接到的零件</param>
         /// <param name="beBolted">要栓接的零件</param>
         /// <param name="otherBeBolted">其他要栓接的零件集合</param>
@@ -783,8 +767,7 @@ namespace Muggle.TsExtensions.Common.Model {
         /// <param name="nut2">是否使用螺母1，默认值 true</param>
         /// <returns>创建的环形螺栓组。</returns>
         /// <exception cref="ArgumentNullException"></exception>
-        /// <exception cref="Exception">对象插入数据库失败时引发。</exception>
-        public static BoltCircle CreatBoltCircle(
+        internal static BoltCircle CreatBoltCircle(
             Part boltTo, Part beBolted, IEnumerable<Part> otherBeBolted, Point firstPosition, Point secondPosition,
             int num = 8, double diameter = 200.0, Position position = null,
             string boltStandard = "HS10.9", double boltSize = 20.0,
@@ -832,12 +815,13 @@ namespace Muggle.TsExtensions.Common.Model {
                 }
             }
 
-            return boltCircle.Insert() ? boltCircle : throw new Exception("Failed to insert BoltCircle.");
+            return boltCircle;
         }
 
         /// <summary>
         /// 创建列表螺栓组。
         /// </summary>
+        /// <remarks>应自行执行 Insert() 操作。</remarks>
         /// <param name="boltTo">栓接到的零件</param>
         /// <param name="beBolted">要栓接的零件</param>
         /// <param name="otherBeBolted">其他要栓接的零件集合</param>
@@ -862,8 +846,7 @@ namespace Muggle.TsExtensions.Common.Model {
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="ArgumentException"><paramref name="boltDistX"/> 或 <paramref name="boltDistY"/>
         /// 中元素数量为 0 时引发。</exception>
-        /// <exception cref="Exception">对象插入数据库失败时引发。</exception>
-        public static BoltXYList CreatBoltXYList(
+        internal static BoltXYList CreatBoltXYList(
             Part boltTo, Part beBolted, IEnumerable<Part> otherBeBolted, Point firstPosition, Point secondPosition,
             IEnumerable<Distance> boltDistX,
             IEnumerable<Distance> boltDistY,
@@ -887,11 +870,11 @@ namespace Muggle.TsExtensions.Common.Model {
 
             var boltDistXList = boltDistX as IList<Distance> ?? boltDistX.ToList();
             if (!boltDistXList.Any())
-                throw new ArgumentException($"“{nameof(boltDistX)}”中项目数至少需要1个。");
+                throw new ArgumentException(string.Format(Language.NeedAtLeastNElements, 1), nameof(boltDistX));
 
             var boltDistYList = boltDistX as IList<Distance> ?? boltDistY.ToList();
             if (!boltDistYList.Any())
-                throw new ArgumentException($"“{nameof(boltDistY)}”中项目数至少需要1个。");
+                throw new ArgumentException(string.Format(Language.NeedAtLeastNElements, 1), nameof(boltDistY));
 
             position ??= new Position { Rotation = Position.RotationEnum.TOP };
 
@@ -932,7 +915,7 @@ namespace Muggle.TsExtensions.Common.Model {
                 boltXYList.AddBoltDistY(d.Value);
             }
 
-            return boltXYList.Insert() ? boltXYList : throw new Exception("Failed to insert BoltXYList.");
+            return boltXYList;
         }
 
         /// <summary>
@@ -976,7 +959,7 @@ namespace Muggle.TsExtensions.Common.Model {
         /// 或 当 <paramref name="useWasherPlate"/> 为 true，且 <paramref name="washerPlateThickness"/>、
         /// <paramref name="washerPlateWidth"/>、<paramref name="washerPlateHoleDiameter"/> 
         /// 任一小于等于 0.0 时引发。</exception>
-        public static List<Part> CreatAnchorRod(
+        public static List<Part> InsertAnchorRod(
             Point firstPosition, Point secondPosition,
             double length1, double length2, double length3, double length4 = 0.0, double length5 = 0.0,
             Vector hookDirection = null, double bendRadiusFactor = 3.5,
@@ -985,6 +968,7 @@ namespace Muggle.TsExtensions.Common.Model {
             double washerPlatePosition = 20.0, double washerPlateHoleDiameter = 26.0,
             bool useWasher1 = true, bool useWasher2 = true, bool useWasher3 = true, bool useNut1 = true,
             bool useNut2 = true, bool useNut3 = true) {
+
             #region 参数检查
 
             if (firstPosition is null) {
@@ -997,7 +981,7 @@ namespace Muggle.TsExtensions.Common.Model {
 
             var anchorDirection = new Vector(secondPosition - firstPosition).GetNormal();
             if (anchorDirection.IsZero()) {
-                throw new ArgumentException("锚杆控制方向不能为零向量。");
+                throw new ArgumentException(Language.ShouldNotBeZeroVector, nameof(anchorDirection));
             }
 
             if (length4 > 0.0 || length5 > 0.0) {
@@ -1006,12 +990,13 @@ namespace Muggle.TsExtensions.Common.Model {
                 }
 
                 if (hookDirection.IsZero()) {
-                    throw new ArgumentException("弯钩方向不能为零向量。");
+                    throw new ArgumentException(Language.ShouldNotBeZeroVector, nameof(hookDirection));
                 }
 
                 var cross = anchorDirection.Cross(hookDirection);
                 if (cross.IsZero()) {
-                    throw new ArgumentException("弯钩方向不能与锚杆控制方向平行。");
+                    throw new ArgumentException(string.Format(Language.ShouldNotParallelWith, nameof(anchorDirection),
+                        nameof(hookDirection)));
                 }
 
                 hookDirection = cross.Cross(anchorDirection).GetNormal();
@@ -1020,45 +1005,45 @@ namespace Muggle.TsExtensions.Common.Model {
             material ??= string.Empty;
 
             if (length1 <= 0.0) {
-                throw new ArgumentException($"“{nameof(length1)}”不应小于等于 0。", nameof(length1));
+                throw new ArgumentException(Language.ShouldNotEqualOrLessThanZero, nameof(length1));
             }
 
             if (length2 <= 0.0) {
-                throw new ArgumentException($"“{nameof(length2)}”不应小于等于 0。", nameof(length2));
+                throw new ArgumentException(Language.ShouldNotEqualOrLessThanZero, nameof(length2));
             }
 
             if (length3 <= 0.0) {
-                throw new ArgumentException($"“{nameof(length3)}”不应小于等于 0。", nameof(length3));
+                throw new ArgumentException(Language.ShouldNotEqualOrLessThanZero, nameof(length3));
             }
 
             if (length4 < 0.0) {
-                throw new ArgumentException($"“{nameof(length4)}”不应小于 0。", nameof(length4));
+                throw new ArgumentException(Language.ShouldNotEqualOrLessThanZero, nameof(length4));
             }
 
             if (length5 < 0.0) {
-                throw new ArgumentException($"“{nameof(length5)}”不应小于 0。", nameof(length5));
+                throw new ArgumentException(Language.ShouldNotEqualOrLessThanZero, nameof(length5));
             }
 
             if (size <= 0.0) {
-                throw new ArgumentException($"“{nameof(size)}”不应小于等于 0。", nameof(size));
+                throw new ArgumentException(Language.ShouldNotEqualOrLessThanZero, nameof(size));
             }
 
             if (tolerance < 0.0) {
-                throw new ArgumentException($"“{nameof(tolerance)}”不应小于 0。", nameof(tolerance));
+                throw new ArgumentException(Language.ShouldNotEqualOrLessThanZero, nameof(tolerance));
             }
 
             if (useWasherPlate) {
                 if (washerPlateThickness <= 0.0) {
-                    throw new ArgumentException($"“{nameof(washerPlateThickness)}”不应小于等于 0。",
+                    throw new ArgumentException(Language.ShouldNotEqualOrLessThanZero,
                         nameof(washerPlateThickness));
                 }
 
                 if (washerPlateWidth <= 0.0) {
-                    throw new ArgumentException($"“{nameof(washerPlateWidth)}”不应小于等于 0。", nameof(washerPlateWidth));
+                    throw new ArgumentException(Language.ShouldNotEqualOrLessThanZero, nameof(washerPlateWidth));
                 }
 
                 if (washerPlateHoleDiameter <= 0.0) {
-                    throw new ArgumentException($"“{nameof(washerPlateHoleDiameter)}”不应小于等于 0。",
+                    throw new ArgumentException(Language.ShouldNotEqualOrLessThanZero,
                         nameof(washerPlateHoleDiameter));
                 }
             }
@@ -1103,12 +1088,14 @@ namespace Muggle.TsExtensions.Common.Model {
             var point2 = firstPosition + anchorDirection * length2;
             screw = CreatBeam(point1, point2, "SCREW", $"D{size - 1}", material,
                 partPrefix: "D", @class: @class);
+            screw.Insert();
 
             var point3 = point2 + anchorDirection * length3;
             Point point4 = null, point5 = null, point6 = null;
             if (length4 == 0.0) {
                 anchorRod = CreatBeam(point2, point3, "ANCHORROD", $"D{size}", material,
                     partPrefix: "D", @class: @class);
+                anchorRod.Insert();
             } else {
                 var chamferNone = new Chamfer();
                 var chamferRounding = new Chamfer {
@@ -1127,6 +1114,7 @@ namespace Muggle.TsExtensions.Common.Model {
                     anchorRod = CreatPolyBeam(
                         new Contour { ContourPoints = new ArrayList { cp2, cp3, cp4 } },
                         "ANCHORROD", $"D{size}", material, partPrefix: "D", @class: @class);
+                    anchorRod.Insert();
                 } else {
                     point5 = point4 - anchorDirection * length5;
                     cp4 = new ContourPoint(point4, chamferRounding);
@@ -1135,6 +1123,7 @@ namespace Muggle.TsExtensions.Common.Model {
                     anchorRod = CreatPolyBeam(
                         new Contour { ContourPoints = new ArrayList { cp2, cp3, cp4, cp5 } },
                         "ANCHORROD", $"D{size}", material, partPrefix: "D", @class: @class);
+                    anchorRod.Insert();
                 }
             }
 
@@ -1147,15 +1136,17 @@ namespace Muggle.TsExtensions.Common.Model {
             washerPlate = CreatBeam(
                 point1, point2, "WASHERPLATE", $"PL{washerPlateThickness}*{washerPlateWidth}", material,
                 @class: @class, depthEnum: Position.DepthEnum.FRONT);
+            washerPlate.Insert();
 
             point1 = firstPosition - anchorDirection * washerPlatePosition;
             point2 = point1 - anchorDirection * washerPlateThickness;
             var hole = CreatBeam(
                 point1, point2, "HOLE", $"D{washerPlateHoleDiameter}", "ANTIMATERIAL",
                 partPrefix: "D", @class: BooleanPart.BooleanOperativeClassName);
+            hole.Insert();
             ApplyBooleanOperation(washerPlate, hole);
             hole.Delete();
-        SkipWasherPlate:
+            SkipWasherPlate:
 
             if (!useWasher1)
                 goto SkipWasher1;
@@ -1165,7 +1156,8 @@ namespace Muggle.TsExtensions.Common.Model {
             washer1 = CreatBeam(
                 point1, point2, "WASHER", $"O{size * 2 + 6}*{size * 0.5 + 3}", material,
                 partPrefix: "O", @class: @class);
-        SkipWasher1:
+            washer1.Insert();
+            SkipWasher1:
 
             if (!useWasher2)
                 goto SkipWasher2;
@@ -1175,7 +1167,8 @@ namespace Muggle.TsExtensions.Common.Model {
             washer2 = CreatBeam(
                 point1, point2, "WASHER", $"O{size * 2 + 6}*{size * 0.5 + 3}", material,
                 partPrefix: "O", @class: @class);
-        SkipWasher2:
+            washer2.Insert();
+            SkipWasher2:
 
             if (!useWasher3)
                 goto SkipWasher3;
@@ -1184,7 +1177,8 @@ namespace Muggle.TsExtensions.Common.Model {
             washer3 = CreatBeam(
                 point1, point2, "WASHER", $"O{size * 2 + 6}*{size * 0.5 + 3}", material,
                 partPrefix: "O", @class: @class);
-        SkipWasher3:
+            washer3.Insert();
+            SkipWasher3:
 
             var matrix = MatrixFactoryExtension.Rotate(new Line(firstPosition, secondPosition), Math.PI / 3);
             if (!useNut1)
@@ -1200,7 +1194,8 @@ namespace Muggle.TsExtensions.Common.Model {
             nut1 = CreatContourPlate(
                 [point1, point2, point3, point4, point5, point6], "NUT", $"PL{size}", material,
                 @class: @class, depthEnum: Position.DepthEnum.FRONT);
-        SkipNut1:
+            nut1.Insert();
+            SkipNut1:
 
             if (!useNut2)
                 goto SkipNut2;
@@ -1216,7 +1211,8 @@ namespace Muggle.TsExtensions.Common.Model {
             nut2 = CreatContourPlate(
                 [point1, point2, point3, point4, point5, point6], "NUT", $"PL{size}", material,
                 @class: @class, depthEnum: Position.DepthEnum.FRONT);
-        SkipNut2:
+            nut2.Insert();
+            SkipNut2:
 
             if (!useNut3)
                 goto SkipNut3;
@@ -1229,7 +1225,8 @@ namespace Muggle.TsExtensions.Common.Model {
             nut3 = CreatContourPlate(
                 [point1, point2, point3, point4, point5, point6], "NUT", $"PL{size}", material,
                 @class: @class, depthEnum: Position.DepthEnum.BEHIND);
-        SkipNut3:
+            nut3.Insert();
+            SkipNut3:
 
             var parts = new List<Part> { anchorRod };
             if (washerPlate != null) parts.Add(washerPlate);
@@ -1238,6 +1235,7 @@ namespace Muggle.TsExtensions.Common.Model {
                 firstPosition + anchorDirection * (size * 1.5),
                 firstPosition - anchorDirection * (washerPlatePosition + washerPlateThickness + size * 3),
                 "HOLE", $"D{size}", "ANTIMATERIAL", @class: BooleanPart.BooleanOperativeClassName);
+            hole.Insert();
             if (washer1 != null) {
                 ApplyBooleanOperation(washer1, hole);
                 parts.Add(washer1);
@@ -1282,25 +1280,25 @@ namespace Muggle.TsExtensions.Common.Model {
         /// 以 <see cref="Solid.IntersectAllFaces(Point, Point, Point)"/> 方法计算交集。
         /// </remarks>
         /// <param name="part"><inheritdoc 
-        /// cref="CreatStiffeners(Part, Point, double, string, string, double, double, double, double, double, Chamfer.ChamferTypeEnum, double, double, double, double)" 
+        /// cref="InsertStiffeners" 
         /// path="/param[1]"/>
         /// </param>
         /// <param name="position"><inheritdoc 
-        /// cref="CreatStiffeners(Part, Point, double, string, string, double, double, double, double, double, Chamfer.ChamferTypeEnum, double, double, double, double)" 
+        /// cref="InsertStiffeners" 
         /// path="/param[2]"/>
         /// </param>
         /// <param name="thickness"><inheritdoc 
-        /// cref="CreatStiffeners(Part, Point, double, string, string, double, double, double, double, double, Chamfer.ChamferTypeEnum, double, double, double, double)" 
+        /// cref="InsertStiffeners" 
         /// path="/param[3]"/>
         /// </param>
         /// <param name="partCS">加劲板所处位置处映射的零件坐标系</param>
         /// <param name="stifPlane">加劲板中心平面</param>
         /// <param name="rotationAroundY"><inheritdoc 
-        /// cref="CreatStiffeners(Part, Point, double, string, string, double, double, double, double, double, Chamfer.ChamferTypeEnum, double, double, double, double)" 
+        /// cref="InsertStiffeners" 
         /// path="/param[6]"/>
         /// </param>
         /// <param name="rotationAroundZ"><inheritdoc 
-        /// cref="CreatStiffeners(Part, Point, double, string, string, double, double, double, double, double, Chamfer.ChamferTypeEnum, double, double, double, double)" 
+        /// cref="InsertStiffeners" 
         /// path="/param[7]"/>
         /// </param>
         /// <returns>
@@ -1326,13 +1324,13 @@ namespace Muggle.TsExtensions.Common.Model {
             const double radiansOf85 = 85.0 / 180.0 * Math.PI;
             if (Math.Abs(rotationAroundY) > radiansOf85) {
                 throw new ArgumentOutOfRangeException(
-                    $"Rotation angle \"{nameof(rotationAroundY)}\" out of range, only supports in range of -85~85 degrees.",
+                    string.Format(Language.InvalidValueAndValidRangeIs, "-85~85 degrees"),
                     nameof(rotationAroundY));
             }
 
             if (Math.Abs(rotationAroundZ) > radiansOf85) {
                 throw new ArgumentOutOfRangeException(
-                    $"Rotation angle \"{nameof(rotationAroundY)}\" out of range, only supports in range of -85~85 degrees.",
+                    string.Format(Language.InvalidValueAndValidRangeIs, "-85~85 degrees"),
                     nameof(rotationAroundZ));
             }
 
@@ -1353,7 +1351,9 @@ namespace Muggle.TsExtensions.Common.Model {
                 break;
             }
             default:
-                throw new ArgumentException($"\"{nameof(part)}\" is neither \"Beam\" nor \"PolyBeam\".", nameof(part));
+                throw new ArgumentException(
+                    string.Format(Language.InvalidTypeAndValidTypesAre, string.Join(", ", ["Beam", "PolyBeam"])),
+                    nameof(part));
             }
 
             partCS = new CoordinateSystem(Projection.PointToLine(position, nearestSegLine),
@@ -1442,52 +1442,52 @@ namespace Muggle.TsExtensions.Common.Model {
         /// 为 H 型钢创建加劲板。
         /// </summary>
         /// <param name="part"><inheritdoc 
-        /// cref="CreatStiffeners(Part, Point, double, string, string, double, double, double, double, double, Chamfer.ChamferTypeEnum, double, double, double, double)" 
+        /// cref="InsertStiffeners" 
         /// path="/param[1]"/></param>
         /// <param name="position"><inheritdoc 
-        /// cref="CreatStiffeners(Part, Point, double, string, string, double, double, double, double, double, Chamfer.ChamferTypeEnum, double, double, double, double)" 
+        /// cref="InsertStiffeners" 
         /// path="/param[2]"/></param>
         /// <param name="thickness"><inheritdoc 
-        /// cref="CreatStiffeners(Part, Point, double, string, string, double, double, double, double, double, Chamfer.ChamferTypeEnum, double, double, double, double)" 
+        /// cref="InsertStiffeners" 
         /// path="/param[3]"/></param>
         /// <param name="material"><inheritdoc 
-        /// cref="CreatStiffeners(Part, Point, double, string, string, double, double, double, double, double, Chamfer.ChamferTypeEnum, double, double, double, double)" 
+        /// cref="InsertStiffeners" 
         /// path="/param[4]"/></param>
         /// <param name="class"><inheritdoc 
-        /// cref="CreatStiffeners(Part, Point, double, string, string, double, double, double, double, double, Chamfer.ChamferTypeEnum, double, double, double, double)" 
+        /// cref="InsertStiffeners" 
         /// path="/param[5]"/></param>
         /// <param name="rotationAroundY"><inheritdoc 
-        /// cref="CreatStiffeners(Part, Point, double, string, string, double, double, double, double, double, Chamfer.ChamferTypeEnum, double, double, double, double)" 
+        /// cref="InsertStiffeners" 
         /// path="/param[6]"/></param>
         /// <param name="rotationAroundZ"><inheritdoc 
-        /// cref="CreatStiffeners(Part, Point, double, string, string, double, double, double, double, double, Chamfer.ChamferTypeEnum, double, double, double, double)" 
+        /// cref="InsertStiffeners" 
         /// path="/param[7]"/></param>
         /// <param name="indent"><inheritdoc 
-        /// cref="CreatStiffeners(Part, Point, double, string, string, double, double, double, double, double, Chamfer.ChamferTypeEnum, double, double, double, double)" 
+        /// cref="InsertStiffeners" 
         /// path="/param[8]"/></param>
         /// <param name="clearance"><inheritdoc 
-        /// cref="CreatStiffeners(Part, Point, double, string, string, double, double, double, double, double, Chamfer.ChamferTypeEnum, double, double, double, double)" 
+        /// cref="InsertStiffeners" 
         /// path="/param[10]"/></param>
         /// <param name="chamferType"><inheritdoc 
-        /// cref="CreatStiffeners(Part, Point, double, string, string, double, double, double, double, double, Chamfer.ChamferTypeEnum, double, double, double, double)" 
+        /// cref="InsertStiffeners" 
         /// path="/param[11]"/></param>
         /// <param name="chamferSizeX"><inheritdoc 
-        /// cref="CreatStiffeners(Part, Point, double, string, string, double, double, double, double, double, Chamfer.ChamferTypeEnum, double, double, double, double)" 
+        /// cref="InsertStiffeners" 
         /// path="/param[12]"/></param>
         /// <param name="chamferSizeY"><inheritdoc 
-        /// cref="CreatStiffeners(Part, Point, double, string, string, double, double, double, double, double, Chamfer.ChamferTypeEnum, double, double, double, double)" 
+        /// cref="InsertStiffeners" 
         /// path="/param[13]"/></param>
         /// <param name="chamferDz1"><inheritdoc 
-        /// cref="CreatStiffeners(Part, Point, double, string, string, double, double, double, double, double, Chamfer.ChamferTypeEnum, double, double, double, double)" 
+        /// cref="InsertStiffeners" 
         /// path="/param[14]"/></param>
         /// <param name="chamferDz2"><inheritdoc 
-        /// cref="CreatStiffeners(Part, Point, double, string, string, double, double, double, double, double, Chamfer.ChamferTypeEnum, double, double, double, double)" 
+        /// cref="InsertStiffeners" 
         /// path="/param[15]"/></param>
         /// <returns>成功创建的加劲板集合，
         /// 第一个元素在零件坐标系 Z 轴正向侧，第二个元素在零件坐标系 Z 轴负向侧。</returns>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="Exception">不支持的截面类型引发。</exception>
-        private static ContourPlate[] CreatStiffenersForTypeI(
+        private static ContourPlate[] InsertStiffenersForTypeI(
             Part part, Point position, double thickness, string material = "Q235B", string @class = "99",
             double rotationAroundY = 0.0, double rotationAroundZ = 0.0, double indent = 0.0, double clearance = 2.0,
             Chamfer.ChamferTypeEnum chamferType = 0, double chamferSizeX = 0.0, double chamferSizeY = 0.0,
@@ -1586,26 +1586,27 @@ namespace Muggle.TsExtensions.Common.Model {
                     new ContourPoint(corners1[0], new Chamfer()),
                     new ContourPoint(
                         corners1[1],
-                        new Chamfer(chamferSizeX, chamferSizeY, chamferType){DZ1 = chamferDz1, DZ2 = chamferDz2}),
+                        new Chamfer(chamferSizeX, chamferSizeY, chamferType) { DZ1 = chamferDz1, DZ2 = chamferDz2 }),
                     new ContourPoint(
                         corners1[2],
-                        new Chamfer(chamferSizeY, chamferSizeX, chamferType){DZ1 = chamferDz1, DZ2 = chamferDz2}),
+                        new Chamfer(chamferSizeY, chamferSizeX, chamferType) { DZ1 = chamferDz1, DZ2 = chamferDz2 }),
                     new ContourPoint(corners1[3], new Chamfer())
                 }, "STIFFENER", $"PL{thickness}", material, @class: @class);
+            contourPlates[0].Insert();
             contourPlates[1] = CreatContourPlate(
                 new ArrayList {
                     new ContourPoint(corners2[3], new Chamfer()),
                     new ContourPoint(
                         corners2[2],
-                        new Chamfer(chamferSizeX, chamferSizeY, chamferType){DZ1 = chamferDz1, DZ2 = chamferDz2}),
+                        new Chamfer(chamferSizeX, chamferSizeY, chamferType) { DZ1 = chamferDz1, DZ2 = chamferDz2 }),
                     new ContourPoint(
                         corners2[1],
-                        new Chamfer(chamferSizeY, chamferSizeX, chamferType){DZ1 = chamferDz1, DZ2 = chamferDz2}),
+                        new Chamfer(chamferSizeY, chamferSizeX, chamferType) { DZ1 = chamferDz1, DZ2 = chamferDz2 }),
                     new ContourPoint(corners2[0], new Chamfer())
                 }, "STIFFENER", $"PL{thickness}", material, @class: @class);
+            contourPlates[1].Insert();
 
             return contourPlates;
-
 
             static Point BottomRight(Point p1, Point p2) => new(Math.Min(p1.X, p2.X), Math.Max(p1.Y, p2.Y), 0.0);
             static Point BottomLeft(Point p1, Point p2) => new(Math.Max(p1.X, p2.X), Math.Max(p1.Y, p2.Y), 0.0);
@@ -1672,7 +1673,7 @@ namespace Muggle.TsExtensions.Common.Model {
         /// 第一个元素在零件坐标系 Z 轴正向侧，第二个元素在零件坐标系 Z 轴负向侧。</returns>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="Exception">不支持的截面类型引发。</exception>
-        private static ContourPlate[] CreatStiffenersForTypeT(
+        private static ContourPlate[] InsertStiffenersForTypeT(
             Part part, Point position, double thickness, string material = "Q235B", string @class = "99",
             double rotationAroundY = 0.0, double rotationAroundZ = 0.0, double indent = 0.0, double indent2 = 0.0,
             double clearance = 2.0,
@@ -1771,19 +1772,21 @@ namespace Muggle.TsExtensions.Common.Model {
                     new ContourPoint(corners1[0], new Chamfer()),
                     new ContourPoint(
                         corners1[1],
-                        new Chamfer(chamferSizeX, chamferSizeY, chamferType){DZ1 = chamferDz1, DZ2 = chamferDz2}),
+                        new Chamfer(chamferSizeX, chamferSizeY, chamferType) { DZ1 = chamferDz1, DZ2 = chamferDz2 }),
                     new ContourPoint(corners1[2], new Chamfer()),
                     new ContourPoint(corners1[3], new Chamfer())
                 }, "STIFFENER", $"PL{thickness}", material, @class: @class);
+            contourPlates[0].Insert();
             contourPlates[1] = CreatContourPlate(
                 new ArrayList {
                     new ContourPoint(corners2[3], new Chamfer()),
                     new ContourPoint(
                         corners2[2],
-                        new Chamfer(chamferSizeX, chamferSizeY, chamferType){DZ1 = chamferDz1, DZ2 = chamferDz2}),
+                        new Chamfer(chamferSizeX, chamferSizeY, chamferType) { DZ1 = chamferDz1, DZ2 = chamferDz2 }),
                     new ContourPoint(corners2[1], new Chamfer()),
                     new ContourPoint(corners2[0], new Chamfer())
                 }, "STIFFENER", $"PL{thickness}", material, @class: @class);
+            contourPlates[1].Insert();
 
             return contourPlates;
 
@@ -1852,7 +1855,7 @@ namespace Muggle.TsExtensions.Common.Model {
         /// <returns>成功创建的加劲板。</returns>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="Exception">不支持的截面类型引发。</exception>
-        private static ContourPlate CreatStiffenersForTypeU(
+        private static ContourPlate InsertStiffenersForTypeU(
             Part part, Point position, double thickness, string material = "Q235B", string @class = "99",
             double rotationAroundY = 0.0, double rotationAroundZ = 0.0, double indent = 0.0, double clearance = 2.0,
             Chamfer.ChamferTypeEnum chamferType = 0, double chamferSizeX = 0.0, double chamferSizeY = 0.0,
@@ -1936,12 +1939,13 @@ namespace Muggle.TsExtensions.Common.Model {
                     new ContourPoint(corners[0], new Chamfer()),
                     new ContourPoint(
                         corners[1],
-                        new Chamfer(chamferSizeX, chamferSizeY, chamferType){DZ1 = chamferDz1, DZ2 = chamferDz2}),
+                        new Chamfer(chamferSizeX, chamferSizeY, chamferType) { DZ1 = chamferDz1, DZ2 = chamferDz2 }),
                     new ContourPoint(
                         corners[2],
-                        new Chamfer(chamferSizeY, chamferSizeX, chamferType){DZ1 = chamferDz1, DZ2 = chamferDz2}),
+                        new Chamfer(chamferSizeY, chamferSizeX, chamferType) { DZ1 = chamferDz1, DZ2 = chamferDz2 }),
                     new ContourPoint(corners[3], new Chamfer())
                 }, "STIFFENER", $"PL{thickness}", material, @class: @class);
+            contourPlate.Insert();
 
             return contourPlate;
 
@@ -1996,48 +2000,48 @@ namespace Muggle.TsExtensions.Common.Model {
         /// 为箱型截面创建加劲板。
         /// </summary>
         /// <param name="part"><inheritdoc 
-        /// cref="CreatStiffeners(Part, Point, double, string, string, double, double, double, double, double, Chamfer.ChamferTypeEnum, double, double, double, double)" 
+        /// cref="InsertStiffeners" 
         /// path="/param[1]"/></param>
         /// <param name="position"><inheritdoc 
-        /// cref="CreatStiffeners(Part, Point, double, string, string, double, double, double, double, double, Chamfer.ChamferTypeEnum, double, double, double, double)" 
+        /// cref="InsertStiffeners" 
         /// path="/param[2]"/></param>
         /// <param name="thickness"><inheritdoc 
-        /// cref="CreatStiffeners(Part, Point, double, string, string, double, double, double, double, double, Chamfer.ChamferTypeEnum, double, double, double, double)" 
+        /// cref="InsertStiffeners" 
         /// path="/param[3]"/></param>
         /// <param name="material"><inheritdoc 
-        /// cref="CreatStiffeners(Part, Point, double, string, string, double, double, double, double, double, Chamfer.ChamferTypeEnum, double, double, double, double)" 
+        /// cref="InsertStiffeners" 
         /// path="/param[4"/></param>
         /// <param name="class"><inheritdoc 
-        /// cref="CreatStiffeners(Part, Point, double, string, string, double, double, double, double, double, Chamfer.ChamferTypeEnum, double, double, double, double)" 
+        /// cref="InsertStiffeners" 
         /// path="/param[5]"/></param>
         /// <param name="rotationAroundY"><inheritdoc 
-        /// cref="CreatStiffeners(Part, Point, double, string, string, double, double, double, double, double, Chamfer.ChamferTypeEnum, double, double, double, double)" 
+        /// cref="InsertStiffeners" 
         /// path="/param[6]"/></param>
         /// <param name="rotationAroundZ"><inheritdoc 
-        /// cref="CreatStiffeners(Part, Point, double, string, string, double, double, double, double, double, Chamfer.ChamferTypeEnum, double, double, double, double)" 
+        /// cref="InsertStiffeners" 
         /// path="/param[7]"/></param>
         /// <param name="clearance"><inheritdoc 
-        /// cref="CreatStiffeners(Part, Point, double, string, string, double, double, double, double, double, Chamfer.ChamferTypeEnum, double, double, double, double)" 
+        /// cref="InsertStiffeners" 
         /// path="/param[10]"/></param>
         /// <param name="chamferType"><inheritdoc 
-        /// cref="CreatStiffeners(Part, Point, double, string, string, double, double, double, double, double, Chamfer.ChamferTypeEnum, double, double, double, double)" 
+        /// cref="InsertStiffeners" 
         /// path="/param[11]"/></param>
         /// <param name="chamferSizeX"><inheritdoc 
-        /// cref="CreatStiffeners(Part, Point, double, string, string, double, double, double, double, double, Chamfer.ChamferTypeEnum, double, double, double, double)" 
+        /// cref="InsertStiffeners" 
         /// path="/param[12]"/></param>
         /// <param name="chamferSizeY"><inheritdoc 
-        /// cref="CreatStiffeners(Part, Point, double, string, string, double, double, double, double, double, Chamfer.ChamferTypeEnum, double, double, double, double)" 
+        /// cref="InsertStiffeners" 
         /// path="/param[13]"/></param>
         /// <param name="chamferDz1"><inheritdoc 
-        /// cref="CreatStiffeners(Part, Point, double, string, string, double, double, double, double, double, Chamfer.ChamferTypeEnum, double, double, double, double)" 
+        /// cref="InsertStiffeners" 
         /// path="/param[14]"/></param>
         /// <param name="chamferDz2"><inheritdoc 
-        /// cref="CreatStiffeners(Part, Point, double, string, string, double, double, double, double, double, Chamfer.ChamferTypeEnum, double, double, double, double)" 
+        /// cref="InsertStiffeners" 
         /// path="/param[15]"/></param>
         /// <returns>成功创建的加劲板。</returns>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="Exception">不支持的截面类型引发。</exception>
-        private static ContourPlate CreatStiffenersForTypeM(
+        private static ContourPlate InsertStiffenersForTypeM(
             Part part, Point position, double thickness, string material = "Q235B", string @class = "99",
             double rotationAroundY = 0.0, double rotationAroundZ = 0.0, double clearance = 2.0,
             Chamfer.ChamferTypeEnum chamferType = 0, double chamferSizeX = 0.0, double chamferSizeY = 0.0,
@@ -2201,17 +2205,18 @@ namespace Muggle.TsExtensions.Common.Model {
                 new ArrayList {
                     new ContourPoint(
                         corners[0],
-                        new Chamfer(chamferSizeY, chamferSizeX, chamferType){DZ1 = chamferDz1, DZ2 = chamferDz2}),
+                        new Chamfer(chamferSizeY, chamferSizeX, chamferType) { DZ1 = chamferDz1, DZ2 = chamferDz2 }),
                     new ContourPoint(
                         corners[1],
-                        new Chamfer(chamferSizeX, chamferSizeY, chamferType){DZ1 = chamferDz1, DZ2 = chamferDz2}),
+                        new Chamfer(chamferSizeX, chamferSizeY, chamferType) { DZ1 = chamferDz1, DZ2 = chamferDz2 }),
                     new ContourPoint(
                         corners[2],
-                        new Chamfer(chamferSizeY, chamferSizeX, chamferType){DZ1 = chamferDz1, DZ2 = chamferDz2}),
+                        new Chamfer(chamferSizeY, chamferSizeX, chamferType) { DZ1 = chamferDz1, DZ2 = chamferDz2 }),
                     new ContourPoint(
                         corners[3],
-                        new Chamfer(chamferSizeX, chamferSizeY, chamferType){DZ1 = chamferDz1, DZ2 = chamferDz2})
+                        new Chamfer(chamferSizeX, chamferSizeY, chamferType) { DZ1 = chamferDz1, DZ2 = chamferDz2 })
                 }, "STIFFENER", $"PL{thickness}", material, @class: @class);
+            contourPlate.Insert();
 
             return contourPlate;
 
@@ -2258,33 +2263,33 @@ namespace Muggle.TsExtensions.Common.Model {
         /// 为圆管截面创建加劲板。
         /// </summary>
         /// <param name="part"><inheritdoc 
-        /// cref="CreatStiffeners(Part, Point, double, string, string, double, double, double, double, double, Chamfer.ChamferTypeEnum, double, double, double, double)" 
+        /// cref="InsertStiffeners" 
         /// path="/param[1]"/></param>
         /// <param name="position"><inheritdoc 
-        /// cref="CreatStiffeners(Part, Point, double, string, string, double, double, double, double, double, Chamfer.ChamferTypeEnum, double, double, double, double)" 
+        /// cref="InsertStiffeners" 
         /// path="/param[2]"/></param>
         /// <param name="thickness"><inheritdoc 
-        /// cref="CreatStiffeners(Part, Point, double, string, string, double, double, double, double, double, Chamfer.ChamferTypeEnum, double, double, double, double)" 
+        /// cref="InsertStiffeners" 
         /// path="/param[3]"/></param>
         /// <param name="material"><inheritdoc 
-        /// cref="CreatStiffeners(Part, Point, double, string, string, double, double, double, double, double, Chamfer.ChamferTypeEnum, double, double, double, double)" 
+        /// cref="InsertStiffeners" 
         /// path="/param[4]"/></param>
         /// <param name="class"><inheritdoc 
-        /// cref="CreatStiffeners(Part, Point, double, string, string, double, double, double, double, double, Chamfer.ChamferTypeEnum, double, double, double, double)" 
+        /// cref="InsertStiffeners" 
         /// path="/param[5]"/></param>
         /// <param name="rotationAroundY"><inheritdoc 
-        /// cref="CreatStiffeners(Part, Point, double, string, string, double, double, double, double, double, Chamfer.ChamferTypeEnum, double, double, double, double)" 
+        /// cref="InsertStiffeners" 
         /// path="/param[6]"/></param>
         /// <param name="rotationAroundZ"><inheritdoc 
-        /// cref="CreatStiffeners(Part, Point, double, string, string, double, double, double, double, double, Chamfer.ChamferTypeEnum, double, double, double, double)" 
+        /// cref="InsertStiffeners" 
         /// path="/param[7]"/></param>
         /// <param name="clearance"><inheritdoc 
-        /// cref="CreatStiffeners(Part, Point, double, string, string, double, double, double, double, double, Chamfer.ChamferTypeEnum, double, double, double, double)" 
+        /// cref="InsertStiffeners" 
         /// path="/param[10]"/></param>
         /// <returns>成功创建的加劲板。</returns>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="Exception">不支持的截面类型引发。</exception>
-        private static ContourPlate CreatStiffenersForTypeRO(
+        private static ContourPlate InsertStiffenersForTypeRo(
             Part part, Point position, double thickness, string material = "Q235B", string @class = "99",
             double rotationAroundY = 0.0, double rotationAroundZ = 0.0, double clearance = 2.0) {
             if (part is null) {
@@ -2344,6 +2349,7 @@ namespace Muggle.TsExtensions.Common.Model {
 
             var contourPlate = CreatContourPlate(contourPoints, "STIFFENER", $"PL{thickness}", material,
                 @class: @class);
+            contourPlate.Insert();
 
             return contourPlate;
 
@@ -2401,8 +2407,8 @@ namespace Muggle.TsExtensions.Common.Model {
         /// <returns>成功创建的加劲板。</returns>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="ArgumentException"></exception>
-        /// <exception cref="Exception">不支持的截面类型引发。</exception>
-        public static ContourPlate[] CreatStiffeners(
+        /// <exception cref="NotSupportedException">不支持的截面类型引发。</exception>
+        public static ContourPlate[] InsertStiffeners(
             Part part, Point position, double thickness, string material = "Q235B", string @class = "99",
             double rotationAroundY = 0.0, double rotationAroundZ = 0.0, double indent = 0.0, double indent2 = 0.0,
             double clearance = 2.0,
@@ -2432,35 +2438,35 @@ namespace Muggle.TsExtensions.Common.Model {
 
             var profileType = string.Empty;
             if (!part.GetReportProperty(propertyName, ref profileType)) {
-                throw new Exception($"Failed to get \"{propertyName}\" for {part.Identifier}.");
+                throw new Exception(string.Format(Language.FaildToGetValueFor, propertyName, part.Identifier));
             }
 
             var profileText = part.Profile.ProfileString;
 
             switch (profileType) {
             case "I":
-                return CreatStiffenersForTypeI(part, position, thickness, material, @class,
+                return InsertStiffenersForTypeI(part, position, thickness, material, @class,
                     rotationAroundY, rotationAroundZ, indent, clearance,
                     chamferType, chamferSizeX, chamferSizeY, chamferDz1, chamferDz2);
             case "T":
-                return CreatStiffenersForTypeT(part, position, thickness, material, @class,
+                return InsertStiffenersForTypeT(part, position, thickness, material, @class,
                     rotationAroundY, rotationAroundZ, indent, indent2, clearance,
                     chamferType, chamferSizeX, chamferSizeY, chamferDz1, chamferDz2);
             case "U":
                 return [
-                    CreatStiffenersForTypeU(part, position, thickness, material, @class,
+                    InsertStiffenersForTypeU(part, position, thickness, material, @class,
                         rotationAroundY, rotationAroundZ, indent, clearance,
                         chamferType, chamferSizeX, chamferSizeY, chamferDz1, chamferDz2)
                 ];
             case "M":
                 return [
-                    CreatStiffenersForTypeM(part, position, thickness, material, @class,
+                    InsertStiffenersForTypeM(part, position, thickness, material, @class,
                         rotationAroundY, rotationAroundZ, clearance,
                         chamferType, chamferSizeX, chamferSizeY, chamferDz1, chamferDz2)
                 ];
             case "RO":
                 return [
-                    CreatStiffenersForTypeRO(part, position, thickness, material, @class,
+                    InsertStiffenersForTypeRo(part, position, thickness, material, @class,
                         rotationAroundY, rotationAroundZ, clearance)
                 ];
             case "Z":
@@ -2483,87 +2489,8 @@ namespace Muggle.TsExtensions.Common.Model {
 
                 goto default;
             default:
-                throw new Exception($"Profile \"{profileText}\" not supported yet.");
+                throw new NotSupportedException(profileText);
             }
-        }
-
-        /// <summary>
-        /// 沿给定轴线每隔给定角度旋转复制一份对象。
-        /// </summary>
-        /// <param name="obj">要旋转复制的对象</param>
-        /// <param name="axisOrigin">旋转轴起点</param>
-        /// <param name="axisDirection">旋转轴方向</param>
-        /// <param name="radians">旋转角度，弧度制</param>
-        /// <param name="num">要复制的数量，默认值 1</param>
-        /// <returns>成功旋转复制的对象集合（不包括初始对象）。</returns>
-        /// <exception cref="ArgumentNullException"></exception>
-        /// <exception cref="ArgumentException"><paramref name="num"/> &lt;= 0 时引发。</exception>
-        [Obsolete(
-            "应改为使用 Muggle.TsExtensions.Model.ModelOperation.CopyObject(ModelObject obj, Matrix matrix, int num)方法",
-            true)]
-        public static List<ModelObject> Copy_Rotate(
-            ModelObject obj,
-            Point axisOrigin,
-            Vector axisDirection,
-            double radians,
-            int num = 1) {
-            if (obj is null) {
-                throw new ArgumentNullException(nameof(obj));
-            }
-
-            if (axisOrigin is null) {
-                throw new ArgumentNullException(nameof(axisOrigin));
-            }
-
-            if (axisDirection is null) {
-                throw new ArgumentNullException(nameof(axisDirection));
-            }
-
-            if (num <= 0)
-                throw new ArgumentException($"“{nameof(num)}”不应小于等于 0。");
-
-            var objs = new List<ModelObject>();
-
-            for (int i = 1; i <= num; i++) {
-                var copy = Tekla.Structures.Model.Operations.Operation.CopyObject(obj, new Vector());
-                if (Move_Rotate(copy, axisOrigin, axisDirection, radians * i)) objs.Add(copy);
-            }
-
-            return objs;
-        }
-
-        /// <summary>
-        /// 沿给定轴线和角度旋转移动对象。
-        /// </summary>
-        /// <param name="obj">要旋转移动的对象</param>
-        /// <param name="axisOrigin">旋转轴起点</param>
-        /// <param name="axisDirection">旋转轴方向</param>
-        /// <param name="radians">旋转角度，弧度制</param>
-        /// <returns>成功返回 True，失败返回 False。</returns>
-        /// <exception cref="ArgumentNullException"></exception>
-        [Obsolete("应改为使用 Muggle.TsExtensions.Model.ModelOperation.MoveObject(ModelObject obj, Matrix matrix)方法", true)]
-        public static bool Move_Rotate(
-            ModelObject obj,
-            Point axisOrigin,
-            Vector axisDirection,
-            double radians) {
-            if (obj is null) {
-                throw new ArgumentNullException(nameof(obj));
-            }
-
-            if (axisOrigin is null) {
-                throw new ArgumentNullException(nameof(axisOrigin));
-            }
-
-            if (axisDirection is null) {
-                throw new ArgumentNullException(nameof(axisDirection));
-            }
-
-            var matrix = MatrixFactoryExtension.Rotate(new Line(axisOrigin, axisDirection), radians);
-            var currentCS = new CoordinateSystem();
-            var targetCS = matrix.Transform(currentCS);
-
-            return Tekla.Structures.Model.Operations.Operation.MoveObject(obj, currentCS, targetCS);
         }
 
         /// <summary>
@@ -2613,7 +2540,7 @@ namespace Muggle.TsExtensions.Common.Model {
             }
 
             if (num <= 0)
-                throw new ArgumentException($"“{nameof(num)}”应大于 0。", nameof(num));
+                throw new ArgumentException(Language.ShouldNotEqualOrLessThanZero, nameof(num));
 
             var objs = new List<ModelObject>();
             var zeroVector = new Vector();

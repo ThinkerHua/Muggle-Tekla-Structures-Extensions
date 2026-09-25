@@ -1,13 +1,13 @@
 ﻿/*==============================================================================
  *  Muggle TsExtensions - extensions for Tekla Structures
  *
- *  Copyright © 2024 Huang YongXing.                 
+ *  Copyright © 2024 Huang YongXing.
  *
- *  This library is free software, licensed under the terms of the GNU 
- *  General Public License as published by the Free Software Foundation, 
- *  either version 3 of the License, or (at your option) any later version. 
- *  You should have received a copy of the GNU General Public License 
- *  along with this program. If not, see <http://www.gnu.org/licenses/>. 
+ *  This library is free software, licensed under the terms of the GNU
+ *  General Public License as published by the Free Software Foundation,
+ *  either version 3 of the License, or (at your option) any later version.
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program. If not, see <http://www.gnu.org/licenses/>.
  *==============================================================================
  *  Geometry3dOperation.cs: solver of geometric problems
  *  written by Huang YongXing - thinkerhua@hotmail.com
@@ -18,6 +18,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Muggle.TsExtensions.Common.Resources;
 using Tekla.Structures.Geometry3d;
 using Tekla.Structures.Model;
 using Task = System.Threading.Tasks.Task;
@@ -172,38 +173,21 @@ namespace Muggle.TsExtensions.Common.Geometry3d {
                 throw new ArgumentNullException($"{nameof(lines)}.{nameof(lines.L3)}");
             }
             if (l1.Direction.IsZero()) {
-                throw new ArgumentException(
-                    $"“{nameof(lines)}”的元素" +
-                    $"“L1 = {{" +
-                    $"Origin = {l1.Origin.ToString(null)}, " +
-                    $"Direction = {l1.Direction.ToString(null)} }}”" +
-                    $"的Direction属性不应为零向量。");
+                throw new ArgumentException(Language.DirectionOfLineShouldNotBeZeroVector, nameof(lines.L1));
             }
             if (l2.Direction.IsZero()) {
-                throw new ArgumentException(
-                    $"“{nameof(lines)}”的元素" +
-                    $"“L2 = {{" +
-                    $"Origin = {l2.Origin.ToString(null)}, " +
-                    $"Direction = {l2.Direction.ToString(null)} }}”" +
-                    $"的Direction属性不应为零向量。");
+                throw new ArgumentException(Language.DirectionOfLineShouldNotBeZeroVector, nameof(lines.L2));
             }
             if (l3.Direction.IsZero()) {
-                throw new ArgumentException(
-                    $"“{nameof(lines)}”的元素" +
-                    $"“L3 = {{" +
-                    $"Origin = {l3.Origin.ToString(null)}, " +
-                    $"Direction = {l3.Direction.ToString(null)} }}”" +
-                    $"的Direction属性不应为零向量。");
+                throw new ArgumentException(Language.DirectionOfLineShouldNotBeZeroVector, nameof(lines.L3));
             }
 
             //不构成三角形
             if (e1 <= 0 || e2 <= 0 || e3 <= 0) {
-                throw new ArgumentException($"“{nameof(edges)}”的元素" +
-                    $"E1 = “{e1}, E2 = {e2}, E3 = {e3}”不应小于等于0.0。");
+                throw new ArgumentException(Language.EdgeShouldNotEqualOrLessThanZero);
             }
             if ((e1 + e2) <= e3 || (e1 + e3) <= e2 || (e2 + e3) <= e1) {
-                throw new ArgumentException($"“{nameof(edges)}”的元素" +
-                    $"E1 = “{e1}, E2 = {e2}, E3 = {e3}”不构成三角形。");
+                throw new ArgumentException(Language.GivenEdgesNotFormTriangle);
             }
 
             //任意一对不共面 或 均共线
@@ -211,7 +195,7 @@ namespace Muggle.TsExtensions.Common.Geometry3d {
             var sign13 = GeometricPlaneFactory.ByLines(l1, l3, out GeometricPlane gPlane13);
             var sign23 = GeometricPlaneFactory.ByLines(l2, l3, out _);
             if (sign12 == 0 || sign13 == 0 || sign23 == 0 || sign12 + sign13 + sign23 == -3) {
-                throw new ArgumentException($"“{nameof(lines)}”的元素不在同一个平面上。");
+                throw new ArgumentException(Language.GivenLinesNotOnTheSamePlane);
             }
 
             //共同平面法向
@@ -401,12 +385,8 @@ namespace Muggle.TsExtensions.Common.Geometry3d {
                 throw new ArgumentNullException(nameof(vertex3Interval));
             }
 
-            if (vertex3Values is null) {
-                throw new ArgumentNullException(nameof(vertex3Values));
-            }
-
-            if (vertex3Values.Count() == 0) {
-                throw new ArgumentException($"“{nameof(vertex3Values)}”的元素数量不应为0。");
+            if (vertex3Values is null || vertex3Values.Count() == 0) {
+                throw new ArgumentNullException(Language.ShouldNotBeNullOrEmpty, nameof(vertex3Values));
             }
 
             (Point X1, Point X2) intersection_l1, intersection_l2;
@@ -432,12 +412,8 @@ namespace Muggle.TsExtensions.Common.Geometry3d {
         internal static IEnumerable<(Point vertex1, Point vertex2)> GetSpecificCombinationsOfVertices(
             IEnumerable<((Point X1, Point X2) intersection_l1, (Point X1, Point X2) intersection_l2)> vertices,
             int combinationEnum) {
-            if (vertices is null) {
-                throw new ArgumentNullException(nameof(vertices));
-            }
-
-            if (vertices.Count() == 0) {
-                throw new ArgumentException($"“{nameof(vertices)}”的元素数量不应为0。");
+            if (vertices is null || vertices.Count() == 0) {
+                throw new ArgumentException(Language.ShouldNotBeNullOrEmpty, nameof(vertices));
             }
 
             foreach (var (intersection_l1, intersection_l2) in vertices) {
@@ -485,17 +461,15 @@ namespace Muggle.TsExtensions.Common.Geometry3d {
             var cntV = vertex3Values.Count();
 
             if (cntC == 0) {
-                throw new ArgumentException($"“{nameof(combinations)}”的元素数量不应为0。");
+                throw new ArgumentException(Language.ShouldNotBeEmptyList, nameof(combinations));
             }
 
             if (cntV == 0) {
-                throw new ArgumentException($"“{nameof(vertex3Values)}”的元素数量不应为0。");
+                throw new ArgumentException(Language.ShouldNotBeEmptyList, nameof(vertex3Values));
             }
 
             if (cntC != cntV) {
-                throw new ArgumentException(
-                    $"“{nameof(combinations)}”的元素数量" +
-                    $"与“{nameof(vertex3Values)}”的元素数量不一致。");
+                throw new ArgumentException(string.Format(Language.NumberOfElementsShouldMatch, nameof(combinations), nameof(vertex3Values)));
             }
 
             var distances = new List<double>();
@@ -558,17 +532,15 @@ namespace Muggle.TsExtensions.Common.Geometry3d {
             var cntV = initialVertex3Values.Count();
 
             if (cntC == 0) {
-                throw new ArgumentException($"“{nameof(initialCombinations)}”的元素数量不应为0。");
+                throw new ArgumentException(Language.ShouldNotBeEmptyList, nameof(initialCombinations));
             }
 
             if (cntV == 0) {
-                throw new ArgumentException($"“{nameof(initialVertex3Values)}”的元素数量不应为0。");
+                throw new ArgumentException(Language.ShouldNotBeEmptyList, nameof(initialVertex3Values));
             }
 
             if (cntC != cntV) {
-                throw new ArgumentException(
-                    $"“{nameof(initialCombinations)}”的元素数量" +
-                    $"与“{nameof(initialVertex3Values)}”的元素数量不一致。");
+                throw new ArgumentException(string.Format(Language.NumberOfElementsShouldMatch, nameof(initialCombinations), nameof(initialVertex3Values)));
             }
 
             if (vertex3Interval is null) {
@@ -694,8 +666,28 @@ namespace Muggle.TsExtensions.Common.Geometry3d {
                 throw new ArgumentNullException(nameof(p3));
             }
 
-            if (p0 == p1 || p0 == p2 || p0 == p3 || p1 == p2 || p1 == p3 || p2 == p3) {
-                throw new ArgumentException("给定的四个点必须均不相等。");
+            if (p0 == p1) {
+                throw new ArgumentException(string.Format(Language.ShouldNotEqual, nameof(p0), nameof(p1)));
+            }
+
+            if (p0 == p2) {
+                throw new ArgumentException(string.Format(Language.ShouldNotEqual, nameof(p0), nameof(p2)));
+            }
+
+            if (p0 == p3) {
+                throw new ArgumentException(string.Format(Language.ShouldNotEqual, nameof(p0), nameof(p3)));
+            }
+
+            if (p1 == p2) {
+                throw new ArgumentException(string.Format(Language.ShouldNotEqual, nameof(p1), nameof(p2)));
+            }
+
+            if (p1 == p3) {
+                throw new ArgumentException(string.Format(Language.ShouldNotEqual, nameof(p1), nameof(p3)));
+            }
+
+            if (p2 == p3) {
+                throw new ArgumentException(string.Format(Language.ShouldNotEqual, nameof(p2), nameof(p3)));
             }
 
             var m = new Matrix();

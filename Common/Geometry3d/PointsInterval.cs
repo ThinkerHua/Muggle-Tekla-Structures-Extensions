@@ -16,6 +16,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Muggle.TsExtensions.Common.Resources;
 using Tekla.Structures.Geometry3d;
 
 namespace Muggle.TsExtensions.Common.Geometry3d {
@@ -195,7 +196,7 @@ namespace Muggle.TsExtensions.Common.Geometry3d {
                 throw new ArgumentNullException(nameof(line));
             }
             if (line.Direction.IsZero())
-                throw new ArgumentException($"“{nameof(line)}”.Direction 不应为零向量。");
+                throw new ArgumentException(Language.DirectionOfLineShouldNotBeZeroVector, nameof(line));
 
             Origin = line.Origin;
             Direction = line.Direction;
@@ -216,7 +217,7 @@ namespace Muggle.TsExtensions.Common.Geometry3d {
 
             Direction = lineSegment.GetDirectionVector();
             if (Direction.IsZero())
-                throw new ArgumentException($"“{nameof(lineSegment)}”长度不应等于0.0。");
+                throw new ArgumentException(Language.DirectionOfLineShouldNotBeZeroVector, nameof(lineSegment));
 
             Origin = lineSegment.StartPoint;
             End = lineSegment.Length();
@@ -320,7 +321,7 @@ namespace Muggle.TsExtensions.Common.Geometry3d {
         /// <exception cref="ArgumentException"><paramref name="value"/> 应当是有效数值，不应是 <see cref="double.NaN"/>。</exception>
         public Point GetPoint(double value) {
             if (double.IsNaN(value)) {
-                throw new ArgumentException($"“{nameof(value)} = NaN”，不是有效数值。");
+                throw new ArgumentException($"{nameof(value)} = NaN");
             }
 
             return Origin + value * Direction;
@@ -337,16 +338,16 @@ namespace Muggle.TsExtensions.Common.Geometry3d {
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="dis"/> &lt;= 0.0 或 <paramref name="num"/> &lt;= 0.0 时引发。</exception>
         public IEnumerable<double> GetValuesAround(double value, double dis, int num) {
             if (double.IsNaN(value) || value < _start || value > _end) {
-                var msg = ToString(null);
+                var msg = ToString();
                 msg = msg.Replace("\n", " ");
                 msg = msg.Remove(msg.Length - 1, 1);
-                throw new ArgumentException($"“{nameof(value)} = {value}”不在区间“{msg}”内。");
+                throw new ArgumentException(string.Format(Language.InvalidValueAndValidRangeIs, msg), nameof(value));
             }
             if (dis <= 0) {
-                throw new ArgumentOutOfRangeException($"“{nameof(dis)} = {dis}”不应小于等于0.0。");
+                throw new ArgumentOutOfRangeException(Language.ShouldNotEqualOrLessThanZero, nameof(dis));
             }
             if (num <= 0) {
-                throw new ArgumentOutOfRangeException($"“{nameof(num)} = {num}”不应小于等于0。");
+                throw new ArgumentOutOfRangeException(Language.ShouldNotEqualOrLessThanZero, nameof(num));
             }
 
 
@@ -377,16 +378,16 @@ namespace Muggle.TsExtensions.Common.Geometry3d {
 
             var value = GetValue(point);
             if (double.IsNaN(value) || value < _start || value > _end) {
-                var msg = ToString(null);
+                var msg = ToString();
                 msg = msg.Replace("\n", " ");
                 msg = msg.Remove(msg.Length - 1, 1);
-                throw new ArgumentException($"“{nameof(point)} = {point.ToString(null)}”不在区间“{msg}”内。");
+                throw new ArgumentException(string.Format(Language.InvalidValueAndValidRangeIs, msg), nameof(point));
             }
             if (dis <= 0) {
-                throw new ArgumentOutOfRangeException($"“{nameof(dis)} = {dis}”不应小于等于0.0。");
+                throw new ArgumentOutOfRangeException(Language.ShouldNotEqualOrLessThanZero, nameof(dis));
             }
             if (num <= 0) {
-                throw new ArgumentOutOfRangeException($"“{nameof(num)} = {num}”不应小于等于0。");
+                throw new ArgumentOutOfRangeException(Language.ShouldNotEqualOrLessThanZero, nameof(num));
             }
 
             return GetPointsAround(value, dis, num);
@@ -406,13 +407,13 @@ namespace Muggle.TsExtensions.Common.Geometry3d {
                 var msg = ToString(null);
                 msg = msg.Replace("\n", " ");
                 msg = msg.Remove(msg.Length - 1, 1);
-                throw new ArgumentException($"“{nameof(value)} = {value}”不在区间“{msg}”内。");
+                throw new ArgumentException(string.Format(Language.InvalidValueAndValidRangeIs, msg), nameof(value));
             }
             if (dis <= 0) {
-                throw new ArgumentOutOfRangeException($"“{nameof(dis)} = {dis}”不应小于等于0.0。");
+                throw new ArgumentOutOfRangeException(Language.ShouldNotEqualOrLessThanZero, nameof(dis));
             }
             if (num <= 0) {
-                throw new ArgumentOutOfRangeException($"“{nameof(num)} = {num}”不应小于等于0。");
+                throw new ArgumentOutOfRangeException(Language.ShouldNotEqualOrLessThanZero, nameof(num));
             }
 
 

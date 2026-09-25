@@ -16,6 +16,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Muggle.TsExtensions.Common.Resources;
 using Tekla.Structures.Geometry3d;
 
 namespace Muggle.TsExtensions.Common.Geometry3d {
@@ -143,13 +144,13 @@ namespace Muggle.TsExtensions.Common.Geometry3d {
             }
 
             if (line.Direction.IsZero())
-                throw new ArgumentException($"“{nameof(line)}”.Direction 不应为零向量。");
+                throw new ArgumentException(Language.DirectionOfLineShouldNotBeZeroVector, nameof(line));
 
             //  0半径圆弧
             if (arc.Radius == 0)
-                return new List<LineSegment> {
+                return [
                     new LineSegment(arc.CenterPoint, Projection.PointToLine(arc.CenterPoint, line))
-                };
+                ];
 
             //  直线垂直圆弧平面穿过弧心的情形
             if (Distance.PointToLine(arc.CenterPoint, line) == 0 && Parallel.VectorToVector(arc.Normal, line.Direction))
@@ -302,7 +303,7 @@ namespace Muggle.TsExtensions.Common.Geometry3d {
             }
 
             if (line.Direction.IsZero())
-                throw new ArgumentException($"“{nameof(line)}”.Direction 不应为零向量。");
+                throw new ArgumentException(Language.DirectionOfLineShouldNotBeZeroVector, nameof(line));
 
             var segList = new List<LineSegment>();
             LineSegment seg;

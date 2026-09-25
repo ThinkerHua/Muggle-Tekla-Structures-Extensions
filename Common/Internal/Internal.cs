@@ -16,6 +16,7 @@
 using System;
 using Muggle.TsExtensions.Common.Geometry3d;
 using Muggle.TsExtensions.Common.ModelUI;
+using Muggle.TsExtensions.Common.Resources;
 using Tekla.Structures.Geometry3d;
 using Tekla.Structures.Model;
 using Tekla.Structures.Model.UI;
@@ -49,7 +50,7 @@ namespace Muggle.TsExtensions.Common.Internal {
             }
 
             var model = new Tekla.Structures.Model.Model();
-            if (!model.GetConnectionStatus()) throw new Exception("Tekla Structures 不在运行。");
+            if (!model.GetConnectionStatus()) throw new Exception(Language.CannotEstablishConnection);
             var currentTP = model.GetWorkPlaneHandler().GetCurrentTransformationPlane();
 
             var origin = new Point(0, 0, 0).Transform(tp, currentTP);
@@ -98,7 +99,7 @@ namespace Muggle.TsExtensions.Common.Internal {
             }
 
             var model = new Tekla.Structures.Model.Model();
-            if (!model.GetConnectionStatus()) throw new Exception("Tekla Structures 不在运行。");
+            if (!model.GetConnectionStatus()) throw new Exception(Language.CannotEstablishConnection);
 
             var axisX = new Vector(cs.AxisX);
             var axisY = new Vector(cs.AxisY);

@@ -15,6 +15,7 @@
 
 using System;
 using System.Text.RegularExpressions;
+using Muggle.TsExtensions.Common.Resources;
 
 namespace Muggle.TsExtensions.Common.Profile {
     /// <summary>
@@ -30,13 +31,13 @@ namespace Muggle.TsExtensions.Common.Profile {
         /// <exception cref="Exception">不是有效的截面文本时引发。</exception>
         public static string GetProfilePrefix(string profileText) {
             if (string.IsNullOrEmpty(profileText)) {
-                throw new ArgumentException($"“{nameof(profileText)}”不能为 null 或空。", nameof(profileText));
+                throw new ArgumentException(Language.ShouldNotBeNullOrEmpty, nameof(profileText));
             }
 
             const string pattern = @"\A(?<prefix>[^0-9]+)[0-9].+\Z";
             var match = Regex.Match(profileText, pattern);
 
-            return !match.Success ? throw new Exception("Not a valid profile text.") : match.Groups["prefix"].Value;
+            return !match.Success ? throw new Exception(Language.InvalidValue) : match.Groups["prefix"].Value;
         }
     }
 }

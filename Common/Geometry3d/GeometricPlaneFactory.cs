@@ -14,6 +14,7 @@
  *==============================================================================*/
 
 using System;
+using Muggle.TsExtensions.Common.Resources;
 using Tekla.Structures.Geometry3d;
 using Tekla.Structures.Model;
 
@@ -51,10 +52,10 @@ namespace Muggle.TsExtensions.Common.Geometry3d {
             }
 
             if (line1.Direction.IsZero())
-                throw new ArgumentException($"“{nameof(line1)}”.Direction 不应为零向量。");
+                throw new ArgumentException(Language.ShouldNotBeZeroVector, nameof(line1));
 
             if (line2.Direction.IsZero())
-                throw new ArgumentException($"“{nameof(line2)}”.Direction 不应为零向量。");
+                throw new ArgumentException(Language.ShouldNotBeZeroVector, nameof(line2));
 
             gPlane = null;
             if (Vector.Cross(line1.Direction, line2.Direction).IsZero()) {
@@ -102,8 +103,15 @@ namespace Muggle.TsExtensions.Common.Geometry3d {
                 throw new ArgumentNullException(nameof(point3));
             }
 
-            if (point1.Equals(point2) || point1.Equals(point3) || point2.Equals(point3))
-                throw new ArgumentException("给定点不应相等。");
+            if (point1.Equals(point2))
+                throw new ArgumentException(string.Format(Language.ShouldNotEqual, nameof(point1), nameof(point2)));
+            
+            if (point1.Equals(point3))
+                throw new ArgumentException(string.Format(Language.ShouldNotEqual, nameof(point1), nameof(point3)));
+            
+            if (point2.Equals(point3))
+                throw new ArgumentException(string.Format(Language.ShouldNotEqual, nameof(point2), nameof(point3)));
+            
 
             return new GeometricPlane(point1, new Vector(point2 - point1), new Vector(point3 - point1));
         }

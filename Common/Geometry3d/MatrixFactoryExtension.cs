@@ -14,6 +14,7 @@
  *==============================================================================*/
 
 using System;
+using Muggle.TsExtensions.Common.Resources;
 using Tekla.Structures.Geometry3d;
 
 namespace Muggle.TsExtensions.Common.Geometry3d {
@@ -60,7 +61,7 @@ namespace Muggle.TsExtensions.Common.Geometry3d {
             }
 
             if (axis.Direction.IsZero()) {
-                throw new ArgumentException($"{nameof(axis)} 的 Direction 属性不应为零向量。", nameof(axis));
+                throw new ArgumentException(Language.DirectionOfLineShouldNotBeZeroVector, nameof(axis));
             }
 
             var origin = new Point();
@@ -94,7 +95,7 @@ namespace Muggle.TsExtensions.Common.Geometry3d {
             }
 
             if (normal.IsZero()) {
-                throw new ArgumentException($"{nameof(normal)} 不应是零向量", nameof(normal));
+                throw new ArgumentException(Language.ShouldNotBeZeroVector, nameof(normal));
             }
 
             normal = normal.GetNormal();
@@ -123,7 +124,7 @@ namespace Muggle.TsExtensions.Common.Geometry3d {
             }
 
             if (normal.IsZero()) {
-                throw new ArgumentException($"{nameof(normal)} 不应是零向量", nameof(normal));
+                throw new ArgumentException(Language.ShouldNotBeZeroVector, nameof(normal));
             }
 
             normal = normal.GetNormal();

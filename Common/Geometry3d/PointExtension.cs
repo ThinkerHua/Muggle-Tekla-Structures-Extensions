@@ -16,6 +16,7 @@
 using System;
 using Tekla.Structures.Geometry3d;
 using Tekla.Structures.Model;
+using Muggle.TsExtensions.Common.Resources;
 
 namespace Muggle.TsExtensions.Common.Geometry3d {
     /// <summary>
@@ -80,14 +81,14 @@ namespace Muggle.TsExtensions.Common.Geometry3d {
         /// <param name="divisor">除数</param>
         /// <returns>点与标量的商。</returns>
         /// <exception cref="ArgumentNullException"></exception>
-        /// <exception cref="ArgumentException">除数 <paramref name="divisor"/> 不应为 0.0。</exception>
+        /// <exception cref="ArgumentOutOfRangeException">除数 <paramref name="divisor"/> 不应为 0.0。</exception>
         public static Point Divide(this Point p, double divisor) {
             if (p is null) {
                 throw new ArgumentNullException(nameof(p));
             }
 
             if (divisor == 0.0) {
-                throw new ArgumentException($"除数“{nameof(divisor)}”不应为 0.0。");
+                throw new ArgumentOutOfRangeException(Language.DivisorShouldNotBeZero, nameof(divisor));
             }
 
             return new Point(p.X / divisor, p.Y / divisor, p.Z / divisor);

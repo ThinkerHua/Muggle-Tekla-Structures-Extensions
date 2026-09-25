@@ -15,6 +15,7 @@
 
 using System;
 using System.Collections.Generic;
+using Muggle.TsExtensions.Common.Resources;
 
 namespace Muggle.TsExtensions.Common {
 
@@ -58,7 +59,7 @@ namespace Muggle.TsExtensions.Common {
                 throw new ArgumentNullException(nameof(data));
             }
             if (data.Count == 0)
-                throw new ArgumentException($"“{nameof(data)}”中项目数应大于0。");
+                throw new ArgumentException(Language.ShouldNotBeEmptyList, nameof(data));
 
             if (interval < 3) interval = 3;
             if (interval % 2 == 0) interval++;

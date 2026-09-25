@@ -14,6 +14,7 @@
  *==============================================================================*/
 
 using System;
+using Muggle.TsExtensions.Common.Resources;
 using Tekla.Structures.Geometry3d;
 
 namespace Muggle.TsExtensions.Common.Geometry3d {
@@ -127,7 +128,7 @@ namespace Muggle.TsExtensions.Common.Geometry3d {
 
             var det = matrix.Determinant();
             if (det == 0) {
-                throw new InvalidOperationException("Matrix is singular and cannot be inverted.");
+                throw new InvalidOperationException(Language.SingularMatrixCannotBeInverted);
             }
 
             var m = new Matrix();

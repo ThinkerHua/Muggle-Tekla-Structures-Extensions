@@ -15,7 +15,7 @@
 
 using System;
 using System.Collections.Generic;
-
+using Muggle.TsExtensions.Common.Resources;
 using Tekla.Structures.Geometry3d;
 
 namespace Muggle.TsExtensions.Common.Geometry3d {
@@ -40,8 +40,11 @@ namespace Muggle.TsExtensions.Common.Geometry3d {
                 throw new ArgumentNullException(nameof(vector));
             }
 
-            if (vector.IsZero() || Parallel.VectorToVector(vector, arc.Normal))
-                throw new ArgumentException($"{nameof(vector)} 不应是零向量，且不应与 {nameof(arc)} 的法向平行。", nameof(vector));
+            if (vector.IsZero())
+                throw new ArgumentException(Language.ShouldNotBeZeroVector, nameof(vector));
+            
+            if (Parallel.VectorToVector(vector, arc.Normal))
+                throw new ArgumentException(string.Format(Language.ShouldNotParallelWith, nameof(arc.Normal)), nameof(vector));
 
             var v = ProjectionExtension.VectorToPlane(vector, new GeometricPlane(arc.CenterPoint, arc.Normal));
             var angle = arc.StartDirection.GetAngleBetweenWithDirection(v, arc.Normal);
@@ -90,10 +93,10 @@ namespace Muggle.TsExtensions.Common.Geometry3d {
             var gPlane = new GeometricPlane(arc.CenterPoint, arc.Normal);
 
             if (Projection.PointToPlane(startPoint, gPlane) == arc.CenterPoint)
-                throw new ArgumentException($"“{nameof(startPoint)}”在圆弧平面上的投影，不应与弧中心点重合。");
+                throw new ArgumentException(string.Format(Language.ProjectionOnShouldNotOverlapWith, nameof(startPoint), nameof(arc), nameof(arc.CenterPoint)));
 
             if (Projection.PointToPlane(endPoint, gPlane) == arc.CenterPoint)
-                throw new ArgumentException($"“{nameof(endPoint)}”在圆弧平面上的投影，不应与弧中心点重合。");
+                throw new ArgumentException(string.Format(Language.ProjectionOnShouldNotOverlapWith, nameof(endPoint), nameof(arc), nameof(arc.CenterPoint)));
 
             //  0半径特解
             if (arc.Radius == 0) return new List<Point> { arc.StartPoint };

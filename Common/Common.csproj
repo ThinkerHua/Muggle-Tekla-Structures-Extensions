@@ -1,27 +1,44 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-	<PropertyGroup>
-		<TargetFrameworks Condition="$(Configuration.EndsWith('2021'))">net48</TargetFrameworks>
-		<TargetFrameworks Condition="$(Configuration.EndsWith('2024'))">net48;netstandard2.0</TargetFrameworks>
-		<LangVersion>Latest</LangVersion>
-		<OutputType>Library</OutputType>
-		<RootNamespace>Muggle.TsExtensions.Common</RootNamespace>
-		<Authors>thinkerhua@hotmail.com</Authors>
-		<Copyright>Copyright © 2024 thinkerhua@hotmail.com. All rights reserved.</Copyright>
-		<GenerateDocumentationFile>True</GenerateDocumentationFile>
-		<Configurations>D2021;D2024;R2021;R2024</Configurations>
+    <PropertyGroup>
+        <TargetFrameworks Condition="$(Configuration.EndsWith('2021'))">net48</TargetFrameworks>
+        <TargetFrameworks Condition="$(Configuration.EndsWith('2024'))">net48;netstandard2.0</TargetFrameworks>
+        <LangVersion>Latest</LangVersion>
+        <OutputType>Library</OutputType>
+        <RootNamespace>Muggle.TsExtensions.Common</RootNamespace>
+        <Authors>thinkerhua@hotmail.com</Authors>
+        <Copyright>Copyright © 2024 thinkerhua@hotmail.com. All rights reserved.</Copyright>
+        <Configurations>D2021;D2024;R2021;R2024</Configurations>
         <Optimize Condition="$(Configuration.StartsWith('R'))">True</Optimize>
         <DefineConstants Condition="$(Configuration.StartsWith('D'))">TRACE;DEBUG</DefineConstants>
         <DefineConstants Condition="$(Configuration.StartsWith('R'))">TRACE;RELEASE</DefineConstants>
-	</PropertyGroup>
-    
-	<ItemGroup>
-		<PackageReference Include="Tekla.Structures" ExcludeAssets="runtime" />
-		<PackageReference Include="Tekla.Structures.Datatype" ExcludeAssets="runtime" />
-		<PackageReference Include="Tekla.Structures.Model" ExcludeAssets="runtime" />
-	</ItemGroup>
-    
-	<Target Name="PostBuild" AfterTargets="PostBuildEvent" >
-		<Exec Command="xcopy &quot;$(TargetDir)$(TargetName).dll&quot; &quot;D:\Program Files\Tekla Structures\$(TeklaVersion)\Environments\common\extensions\Muggle.TsExtensions\&quot; /Y /C /Q /R" 
-			  Condition="'$(TargetFramework)' == 'net48'"/>
-	</Target>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Tekla.Structures" ExcludeAssets="runtime"/>
+        <PackageReference Include="Tekla.Structures.Datatype" ExcludeAssets="runtime"/>
+        <PackageReference Include="Tekla.Structures.Model" ExcludeAssets="runtime"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <EmbeddedResource Update="Resources\Language.resx">
+            <Generator>PublicResXFileCodeGenerator</Generator>
+            <LastGenOutput>Language.Designer.cs</LastGenOutput>
+        </EmbeddedResource>
+        <EmbeddedResource Update="Resources\Language.zh-hans.resx">
+            <DependentUpon>Language.resx</DependentUpon>
+        </EmbeddedResource>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Compile Update="Resources\Language.Designer.cs">
+            <DesignTime>True</DesignTime>
+            <AutoGen>True</AutoGen>
+            <DependentUpon>Language.resx</DependentUpon>
+        </Compile>
+    </ItemGroup>
+
+    <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+        <Exec Command="xcopy &quot;$(TargetDir)$(TargetName).dll&quot; &quot;D:\Program Files\Tekla Structures\$(TeklaVersion)\Environments\common\extensions\Muggle.TsExtensions\&quot; /Y /C /Q /R"
+              Condition="'$(TargetFramework)' == 'net48'"/>
+    </Target>
 </Project>
