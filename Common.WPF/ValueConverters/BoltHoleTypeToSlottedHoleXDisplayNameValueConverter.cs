@@ -5,7 +5,7 @@ using System.Windows.Data;
 using Muggle.TsExtensions.Common.WPF.Localization;
 
 namespace Muggle.TsExtensions.Common.WPF.ValueConverters {
-    
+
     /// <summary>
     /// Provide a one-way conversion from the BoltHoleType value to the display name of the SlottedHoleX property
     /// </summary>
