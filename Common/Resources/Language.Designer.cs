@@ -21,7 +21,7 @@ namespace Muggle.TsExtensions.Common.Resources {
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class Language {
+    public class Language {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -35,7 +35,7 @@ namespace Muggle.TsExtensions.Common.Resources {
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
+        public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Muggle.TsExtensions.Common.Resources.Language", typeof(Language).Assembly);
@@ -50,7 +50,7 @@ namespace Muggle.TsExtensions.Common.Resources {
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
+        public static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -62,7 +62,7 @@ namespace Muggle.TsExtensions.Common.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Cannot establish connection with Tekla Structures.
         /// </summary>
-        internal static string CannotEstablishConnection {
+        public static string CannotEstablishConnection {
             get {
                 return ResourceManager.GetString("CannotEstablishConnection", resourceCulture);
             }
@@ -71,7 +71,7 @@ namespace Muggle.TsExtensions.Common.Resources {
         /// <summary>
         ///   Looks up a localized string similar to The direction of a line should not be a zero vector.
         /// </summary>
-        internal static string DirectionOfLineShouldNotBeZeroVector {
+        public static string DirectionOfLineShouldNotBeZeroVector {
             get {
                 return ResourceManager.GetString("DirectionOfLineShouldNotBeZeroVector", resourceCulture);
             }
@@ -80,7 +80,7 @@ namespace Muggle.TsExtensions.Common.Resources {
         /// <summary>
         ///   Looks up a localized string similar to The divisor should not be 0.
         /// </summary>
-        internal static string DivisorShouldNotBeZero {
+        public static string DivisorShouldNotBeZero {
             get {
                 return ResourceManager.GetString("DivisorShouldNotBeZero", resourceCulture);
             }
@@ -89,7 +89,7 @@ namespace Muggle.TsExtensions.Common.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Edge of triangle should not equal or less than 0.
         /// </summary>
-        internal static string EdgeShouldNotEqualOrLessThanZero {
+        public static string EdgeShouldNotEqualOrLessThanZero {
             get {
                 return ResourceManager.GetString("EdgeShouldNotEqualOrLessThanZero", resourceCulture);
             }
@@ -98,7 +98,7 @@ namespace Muggle.TsExtensions.Common.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Failed to get {0} value for {1}.
         /// </summary>
-        internal static string FaildToGetValueFor {
+        public static string FaildToGetValueFor {
             get {
                 return ResourceManager.GetString("FaildToGetValueFor", resourceCulture);
             }
@@ -107,7 +107,7 @@ namespace Muggle.TsExtensions.Common.Resources {
         /// <summary>
         ///   Looks up a localized string similar to The given edges do not form a triangle.
         /// </summary>
-        internal static string GivenEdgesNotFormTriangle {
+        public static string GivenEdgesNotFormTriangle {
             get {
                 return ResourceManager.GetString("GivenEdgesNotFormTriangle", resourceCulture);
             }
@@ -116,7 +116,7 @@ namespace Muggle.TsExtensions.Common.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Given lines are not on the same plane.
         /// </summary>
-        internal static string GivenLinesNotOnTheSamePlane {
+        public static string GivenLinesNotOnTheSamePlane {
             get {
                 return ResourceManager.GetString("GivenLinesNotOnTheSamePlane", resourceCulture);
             }
@@ -125,7 +125,7 @@ namespace Muggle.TsExtensions.Common.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Invalid type, valid types are {0}.
         /// </summary>
-        internal static string InvalidTypeAndValidTypesAre {
+        public static string InvalidTypeAndValidTypesAre {
             get {
                 return ResourceManager.GetString("InvalidTypeAndValidTypesAre", resourceCulture);
             }
@@ -134,7 +134,7 @@ namespace Muggle.TsExtensions.Common.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Invalid value.
         /// </summary>
-        internal static string InvalidValue {
+        public static string InvalidValue {
             get {
                 return ResourceManager.GetString("InvalidValue", resourceCulture);
             }
@@ -143,7 +143,7 @@ namespace Muggle.TsExtensions.Common.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Invalid value, valid range is {0}.
         /// </summary>
-        internal static string InvalidValueAndValidRangeIs {
+        public static string InvalidValueAndValidRangeIs {
             get {
                 return ResourceManager.GetString("InvalidValueAndValidRangeIs", resourceCulture);
             }
@@ -152,7 +152,7 @@ namespace Muggle.TsExtensions.Common.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Invalid value, valid values are {0}.
         /// </summary>
-        internal static string InvalidValueAndValidValuesAre {
+        public static string InvalidValueAndValidValuesAre {
             get {
                 return ResourceManager.GetString("InvalidValueAndValidValuesAre", resourceCulture);
             }
@@ -161,7 +161,7 @@ namespace Muggle.TsExtensions.Common.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Need at least {0} element(s).
         /// </summary>
-        internal static string NeedAtLeastNElements {
+        public static string NeedAtLeastNElements {
             get {
                 return ResourceManager.GetString("NeedAtLeastNElements", resourceCulture);
             }
@@ -170,7 +170,7 @@ namespace Muggle.TsExtensions.Common.Resources {
         /// <summary>
         ///   Looks up a localized string similar to {0} and {1} should have the same number of elements.
         /// </summary>
-        internal static string NumberOfElementsShouldMatch {
+        public static string NumberOfElementsShouldMatch {
             get {
                 return ResourceManager.GetString("NumberOfElementsShouldMatch", resourceCulture);
             }
@@ -179,7 +179,7 @@ namespace Muggle.TsExtensions.Common.Resources {
         /// <summary>
         ///   Looks up a localized string similar to The projection of {0} on plane {1} should not overlap with {2}.
         /// </summary>
-        internal static string ProjectionOnShouldNotOverlapWith {
+        public static string ProjectionOnShouldNotOverlapWith {
             get {
                 return ResourceManager.GetString("ProjectionOnShouldNotOverlapWith", resourceCulture);
             }
@@ -188,7 +188,7 @@ namespace Muggle.TsExtensions.Common.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Should not be an empty list.
         /// </summary>
-        internal static string ShouldNotBeEmptyList {
+        public static string ShouldNotBeEmptyList {
             get {
                 return ResourceManager.GetString("ShouldNotBeEmptyList", resourceCulture);
             }
@@ -197,7 +197,7 @@ namespace Muggle.TsExtensions.Common.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Should not be NaN or 0.
         /// </summary>
-        internal static string ShouldNotBeNanOrZero {
+        public static string ShouldNotBeNanOrZero {
             get {
                 return ResourceManager.GetString("ShouldNotBeNanOrZero", resourceCulture);
             }
@@ -206,7 +206,7 @@ namespace Muggle.TsExtensions.Common.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Should not be null or empty.
         /// </summary>
-        internal static string ShouldNotBeNullOrEmpty {
+        public static string ShouldNotBeNullOrEmpty {
             get {
                 return ResourceManager.GetString("ShouldNotBeNullOrEmpty", resourceCulture);
             }
@@ -215,7 +215,7 @@ namespace Muggle.TsExtensions.Common.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Should not be zero.
         /// </summary>
-        internal static string ShouldNotBeZero {
+        public static string ShouldNotBeZero {
             get {
                 return ResourceManager.GetString("ShouldNotBeZero", resourceCulture);
             }
@@ -224,7 +224,7 @@ namespace Muggle.TsExtensions.Common.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Should not be zero vector.
         /// </summary>
-        internal static string ShouldNotBeZeroVector {
+        public static string ShouldNotBeZeroVector {
             get {
                 return ResourceManager.GetString("ShouldNotBeZeroVector", resourceCulture);
             }
@@ -233,7 +233,7 @@ namespace Muggle.TsExtensions.Common.Resources {
         /// <summary>
         ///   Looks up a localized string similar to {0} should not equal {1}.
         /// </summary>
-        internal static string ShouldNotEqual {
+        public static string ShouldNotEqual {
             get {
                 return ResourceManager.GetString("ShouldNotEqual", resourceCulture);
             }
@@ -242,7 +242,7 @@ namespace Muggle.TsExtensions.Common.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Should not equal or less than 0.
         /// </summary>
-        internal static string ShouldNotEqualOrLessThanZero {
+        public static string ShouldNotEqualOrLessThanZero {
             get {
                 return ResourceManager.GetString("ShouldNotEqualOrLessThanZero", resourceCulture);
             }
@@ -251,7 +251,7 @@ namespace Muggle.TsExtensions.Common.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Should not parallel with {0}.
         /// </summary>
-        internal static string ShouldNotParallelWith {
+        public static string ShouldNotParallelWith {
             get {
                 return ResourceManager.GetString("ShouldNotParallelWith", resourceCulture);
             }
@@ -260,7 +260,7 @@ namespace Muggle.TsExtensions.Common.Resources {
         /// <summary>
         ///   Looks up a localized string similar to Singular matrix cannot be inverted.
         /// </summary>
-        internal static string SingularMatrixCannotBeInverted {
+        public static string SingularMatrixCannotBeInverted {
             get {
                 return ResourceManager.GetString("SingularMatrixCannotBeInverted", resourceCulture);
             }
