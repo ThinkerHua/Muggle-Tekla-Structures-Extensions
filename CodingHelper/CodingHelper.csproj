@@ -8,7 +8,7 @@
         <IsRoslynComponent>true</IsRoslynComponent>
         <PackageId>Muggle.TsExtensions.CodingHelper</PackageId>
         <Title>Tekla Structures OpenAPI development helper</Title>
-        <Version>2.1.0-beta.2</Version>
+        <Version>2.1.0-beta.3</Version>
         <Authors>Huang YongXing</Authors>
         <Description>Generate fields for plugin data class, fields and utility methods for plugin class, properties for view model class, and a simple user interface for plugin.</Description>
         <Copyright>© 2026 Huang YongXing</Copyright>
@@ -21,8 +21,8 @@
         <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
         <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
         <PackageReleaseNotes>
-File "WpfUi.xaml" renamed to "WpfUi.g.xaml";
-Fix wrong binding with BoltCircle properties in "WpfUi.g.xaml";
+Adjusted the value validation method for the Distance type property in the view model (Previously, if a non-0.0 default value was set, you couldn't set the value to 0.0);
+Fix spelling mistakes ("Creat**" methods renamed to "Create**");
 		</PackageReleaseNotes>
         <IncludeBuildOutput>false</IncludeBuildOutput>
     </PropertyGroup>

@@ -8,7 +8,7 @@
   * [Generator for plugin class](#generator-for-plugin-class)
     * [Fields and "GetFieldValuesFrom" method](#fields-and-getfieldvaluesfrom-method)
       * [Example](#example-1)
-    * ["SetDataToDefaultIfUnset" method, "Creat\*\*" methods and "ModifyTo\*\*" methods](#setdatatodefaultifunset-method-creat-methods-and-modifyto-methods)
+    * ["SetDataToDefaultIfUnset" method, "Create\*\*" methods and "ModifyTo\*\*" methods](#setdatatodefaultifunset-method-Create-methods-and-modifyto-methods)
       * [Example](#example-2)
   * [Generator for view model class](#generator-for-view-model-class)
     * [System preset properties](#system-preset-properties)
@@ -173,9 +173,9 @@ public partial class Plugin {
 }
 ~~~
 
-### "SetDataToDefaultIfUnset" method, "Creat\*\*" methods and "ModifyTo\*\*" methods
+### "SetDataToDefaultIfUnset" method, "Create\*\*" methods and "ModifyTo\*\*" methods
 
-Apply these attributes on the plugin class or its data field or property, then it will auto generate a **"SetDataToDefaultIfUnset"** method, a series of **"Creat\*\*"** methods and **"ModifyTo\*\*"** methods:
+Apply these attributes on the plugin class or its data field or property, then it will auto generate a **"SetDataToDefaultIfUnset"** method, a series of **"Create\*\*"** methods and **"ModifyTo\*\*"** methods:
 
 - GeneralFieldDefaultValuesAttribute
 - PartFieldDefaultValuesAttribute
@@ -187,7 +187,7 @@ Apply these attributes on the plugin class or its data field or property, then i
 
 The "SetDataToDefaultIfUnset" used to set fields of plugin or fields of plugin data member to default value, if they are not set form user interface.
 
-The "Creat\*\*" method only need to pass in generic parameter to automatically use the associated fields to create model object.
+The "Create\*\*" method only need to pass in generic parameter to automatically use the associated fields to create model object.
 
 The "ModifyTo\*\*" method only need to pass in existing object to automatically use the associated fields to modify it.
 
@@ -230,7 +230,7 @@ public partial class Plugin : PluginBase {
     
     public override bool Run(List<InputDefinition> input) {
         /* ... */
-        var stif = CreatPlateStiffener<ContourPlate>();
+        var stif = CreatePlateStiffener<ContourPlate>();
         stif.Insert();
         
         var plate = new Beam();
@@ -273,7 +273,7 @@ public partial class Plugin {
             Data.PlateStiffenerPartStartNumber = 1;
     }
     
-    private T CreatPlateStiffener<T>() where T : global::Tekla.Structures.Model.Part, new() {
+    private T CreatePlateStiffener<T>() where T : global::Tekla.Structures.Model.Part, new() {
         if (typeof(T) == typeof(global::Tekla.Structures.Model.Brep))
             throw new global::System.NotSupportedException($"Type \"{typeof(global::Tekla.Structures.Model.Brep)}\" not supported.");
         

@@ -647,11 +647,11 @@ public class PluginFieldDefaultValuesGenerator : IIncrementalGenerator {
                 builder.AppendLine(
                     $"        \n" +
                     $"        /// <summary>\n" +
-                    $"        /// Creat <typeparamref name=\"T\"/> type model object for id '{id}'.\n" +
+                    $"        /// Create <typeparamref name=\"T\"/> type model object for id '{id}'.\n" +
                     $"        /// </summary>\n" +
                     $"        /// <typeparam name=\"T\">The model object type want to get.</typeparam>\n" +
                     $"        /// <returns>The <typeparamref name=\"T\"/> type model object created.</returns>\n" +
-                    $"        private T CreatPart{ToPropertyNameStyle(id)}<T>() where T : {TsmNameSpace}.Part, new() {{\n" +
+                    $"        private T CreatePart{ToPropertyNameStyle(id)}<T>() where T : {TsmNameSpace}.Part, new() {{\n" +
                     $"            T part = new T();\n" +
                     $"            part.Name = {propertyAccess}Name;\n" +
                     $"            part.Profile.ProfileString = {propertyAccess}Profile;\n" +
@@ -692,14 +692,14 @@ public class PluginFieldDefaultValuesGenerator : IIncrementalGenerator {
                 builder.AppendLine(
                     $"        \n" +
                     $"        /// <summary>\n" +
-                    $"        /// Creat <typeparamref name=\"T\"/> type model object for id '{id}'.\n" +
+                    $"        /// Create <typeparamref name=\"T\"/> type model object for id '{id}'.\n" +
                     $"        /// </summary>\n" +
                     $"        /// <typeparam name=\"T\">The model object type want to get.</typeparam>\n" +
                     $"        /// <returns>The <typeparamref name=\"T\"/> type model object created.</returns>\n" +
                     $"        /// <exception cref=\"global::System.NotSupportedException\">\n" +
                     $"        /// Throw when <typeparamref name=\"T\"/> is <see cref=\"global::Tekla.Structures.Model.Brep\"/>.\n" +
                     $"        /// </exception>\n" +
-                    $"        private T CreatPlate{ToPropertyNameStyle(id)}<T>() where T : {TsmNameSpace}.Part, new() {{\n" +
+                    $"        private T CreatePlate{ToPropertyNameStyle(id)}<T>() where T : {TsmNameSpace}.Part, new() {{\n" +
                     $"            if (typeof(T) == typeof({TsmNameSpace}.Brep))\n" +
                     $"                throw new global::System.NotSupportedException($\"Type \\\"{{typeof({TsmNameSpace}.Brep)}}\\\" not supported.\");\n" +
                     $"            \n" +
@@ -771,11 +771,11 @@ public class PluginFieldDefaultValuesGenerator : IIncrementalGenerator {
                 builder.AppendLine(
                     $"        \n" +
                     $"        /// <summary>\n" +
-                    $"        /// Creat <typeparamref name=\"T\"/> type model object for id '{id}'.\n" +
+                    $"        /// Create <typeparamref name=\"T\"/> type model object for id '{id}'.\n" +
                     $"        /// </summary>\n" +
                     $"        /// <typeparam name=\"T\">The model object type want to get.</typeparam>\n" +
                     $"        /// <returns>The <typeparamref name=\"T\"/> type model object created.</returns>\n" +
-                    $"        private T CreatWeld{ToPropertyNameStyle(id)}<T>() where T : {TsmNameSpace}.BaseWeld, new() {{\n" +
+                    $"        private T CreateWeld{ToPropertyNameStyle(id)}<T>() where T : {TsmNameSpace}.BaseWeld, new() {{\n" +
                     $"            T weld = new T();\n" +
                     $"            weld.SizeAbove = {propertyAccess}SizeAbove;\n" +
                     $"            weld.SizeBelow = {propertyAccess}SizeBelow;\n" +
@@ -854,14 +854,14 @@ public class PluginFieldDefaultValuesGenerator : IIncrementalGenerator {
                 builder.AppendLine(
                     $"        \n" +
                     $"        /// <summary>\n" +
-                    $"        /// Creat <typeparamref name=\"T\"/> type model object for id '{id}'.\n" +
+                    $"        /// Create <typeparamref name=\"T\"/> type model object for id '{id}'.\n" +
                     $"        /// </summary>\n" +
                     $"        /// <typeparam name=\"T\">The model object type want to get.</typeparam>\n" +
                     $"        /// <returns>The <typeparamref name=\"T\"/> type model object created.</returns>\n" +
                     $"        /// <exception cref=\"global::System.NotSupportedException\">\n" +
                     $"        /// Throw when <typeparamref name=\"T\"/> is <see cref=\"global::Tekla.Structures.Model.BoltCircle\"/>.\n" +
                     $"        /// </exception>\n" +
-                    $"        private T CreatBolt{ToPropertyNameStyle(id)}<T>() where T : {TsmNameSpace}.BoltGroup, new() {{\n" +
+                    $"        private T CreateBolt{ToPropertyNameStyle(id)}<T>() where T : {TsmNameSpace}.BoltGroup, new() {{\n" +
                     $"            {TsmNameSpace}.BoltGroup bolt = null;\n" +
                     $"            switch (typeof(T).ToString()) {{\n" +
                     $"            case \"Tekla.Structures.Model.BoltCircle\":\n" +
@@ -1021,10 +1021,10 @@ public class PluginFieldDefaultValuesGenerator : IIncrementalGenerator {
                 builder.AppendLine(
                     $"        \n" +
                     $"        /// <summary>\n" +
-                    $"        /// Creat <see cref=\"global::Tekla.Structures.Model.BoltCircle\"/> type model object for id '{id}'.\n" +
+                    $"        /// Create <see cref=\"global::Tekla.Structures.Model.BoltCircle\"/> type model object for id '{id}'.\n" +
                     $"        /// </summary>\n" +
                     $"        /// <returns>The <see cref=\"global::Tekla.Structures.Model.BoltCircle\"/> type model object created.</returns>\n" +
-                    $"        private {TsmNameSpace}.BoltCircle CreatBoltCircle{ToPropertyNameStyle(id)}() {{\n" +
+                    $"        private {TsmNameSpace}.BoltCircle CreateBoltCircle{ToPropertyNameStyle(id)}() {{\n" +
                     $"            {TsmNameSpace}.BoltCircle bolt = new {TsmNameSpace}.BoltCircle();\n" +
                     $"            bolt.BoltSize = {propertyAccess}Size;\n" +
                     $"            bolt.BoltStandard = {propertyAccess}Standard;\n" +
@@ -1116,10 +1116,10 @@ public class PluginFieldDefaultValuesGenerator : IIncrementalGenerator {
                 builder.AppendLine(
                     $"        \n" +
                     $"        /// <summary>\n" +
-                    $"        /// Creat <see cref=\"global::Tekla.Structures.Model.Chamfer\"/> for id '{id}'.\n" +
+                    $"        /// Create <see cref=\"global::Tekla.Structures.Model.Chamfer\"/> for id '{id}'.\n" +
                     $"        /// </summary>\n" +
                     $"        /// <returns>The <see cref=\"global::Tekla.Structures.Model.Chamfer\"/> created.</returns>\n" +
-                    $"        private {TsmNameSpace}.Chamfer CreatChamfer{ToPropertyNameStyle(id)}() {{\n" +
+                    $"        private {TsmNameSpace}.Chamfer CreateChamfer{ToPropertyNameStyle(id)}() {{\n" +
                     $"            {TsmNameSpace}.Chamfer chamfer = new {TsmNameSpace}.Chamfer();\n" +
                     $"            chamfer.Type = ({TsmNameSpace}.Chamfer.ChamferTypeEnum) global::System.Enum.Parse(typeof({TsmNameSpace}.Chamfer.ChamferTypeEnum), {propertyAccess}Type.ToString(), true);\n" +
                     $"            chamfer.X = {propertyAccess}X;\n" +

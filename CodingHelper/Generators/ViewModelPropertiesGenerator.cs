@@ -106,7 +106,7 @@ public class ViewModelPropertiesGenerator : IIncrementalGenerator {
 
     internal static IReadOnlyList<PropertyInfo> BoltPropertyInfos(Version tsmVersion) {
         var result = new List<PropertyInfo> {
-            ("Size", "SIZE", "Distance", "value.Millimeters == int.MinValue || value.Millimeters == 0.0"),
+            ("Size", "SIZE", "Distance", "value.Value == int.MinValue || value.Value == 0.0"),
             ("Standard", "STD", "String", "string.IsNullOrEmpty(value)"),
             ("DistX", "DISTX", "DistanceList", "value.Count == 0"),
             ("DistY", "DISTY", "DistanceList", "value.Count == 0"),
@@ -158,7 +158,7 @@ public class ViewModelPropertiesGenerator : IIncrementalGenerator {
 
     internal static IReadOnlyList<PropertyInfo> BoltCirclePropertyInfos(Version tsmVersion) {
         var result = new List<PropertyInfo> {
-            ("Size", "SIZE", "Distance", "value.Millimeters == int.MinValue || value.Millimeters == 0.0"),
+            ("Size", "SIZE", "Distance", "value.Value == int.MinValue || value.Value == 0.0"),
             ("Standard", "STD", "String", "string.IsNullOrEmpty(value)"),
             ("NumberOfBolts", "NUM", "Integer", "value == int.MinValue"),
             ("Diameter", "DIAM", "Double", "value == int.MinValue"),
@@ -571,7 +571,7 @@ public class ViewModelPropertiesGenerator : IIncrementalGenerator {
 
             var predicate = dataType switch {
                 "Integer" or "Double" => "value == int.MinValue",
-                "Distance" => "value.Millimeters == int.MinValue || value.Millimeters == 0.0",
+                "Distance" => "value.Value == int.MinValue",
                 "DistanceList" => "value.Count == 0",
                 "String" => "string.IsNullOrEmpty(value)",
                 _ => string.Empty
