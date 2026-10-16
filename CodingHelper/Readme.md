@@ -554,10 +554,10 @@ it reduces workload during the UI development stage because you can edit based o
 Currently, it only supports WPF, but INP and WinForm will be supported later.
 
 > ***Note***: Since the official implementation of source generators can't output files with non-.cs extensions,
-> this generator bypasses the official method to output a "WpfUi.xaml" file in the project directory
+> this generator bypasses the official method to output a "WpfUi.g.xaml" file in the project directory
 > (although it is possible write WPF UIs purely in C# code, but doing that would lose the convenience mentioned in the second point).
 > However, this approach also introduces a drawback – when you no longer need the generated WPF UI,
-> you'll have to manually delete the "WpfUi.xaml" file.
+> you'll have to manually delete the "WpfUi.g.xaml" file.
 
 ### Example
 

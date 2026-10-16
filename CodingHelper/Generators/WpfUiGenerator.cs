@@ -43,7 +43,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
             builder.Append(XamlMainBodyTail());
 
             using (var fileStream =
-                   new FileStream(Path.Combine(projectDir, "WpfUi.xaml"), FileMode.Create, FileAccess.Write)) {
+                   new FileStream(Path.Combine(projectDir, "WpfUi.g.xaml"), FileMode.Create, FileAccess.Write)) {
                 var data = Encoding.UTF8.GetBytes(builder.ToString());
                 fileStream.Write(data, 0, data.Length);
             }
@@ -732,108 +732,108 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                     $"                    </Grid.RowDefinitions>\r\n" +
                     $"\r\n" +
                     $"                    <TextBlock Grid.Row=\"0\" Grid.Column=\"0\" Text=\"Size\" />\r\n" +
-                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"0\" Grid.Column=\"1\" AttributeName=\"B{property}SIZE\" />\r\n" +
-                    $"                    <tsuic:WpfBoltCatalogSize Grid.Row=\"0\" Grid.Column=\"2\" SelectedItem=\"{{Binding Bolt{property}Size, Mode=TwoWay}}\" ItemsSource=\"{{Binding Path=BoltSizes, ElementName=Bolt{property}StdCatalog}}\" />\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"0\" Grid.Column=\"1\" AttributeName=\"BC{property}SIZE\" />\r\n" +
+                    $"                    <tsuic:WpfBoltCatalogSize Grid.Row=\"0\" Grid.Column=\"2\" SelectedItem=\"{{Binding BoltCircle{property}Size, Mode=TwoWay}}\" ItemsSource=\"{{Binding Path=BoltSizes, ElementName=BoltCircle{property}StdCatalog}}\" />\r\n" +
                     $"\r\n" +
                     $"                    <TextBlock Grid.Row=\"1\" Grid.Column=\"0\" Text=\"Standard\" />\r\n" +
-                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"1\" Grid.Column=\"1\" AttributeName=\"B{property}STD\" />\r\n" +
-                    $"                    <tsuic:WpfBoltCatalogStandard x:Name=\"Bolt{property}StdCatalog\" Grid.Row=\"1\" Grid.Column=\"2\" SelectedItem=\"{{Binding Bolt{property}Standard, Mode=TwoWay}}\" />\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"1\" Grid.Column=\"1\" AttributeName=\"BC{property}STD\" />\r\n" +
+                    $"                    <tsuic:WpfBoltCatalogStandard x:Name=\"BoltCircle{property}StdCatalog\" Grid.Row=\"1\" Grid.Column=\"2\" SelectedItem=\"{{Binding BoltCircle{property}Standard, Mode=TwoWay}}\" />\r\n" +
                     $"\r\n" +
                     $"                    <TextBlock Grid.Row=\"2\" Grid.Column=\"0\" Text=\"Bolt type\" />\r\n" +
-                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"2\" Grid.Column=\"1\" AttributeName=\"B{property}TYPE\" />\r\n" +
-                    $"                    <ComboBox Grid.Row=\"2\" Grid.Column=\"2\" SelectedIndex=\"{{Binding Bolt{property}Type, Mode=TwoWay}}\" ItemsSource=\"{{StaticResource BoltTypeSet}}\" />\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"2\" Grid.Column=\"1\" AttributeName=\"BC{property}TYPE\" />\r\n" +
+                    $"                    <ComboBox Grid.Row=\"2\" Grid.Column=\"2\" SelectedIndex=\"{{Binding BoltCircle{property}Type, Mode=TwoWay}}\" ItemsSource=\"{{StaticResource BoltTypeSet}}\" />\r\n" +
                     $"\r\n" +
                     $"                    <TextBlock Grid.Row=\"3\" Grid.Column=\"0\" Text=\"Thread in material\" />\r\n" +
-                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"3\" Grid.Column=\"1\" AttributeName=\"B{property}THRD\" />\r\n" +
-                    $"                    <ComboBox Grid.Row=\"3\" Grid.Column=\"2\" SelectedIndex=\"{{Binding Bolt{property}ThreadInMaterial, Mode=TwoWay}}\" ItemsSource=\"{{StaticResource BoltThreadInMaterialSet}}\" />\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"3\" Grid.Column=\"1\" AttributeName=\"BC{property}THRD\" />\r\n" +
+                    $"                    <ComboBox Grid.Row=\"3\" Grid.Column=\"2\" SelectedIndex=\"{{Binding BoltCircle{property}ThreadInMaterial, Mode=TwoWay}}\" ItemsSource=\"{{StaticResource BoltThreadInMaterialSet}}\" />\r\n" +
                     $"\r\n" +
                     $"                    <TextBlock Grid.Row=\"4\" Grid.Column=\"0\" Text=\"Cut length\" />\r\n" +
-                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"4\" Grid.Column=\"1\" AttributeName=\"B{property}CLEN\" />\r\n" +
-                    $"                    <TextBox Grid.Row=\"4\" Grid.Column=\"2\" Text=\"{{Binding Bolt{property}CutLength, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"4\" Grid.Column=\"1\" AttributeName=\"BC{property}CLEN\" />\r\n" +
+                    $"                    <TextBox Grid.Row=\"4\" Grid.Column=\"2\" Text=\"{{Binding BoltCircle{property}CutLength, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
                     $"\r\n" +
                     $"                    <TextBlock Grid.Row=\"5\" Grid.Column=\"0\" Text=\"Extra length\" />\r\n" +
-                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"5\" Grid.Column=\"1\" AttributeName=\"B{property}XLEN\" />\r\n" +
-                    $"                    <TextBox Grid.Row=\"5\" Grid.Column=\"2\" Text=\"{{Binding Bolt{property}ExtraLength, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"5\" Grid.Column=\"1\" AttributeName=\"BC{property}XLEN\" />\r\n" +
+                    $"                    <TextBox Grid.Row=\"5\" Grid.Column=\"2\" Text=\"{{Binding BoltCircle{property}ExtraLength, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
                     $"\r\n" +
                     $"                    <TextBlock Grid.Row=\"6\" Grid.Column=\"0\" Text=\"Tolerance\" />\r\n" +
-                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"6\" Grid.Column=\"1\" AttributeName=\"B{property}TOL\" />\r\n" +
-                    $"                    <TextBox Grid.Row=\"6\" Grid.Column=\"2\" Text=\"{{Binding Bolt{property}Tolerance, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"6\" Grid.Column=\"1\" AttributeName=\"BC{property}TOL\" />\r\n" +
+                    $"                    <TextBox Grid.Row=\"6\" Grid.Column=\"2\" Text=\"{{Binding BoltCircle{property}Tolerance, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
                     $"\r\n" +
                     $"                    <TextBlock Grid.Row=\"7\" Grid.Column=\"0\" Text=\"Plain hole type\" />\r\n" +
-                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"7\" Grid.Column=\"1\" AttributeName=\"B{property}PLAIN\" />\r\n" +
-                    $"                    <ComboBox Grid.Row=\"7\" Grid.Column=\"2\" SelectedIndex=\"{{Binding Bolt{property}PlainType, Mode=TwoWay}}\" ItemsSource=\"{{StaticResource BoltPlainHoleTypeSet}}\" />\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"7\" Grid.Column=\"1\" AttributeName=\"BC{property}PLAIN\" />\r\n" +
+                    $"                    <ComboBox Grid.Row=\"7\" Grid.Column=\"2\" SelectedIndex=\"{{Binding BoltCircle{property}PlainType, Mode=TwoWay}}\" ItemsSource=\"{{StaticResource BoltPlainHoleTypeSet}}\" />\r\n" +
                     $"\r\n" +
                     $"                    <TextBlock Grid.Row=\"8\" Grid.Column=\"0\" Text=\"Hole depth\" />\r\n" +
-                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"8\" Grid.Column=\"1\" AttributeName=\"B{property}DEPTH\" />\r\n" +
-                    $"                    <TextBox Grid.Row=\"8\" Grid.Column=\"2\" Text=\"{{Binding Bolt{property}BlindHoleDepth, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"8\" Grid.Column=\"1\" AttributeName=\"BC{property}DEPTH\" />\r\n" +
+                    $"                    <TextBox Grid.Row=\"8\" Grid.Column=\"2\" Text=\"{{Binding BoltCircle{property}BlindHoleDepth, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
                     $"\r\n" +
                     $"                    <TextBlock Grid.Row=\"9\" Grid.Column=\"0\" Text=\"Special hole type\" />\r\n" +
-                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"9\" Grid.Column=\"1\" AttributeName=\"B{property}HOLTY\" />\r\n" +
-                    $"                    <ComboBox Grid.Row=\"9\" Grid.Column=\"2\" SelectedIndex=\"{{Binding Bolt{property}HoleType, Mode=TwoWay}}\" ItemsSource=\"{{StaticResource BoltSpecialHoleTypeSet}}\" />\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"9\" Grid.Column=\"1\" AttributeName=\"BC{property}HOLTY\" />\r\n" +
+                    $"                    <ComboBox Grid.Row=\"9\" Grid.Column=\"2\" SelectedIndex=\"{{Binding BoltCircle{property}HoleType, Mode=TwoWay}}\" ItemsSource=\"{{StaticResource BoltSpecialHoleTypeSet}}\" />\r\n" +
                     $"\r\n" +
                     $"                    <TextBlock Grid.Row=\"10\" Grid.Column=\"0\" Text=\"Slotted hole X\" />\r\n" +
-                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"10\" Grid.Column=\"1\" AttributeName=\"B{property}SLOTX\" />\r\n" +
-                    $"                    <TextBox Grid.Row=\"10\" Grid.Column=\"2\" Text=\"{{Binding Bolt{property}SlottedHoleX, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"10\" Grid.Column=\"1\" AttributeName=\"BC{property}SLOTX\" />\r\n" +
+                    $"                    <TextBox Grid.Row=\"10\" Grid.Column=\"2\" Text=\"{{Binding BoltCircle{property}SlottedHoleX, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
                     $"\r\n" +
                     $"                    <TextBlock Grid.Row=\"11\" Grid.Column=\"0\" Text=\"Slotted hole Y\" />\r\n" +
-                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"11\" Grid.Column=\"1\" AttributeName=\"B{property}SLOTY\" />\r\n" +
-                    $"                    <TextBox Grid.Row=\"11\" Grid.Column=\"2\" Text=\"{{Binding Bolt{property}SlottedHoleY, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"11\" Grid.Column=\"1\" AttributeName=\"BC{property}SLOTY\" />\r\n" +
+                    $"                    <TextBox Grid.Row=\"11\" Grid.Column=\"2\" Text=\"{{Binding BoltCircle{property}SlottedHoleY, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
                     $"\r\n" +
                     $"                    <TextBlock Grid.Row=\"12\" Grid.Column=\"0\" Text=\"Rotate slots\" />\r\n" +
-                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"12\" Grid.Column=\"1\" AttributeName=\"B{property}RSLOT\" />\r\n" +
-                    $"                    <ComboBox Grid.Row=\"12\" Grid.Column=\"2\" SelectedIndex=\"{{Binding Bolt{property}RotateSlots, Mode=TwoWay}}\" ItemsSource=\"{{StaticResource BoltRotateSlotsSet}}\" />\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"12\" Grid.Column=\"1\" AttributeName=\"BC{property}RSLOT\" />\r\n" +
+                    $"                    <ComboBox Grid.Row=\"12\" Grid.Column=\"2\" SelectedIndex=\"{{Binding BoltCircle{property}RotateSlots, Mode=TwoWay}}\" ItemsSource=\"{{StaticResource BoltRotateSlotsSet}}\" />\r\n" +
                     $"\r\n" +
                     $"                    <TextBlock Grid.Row=\"0\" Grid.Column=\"4\" Text=\"Number of bolts\" />\r\n" +
-                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"0\" Grid.Column=\"5\" AttributeName=\"B{property}NUM\" />\r\n" +
-                    $"                    <TextBox Grid.Row=\"0\" Grid.Column=\"6\" Text=\"{{Binding Bolt{property}NumberOfBolts, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"0\" Grid.Column=\"5\" AttributeName=\"BC{property}NUM\" />\r\n" +
+                    $"                    <TextBox Grid.Row=\"0\" Grid.Column=\"6\" Text=\"{{Binding BoltCircle{property}NumberOfBolts, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
                     $"\r\n" +
                     $"                    <TextBlock Grid.Row=\"1\" Grid.Column=\"4\" Text=\"Diameter\" />\r\n" +
-                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"1\" Grid.Column=\"5\" AttributeName=\"B{property}DIAM\" />\r\n" +
-                    $"                    <TextBox Grid.Row=\"1\" Grid.Column=\"6\" Text=\"{{Binding Bolt{property}Diameter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"1\" Grid.Column=\"5\" AttributeName=\"BC{property}DIAM\" />\r\n" +
+                    $"                    <TextBox Grid.Row=\"1\" Grid.Column=\"6\" Text=\"{{Binding BoltCircle{property}Diameter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
                     $"\r\n" +
                     $"                    <TextBlock Grid.Row=\"2\" Grid.Column=\"4\" Text=\"Bolt\" />\r\n" +
-                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"2\" Grid.Column=\"5\" AttributeName=\"B{property}ISBOT\" />\r\n" +
-                    $"                    <CheckBox Grid.Row=\"2\" Grid.Column=\"6\" IsChecked=\"{{Binding Bolt{property}IsBolt, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"2\" Grid.Column=\"5\" AttributeName=\"BC{property}ISBOT\" />\r\n" +
+                    $"                    <CheckBox Grid.Row=\"2\" Grid.Column=\"6\" IsChecked=\"{{Binding BoltCircle{property}IsBolt, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
                     $"\r\n" +
                     $"                    <TextBlock Grid.Row=\"3\" Grid.Column=\"4\" Text=\"Washer 1\" />\r\n" +
-                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"3\" Grid.Column=\"5\" AttributeName=\"B{property}WSHR1\" />\r\n" +
-                    $"                    <CheckBox Grid.Row=\"3\" Grid.Column=\"6\" IsChecked=\"{{Binding Bolt{property}UseWasher1, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"3\" Grid.Column=\"5\" AttributeName=\"BC{property}WSHR1\" />\r\n" +
+                    $"                    <CheckBox Grid.Row=\"3\" Grid.Column=\"6\" IsChecked=\"{{Binding BoltCircle{property}UseWasher1, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
                     $"\r\n" +
                     $"                    <TextBlock Grid.Row=\"4\" Grid.Column=\"4\" Text=\"Washer 2\" />\r\n" +
-                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"4\" Grid.Column=\"5\" AttributeName=\"B{property}WSHR2\" />\r\n" +
-                    $"                    <CheckBox Grid.Row=\"4\" Grid.Column=\"6\" IsChecked=\"{{Binding Bolt{property}UseWasher2, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"4\" Grid.Column=\"5\" AttributeName=\"BC{property}WSHR2\" />\r\n" +
+                    $"                    <CheckBox Grid.Row=\"4\" Grid.Column=\"6\" IsChecked=\"{{Binding BoltCircle{property}UseWasher2, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
                     $"\r\n" +
                     $"                    <TextBlock Grid.Row=\"5\" Grid.Column=\"4\" Text=\"Washer 3\" />\r\n" +
-                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"5\" Grid.Column=\"5\" AttributeName=\"B{property}WSHR3\" />\r\n" +
-                    $"                    <CheckBox Grid.Row=\"5\" Grid.Column=\"6\" IsChecked=\"{{Binding Bolt{property}UseWasher3, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"5\" Grid.Column=\"5\" AttributeName=\"BC{property}WSHR3\" />\r\n" +
+                    $"                    <CheckBox Grid.Row=\"5\" Grid.Column=\"6\" IsChecked=\"{{Binding BoltCircle{property}UseWasher3, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
                     $"\r\n" +
                     $"                    <TextBlock Grid.Row=\"6\" Grid.Column=\"4\" Text=\"Nut 1\" />\r\n" +
-                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"6\" Grid.Column=\"5\" AttributeName=\"B{property}NUT1\" />\r\n" +
-                    $"                    <CheckBox Grid.Row=\"6\" Grid.Column=\"6\" IsChecked=\"{{Binding Bolt{property}UseNut1, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"6\" Grid.Column=\"5\" AttributeName=\"BC{property}NUT1\" />\r\n" +
+                    $"                    <CheckBox Grid.Row=\"6\" Grid.Column=\"6\" IsChecked=\"{{Binding BoltCircle{property}UseNut1, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
                     $"\r\n" +
                     $"                    <TextBlock Grid.Row=\"7\" Grid.Column=\"4\" Text=\"Nut 2\" />\r\n" +
-                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"7\" Grid.Column=\"5\" AttributeName=\"B{property}NUT2\" />\r\n" +
-                    $"                    <CheckBox Grid.Row=\"7\" Grid.Column=\"6\" IsChecked=\"{{Binding Bolt{property}UseNut2, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"7\" Grid.Column=\"5\" AttributeName=\"BC{property}NUT2\" />\r\n" +
+                    $"                    <CheckBox Grid.Row=\"7\" Grid.Column=\"6\" IsChecked=\"{{Binding BoltCircle{property}UseNut2, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
                     $"\r\n" +
                     $"                    <TextBlock Grid.Row=\"8\" Grid.Column=\"4\" Text=\"Hole 1\" />\r\n" +
-                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"8\" Grid.Column=\"5\" AttributeName=\"B{property}HOLE1\" />\r\n" +
-                    $"                    <CheckBox Grid.Row=\"8\" Grid.Column=\"6\" IsChecked=\"{{Binding Bolt{property}Hole1, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"8\" Grid.Column=\"5\" AttributeName=\"BC{property}HOLE1\" />\r\n" +
+                    $"                    <CheckBox Grid.Row=\"8\" Grid.Column=\"6\" IsChecked=\"{{Binding BoltCircle{property}Hole1, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
                     $"\r\n" +
                     $"                    <TextBlock Grid.Row=\"9\" Grid.Column=\"4\" Text=\"Hole 2\" />\r\n" +
-                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"9\" Grid.Column=\"5\" AttributeName=\"B{property}HOLE2\" />\r\n" +
-                    $"                    <CheckBox Grid.Row=\"9\" Grid.Column=\"6\" IsChecked=\"{{Binding Bolt{property}Hole2, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"9\" Grid.Column=\"5\" AttributeName=\"BC{property}HOLE2\" />\r\n" +
+                    $"                    <CheckBox Grid.Row=\"9\" Grid.Column=\"6\" IsChecked=\"{{Binding BoltCircle{property}Hole2, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
                     $"\r\n" +
                     $"                    <TextBlock Grid.Row=\"10\" Grid.Column=\"4\" Text=\"Hole 3\" />\r\n" +
-                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"10\" Grid.Column=\"5\" AttributeName=\"B{property}HOLE3\" />\r\n" +
-                    $"                    <CheckBox Grid.Row=\"10\" Grid.Column=\"6\" IsChecked=\"{{Binding Bolt{property}Hole3, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"10\" Grid.Column=\"5\" AttributeName=\"BC{property}HOLE3\" />\r\n" +
+                    $"                    <CheckBox Grid.Row=\"10\" Grid.Column=\"6\" IsChecked=\"{{Binding BoltCircle{property}Hole3, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
                     $"\r\n" +
                     $"                    <TextBlock Grid.Row=\"11\" Grid.Column=\"4\" Text=\"Hole 4\" />\r\n" +
-                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"11\" Grid.Column=\"5\" AttributeName=\"B{property}HOLE4\" />\r\n" +
-                    $"                    <CheckBox Grid.Row=\"11\" Grid.Column=\"6\" IsChecked=\"{{Binding Bolt{property}Hole4, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"11\" Grid.Column=\"5\" AttributeName=\"BC{property}HOLE4\" />\r\n" +
+                    $"                    <CheckBox Grid.Row=\"11\" Grid.Column=\"6\" IsChecked=\"{{Binding BoltCircle{property}Hole4, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
                     $"\r\n" +
                     $"                    <TextBlock Grid.Row=\"12\" Grid.Column=\"4\" Text=\"Hole 5\" />\r\n" +
-                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"12\" Grid.Column=\"5\" AttributeName=\"B{property}HOLE5\" />\r\n" +
-                    $"                    <CheckBox Grid.Row=\"12\" Grid.Column=\"6\" IsChecked=\"{{Binding Bolt{property}Hole5, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
+                    $"                    <tsuic:WpfFilterCheckBox Grid.Row=\"12\" Grid.Column=\"5\" AttributeName=\"BC{property}HOLE5\" />\r\n" +
+                    $"                    <CheckBox Grid.Row=\"12\" Grid.Column=\"6\" IsChecked=\"{{Binding BoltCircle{property}Hole5, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}}\" />\r\n" +
                     $"                </Grid>\r\n" +
                     $"            </TabItem>\r\n");
             }

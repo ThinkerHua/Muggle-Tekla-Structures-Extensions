@@ -8,7 +8,7 @@
         <IsRoslynComponent>true</IsRoslynComponent>
         <PackageId>Muggle.TsExtensions.CodingHelper</PackageId>
         <Title>Tekla Structures OpenAPI development helper</Title>
-        <Version>2.1.0-beta.1</Version>
+        <Version>2.1.0-beta.2</Version>
         <Authors>Huang YongXing</Authors>
         <Description>Generate fields for plugin data class, fields and utility methods for plugin class, properties for view model class, and a simple user interface for plugin.</Description>
         <Copyright>© 2026 Huang YongXing</Copyright>
@@ -21,15 +21,9 @@
         <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
         <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
         <PackageReleaseNotes>
-Added a user interface generator, which on one hand makes debugging easier during the core logic development stage, 
-and on the other hand reduces workload during the UI development stage because you can edit based on the generated files. 
-Currently, it only supports WPF, but INP and WinForm will be supported later.
-Note: Since the official implementation of source generators can't output files with non-.cs extensions, 
-this generator bypasses the official method to output a WpfUi.xaml file in the project directory 
-(although it is possible write WPF UIs purely in C# code, but doing that would lose the convenience mentioned in the second point). 
-However, this approach also introduces a drawback – when you no longer need the WPF UI, 
-you'll have to manually delete the WpfUi.xaml file.
-        </PackageReleaseNotes>
+File "WpfUi.xaml" renamed to "WpfUi.g.xaml";
+Fix wrong binding with BoltCircle properties in "WpfUi.g.xaml";
+		</PackageReleaseNotes>
         <IncludeBuildOutput>false</IncludeBuildOutput>
     </PropertyGroup>
 
