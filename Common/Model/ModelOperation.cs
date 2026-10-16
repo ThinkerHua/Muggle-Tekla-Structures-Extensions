@@ -41,7 +41,7 @@ namespace Muggle.TsExtensions.Common.Model {
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="thickness"/> 不能是 <see cref="double.NaN"/>，
         /// 也不应小于等于 0.0。</exception>
-        public static ContourPlate CreatBooleanOperationPolygon(ArrayList contourPoints, double thickness) {
+        public static ContourPlate CreateBooleanOperationPolygon(ArrayList contourPoints, double thickness) {
             if (contourPoints is null) {
                 throw new ArgumentNullException(nameof(contourPoints));
             }
@@ -70,7 +70,7 @@ namespace Muggle.TsExtensions.Common.Model {
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="ArgumentOutOfRangeException"><paramref name="thickness"/> 不能是 <see cref="double.NaN"/>，
         /// 也不应小于等于 0.0。</exception>
-        public static ContourPlate CreatBooleanOperationPolygon(IEnumerable<Point> points, double thickness) {
+        public static ContourPlate CreateBooleanOperationPolygon(IEnumerable<Point> points, double thickness) {
             if (points is null) {
                 throw new ArgumentNullException(nameof(points));
             }
@@ -102,7 +102,7 @@ namespace Muggle.TsExtensions.Common.Model {
         /// <param name="sourceContourPlate">用作布尔操作的多边形板</param>
         /// <returns>布尔操作多边形</returns>
         /// <exception cref="ArgumentNullException"></exception>
-        public static ContourPlate CreatBooleanOperationPolygon(ContourPlate sourceContourPlate) {
+        public static ContourPlate CreateBooleanOperationPolygon(ContourPlate sourceContourPlate) {
             if (sourceContourPlate is null) {
                 throw new ArgumentNullException(nameof(sourceContourPlate));
             }
@@ -180,7 +180,7 @@ namespace Muggle.TsExtensions.Common.Model {
         /// <param name="rotationOffset">位置属性的旋转偏移，默认值 0.0</param>
         /// <returns>创建的梁</returns>
         /// <exception cref="ArgumentNullException"></exception>
-        internal static Beam CreatBeam(
+        internal static Beam CreateBeam(
             Point startPoint, Point endPoint,
             string name = "BEAM", string profileStr = "HM244*175*7*11", string materialStr = "Q345B",
             string assemblyPrefix = "GL-", int assemblyStartNumber = 1, string partPrefix = "P",
@@ -260,7 +260,7 @@ namespace Muggle.TsExtensions.Common.Model {
         /// <param name="rotationOffset">位置属性的旋转偏移，默认值 0.0</param>
         /// <returns>创建的折梁</returns>
         /// <exception cref="ArgumentNullException"></exception>
-        internal static PolyBeam CreatPolyBeam(
+        internal static PolyBeam CreatePolyBeam(
             Contour contour,
             string name = "BEAM", string profileStr = "HM244*175*7*11", string materialStr = "Q345B",
             string assemblyPrefix = "GL-", int assemblyStartNumber = 1, string partPrefix = "P",
@@ -335,7 +335,7 @@ namespace Muggle.TsExtensions.Common.Model {
         /// <param name="rotationOffset">位置属性的旋转偏移，默认值 0.0</param>
         /// <returns>创建的折梁</returns>
         /// <exception cref="ArgumentNullException"></exception>
-        internal static PolyBeam CreatPolyBeam(
+        internal static PolyBeam CreatePolyBeam(
             IEnumerable<Point> points,
             string name = "BEAM", string profileStr = "HM244*175*7*11", string materialStr = "Q345B",
             string assemblyPrefix = "GL-", int assemblyStartNumber = 1, string partPrefix = "P",
@@ -411,7 +411,7 @@ namespace Muggle.TsExtensions.Common.Model {
         /// <param name="depthOffset">位置属性的深度偏移，默认值 0.0</param>
         /// <returns>创建的多边形板。</returns>
         /// <exception cref="ArgumentNullException"></exception>
-        internal static ContourPlate CreatContourPlate(
+        internal static ContourPlate CreateContourPlate(
             ArrayList contourPoints,
             string name = "PLATE", string profileStr = "PL10", string materialStr = "Q345B",
             string assemblyPrefix = "PLATE", int assemblyStartNumber = 1, string partPrefix = "P",
@@ -478,7 +478,7 @@ namespace Muggle.TsExtensions.Common.Model {
         /// <returns>创建的多边形板。</returns>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="ArgumentException"><paramref name="points"/>元素数量为 0 时引发。</exception>
-        internal static ContourPlate CreatContourPlate(
+        internal static ContourPlate CreateContourPlate(
             IEnumerable<Point> points,
             string name = "PLATE", string profileStr = "PL10", string materialStr = "Q345B",
             string assemblyPrefix = "PLATE", int assemblyStartNumber = 1, string partPrefix = "P",
@@ -552,7 +552,7 @@ namespace Muggle.TsExtensions.Common.Model {
         /// <param name="angleBelow">下焊缝角度，默认值 0.0</param>
         /// <returns>创建的焊缝</returns>
         /// <exception cref="ArgumentNullException"></exception>
-        internal static Weld CreatWeld(
+        internal static Weld CreateWeld(
             ModelObject mainObject, ModelObject secondaryObject,
             bool aroundWeld = true, bool shopWeld = true,
             Weld.WeldPositionEnum position = Weld.WeldPositionEnum.WELD_POSITION_PLUS_X,
@@ -605,7 +605,7 @@ namespace Muggle.TsExtensions.Common.Model {
         /// <param name="angleBelow">下焊缝角度，默认值 0.0</param>
         /// <returns>创建的多边形焊缝</returns>
         /// <exception cref="ArgumentNullException"></exception>
-        internal static PolygonWeld CreatPolygonWeld(
+        internal static PolygonWeld CreatePolygonWeld(
             ModelObject mainObject, ModelObject secondaryObject, Polygon polygon,
             bool aroundWeld = false, bool shopWeld = true,
             BaseWeld.WeldPreparationTypeEnum preparation = BaseWeld.WeldPreparationTypeEnum.PREPARATION_NONE,
@@ -671,7 +671,7 @@ namespace Muggle.TsExtensions.Common.Model {
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="ArgumentException"><paramref name="boltDistX"/> 或 <paramref name="boltDistY"/>
         /// 中元素数量为 0 时引发。</exception>
-        internal static BoltArray CreatBoltArray(
+        internal static BoltArray CreateBoltArray(
             Part boltTo, Part beBolted, IEnumerable<Part> otherBeBolted, Point firstPosition, Point secondPosition,
             IEnumerable<Distance> boltDistX,
             IEnumerable<Distance> boltDistY,
@@ -767,7 +767,7 @@ namespace Muggle.TsExtensions.Common.Model {
         /// <param name="nut2">是否使用螺母1，默认值 true</param>
         /// <returns>创建的环形螺栓组。</returns>
         /// <exception cref="ArgumentNullException"></exception>
-        internal static BoltCircle CreatBoltCircle(
+        internal static BoltCircle CreateBoltCircle(
             Part boltTo, Part beBolted, IEnumerable<Part> otherBeBolted, Point firstPosition, Point secondPosition,
             int num = 8, double diameter = 200.0, Position position = null,
             string boltStandard = "HS10.9", double boltSize = 20.0,
@@ -846,7 +846,7 @@ namespace Muggle.TsExtensions.Common.Model {
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="ArgumentException"><paramref name="boltDistX"/> 或 <paramref name="boltDistY"/>
         /// 中元素数量为 0 时引发。</exception>
-        internal static BoltXYList CreatBoltXYList(
+        internal static BoltXYList CreateBoltXYList(
             Part boltTo, Part beBolted, IEnumerable<Part> otherBeBolted, Point firstPosition, Point secondPosition,
             IEnumerable<Distance> boltDistX,
             IEnumerable<Distance> boltDistY,
@@ -1085,14 +1085,14 @@ namespace Muggle.TsExtensions.Common.Model {
 
             var point1 = firstPosition - anchorDirection * length1;
             var point2 = firstPosition + anchorDirection * length2;
-            screw = CreatBeam(point1, point2, "SCREW", $"D{size - 1}", material,
+            screw = CreateBeam(point1, point2, "SCREW", $"D{size - 1}", material,
                 partPrefix: "D", @class: @class);
             screw.Insert();
 
             var point3 = point2 + anchorDirection * length3;
             Point point4 = null, point5 = null, point6 = null;
             if (length4 == 0.0) {
-                anchorRod = CreatBeam(point2, point3, "ANCHORROD", $"D{size}", material,
+                anchorRod = CreateBeam(point2, point3, "ANCHORROD", $"D{size}", material,
                     partPrefix: "D", @class: @class);
                 anchorRod.Insert();
             } else {
@@ -1110,7 +1110,7 @@ namespace Muggle.TsExtensions.Common.Model {
                 if (length5 == 0.0) {
                     var cp4 = new ContourPoint(point4, chamferNone);
 
-                    anchorRod = CreatPolyBeam(
+                    anchorRod = CreatePolyBeam(
                         new Contour { ContourPoints = new ArrayList { cp2, cp3, cp4 } },
                         "ANCHORROD", $"D{size}", material, partPrefix: "D", @class: @class);
                     anchorRod.Insert();
@@ -1119,7 +1119,7 @@ namespace Muggle.TsExtensions.Common.Model {
                     var cp4 = new ContourPoint(point4, chamferRounding);
                     var cp5 = new ContourPoint(point5, chamferNone);
 
-                    anchorRod = CreatPolyBeam(
+                    anchorRod = CreatePolyBeam(
                         new Contour { ContourPoints = new ArrayList { cp2, cp3, cp4, cp5 } },
                         "ANCHORROD", $"D{size}", material, partPrefix: "D", @class: @class);
                     anchorRod.Insert();
@@ -1132,14 +1132,14 @@ namespace Muggle.TsExtensions.Common.Model {
                 goto SkipWasherPlate;
             point1 = firstPosition - anchorDirection * washerPlatePosition + hookDirection * (washerPlateWidth * 0.5);
             point2 = point1 - hookDirection * washerPlateWidth;
-            washerPlate = CreatBeam(
+            washerPlate = CreateBeam(
                 point1, point2, "WASHERPLATE", $"PL{washerPlateThickness}*{washerPlateWidth}", material,
                 @class: @class, depthEnum: Position.DepthEnum.FRONT);
             washerPlate.Insert();
 
             point1 = firstPosition - anchorDirection * washerPlatePosition;
             point2 = point1 - anchorDirection * washerPlateThickness;
-            var hole = CreatBeam(
+            var hole = CreateBeam(
                 point1, point2, "HOLE", $"D{washerPlateHoleDiameter}", "ANTIMATERIAL",
                 partPrefix: "D", @class: BooleanPart.BooleanOperativeClassName);
             hole.Insert();
@@ -1152,7 +1152,7 @@ namespace Muggle.TsExtensions.Common.Model {
             point1 = firstPosition -
                      anchorDirection * (washerPlatePosition + (useWasherPlate ? washerPlateThickness : 0.0));
             point2 = point1 - anchorDirection * (size * 0.5);
-            washer1 = CreatBeam(
+            washer1 = CreateBeam(
                 point1, point2, "WASHER", $"O{size * 2 + 6}*{size * 0.5 + 3}", material,
                 partPrefix: "O", @class: @class);
             washer1.Insert();
@@ -1163,7 +1163,7 @@ namespace Muggle.TsExtensions.Common.Model {
             point1 = firstPosition - anchorDirection *
                 (washerPlatePosition + (useWasherPlate ? washerPlateThickness : 0.0) + size * 0.5);
             point2 = point1 - anchorDirection * (size * 0.5);
-            washer2 = CreatBeam(
+            washer2 = CreateBeam(
                 point1, point2, "WASHER", $"O{size * 2 + 6}*{size * 0.5 + 3}", material,
                 partPrefix: "O", @class: @class);
             washer2.Insert();
@@ -1173,7 +1173,7 @@ namespace Muggle.TsExtensions.Common.Model {
                 goto SkipWasher3;
             point1 = firstPosition;
             point2 = point1 + anchorDirection * (size * 0.5);
-            washer3 = CreatBeam(
+            washer3 = CreateBeam(
                 point1, point2, "WASHER", $"O{size * 2 + 6}*{size * 0.5 + 3}", material,
                 partPrefix: "O", @class: @class);
             washer3.Insert();
@@ -1190,7 +1190,7 @@ namespace Muggle.TsExtensions.Common.Model {
             point4 = matrix.Transform(point3);
             point5 = matrix.Transform(point4);
             point6 = matrix.Transform(point5);
-            nut1 = CreatContourPlate(
+            nut1 = CreateContourPlate(
                 [point1, point2, point3, point4, point5, point6], "NUT", $"PL{size}", material,
                 @class: @class, depthEnum: Position.DepthEnum.FRONT);
             nut1.Insert();
@@ -1207,7 +1207,7 @@ namespace Muggle.TsExtensions.Common.Model {
             point4 = matrix.Transform(point3);
             point5 = matrix.Transform(point4);
             point6 = matrix.Transform(point5);
-            nut2 = CreatContourPlate(
+            nut2 = CreateContourPlate(
                 [point1, point2, point3, point4, point5, point6], "NUT", $"PL{size}", material,
                 @class: @class, depthEnum: Position.DepthEnum.FRONT);
             nut2.Insert();
@@ -1221,7 +1221,7 @@ namespace Muggle.TsExtensions.Common.Model {
             point4 = matrix.Transform(point3);
             point5 = matrix.Transform(point4);
             point6 = matrix.Transform(point5);
-            nut3 = CreatContourPlate(
+            nut3 = CreateContourPlate(
                 [point1, point2, point3, point4, point5, point6], "NUT", $"PL{size}", material,
                 @class: @class, depthEnum: Position.DepthEnum.BEHIND);
             nut3.Insert();
@@ -1230,7 +1230,7 @@ namespace Muggle.TsExtensions.Common.Model {
             var parts = new List<Part> { anchorRod };
             if (washerPlate != null) parts.Add(washerPlate);
 
-            hole = CreatBeam(
+            hole = CreateBeam(
                 firstPosition + anchorDirection * (size * 1.5),
                 firstPosition - anchorDirection * (washerPlatePosition + washerPlateThickness + size * 3),
                 "HOLE", $"D{size}", "ANTIMATERIAL", @class: BooleanPart.BooleanOperativeClassName);
