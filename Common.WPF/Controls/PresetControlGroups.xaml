@@ -171,10 +171,10 @@
         <TextBlock Grid.Row="4" Grid.Column="0" Text="{tr:Translate albl_PositionInRelationToPrimaryPart}" />
         <tsuic:WpfFilterCheckBox x:Name="filterVerticalPosition" Grid.Row="4" Grid.Column="1" AttributeName="vertical_position" />
         <tsuic:WpfFilterCheckBox Grid.Row="4"
-                                Grid.Column="1"
-                                AttributeName="horizontal_position"
-                                Visibility="Hidden"
-                                IsChecked="{Binding ElementName=filterVerticalPosition, Path=IsChecked, Mode=TwoWay}" />
+                                 Grid.Column="1"
+                                 AttributeName="horizontal_position"
+                                 Visibility="Hidden"
+                                 IsChecked="{Binding ElementName=filterVerticalPosition, Path=IsChecked, Mode=TwoWay}" />
 
         <!-- UpMiddleLeft UpMiddleMiddle UpMiddleRight -->
         <Image Grid.Row="4"
