@@ -99,18 +99,17 @@ public static class ContourPointExtension {
     }
 
     /// <summary>
-    /// 获取用零碎点模拟的轮廓点集合。
+    /// 获取模拟的轮廓点集合。
     /// </summary>
     /// <remarks>需自行判断元素是否与 <paramref name="previous"/> 或 <paramref name="next"/> 重合。</remarks>
     /// <param name="current">当前轮廓点</param>
     /// <param name="previous">前一个轮廓点</param>
     /// <param name="next">下一下轮廓点</param>
-    /// <param name="epsilon">轮廓线最小线段长</param>
     /// <returns>模拟的轮廓点集合。</returns>
     /// <exception cref="ArgumentNullException"></exception>
     /// <exception cref="ArgumentOutOfRangeException"></exception>
     public static List<ContourPoint> GetSimulatedContourPoints(this ContourPoint current, 
-        Point previous, Point next, double epsilon = 5.0) {
+        Point previous, Point next) {
         
         if (current == null) {
             throw new ArgumentNullException(nameof(current));
@@ -123,12 +122,6 @@ public static class ContourPointExtension {
         if (next == null) {
             throw new ArgumentNullException(nameof(next));
         }
-
-        if (epsilon < GeometryConstants.DISTANCE_EPSILON) {
-            throw new ArgumentOutOfRangeException(nameof(epsilon));
-        }
-
-        var chamfer = current.Chamfer;
         
         var axisX = new Vector(current - previous).GetNormal();
         var axisY = new Vector(next - current).GetNormal();
@@ -140,15 +133,19 @@ public static class ContourPointExtension {
         var line1 = new Line(current, axisX);
         var line2 = new Line(current, axisY);
 
-        List<Point> result;
+        var chamfer = current.Chamfer;
+        var chamferNone = new Chamfer();
+        var chamferArcPoint = new Chamfer(0, 0, Chamfer.ChamferTypeEnum.CHAMFER_ARC_POINT);
+
+        List<ContourPoint> result;
         switch (chamfer.Type) {
         case Chamfer.ChamferTypeEnum.CHAMFER_NONE:
             result = [current];
             break;
         case Chamfer.ChamferTypeEnum.CHAMFER_LINE:
             result = [
-                current - axisX * chamfer.X,
-                current + axisY * chamfer.Y,
+                new ContourPoint(current - axisX * chamfer.X, chamferNone),
+                new ContourPoint(current + axisY * chamfer.Y, chamferNone),
             ];
             break;
         case Chamfer.ChamferTypeEnum.CHAMFER_ROUNDING:
@@ -158,88 +155,86 @@ public static class ContourPointExtension {
             var center = IntersectionExtension.LineToLine(line1Offset, line2Offset).StartPoint;
             var startDirection = new Vector(Projection.PointToLine(center, line1) - center);
             var arc = new Arc(center, startDirection, axisX, chamfer.X, angle);
-            
-            result = GetPointsOnArc(arc);
-            if (!result.Last().Equals(arc.EndPoint)) result.Add(arc.EndPoint);
+
+            result = [
+                new ContourPoint(arc.StartPoint, chamferNone),
+                new ContourPoint(arc.ArcMiddlePoint, chamferArcPoint),
+                new ContourPoint(arc.EndPoint, chamferNone),
+            ];
             break;
         case Chamfer.ChamferTypeEnum.CHAMFER_ARC:
             var startPoint = current - axisX * chamfer.X;
             arc = new Arc(current, startPoint, axisZ * -1, Math.PI - angle);
-            
-            result = GetPointsOnArc(arc);
-            if (!result.Last().Equals(arc.EndPoint)) result.Add(arc.EndPoint);
+
+            result = [
+                new ContourPoint(arc.StartPoint, chamferNone),
+                new ContourPoint(arc.ArcMiddlePoint, chamferArcPoint),
+                new ContourPoint(arc.EndPoint, chamferNone),
+            ];
             break;
         case Chamfer.ChamferTypeEnum.CHAMFER_ARC_POINT:
-            arc = new Arc(previous, next, current);
-            result = GetPointsOnArc(arc);
+            result = [
+                new ContourPoint(previous, chamferNone),
+                new ContourPoint(current, chamferArcPoint),
+                new ContourPoint(next, chamferNone),
+            ];
             break;
         case Chamfer.ChamferTypeEnum.CHAMFER_SQUARE:
             line1Offset = line1.Offset(zCrossX * chamfer.Y);
             line2Offset = line2.Offset(zCrossY * chamfer.X);
             var cross = IntersectionExtension.LineToLine(line1Offset, line2Offset).StartPoint;
+            
             result = [
-                Projection.PointToLine(cross, line1),
-                cross,
-                Projection.PointToLine(cross, line2),
+                new ContourPoint(Projection.PointToLine(cross, line1), chamferNone),
+                new ContourPoint(cross, chamferNone),
+                new ContourPoint(Projection.PointToLine(cross, line2), chamferNone),
             ];
             break;
         case Chamfer.ChamferTypeEnum.CHAMFER_SQUARE_PARALLEL:
             line1Offset = line1.Offset(zCrossX * chamfer.Y);
             line2Offset = line2.Offset(zCrossY * chamfer.X);
+            
             result = [
-                IntersectionExtension.LineToLine(line1, line2Offset).StartPoint,
-                IntersectionExtension.LineToLine(line1Offset, line2Offset).StartPoint,
-                IntersectionExtension.LineToLine(line1Offset, line2).StartPoint,
+                new ContourPoint(IntersectionExtension.LineToLine(line1, line2Offset).StartPoint, chamferNone),
+                new ContourPoint(IntersectionExtension.LineToLine(line1Offset, line2Offset).StartPoint, chamferNone),
+                new ContourPoint(IntersectionExtension.LineToLine(line1Offset, line2).StartPoint, chamferNone),
             ];
             break;
         case Chamfer.ChamferTypeEnum.CHAMFER_LINE_AND_ARC:
             line1Offset = line1.Offset(zCrossX * chamfer.Y);
             line2Offset = line2.Offset(zCrossY * chamfer.X);
+            var line1CrossLine2Offset = IntersectionExtension.LineToLine(line1, line2Offset).StartPoint;
+            var line2CrossLine1Offset = IntersectionExtension.LineToLine(line2, line1Offset).StartPoint;
+            
             if (chamfer.X >= chamfer.Y) {
-                startPoint = IntersectionExtension.LineToLine(line1, line2Offset).StartPoint;
-                center = startPoint + axisX * chamfer.Y;
-                arc = new Arc(center, startPoint, axisZ * -1, Math.PI / 2);
-                
-                result = GetPointsOnArc(arc);
-                if (!result.Last().Equals(arc.EndPoint)) result.Add(arc.EndPoint);
-                result.Add(IntersectionExtension.LineToLine(line1Offset, line2).StartPoint);
+                center = line1CrossLine2Offset + axisX * chamfer.Y;
+                arc = new Arc(center, line1CrossLine2Offset, axisZ * -1, Math.PI / 2);
+
+                result = [
+                    new ContourPoint(arc.StartPoint, chamferNone),
+                    new ContourPoint(arc.ArcMiddlePoint, chamferArcPoint),
+                    new ContourPoint(arc.EndPoint, chamferNone),
+                    new ContourPoint(line2CrossLine1Offset, chamferNone),
+                ];
             } else {
-                var endPoint = IntersectionExtension.LineToLine(line1Offset, line2).StartPoint;
-                center = endPoint - axisY * chamfer.X;
+                center = line2CrossLine1Offset - axisY * chamfer.X;
                 startPoint = Projection.PointToLine(center, line2Offset);
                 arc = new Arc(center, startPoint, axisZ * -1, Math.PI / 2);
                 
                 result = [
-                    IntersectionExtension.LineToLine(line1, line2Offset).StartPoint,
-                    .. GetPointsOnArc(arc)
+                    new ContourPoint(line1CrossLine2Offset, chamferNone),
+                    new ContourPoint(arc.StartPoint, chamferNone),
+                    new ContourPoint(arc.ArcMiddlePoint, chamferArcPoint),
+                    new ContourPoint(arc.EndPoint, chamferNone),
                 ];
-                if (!result.Last().Equals(arc.EndPoint)) result.Add(arc.EndPoint);
             }
 
             break;
         default:
             throw new ArgumentOutOfRangeException();
         }
-
-        /*if (result.Last().Equals(next)) result.RemoveAt(result.Count - 1);
-        if (result.First().Equals(previous)) {
-            return [.. result.Take(result.Count - 1)];
-        } else {
-            return [.. result];
-        }*/
-        return [.. result.Select(p => new ContourPoint(p, new Chamfer()))];
-
-        List<Point> GetPointsOnArc(Arc arc) {
-            var cnt = (int)(arc.Length / epsilon);
-            if (arc.Length % epsilon != 0) cnt++;
-            var startPoint = arc.StartPoint;
-            var endPoint = arc.EndPoint;
-            var stepRadians = arc.Angle / cnt;
-
-            arc = new Arc(arc.CenterPoint, arc.StartDirection, arc.StartTangent, arc.Radius, Math.PI * 2);
-
-            return arc.GetPoints(startPoint, endPoint, stepRadians);
-        }
+        
+        return result;
     }
 
 }
