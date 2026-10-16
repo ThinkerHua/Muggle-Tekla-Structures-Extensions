@@ -968,7 +968,6 @@ namespace Muggle.TsExtensions.Common.Model {
             double washerPlatePosition = 20.0, double washerPlateHoleDiameter = 26.0,
             bool useWasher1 = true, bool useWasher2 = true, bool useWasher3 = true, bool useNut1 = true,
             bool useNut2 = true, bool useNut3 = true) {
-
             #region 参数检查
 
             if (firstPosition is null) {
@@ -1103,13 +1102,13 @@ namespace Muggle.TsExtensions.Common.Model {
                     X = bendRadiusFactor * size,
                     Y = bendRadiusFactor * size,
                 };
-                ContourPoint cp2, cp3, cp4, cp5;
-                cp2 = new ContourPoint(point2, chamferNone);
-                cp3 = new ContourPoint(point3, chamferRounding);
+
+                var cp2 = new ContourPoint(point2, chamferNone);
+                var cp3 = new ContourPoint(point3, chamferRounding);
 
                 point4 = point3 + hookDirection * length4;
                 if (length5 == 0.0) {
-                    cp4 = new ContourPoint(point4, chamferNone);
+                    var cp4 = new ContourPoint(point4, chamferNone);
 
                     anchorRod = CreatPolyBeam(
                         new Contour { ContourPoints = new ArrayList { cp2, cp3, cp4 } },
@@ -1117,8 +1116,8 @@ namespace Muggle.TsExtensions.Common.Model {
                     anchorRod.Insert();
                 } else {
                     point5 = point4 - anchorDirection * length5;
-                    cp4 = new ContourPoint(point4, chamferRounding);
-                    cp5 = new ContourPoint(point5, chamferNone);
+                    var cp4 = new ContourPoint(point4, chamferRounding);
+                    var cp5 = new ContourPoint(point5, chamferNone);
 
                     anchorRod = CreatPolyBeam(
                         new Contour { ContourPoints = new ArrayList { cp2, cp3, cp4, cp5 } },
@@ -1280,25 +1279,25 @@ namespace Muggle.TsExtensions.Common.Model {
         /// 以 <see cref="Solid.IntersectAllFaces(Point, Point, Point)"/> 方法计算交集。
         /// </remarks>
         /// <param name="part"><inheritdoc 
-        /// cref="InsertStiffeners" 
+        /// cref="CalculateStiffeners" 
         /// path="/param[1]"/>
         /// </param>
         /// <param name="position"><inheritdoc 
-        /// cref="InsertStiffeners" 
+        /// cref="CalculateStiffeners" 
         /// path="/param[2]"/>
         /// </param>
         /// <param name="thickness"><inheritdoc 
-        /// cref="InsertStiffeners" 
+        /// cref="CalculateStiffeners" 
         /// path="/param[3]"/>
         /// </param>
-        /// <param name="partCS">加劲板所处位置处映射的零件坐标系</param>
+        /// <param name="partCs">加劲板所处位置处映射的零件坐标系</param>
         /// <param name="stifPlane">加劲板中心平面</param>
         /// <param name="rotationAroundY"><inheritdoc 
-        /// cref="InsertStiffeners" 
+        /// cref="CalculateStiffeners" 
         /// path="/param[6]"/>
         /// </param>
         /// <param name="rotationAroundZ"><inheritdoc 
-        /// cref="InsertStiffeners" 
+        /// cref="CalculateStiffeners" 
         /// path="/param[7]"/>
         /// </param>
         /// <returns>
@@ -1311,7 +1310,7 @@ namespace Muggle.TsExtensions.Common.Model {
         /// <exception cref="ArgumentException"><paramref name="part"/> 
         /// 不是 <see cref="Beam"/> 或 <see cref="PolyBeam"/> 时引发。</exception>
         private static IEnumerator[] IntersectionWithStiffenerSurfacePlane(
-            Part part, Point position, double thickness, out CoordinateSystem partCS, out GeometricPlane stifPlane,
+            Part part, Point position, double thickness, out CoordinateSystem partCs, out GeometricPlane stifPlane,
             double rotationAroundY = 0.0, double rotationAroundZ = 0.0) {
             if (part is null) {
                 throw new ArgumentNullException(nameof(part));
@@ -1356,7 +1355,7 @@ namespace Muggle.TsExtensions.Common.Model {
                     nameof(part));
             }
 
-            partCS = new CoordinateSystem(Projection.PointToLine(position, nearestSegLine),
+            partCs = new CoordinateSystem(Projection.PointToLine(position, nearestSegLine),
                 coordinateSystem.AxisX, coordinateSystem.AxisY);
 
             var axisY = new Vector(0, 1000, 0);
@@ -1365,18 +1364,18 @@ namespace Muggle.TsExtensions.Common.Model {
             var matrixRotationZ = MatrixFactory.Rotate(-rotationAroundZ, axisZ);
             var matrix = matrixRotationZ * matrixRotationY;
 
-            var planeAxisX = MatrixExtension.Transform(matrix, -1 * axisZ).TransformFrom(partCS);
-            var planeAxisY = MatrixExtension.Transform(matrix, axisY).TransformFrom(partCS);
+            var planeAxisX = MatrixExtension.Transform(matrix, -1 * axisZ).TransformFrom(partCs);
+            var planeAxisY = MatrixExtension.Transform(matrix, axisY).TransformFrom(partCs);
             var planeNormal = planeAxisX.Cross(planeAxisY).GetNormal();
-            stifPlane = new GeometricPlane(partCS.Origin, planeNormal);
+            stifPlane = new GeometricPlane(partCs.Origin, planeNormal);
 
             var offsetVector = planeNormal * (thickness * 0.5);
 
-            var planeFrontOrigin = partCS.Origin + offsetVector;
+            var planeFrontOrigin = partCs.Origin + offsetVector;
             var planeFrontPointX = planeFrontOrigin + planeAxisX;
             var planeFrontPointY = planeFrontOrigin + planeAxisY;
 
-            var planeBehindOrigin = partCS.Origin - offsetVector;
+            var planeBehindOrigin = partCs.Origin - offsetVector;
             var planeBehindPointX = planeBehindOrigin + planeAxisX;
             var planeBehindPointY = planeBehindOrigin + planeAxisY;
 
@@ -1428,70 +1427,35 @@ namespace Muggle.TsExtensions.Common.Model {
                     .Cross(new Vector(vertexList.ElementAt(preIndex) - vertexList.ElementAt(firstIndex)))) < 0;
 
             if (reverse) {
-                vertexList = vertexList.Reverse().ToList();
-                vertexList = vertexList.Skip(cnt - 1 - firstIndex)
-                    .Concat(vertexList.Take(cnt - 1 - firstIndex)).ToList();
+                vertexList = [.. vertexList.Reverse()];
+                vertexList = [
+                    .. vertexList.Skip(cnt - 1 - firstIndex),
+                    .. vertexList.Take(cnt - 1 - firstIndex)
+                ];
             } else {
-                vertexList = vertexList.Skip(firstIndex).Concat(vertexList.Take(firstIndex)).ToList();
+                vertexList = [.. vertexList.Skip(firstIndex), .. vertexList.Take(firstIndex)];
             }
 
             return vertexList;
         }
 
         /// <summary>
-        /// 为 H 型钢创建加劲板。
+        /// 为 H 型钢计算加劲板轮廓点。
         /// </summary>
-        /// <param name="part"><inheritdoc 
-        /// cref="InsertStiffeners" 
-        /// path="/param[1]"/></param>
-        /// <param name="position"><inheritdoc 
-        /// cref="InsertStiffeners" 
-        /// path="/param[2]"/></param>
-        /// <param name="thickness"><inheritdoc 
-        /// cref="InsertStiffeners" 
-        /// path="/param[3]"/></param>
-        /// <param name="material"><inheritdoc 
-        /// cref="InsertStiffeners" 
-        /// path="/param[4]"/></param>
-        /// <param name="class"><inheritdoc 
-        /// cref="InsertStiffeners" 
-        /// path="/param[5]"/></param>
-        /// <param name="rotationAroundY"><inheritdoc 
-        /// cref="InsertStiffeners" 
-        /// path="/param[6]"/></param>
-        /// <param name="rotationAroundZ"><inheritdoc 
-        /// cref="InsertStiffeners" 
-        /// path="/param[7]"/></param>
-        /// <param name="indent"><inheritdoc 
-        /// cref="InsertStiffeners" 
-        /// path="/param[8]"/></param>
-        /// <param name="clearance"><inheritdoc 
-        /// cref="InsertStiffeners" 
-        /// path="/param[10]"/></param>
-        /// <param name="chamferType"><inheritdoc 
-        /// cref="InsertStiffeners" 
-        /// path="/param[11]"/></param>
-        /// <param name="chamferSizeX"><inheritdoc 
-        /// cref="InsertStiffeners" 
-        /// path="/param[12]"/></param>
-        /// <param name="chamferSizeY"><inheritdoc 
-        /// cref="InsertStiffeners" 
-        /// path="/param[13]"/></param>
-        /// <param name="chamferDz1"><inheritdoc 
-        /// cref="InsertStiffeners" 
-        /// path="/param[14]"/></param>
-        /// <param name="chamferDz2"><inheritdoc 
-        /// cref="InsertStiffeners" 
-        /// path="/param[15]"/></param>
-        /// <returns>成功创建的加劲板集合，
-        /// 第一个元素在零件坐标系 Z 轴正向侧，第二个元素在零件坐标系 Z 轴负向侧。</returns>
+        /// <param name="part"><inheritdoc cref="CalculateStiffeners" path="/param[1]"/></param>
+        /// <param name="position"><inheritdoc cref="CalculateStiffeners" path="/param[2]"/></param>
+        /// <param name="thickness"><inheritdoc cref="CalculateStiffeners" path="/param[3]"/></param>
+        /// <param name="rotationAroundY"><inheritdoc cref="CalculateStiffeners" path="/param[4]"/></param>
+        /// <param name="rotationAroundZ"><inheritdoc cref="CalculateStiffeners" path="/param[5]"/></param>
+        /// <param name="indent"><inheritdoc cref="CalculateStiffeners" path="/param[6]"/></param>
+        /// <param name="clearance"><inheritdoc cref="CalculateStiffeners" path="/param[8]"/></param>
+        /// <param name="chamfer"><inheritdoc cref="CalculateStiffeners" path="/param[9]"/></param>
+        /// <returns>加劲板轮廓点集合，第一个元素在零件坐标系 Z 轴正向侧，第二个元素在零件坐标系 Z 轴负向侧。</returns>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="Exception">不支持的截面类型引发。</exception>
-        private static ContourPlate[] InsertStiffenersForTypeI(
-            Part part, Point position, double thickness, string material = "Q235B", string @class = "99",
-            double rotationAroundY = 0.0, double rotationAroundZ = 0.0, double indent = 0.0, double clearance = 2.0,
-            Chamfer.ChamferTypeEnum chamferType = 0, double chamferSizeX = 0.0, double chamferSizeY = 0.0,
-            double chamferDz1 = 0.0, double chamferDz2 = 0.0) {
+        private static ArrayList[] CalculateStiffenersForTypeI(
+            Part part, Point position, double thickness, double rotationAroundY = 0.0, double rotationAroundZ = 0.0,
+            double indent = 0.0, double clearance = 2.0, Chamfer chamfer = null) {
             if (part is null) {
                 throw new ArgumentNullException(nameof(part));
             }
@@ -1500,30 +1464,26 @@ namespace Muggle.TsExtensions.Common.Model {
                 throw new ArgumentNullException(nameof(position));
             }
 
-            if (material is null) {
-                throw new ArgumentNullException(nameof(material));
-            }
-
-            if (string.IsNullOrEmpty(@class)) {
-                @class = "99";
-            }
+            chamfer ??= new Chamfer();
+            var chamferReversed = chamfer.GetReversed();
+            var chamferNone = new Chamfer();
 
             var faceEnumArr = IntersectionWithStiffenerSurfacePlane(
-                part, position, thickness, out var partCS, out var stifPlane, rotationAroundY,
+                part, position, thickness, out var partCs, out var stifPlane, rotationAroundY,
                 rotationAroundZ);
             var faceEnumFront = faceEnumArr[0];
             var faceEnumBehind = faceEnumArr[1];
 
             var verticesFront = GetVertices(faceEnumFront);
             var verticesBehind = GetVertices(faceEnumBehind);
-            verticesFront = OrderVertices(verticesFront, partCS).ToList();
-            verticesBehind = OrderVertices(verticesBehind, partCS).ToList();
-            verticesFront = verticesFront.Skip(2).Take(4).Concat(verticesFront.Skip(8)).ToList();
-            verticesBehind = verticesBehind.Skip(2).Take(4).Concat(verticesBehind.Skip(8)).ToList();
+            verticesFront = [.. OrderVertices(verticesFront, partCs)];
+            verticesBehind = [.. OrderVertices(verticesBehind, partCs)];
+            verticesFront = [.. verticesFront.Skip(2).Take(4), .. verticesFront.Skip(8)];
+            verticesBehind = [.. verticesBehind.Skip(2).Take(4), .. verticesBehind.Skip(8)];
 
-            var offsetZIndent = new Vector(0, 0, indent).TransformFrom(partCS);
-            var offsetZClearance = new Vector(0, 0, clearance).TransformFrom(partCS);
-            var offsetYClearance = new Vector(0, clearance, 0).TransformFrom(partCS);
+            var offsetZIndent = new Vector(0, 0, indent).TransformFrom(partCs);
+            var offsetZClearance = new Vector(0, 0, clearance).TransformFrom(partCs);
+            var offsetYClearance = new Vector(0, clearance, 0).TransformFrom(partCs);
             var arrList = new List<Point[]> { verticesFront.ToArray(), verticesBehind.ToArray() };
             foreach (var arr in arrList) {
                 arr[0] -= offsetZIndent;
@@ -1550,19 +1510,18 @@ namespace Muggle.TsExtensions.Common.Model {
             var stifBehindPlane = new GeometricPlane(stifPlane.Origin - stifPlane.Normal.GetNormal(thickness * 0.5),
                 stifPlane.Normal);
 
-            var partZXPlane = new GeometricPlane(partCS.Origin, partCS.AxisY);
-            var partXYPlane = new GeometricPlane(partCS.Origin, partCS.AxisX.Cross(partCS.AxisY));
-            var shearAxisX = Intersection.PlaneToPlane(partZXPlane, stifPlane).Direction;
-            var shearAxisY = Intersection.PlaneToPlane(partXYPlane, stifPlane).Direction;
+            var partZxPlane = new GeometricPlane(partCs.Origin, partCs.AxisY);
+            var partXyPlane = new GeometricPlane(partCs.Origin, partCs.AxisX.Cross(partCs.AxisY));
+            var shearAxisX = Intersection.PlaneToPlane(partZxPlane, stifPlane).Direction;
+            var shearAxisY = Intersection.PlaneToPlane(partXyPlane, stifPlane).Direction;
             var shearAxisZ = shearAxisX.Cross(shearAxisY);
             var matrixToStif =
                 MatrixFactoryExtension.ToCoordinateSystem(shearAxisX, shearAxisY, shearAxisZ, stifPlane.Origin);
             var matrixFromStif = matrixToStif.Inverse();
 
-            verticesFront = lines.Select(l => matrixToStif.Transform(Intersection.LineToPlane(l, stifFrontPlane)))
-                .ToList();
-            verticesBehind = lines.Select(l => matrixToStif.Transform(Intersection.LineToPlane(l, stifBehindPlane)))
-                .ToList();
+            verticesFront = [.. lines.Select(l => matrixToStif.Transform(Intersection.LineToPlane(l, stifFrontPlane)))];
+            verticesBehind =
+                [.. lines.Select(l => matrixToStif.Transform(Intersection.LineToPlane(l, stifBehindPlane)))];
             Point[] corners1 = [
                 TopLeft(verticesFront.ElementAt(0), verticesBehind.ElementAt(0)),
                 TopRight(verticesFront.ElementAt(1), verticesBehind.ElementAt(1)),
@@ -1580,33 +1539,20 @@ namespace Muggle.TsExtensions.Common.Model {
                 corners2[i] = matrixFromStif.Transform(corners2[i]);
             }
 
-            var contourPlates = new ContourPlate[2];
-            contourPlates[0] = CreatContourPlate(
-                new ArrayList {
-                    new ContourPoint(corners1[0], new Chamfer()),
-                    new ContourPoint(
-                        corners1[1],
-                        new Chamfer(chamferSizeX, chamferSizeY, chamferType) { DZ1 = chamferDz1, DZ2 = chamferDz2 }),
-                    new ContourPoint(
-                        corners1[2],
-                        new Chamfer(chamferSizeY, chamferSizeX, chamferType) { DZ1 = chamferDz1, DZ2 = chamferDz2 }),
-                    new ContourPoint(corners1[3], new Chamfer())
-                }, "STIFFENER", $"PL{thickness}", material, @class: @class);
-            contourPlates[0].Insert();
-            contourPlates[1] = CreatContourPlate(
-                new ArrayList {
-                    new ContourPoint(corners2[3], new Chamfer()),
-                    new ContourPoint(
-                        corners2[2],
-                        new Chamfer(chamferSizeX, chamferSizeY, chamferType) { DZ1 = chamferDz1, DZ2 = chamferDz2 }),
-                    new ContourPoint(
-                        corners2[1],
-                        new Chamfer(chamferSizeY, chamferSizeX, chamferType) { DZ1 = chamferDz1, DZ2 = chamferDz2 }),
-                    new ContourPoint(corners2[0], new Chamfer())
-                }, "STIFFENER", $"PL{thickness}", material, @class: @class);
-            contourPlates[1].Insert();
+            var contours1 = new ArrayList {
+                new ContourPoint(corners1[0], chamferNone),
+                new ContourPoint(corners1[1], chamferReversed),
+                new ContourPoint(corners1[2], chamfer),
+                new ContourPoint(corners1[3], chamferNone)
+            };
+            var contours2 = new ArrayList {
+                new ContourPoint(corners2[0], chamferNone),
+                new ContourPoint(corners2[1], chamferReversed),
+                new ContourPoint(corners2[2], chamfer),
+                new ContourPoint(corners2[3], chamferNone)
+            };
 
-            return contourPlates;
+            return [contours1, contours2];
 
             static Point BottomRight(Point p1, Point p2) => new(Math.Min(p1.X, p2.X), Math.Max(p1.Y, p2.Y), 0.0);
             static Point BottomLeft(Point p1, Point p2) => new(Math.Max(p1.X, p2.X), Math.Max(p1.Y, p2.Y), 0.0);
@@ -1652,33 +1598,23 @@ namespace Muggle.TsExtensions.Common.Model {
         }
 
         /// <summary>
-        /// 为 T 型钢创建加劲板。
+        /// 为 T 型钢计算加劲板轮廓点。
         /// </summary>
-        /// <param name="part"></param>
-        /// <param name="position"></param>
-        /// <param name="thickness"></param>
-        /// <param name="material"></param>
-        /// <param name="class"></param>
-        /// <param name="rotationAroundY"></param>
-        /// <param name="rotationAroundZ"></param>
-        /// <param name="indent"></param>
-        /// <param name="indent2"></param>
-        /// <param name="clearance"></param>
-        /// <param name="chamferType"></param>
-        /// <param name="chamferSizeX"></param>
-        /// <param name="chamferSizeY"></param>
-        /// <param name="chamferDz1"></param>
-        /// <param name="chamferDz2"></param>
-        /// <returns>成功创建的加劲板集合，
-        /// 第一个元素在零件坐标系 Z 轴正向侧，第二个元素在零件坐标系 Z 轴负向侧。</returns>
+        /// <param name="part"><inheritdoc cref="CalculateStiffeners" path="/param[1]"/></param>
+        /// <param name="position"><inheritdoc cref="CalculateStiffeners" path="/param[2]"/></param>
+        /// <param name="thickness"><inheritdoc cref="CalculateStiffeners" path="/param[3]"/></param>
+        /// <param name="rotationAroundY"><inheritdoc cref="CalculateStiffeners" path="/param[4]"/></param>
+        /// <param name="rotationAroundZ"><inheritdoc cref="CalculateStiffeners" path="/param[5]"/></param>
+        /// <param name="indent"><inheritdoc cref="CalculateStiffeners" path="/param[6]"/></param>
+        /// <param name="indent2"><inheritdoc cref="CalculateStiffeners" path="/param[7]"/></param>
+        /// <param name="clearance"><inheritdoc cref="CalculateStiffeners" path="/param[8]"/></param>
+        /// <param name="chamfer"><inheritdoc cref="CalculateStiffeners" path="/param[9]"/></param>
+        /// <returns>加劲板轮廓点集合，第一个元素在零件坐标系 Z 轴正向侧，第二个元素在零件坐标系 Z 轴负向侧。</returns>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="Exception">不支持的截面类型引发。</exception>
-        private static ContourPlate[] InsertStiffenersForTypeT(
-            Part part, Point position, double thickness, string material = "Q235B", string @class = "99",
-            double rotationAroundY = 0.0, double rotationAroundZ = 0.0, double indent = 0.0, double indent2 = 0.0,
-            double clearance = 2.0,
-            Chamfer.ChamferTypeEnum chamferType = 0, double chamferSizeX = 0.0, double chamferSizeY = 0.0,
-            double chamferDz1 = 0.0, double chamferDz2 = 0.0) {
+        private static ArrayList[] CalculateStiffenersForTypeT(
+            Part part, Point position, double thickness, double rotationAroundY = 0.0, double rotationAroundZ = 0.0,
+            double indent = 0.0, double indent2 = 0.0, double clearance = 2.0, Chamfer chamfer = null) {
             if (part is null) {
                 throw new ArgumentNullException(nameof(part));
             }
@@ -1687,31 +1623,27 @@ namespace Muggle.TsExtensions.Common.Model {
                 throw new ArgumentNullException(nameof(position));
             }
 
-            if (material is null) {
-                throw new ArgumentNullException(nameof(material));
-            }
-
-            if (string.IsNullOrEmpty(@class)) {
-                @class = "99";
-            }
+            chamfer ??= new Chamfer();
+            var chamferReversed = chamfer.GetReversed();
+            var chamferNone = new Chamfer();
 
             var faceEnumArr = IntersectionWithStiffenerSurfacePlane(
-                part, position, thickness, out var partCS, out var stifPlane, rotationAroundY,
+                part, position, thickness, out var partCs, out var stifPlane, rotationAroundY,
                 rotationAroundZ);
             var faceEnumFront = faceEnumArr[0];
             var faceEnumBehind = faceEnumArr[1];
 
             var verticesFront = GetVertices(faceEnumFront);
             var verticesBehind = GetVertices(faceEnumBehind);
-            verticesFront = OrderVertices(verticesFront, partCS).ToList();
-            verticesBehind = OrderVertices(verticesBehind, partCS).ToList();
-            verticesFront = verticesFront.Skip(2).ToList();
-            verticesBehind = verticesBehind.Skip(2).ToList();
+            verticesFront = [.. OrderVertices(verticesFront, partCs)];
+            verticesBehind = [.. OrderVertices(verticesBehind, partCs)];
+            verticesFront = [.. verticesFront.Skip(2)];
+            verticesBehind = [.. verticesBehind.Skip(2)];
 
-            var offsetZIndent = new Vector(0, 0, indent).TransformFrom(partCS);
-            var offsetZClearance = new Vector(0, 0, clearance).TransformFrom(partCS);
-            var offsetYIndent2 = new Vector(0, indent2, 0).TransformFrom(partCS);
-            var offsetYClearance = new Vector(0, clearance, 0).TransformFrom(partCS);
+            var offsetZIndent = new Vector(0, 0, indent).TransformFrom(partCs);
+            var offsetZClearance = new Vector(0, 0, clearance).TransformFrom(partCs);
+            var offsetYIndent2 = new Vector(0, indent2, 0).TransformFrom(partCs);
+            var offsetYClearance = new Vector(0, clearance, 0).TransformFrom(partCs);
             var arrList = new List<Point[]> { verticesFront.ToArray(), verticesBehind.ToArray() };
             foreach (var arr in arrList) {
                 arr[0] -= offsetZIndent;
@@ -1734,19 +1666,18 @@ namespace Muggle.TsExtensions.Common.Model {
             var stifBehindPlane = new GeometricPlane(stifPlane.Origin - stifPlane.Normal.GetNormal(thickness * 0.5),
                 stifPlane.Normal);
 
-            var partZXPlane = new GeometricPlane(partCS.Origin, partCS.AxisY);
-            var partXYPlane = new GeometricPlane(partCS.Origin, partCS.AxisX.Cross(partCS.AxisY));
-            var shearAxisX = Intersection.PlaneToPlane(partZXPlane, stifPlane).Direction;
-            var shearAxisY = Intersection.PlaneToPlane(partXYPlane, stifPlane).Direction;
+            var partZxPlane = new GeometricPlane(partCs.Origin, partCs.AxisY);
+            var partXyPlane = new GeometricPlane(partCs.Origin, partCs.AxisX.Cross(partCs.AxisY));
+            var shearAxisX = Intersection.PlaneToPlane(partZxPlane, stifPlane).Direction;
+            var shearAxisY = Intersection.PlaneToPlane(partXyPlane, stifPlane).Direction;
             var shearAxisZ = shearAxisX.Cross(shearAxisY);
             var matrixToStif =
                 MatrixFactoryExtension.ToCoordinateSystem(shearAxisX, shearAxisY, shearAxisZ, stifPlane.Origin);
             var matrixFromStif = matrixToStif.Inverse();
 
-            verticesFront = lines.Select(l => matrixToStif.Transform(Intersection.LineToPlane(l, stifFrontPlane)))
-                .ToList();
-            verticesBehind = lines.Select(l => matrixToStif.Transform(Intersection.LineToPlane(l, stifBehindPlane)))
-                .ToList();
+            verticesFront = [.. lines.Select(l => matrixToStif.Transform(Intersection.LineToPlane(l, stifFrontPlane)))];
+            verticesBehind =
+                [.. lines.Select(l => matrixToStif.Transform(Intersection.LineToPlane(l, stifBehindPlane)))];
 
             var corners1 = new[] {
                 TopLeft(verticesFront.ElementAt(0), verticesBehind.ElementAt(0)),
@@ -1766,29 +1697,20 @@ namespace Muggle.TsExtensions.Common.Model {
             corners1[3] = corners1[0] + corners1[2] - corners1[1];
             corners2[0] = corners2[1] + corners2[3] - corners2[2];
 
-            var contourPlates = new ContourPlate[2];
-            contourPlates[0] = CreatContourPlate(
-                new ArrayList {
-                    new ContourPoint(corners1[0], new Chamfer()),
-                    new ContourPoint(
-                        corners1[1],
-                        new Chamfer(chamferSizeX, chamferSizeY, chamferType) { DZ1 = chamferDz1, DZ2 = chamferDz2 }),
-                    new ContourPoint(corners1[2], new Chamfer()),
-                    new ContourPoint(corners1[3], new Chamfer())
-                }, "STIFFENER", $"PL{thickness}", material, @class: @class);
-            contourPlates[0].Insert();
-            contourPlates[1] = CreatContourPlate(
-                new ArrayList {
-                    new ContourPoint(corners2[3], new Chamfer()),
-                    new ContourPoint(
-                        corners2[2],
-                        new Chamfer(chamferSizeX, chamferSizeY, chamferType) { DZ1 = chamferDz1, DZ2 = chamferDz2 }),
-                    new ContourPoint(corners2[1], new Chamfer()),
-                    new ContourPoint(corners2[0], new Chamfer())
-                }, "STIFFENER", $"PL{thickness}", material, @class: @class);
-            contourPlates[1].Insert();
+            var contours1 = new ArrayList {
+                new ContourPoint(corners1[0], chamferNone),
+                new ContourPoint(corners1[1], chamferReversed),
+                new ContourPoint(corners1[2], chamferNone),
+                new ContourPoint(corners1[3], chamferNone)
+            };
+            var contours2 = new ArrayList {
+                new ContourPoint(corners2[0], chamferNone),
+                new ContourPoint(corners2[1], chamferNone),
+                new ContourPoint(corners2[2], chamfer),
+                new ContourPoint(corners2[3], chamferNone)
+            };
 
-            return contourPlates;
+            return [contours1, contours2];
 
             static Point BottomRight(Point p1, Point p2) => new(Math.Min(p1.X, p2.X), Math.Max(p1.Y, p2.Y), 0.0);
             static Point BottomLeft(Point p1, Point p2) => new(Math.Max(p1.X, p2.X), Math.Max(p1.Y, p2.Y), 0.0);
@@ -1836,30 +1758,22 @@ namespace Muggle.TsExtensions.Common.Model {
         }
 
         /// <summary>
-        /// 为槽钢创建加劲板。
+        /// 为槽钢计算加劲板轮廓点。
         /// </summary>
-        /// <param name="part"></param>
-        /// <param name="position"></param>
-        /// <param name="thickness"></param>
-        /// <param name="material"></param>
-        /// <param name="class"></param>
-        /// <param name="rotationAroundY"></param>
-        /// <param name="rotationAroundZ"></param>
-        /// <param name="indent"></param>
-        /// <param name="clearance"></param>
-        /// <param name="chamferType"></param>
-        /// <param name="chamferSizeX"></param>
-        /// <param name="chamferSizeY"></param>
-        /// <param name="chamferDz1"></param>
-        /// <param name="chamferDz2"></param>
-        /// <returns>成功创建的加劲板。</returns>
+        /// <param name="part"><inheritdoc cref="CalculateStiffeners" path="/param[1]"/></param>
+        /// <param name="position"><inheritdoc cref="CalculateStiffeners" path="/param[2]"/></param>
+        /// <param name="thickness"><inheritdoc cref="CalculateStiffeners" path="/param[3]"/></param>
+        /// <param name="rotationAroundY"><inheritdoc cref="CalculateStiffeners" path="/param[4]"/></param>
+        /// <param name="rotationAroundZ"><inheritdoc cref="CalculateStiffeners" path="/param[5]"/></param>
+        /// <param name="indent"><inheritdoc cref="CalculateStiffeners" path="/param[6]"/></param>
+        /// <param name="clearance"><inheritdoc cref="CalculateStiffeners" path="/param[8]"/></param>
+        /// <param name="chamfer"><inheritdoc cref="CalculateStiffeners" path="/param[9]"/></param>
+        /// <returns>加劲板轮廓点。</returns>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="Exception">不支持的截面类型引发。</exception>
-        private static ContourPlate InsertStiffenersForTypeU(
-            Part part, Point position, double thickness, string material = "Q235B", string @class = "99",
-            double rotationAroundY = 0.0, double rotationAroundZ = 0.0, double indent = 0.0, double clearance = 2.0,
-            Chamfer.ChamferTypeEnum chamferType = 0, double chamferSizeX = 0.0, double chamferSizeY = 0.0,
-            double chamferDz1 = 0.0, double chamferDz2 = 0.0) {
+        private static ArrayList CalculateStiffenersForTypeU(
+            Part part, Point position, double thickness, double rotationAroundY = 0.0, double rotationAroundZ = 0.0,
+            double indent = 0.0, double clearance = 2.0, Chamfer chamfer = null) {
             if (part is null) {
                 throw new ArgumentNullException(nameof(part));
             }
@@ -1868,30 +1782,26 @@ namespace Muggle.TsExtensions.Common.Model {
                 throw new ArgumentNullException(nameof(position));
             }
 
-            if (material is null) {
-                throw new ArgumentNullException(nameof(material));
-            }
-
-            if (string.IsNullOrEmpty(@class)) {
-                @class = "99";
-            }
+            chamfer ??= new Chamfer();
+            var chamferReversed = chamfer.GetReversed();
+            var chamferNone = new Chamfer();
 
             var faceEnumArr = IntersectionWithStiffenerSurfacePlane(
-                part, position, thickness, out var partCS, out var stifPlane, rotationAroundY,
+                part, position, thickness, out var partCs, out var stifPlane, rotationAroundY,
                 rotationAroundZ);
             var faceEnumFront = faceEnumArr[0];
             var faceEnumBehind = faceEnumArr[1];
 
             var verticesFront = GetVertices(faceEnumFront);
             var verticesBehind = GetVertices(faceEnumBehind);
-            verticesFront = OrderVertices(verticesFront, partCS).ToList();
-            verticesBehind = OrderVertices(verticesBehind, partCS).ToList();
-            verticesFront = verticesFront.Skip(2).Take(4).ToList();
-            verticesBehind = verticesBehind.Skip(2).Take(4).ToList();
+            verticesFront = [.. OrderVertices(verticesFront, partCs)];
+            verticesBehind = [.. OrderVertices(verticesBehind, partCs)];
+            verticesFront = [.. verticesFront.Skip(2).Take(4)];
+            verticesBehind = [.. verticesBehind.Skip(2).Take(4)];
 
-            var offsetZIndent = new Vector(0, 0, indent).TransformFrom(partCS);
-            var offsetZClearance = new Vector(0, 0, clearance).TransformFrom(partCS);
-            var offsetYClearance = new Vector(0, clearance, 0).TransformFrom(partCS);
+            var offsetZIndent = new Vector(0, 0, indent).TransformFrom(partCs);
+            var offsetZClearance = new Vector(0, 0, clearance).TransformFrom(partCs);
+            var offsetYClearance = new Vector(0, clearance, 0).TransformFrom(partCs);
             var arrList = new List<Point[]> { verticesFront.ToArray(), verticesBehind.ToArray() };
             foreach (var arr in arrList) {
                 arr[0] -= offsetZIndent;
@@ -1910,19 +1820,18 @@ namespace Muggle.TsExtensions.Common.Model {
             var stifBehindPlane = new GeometricPlane(stifPlane.Origin - stifPlane.Normal.GetNormal(thickness * 0.5),
                 stifPlane.Normal);
 
-            var partZXPlane = new GeometricPlane(partCS.Origin, partCS.AxisY);
-            var partXYPlane = new GeometricPlane(partCS.Origin, partCS.AxisX.Cross(partCS.AxisY));
-            var shearAxisX = Intersection.PlaneToPlane(partZXPlane, stifPlane).Direction;
-            var shearAxisY = Intersection.PlaneToPlane(partXYPlane, stifPlane).Direction;
+            var partZxPlane = new GeometricPlane(partCs.Origin, partCs.AxisY);
+            var partXyPlane = new GeometricPlane(partCs.Origin, partCs.AxisX.Cross(partCs.AxisY));
+            var shearAxisX = Intersection.PlaneToPlane(partZxPlane, stifPlane).Direction;
+            var shearAxisY = Intersection.PlaneToPlane(partXyPlane, stifPlane).Direction;
             var shearAxisZ = shearAxisX.Cross(shearAxisY);
             var matrixToStif =
                 MatrixFactoryExtension.ToCoordinateSystem(shearAxisX, shearAxisY, shearAxisZ, stifPlane.Origin);
             var matrixFromStif = matrixToStif.Inverse();
 
-            verticesFront = lines.Select(l => matrixToStif.Transform(Intersection.LineToPlane(l, stifFrontPlane)))
-                .ToList();
-            verticesBehind = lines.Select(l => matrixToStif.Transform(Intersection.LineToPlane(l, stifBehindPlane)))
-                .ToList();
+            verticesFront = [.. lines.Select(l => matrixToStif.Transform(Intersection.LineToPlane(l, stifFrontPlane)))];
+            verticesBehind =
+                [.. lines.Select(l => matrixToStif.Transform(Intersection.LineToPlane(l, stifBehindPlane)))];
 
             var corners = new[] {
                 TopLeft(verticesFront.ElementAt(0), verticesBehind.ElementAt(0)),
@@ -1934,20 +1843,14 @@ namespace Muggle.TsExtensions.Common.Model {
                 corners[i] = matrixFromStif.Transform(corners[i]);
             }
 
-            var contourPlate = CreatContourPlate(
-                new ArrayList {
-                    new ContourPoint(corners[0], new Chamfer()),
-                    new ContourPoint(
-                        corners[1],
-                        new Chamfer(chamferSizeX, chamferSizeY, chamferType) { DZ1 = chamferDz1, DZ2 = chamferDz2 }),
-                    new ContourPoint(
-                        corners[2],
-                        new Chamfer(chamferSizeY, chamferSizeX, chamferType) { DZ1 = chamferDz1, DZ2 = chamferDz2 }),
-                    new ContourPoint(corners[3], new Chamfer())
-                }, "STIFFENER", $"PL{thickness}", material, @class: @class);
-            contourPlate.Insert();
+            var contours = new ArrayList {
+                new ContourPoint(corners[3], chamferNone),
+                new ContourPoint(corners[2], chamferReversed),
+                new ContourPoint(corners[1], chamfer),
+                new ContourPoint(corners[0], chamferNone)
+            };
 
-            return contourPlate;
+            return contours;
 
             static Point BottomRight(Point p1, Point p2) => new(Math.Min(p1.X, p2.X), Math.Max(p1.Y, p2.Y), 0.0);
             static Point BottomLeft(Point p1, Point p2) => new(Math.Max(p1.X, p2.X), Math.Max(p1.Y, p2.Y), 0.0);
@@ -1997,55 +1900,21 @@ namespace Muggle.TsExtensions.Common.Model {
         }
 
         /// <summary>
-        /// 为箱型截面创建加劲板。
+        /// 为箱型截面计算轮廓点。
         /// </summary>
-        /// <param name="part"><inheritdoc 
-        /// cref="InsertStiffeners" 
-        /// path="/param[1]"/></param>
-        /// <param name="position"><inheritdoc 
-        /// cref="InsertStiffeners" 
-        /// path="/param[2]"/></param>
-        /// <param name="thickness"><inheritdoc 
-        /// cref="InsertStiffeners" 
-        /// path="/param[3]"/></param>
-        /// <param name="material"><inheritdoc 
-        /// cref="InsertStiffeners" 
-        /// path="/param[4"/></param>
-        /// <param name="class"><inheritdoc 
-        /// cref="InsertStiffeners" 
-        /// path="/param[5]"/></param>
-        /// <param name="rotationAroundY"><inheritdoc 
-        /// cref="InsertStiffeners" 
-        /// path="/param[6]"/></param>
-        /// <param name="rotationAroundZ"><inheritdoc 
-        /// cref="InsertStiffeners" 
-        /// path="/param[7]"/></param>
-        /// <param name="clearance"><inheritdoc 
-        /// cref="InsertStiffeners" 
-        /// path="/param[10]"/></param>
-        /// <param name="chamferType"><inheritdoc 
-        /// cref="InsertStiffeners" 
-        /// path="/param[11]"/></param>
-        /// <param name="chamferSizeX"><inheritdoc 
-        /// cref="InsertStiffeners" 
-        /// path="/param[12]"/></param>
-        /// <param name="chamferSizeY"><inheritdoc 
-        /// cref="InsertStiffeners" 
-        /// path="/param[13]"/></param>
-        /// <param name="chamferDz1"><inheritdoc 
-        /// cref="InsertStiffeners" 
-        /// path="/param[14]"/></param>
-        /// <param name="chamferDz2"><inheritdoc 
-        /// cref="InsertStiffeners" 
-        /// path="/param[15]"/></param>
-        /// <returns>成功创建的加劲板。</returns>
+        /// <param name="part"><inheritdoc cref="CalculateStiffeners" path="/param[1]"/></param>
+        /// <param name="position"><inheritdoc cref="CalculateStiffeners" path="/param[2]"/></param>
+        /// <param name="thickness"><inheritdoc cref="CalculateStiffeners" path="/param[3]"/></param>
+        /// <param name="rotationAroundY"><inheritdoc cref="CalculateStiffeners" path="/param[4]"/></param>
+        /// <param name="rotationAroundZ"><inheritdoc cref="CalculateStiffeners" path="/param[5]"/></param>
+        /// <param name="clearance"><inheritdoc cref="CalculateStiffeners" path="/param[8]"/></param>
+        /// <param name="chamfer"><inheritdoc cref="CalculateStiffeners" path="/param[9]"/></param>
+        /// <returns>加劲板轮廓点。</returns>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="Exception">不支持的截面类型引发。</exception>
-        private static ContourPlate InsertStiffenersForTypeM(
-            Part part, Point position, double thickness, string material = "Q235B", string @class = "99",
-            double rotationAroundY = 0.0, double rotationAroundZ = 0.0, double clearance = 2.0,
-            Chamfer.ChamferTypeEnum chamferType = 0, double chamferSizeX = 0.0, double chamferSizeY = 0.0,
-            double chamferDz1 = 0.0, double chamferDz2 = 0.0) {
+        private static ArrayList CalculateStiffenersForTypeM(
+            Part part, Point position, double thickness, double rotationAroundY = 0.0, double rotationAroundZ = 0.0,
+            double clearance = 2.0, Chamfer chamfer = null) {
             if (part is null) {
                 throw new ArgumentNullException(nameof(part));
             }
@@ -2054,24 +1923,19 @@ namespace Muggle.TsExtensions.Common.Model {
                 throw new ArgumentNullException(nameof(position));
             }
 
-            if (material is null) {
-                throw new ArgumentNullException(nameof(material));
-            }
-
-            if (string.IsNullOrEmpty(@class)) {
-                @class = "99";
-            }
+            chamfer ??= new Chamfer();
+            var chamferReversed = chamfer.GetReversed();
 
             var faceEnumArr = IntersectionWithStiffenerSurfacePlane(
-                part, position, thickness, out var partCS, out var stifPlane, rotationAroundY,
+                part, position, thickness, out var partCs, out var stifPlane, rotationAroundY,
                 rotationAroundZ);
             var faceEnumFront = faceEnumArr[0];
             var faceEnumBehind = faceEnumArr[1];
 
             var verticesFront = GetVertices(faceEnumFront);
             var verticesBehind = GetVertices(faceEnumBehind);
-            verticesFront = OrderVertices(verticesFront, partCS).ToList();
-            verticesBehind = OrderVertices(verticesBehind, partCS).ToList();
+            verticesFront = [.. OrderVertices(verticesFront, partCs)];
+            verticesBehind = [.. OrderVertices(verticesBehind, partCs)];
 
             /*
              *  顶点顺序与调用 IntersectAllFaces 方法时传入的 3 个点顺序有关
@@ -2127,38 +1991,42 @@ namespace Muggle.TsExtensions.Common.Model {
             switch (prefix) {
             case "B_WLD_F":
                 if (verticesFront.Count > 4)
-                    verticesFront = verticesFront.Skip(3).Take(3)
-                        .Append(verticesFront.ElementAt(3) + verticesFront.ElementAt(5) - verticesFront.ElementAt(4))
-                        .ToList();
+                    verticesFront = [
+                        .. verticesFront.Skip(3).Take(3),
+                        verticesFront.ElementAt(3) + verticesFront.ElementAt(5) - verticesFront.ElementAt(4)
+                    ];
                 if (verticesBehind.Count > 4)
-                    verticesBehind = verticesBehind.Skip(3).Take(3)
-                        .Append(verticesBehind.ElementAt(3) + verticesBehind.ElementAt(5) - verticesBehind.ElementAt(4))
-                        .ToList();
-                verticesFront = OrderVertices(verticesFront, partCS).ToList();
-                verticesBehind = OrderVertices(verticesBehind, partCS).ToList();
+                    verticesBehind = [
+                        .. verticesBehind.Skip(3).Take(3),
+                        verticesBehind.ElementAt(3) + verticesBehind.ElementAt(5) - verticesBehind.ElementAt(4)
+                    ];
+                verticesFront = [.. OrderVertices(verticesFront, partCs)];
+                verticesBehind = [.. OrderVertices(verticesBehind, partCs)];
                 break;
             case "B_VAR_A":
             case "B_VAR_B":
             case "B_VAR_C":
-                verticesFront = verticesFront.Skip(5).Take(4).ToList();
-                verticesBehind = verticesBehind.Skip(5).Take(4).ToList();
-                verticesFront = OrderVertices(verticesFront, partCS).ToList();
-                verticesBehind = OrderVertices(verticesBehind, partCS).ToList();
+                verticesFront = [.. verticesFront.Skip(5).Take(4)];
+                verticesBehind = [.. verticesBehind.Skip(5).Take(4)];
+                verticesFront = [.. OrderVertices(verticesFront, partCs)];
+                verticesBehind = [.. OrderVertices(verticesBehind, partCs)];
                 break;
             case "B_BUILT":
-                verticesFront = verticesFront.Skip(13).Take(3)
-                    .Append(verticesFront.ElementAt(13) + verticesFront.ElementAt(15) - verticesFront.ElementAt(14))
-                    .ToList();
-                verticesBehind = verticesBehind.Skip(13).Take(3)
-                    .Append(verticesBehind.ElementAt(13) + verticesBehind.ElementAt(15) - verticesBehind.ElementAt(14))
-                    .ToList();
-                verticesFront = OrderVertices(verticesFront, partCS).ToList();
-                verticesBehind = OrderVertices(verticesBehind, partCS).ToList();
+                verticesFront = [
+                    .. verticesFront.Skip(13).Take(3),
+                    verticesFront.ElementAt(13) + verticesFront.ElementAt(15) - verticesFront.ElementAt(14)
+                ];
+                verticesBehind = [
+                    .. verticesBehind.Skip(13).Take(3),
+                    verticesBehind.ElementAt(13) + verticesBehind.ElementAt(15) - verticesBehind.ElementAt(14)
+                ];
+                verticesFront = [.. OrderVertices(verticesFront, partCs)];
+                verticesBehind = [.. OrderVertices(verticesBehind, partCs)];
                 break;
             }
 
-            var offsetZ = new Vector(0, 0, clearance).TransformFrom(partCS);
-            var offsetY = new Vector(0, clearance, 0).TransformFrom(partCS);
+            var offsetZ = new Vector(0, 0, clearance).TransformFrom(partCs);
+            var offsetY = new Vector(0, clearance, 0).TransformFrom(partCs);
             var arrList = new List<Point[]> { verticesFront.ToArray(), verticesBehind.ToArray() };
             foreach (var arr in arrList) {
                 arr[0] += offsetZ;
@@ -2177,19 +2045,18 @@ namespace Muggle.TsExtensions.Common.Model {
             var stifBehindPlane = new GeometricPlane(stifPlane.Origin - stifPlane.Normal.GetNormal(thickness * 0.5),
                 stifPlane.Normal);
 
-            var partZXPlane = new GeometricPlane(partCS.Origin, partCS.AxisY);
-            var partXYPlane = new GeometricPlane(partCS.Origin, partCS.AxisX.Cross(partCS.AxisY));
-            var shearAxisX = Intersection.PlaneToPlane(partZXPlane, stifPlane).Direction;
-            var shearAxisY = Intersection.PlaneToPlane(partXYPlane, stifPlane).Direction;
+            var partZxPlane = new GeometricPlane(partCs.Origin, partCs.AxisY);
+            var partXyPlane = new GeometricPlane(partCs.Origin, partCs.AxisX.Cross(partCs.AxisY));
+            var shearAxisX = Intersection.PlaneToPlane(partZxPlane, stifPlane).Direction;
+            var shearAxisY = Intersection.PlaneToPlane(partXyPlane, stifPlane).Direction;
             var shearAxisZ = shearAxisX.Cross(shearAxisY);
             var matrixToStif =
                 MatrixFactoryExtension.ToCoordinateSystem(shearAxisX, shearAxisY, shearAxisZ, stifPlane.Origin);
             var matrixFromStif = matrixToStif.Inverse();
 
-            verticesFront = lines.Select(l => matrixToStif.Transform(Intersection.LineToPlane(l, stifFrontPlane)))
-                .ToList();
-            verticesBehind = lines.Select(l => matrixToStif.Transform(Intersection.LineToPlane(l, stifBehindPlane)))
-                .ToList();
+            verticesFront = [.. lines.Select(l => matrixToStif.Transform(Intersection.LineToPlane(l, stifFrontPlane)))];
+            verticesBehind =
+                [.. lines.Select(l => matrixToStif.Transform(Intersection.LineToPlane(l, stifBehindPlane)))];
 
             var corners = new[] {
                 TopRight(verticesFront.ElementAt(0), verticesBehind.ElementAt(0)),
@@ -2201,24 +2068,14 @@ namespace Muggle.TsExtensions.Common.Model {
                 corners[i] = matrixFromStif.Transform(corners[i]);
             }
 
-            var contourPlate = CreatContourPlate(
-                new ArrayList {
-                    new ContourPoint(
-                        corners[0],
-                        new Chamfer(chamferSizeY, chamferSizeX, chamferType) { DZ1 = chamferDz1, DZ2 = chamferDz2 }),
-                    new ContourPoint(
-                        corners[1],
-                        new Chamfer(chamferSizeX, chamferSizeY, chamferType) { DZ1 = chamferDz1, DZ2 = chamferDz2 }),
-                    new ContourPoint(
-                        corners[2],
-                        new Chamfer(chamferSizeY, chamferSizeX, chamferType) { DZ1 = chamferDz1, DZ2 = chamferDz2 }),
-                    new ContourPoint(
-                        corners[3],
-                        new Chamfer(chamferSizeX, chamferSizeY, chamferType) { DZ1 = chamferDz1, DZ2 = chamferDz2 })
-                }, "STIFFENER", $"PL{thickness}", material, @class: @class);
-            contourPlate.Insert();
+            var contour = new ArrayList {
+                new ContourPoint(corners[0], chamfer),
+                new ContourPoint(corners[1], chamferReversed),
+                new ContourPoint(corners[2], chamfer),
+                new ContourPoint(corners[3], chamferReversed)
+            };
 
-            return contourPlate;
+            return contour;
 
             static Point BottomRight(Point p1, Point p2) => new(Math.Min(p1.X, p2.X), Math.Max(p1.Y, p2.Y), 0.0);
             static Point BottomLeft(Point p1, Point p2) => new(Math.Max(p1.X, p2.X), Math.Max(p1.Y, p2.Y), 0.0);
@@ -2260,37 +2117,19 @@ namespace Muggle.TsExtensions.Common.Model {
         }
 
         /// <summary>
-        /// 为圆管截面创建加劲板。
+        /// 为圆管截面计算加劲板轮廓点。
         /// </summary>
-        /// <param name="part"><inheritdoc 
-        /// cref="InsertStiffeners" 
-        /// path="/param[1]"/></param>
-        /// <param name="position"><inheritdoc 
-        /// cref="InsertStiffeners" 
-        /// path="/param[2]"/></param>
-        /// <param name="thickness"><inheritdoc 
-        /// cref="InsertStiffeners" 
-        /// path="/param[3]"/></param>
-        /// <param name="material"><inheritdoc 
-        /// cref="InsertStiffeners" 
-        /// path="/param[4]"/></param>
-        /// <param name="class"><inheritdoc 
-        /// cref="InsertStiffeners" 
-        /// path="/param[5]"/></param>
-        /// <param name="rotationAroundY"><inheritdoc 
-        /// cref="InsertStiffeners" 
-        /// path="/param[6]"/></param>
-        /// <param name="rotationAroundZ"><inheritdoc 
-        /// cref="InsertStiffeners" 
-        /// path="/param[7]"/></param>
-        /// <param name="clearance"><inheritdoc 
-        /// cref="InsertStiffeners" 
-        /// path="/param[10]"/></param>
-        /// <returns>成功创建的加劲板。</returns>
+        /// <param name="part"><inheritdoc cref="CalculateStiffeners" path="/param[1]"/></param>
+        /// <param name="position"><inheritdoc cref="CalculateStiffeners" path="/param[2]"/></param>
+        /// <param name="thickness"><inheritdoc cref="CalculateStiffeners" path="/param[3]"/></param>
+        /// <param name="rotationAroundY"><inheritdoc cref="CalculateStiffeners" path="/param[4]"/></param>
+        /// <param name="rotationAroundZ"><inheritdoc cref="CalculateStiffeners" path="/param[5]"/></param>
+        /// <param name="clearance"><inheritdoc cref="CalculateStiffeners" path="/param[8]"/></param>
+        /// <returns>加劲板轮廓点。</returns>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="Exception">不支持的截面类型引发。</exception>
-        private static ContourPlate InsertStiffenersForTypeRo(
-            Part part, Point position, double thickness, string material = "Q235B", string @class = "99",
+        private static ArrayList CalculateStiffenersForTypeRo(
+            Part part, Point position, double thickness,
             double rotationAroundY = 0.0, double rotationAroundZ = 0.0, double clearance = 2.0) {
             if (part is null) {
                 throw new ArgumentNullException(nameof(part));
@@ -2300,26 +2139,18 @@ namespace Muggle.TsExtensions.Common.Model {
                 throw new ArgumentNullException(nameof(position));
             }
 
-            if (material is null) {
-                throw new ArgumentNullException(nameof(material));
-            }
-
-            if (string.IsNullOrEmpty(@class)) {
-                @class = "99";
-            }
-
             var faceEnumArr = IntersectionWithStiffenerSurfacePlane(
-                part, position, thickness, out var partCS, out var stifPlane, rotationAroundY,
+                part, position, thickness, out var partCs, out var stifPlane, rotationAroundY,
                 rotationAroundZ);
             var faceEnumFront = faceEnumArr[0];
             var faceEnumBehind = faceEnumArr[1];
 
             var verticesFront = GetVertices(faceEnumFront);
             var verticesBehind = GetVertices(faceEnumBehind);
-            verticesFront = OrderVertices(verticesFront, partCS).ToList();
-            verticesBehind = OrderVertices(verticesBehind, partCS).ToList();
+            verticesFront = [.. OrderVertices(verticesFront, partCs)];
+            verticesBehind = [.. OrderVertices(verticesBehind, partCs)];
 
-            var centerLine = new Line(partCS.Origin, partCS.AxisX);
+            var centerLine = new Line(partCs.Origin, partCs.AxisX);
             var arrFront = verticesFront.ToArray();
             var arrBehind = verticesBehind.ToArray();
             for (int i = 0; i < arrFront.Length; ++i) {
@@ -2335,23 +2166,23 @@ namespace Muggle.TsExtensions.Common.Model {
             var stifBehindPlane = new GeometricPlane(stifPlane.Origin - stifPlane.Normal.GetNormal(thickness * 0.5),
                 stifPlane.Normal);
 
-            verticesFront = lines.Select(l => Intersection.LineToPlane(l, stifFrontPlane)).ToList();
-            verticesBehind = lines.Select(l => Intersection.LineToPlane(l, stifBehindPlane)).ToList();
+            verticesFront = [.. lines.Select(l => Intersection.LineToPlane(l, stifFrontPlane))];
+            verticesBehind = [.. lines.Select(l => Intersection.LineToPlane(l, stifBehindPlane))];
             verticesFront.Concat(verticesBehind).Aggregate((p1, p2) => p1 + p2)
                 .Multiply(verticesFront.Count() * 2);
 
-            var contourPoints = verticesFront.Select(p => Projection.PointToPlane(p, stifPlane))
-                .Zip(verticesBehind.Select(p => Projection.PointToPlane(p, stifPlane)), (p1, p2) =>
-                    Tekla.Structures.Geometry3d.Distance.PointToLine(p1, centerLine) <
-                    Tekla.Structures.Geometry3d.Distance.PointToLine(p2, centerLine)
+            var contour = Enumerable.Zip(
+                    verticesFront.Select(p => Projection.PointToPlane(p, stifPlane)),
+                    verticesBehind.Select(p => Projection.PointToPlane(p, stifPlane)),
+                    (p1, p2) => Tekla.Structures.Geometry3d.Distance.PointToLine(p1, centerLine) <
+                                Tekla.Structures.Geometry3d.Distance.PointToLine(p2, centerLine)
                         ? p1
-                        : p2);
+                        : p2
+                )
+                .Select(p => new ContourPoint(p, new Chamfer()))
+                .ToList();
 
-            var contourPlate = CreatContourPlate(contourPoints, "STIFFENER", $"PL{thickness}", material,
-                @class: @class);
-            contourPlate.Insert();
-
-            return contourPlate;
+            return new ArrayList(contour);
 
             static List<Point> GetVertices(IEnumerator faceEnum) {
                 var vertices = new List<Point>();
@@ -2387,47 +2218,30 @@ namespace Muggle.TsExtensions.Common.Model {
         }
 
         /// <summary>
-        /// 创建加劲板。
+        /// 计算加劲板轮廓。
         /// </summary>
         /// <param name="part">要创建加劲板的零件</param>
         /// <param name="position">创建加劲板的位置</param>
         /// <param name="thickness">加劲板厚度</param>
-        /// <param name="material">加劲板材质</param>
-        /// <param name="class">加劲板等级</param>
         /// <param name="rotationAroundY">加劲板绕零件坐标系Y轴旋转角度，弧度制</param>
         /// <param name="rotationAroundZ">加劲板绕零件坐标系Z轴旋转角度，弧度制</param>
         /// <param name="indent">加劲板缩进长度，仅适用于 H型钢、T型钢、工字钢、槽钢</param>
         /// <param name="indent2">加劲板另一个方向的缩进长度，仅适用于 T型钢</param>
         /// <param name="clearance">加劲板与零件表面的净距</param>
-        /// <param name="chamferType">加劲板倒角类型，仅适用于 H型钢、T型钢、工字钢、槽钢、矩形管</param>
-        /// <param name="chamferSizeX">加劲板倒角尺寸X，仅适用于 H型钢、T型钢、工字钢、槽钢、矩形管</param>
-        /// <param name="chamferSizeY">加劲板倒角尺寸Y，仅适用于 H型钢、T型钢、工字钢、槽钢、矩形管</param>
-        /// <param name="chamferDz1">加劲板倒角尺寸Dz1，仅适用于 H型钢、T型钢、工字钢、槽钢、矩形管</param>
-        /// <param name="chamferDz2">加劲板倒角尺寸Dz2，仅适用于 H型钢、T型钢、工字钢、槽钢、矩形管</param>
-        /// <returns>成功创建的加劲板。</returns>
+        /// <param name="chamfer">加劲板倒角，仅适用于 H型钢、T型钢、工字钢、槽钢、矩形管</param>
+        /// <returns>加劲板轮廓集合。</returns>
         /// <exception cref="ArgumentNullException"></exception>
         /// <exception cref="ArgumentException"></exception>
         /// <exception cref="NotSupportedException">不支持的截面类型引发。</exception>
-        public static ContourPlate[] InsertStiffeners(
-            Part part, Point position, double thickness, string material = "Q235B", string @class = "99",
-            double rotationAroundY = 0.0, double rotationAroundZ = 0.0, double indent = 0.0, double indent2 = 0.0,
-            double clearance = 2.0,
-            Chamfer.ChamferTypeEnum chamferType = 0, double chamferSizeX = 0.0, double chamferSizeY = 0.0,
-            double chamferDz1 = 0.0, double chamferDz2 = 0.0) {
+        public static ArrayList[] CalculateStiffeners(
+            Part part, Point position, double thickness, double rotationAroundY = 0.0, double rotationAroundZ = 0.0,
+            double indent = 0.0, double indent2 = 0.0, double clearance = 2.0, Chamfer chamfer = null) {
             if (part is null) {
                 throw new ArgumentNullException(nameof(part));
             }
 
             if (position is null) {
                 throw new ArgumentNullException(nameof(position));
-            }
-
-            if (material is null) {
-                throw new ArgumentNullException(nameof(material));
-            }
-
-            if (string.IsNullOrEmpty(@class)) {
-                @class = "99";
             }
 
             const string propertyName = "PROFILE_TYPE";
@@ -2445,28 +2259,24 @@ namespace Muggle.TsExtensions.Common.Model {
 
             switch (profileType) {
             case "I":
-                return InsertStiffenersForTypeI(part, position, thickness, material, @class,
-                    rotationAroundY, rotationAroundZ, indent, clearance,
-                    chamferType, chamferSizeX, chamferSizeY, chamferDz1, chamferDz2);
+                return CalculateStiffenersForTypeI(part, position, thickness,
+                    rotationAroundY, rotationAroundZ, indent, clearance, chamfer);
             case "T":
-                return InsertStiffenersForTypeT(part, position, thickness, material, @class,
-                    rotationAroundY, rotationAroundZ, indent, indent2, clearance,
-                    chamferType, chamferSizeX, chamferSizeY, chamferDz1, chamferDz2);
+                return CalculateStiffenersForTypeT(part, position, thickness,
+                    rotationAroundY, rotationAroundZ, indent, indent2, clearance, chamfer);
             case "U":
                 return [
-                    InsertStiffenersForTypeU(part, position, thickness, material, @class,
-                        rotationAroundY, rotationAroundZ, indent, clearance,
-                        chamferType, chamferSizeX, chamferSizeY, chamferDz1, chamferDz2)
+                    CalculateStiffenersForTypeU(part, position, thickness,
+                        rotationAroundY, rotationAroundZ, indent, clearance, chamfer)
                 ];
             case "M":
                 return [
-                    InsertStiffenersForTypeM(part, position, thickness, material, @class,
-                        rotationAroundY, rotationAroundZ, clearance,
-                        chamferType, chamferSizeX, chamferSizeY, chamferDz1, chamferDz2)
+                    CalculateStiffenersForTypeM(part, position, thickness,
+                        rotationAroundY, rotationAroundZ, clearance, chamfer)
                 ];
             case "RO":
                 return [
-                    InsertStiffenersForTypeRo(part, position, thickness, material, @class,
+                    CalculateStiffenersForTypeRo(part, position, thickness,
                         rotationAroundY, rotationAroundZ, clearance)
                 ];
             case "Z":
@@ -2512,10 +2322,10 @@ namespace Muggle.TsExtensions.Common.Model {
                 throw new ArgumentNullException(nameof(matrix));
             }
 
-            var currentCS = new CoordinateSystem();
-            var targetCS = matrix.Transform(currentCS);
+            var currentCs = new CoordinateSystem();
+            var targetCs = matrix.Transform(currentCs);
 
-            return Tekla.Structures.Model.Operations.Operation.MoveObject(obj, currentCS, targetCS);
+            return Tekla.Structures.Model.Operations.Operation.MoveObject(obj, currentCs, targetCs);
         }
 
         /// <summary>
