@@ -858,21 +858,21 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                 $"                    <Grid.ColumnDefinitions>\r\n" +
                 $"                        <ColumnDefinition Width=\"1*\" />\r\n" +
                 $"                        <ColumnDefinition Width=\"22\" />\r\n" +
+                $"                        <ColumnDefinition Width=\"48\" />\r\n" +
+                $"                        <ColumnDefinition Width=\"22\" />\r\n" +
                 $"                        <ColumnDefinition Width=\"60\" />\r\n" +
+                $"                        <ColumnDefinition Width=\"22\" />\r\n" +
+                $"                        <ColumnDefinition Width=\"48\" />\r\n" +
                 $"                        <ColumnDefinition Width=\"22\" />\r\n" +
                 $"                        <ColumnDefinition Width=\"60\" />\r\n" +
                 $"                        <ColumnDefinition Width=\"22\" />\r\n" +
                 $"                        <ColumnDefinition Width=\"60\" />\r\n" +
                 $"                        <ColumnDefinition Width=\"22\" />\r\n" +
-                $"                        <ColumnDefinition Width=\"60\" />\r\n" +
+                $"                        <ColumnDefinition Width=\"48\" />\r\n" +
                 $"                        <ColumnDefinition Width=\"22\" />\r\n" +
-                $"                        <ColumnDefinition Width=\"60\" />\r\n" +
+                $"                        <ColumnDefinition Width=\"48\" />\r\n" +
                 $"                        <ColumnDefinition Width=\"22\" />\r\n" +
-                $"                        <ColumnDefinition Width=\"60\" />\r\n" +
-                $"                        <ColumnDefinition Width=\"22\" />\r\n" +
-                $"                        <ColumnDefinition Width=\"60\" />\r\n" +
-                $"                        <ColumnDefinition Width=\"22\" />\r\n" +
-                $"                        <ColumnDefinition Width=\"60\" />\r\n" +
+                $"                        <ColumnDefinition Width=\"48\" />\r\n" +
                 $"                        <ColumnDefinition Width=\"22\" />\r\n" +
                 $"                        <ColumnDefinition Width=\"60\" />\r\n" +
                 $"                        <ColumnDefinition Width=\"22\" />\r\n" +
@@ -886,9 +886,9 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                 $"                        <ColumnDefinition Width=\"22\" />\r\n" +
                 $"                        <ColumnDefinition Width=\"40\" />\r\n" +
                 $"                        <ColumnDefinition Width=\"22\" />\r\n" +
-                $"                        <ColumnDefinition Width=\"60\" />\r\n" +
+                $"                        <ColumnDefinition Width=\"48\" />\r\n" +
                 $"                        <ColumnDefinition Width=\"22\" />\r\n" +
-                $"                        <ColumnDefinition Width=\"60\" />\r\n" +
+                $"                        <ColumnDefinition Width=\"48\" />\r\n" +
                 $"                        <ColumnDefinition Width=\"22\" />\r\n" +
                 $"                        <ColumnDefinition Width=\"60\" />\r\n" +
                 $"                    </Grid.ColumnDefinitions>\r\n" +
