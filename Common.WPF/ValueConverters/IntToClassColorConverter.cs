@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Data;
 using System.Windows.Media;
+using Tekla.Structures.Datatype;
 
 namespace Muggle.TsExtensions.Common.WPF.ValueConverters {
 
@@ -37,18 +38,20 @@ namespace Muggle.TsExtensions.Common.WPF.ValueConverters {
 
         /// <inheritdoc/>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
-            if (value is int intValue ||
-                value is string strValue && int.TryParse(strValue, out intValue))
-                return Colors[IntToColorIndex(intValue)];
-
-            return DependencyProperty.UnsetValue;
+            return value switch {
+                int i => Colors[IntToColorIndex(i)],
+                string s when int.TryParse(s, out var i) => Colors[IntToColorIndex(i)],
+                Integer integer => Colors[IntToColorIndex(integer.Value)],
+                _ => DependencyProperty.UnsetValue
+            };
         }
 
         /// <inheritdoc/>
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) {
-            if (value is Color color) return Array.IndexOf(Colors, color);
+            var index = -1;
+            if (value is Color color) index = Array.IndexOf(Colors, color);
 
-            return Binding.DoNothing;
+            return index == -1 ? Binding.DoNothing : index;
         }
 
         private static int IntToColorIndex(int value) {

@@ -7,9 +7,9 @@ using Tekla.Structures.Datatype;
 namespace Muggle.TsExtensions.Common.WPF.ValueConverters {
 
     /// <summary>
-    /// Provide a one-way conversion from the Bolt.PlainHoleType value to the enable state of the Bolt.BlindHoleDepth property
+    /// Provide a one-way conversion from the ChamferType value to the enable state of the Chamfer.X property
     /// </summary>
-    public class BoltPlainHoleTypeToBlindHoleDepthIsEnabledValueConverter : IValueConverter {
+    public class ChamferTypeToXIsEnabledConverter : IValueConverter {
 
         /// <inheritdoc/>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
@@ -24,9 +24,10 @@ namespace Muggle.TsExtensions.Common.WPF.ValueConverters {
             default:
                 return DependencyProperty.UnsetValue;
             }
-
-            return intValue == 1;
+            
+            return intValue is >= 1 and <= 3 or >=5 and <= 7;
         }
+
 
         /// <inheritdoc/>
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) {

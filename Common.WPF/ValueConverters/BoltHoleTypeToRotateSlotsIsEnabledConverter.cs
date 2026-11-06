@@ -9,7 +9,7 @@ namespace Muggle.TsExtensions.Common.WPF.ValueConverters {
     /// <summary>
     /// Provide a one-way conversion from the Bolt.HoleType value to the enable state of the Bolt.RotateSlots property
     /// </summary>
-    public class BoltHoleTypeToRotateSlotsIsEnabledValueConverter : IValueConverter {
+    public class BoltHoleTypeToRotateSlotsIsEnabledConverter : IValueConverter {
 
         /// <inheritdoc/>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {

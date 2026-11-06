@@ -24,7 +24,7 @@
         <ResourceDictionary Source="/Common.WPF;component/Assets/PositionInRelationToPrimaryPart.xaml" />
     </ResourceDictionary.MergedDictionaries>
 
-    <vc:UpDirectionToSelectedIndexValueConverter x:Key="UpDirectionToSelectedIndex" />
+    <vc:UpDirectionToSelectedIndexConverter x:Key="UpDirectionToSelectedIndex" />
 
     <Style x:Key="Element" TargetType="FrameworkElement">
         <Setter Property="Margin" Value="2" />
@@ -43,24 +43,26 @@
     </Style>
     <Style BasedOn="{StaticResource ContainingTextBoxElement}" TargetType="ComboBox" />
     <Style BasedOn="{StaticResource ContainingTextBoxElement}" TargetType="uc:ClassSelector" />
-    <Style BasedOn="{StaticResource Element}" TargetType="tsuic:WpfFilterCheckBox" />
+    <Style BasedOn="{StaticResource Element}" TargetType="tsuic:WpfFilterCheckBox">
+        <Setter Property="Margin" Value="2,2,-2,2" />
+    </Style>
 
     <Grid x:Key="ConnectionGeneralTab">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="auto" />
-            <ColumnDefinition Width="22" />
+            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="16" />
             <ColumnDefinition Width="100" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="auto" />
-            <RowDefinition Height="auto" />
-            <RowDefinition Height="auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="1*" />
-            <RowDefinition Height="auto" />
-            <RowDefinition Height="auto" />
-            <RowDefinition Height="auto" />
-            <RowDefinition Height="auto" />
-            <RowDefinition Height="auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <TextBlock Grid.Row="0" Grid.Column="0" Text="{tr:Translate albl_UpDirection}" />
@@ -116,28 +118,28 @@
 
     <Grid x:Key="DetailGeneralTab">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="auto" />
-            <ColumnDefinition Width="22" />
+            <ColumnDefinition Width="1*" />
+            <ColumnDefinition Width="16" />
             <ColumnDefinition Width="100" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="auto" />
-            <RowDefinition Height="auto" />
-            <RowDefinition Height="auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
             <RowDefinition Height="1*" />
-            <RowDefinition Height="auto" />
-            <RowDefinition Height="auto" />
-            <RowDefinition Height="auto" />
-            <RowDefinition Height="auto" />
-            <RowDefinition Height="auto" />
-            <RowDefinition Height="auto" />
-            <RowDefinition Height="auto" />
-            <RowDefinition Height="auto" />
-            <RowDefinition Height="auto" />
-            <RowDefinition Height="auto" />
-            <RowDefinition Height="auto" />
-            <RowDefinition Height="auto" />
-            <RowDefinition Height="auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <TextBlock Grid.Row="0" Grid.Column="0" Text="{tr:Translate albl_UpDirection}" />
@@ -301,16 +303,16 @@
     <Grid x:Key="CustomPartGeneralTab">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="1*" />
-            <ColumnDefinition Width="22" />
+            <ColumnDefinition Width="16" />
             <ColumnDefinition Width="80" />
-            <ColumnDefinition Width="22" />
+            <ColumnDefinition Width="16" />
             <ColumnDefinition Width="80" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="auto" />
-            <RowDefinition Height="auto" />
-            <RowDefinition Height="auto" />
-            <RowDefinition Height="auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
         <TextBlock Grid.Row="0" Grid.Column="0" Text="{tr:Translate albl_Position_OnPlane}" />

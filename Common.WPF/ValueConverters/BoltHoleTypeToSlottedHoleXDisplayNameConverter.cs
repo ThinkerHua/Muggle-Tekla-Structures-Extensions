@@ -10,7 +10,7 @@ namespace Muggle.TsExtensions.Common.WPF.ValueConverters {
     /// <summary>
     /// Provide a one-way conversion from the Bolt.HoleType value to the display name of the Bolt.SlottedHoleX property
     /// </summary>
-    public class BoltHoleTypeToSlottedHoleXDisplayNameValueConverter : IValueConverter {
+    public class BoltHoleTypeToSlottedHoleXDisplayNameConverter : IValueConverter {
 
         /// <inheritdoc/>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {

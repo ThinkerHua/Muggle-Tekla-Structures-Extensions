@@ -7,9 +7,9 @@ using Tekla.Structures.Datatype;
 namespace Muggle.TsExtensions.Common.WPF.ValueConverters {
 
     /// <summary>
-    /// Provide a one-way conversion from the Bolt.HoleType value to the enable state of the Bolt.SlottedHoleX property
+    /// Provide a one-way conversion from the Bolt.HoleType value to the enable state of the Bolt.SlottedHoleY property
     /// </summary>
-    public class BoltHoleTypeToSlottedHoleXIsEnabledValueConverter : IValueConverter {
+    public class BoltHoleTypeToSlottedHoleYIsEnabledConverter : IValueConverter {
 
         /// <inheritdoc/>
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
@@ -25,7 +25,7 @@ namespace Muggle.TsExtensions.Common.WPF.ValueConverters {
                 return DependencyProperty.UnsetValue;
             }
 
-            return intValue != 2;
+            return intValue == 1;
         }
 
         /// <inheritdoc/>

@@ -39,7 +39,7 @@
             <Setter Property="Stretch" Value="Fill" />
         </Style>
 
-        <vc:InversedBoolToOpacityValueConverter x:Key="IsSelectedToOpacity" />
+        <vc:InversedBoolToOpacityConverter x:Key="IsSelectedToOpacity" />
     </UserControl.Resources>
 
     <Image>

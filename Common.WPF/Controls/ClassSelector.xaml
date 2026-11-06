@@ -58,7 +58,7 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="{Binding Path=ImageWidth, ElementName=ThisControl, Mode=OneWay}" />
                         <ColumnDefinition Width="2" />
-                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
 
                     <Border Grid.Column="0"
