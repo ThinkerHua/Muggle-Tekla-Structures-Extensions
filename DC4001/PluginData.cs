@@ -12,6 +12,7 @@
  *  PluginData.cs: data class for 'DC4001' custom part
  *  written by Huang YongXing - thinkerhua@hotmail.com
  *==============================================================================*/
+
 using Muggle.TsExtensions.CodingHelper.Generators;
 
 namespace Muggle.TsExtensions.DC4001;

@@ -81,7 +81,7 @@
             </DrawingGroup.Transform>
         </DrawingGroup>
     </DrawingGroup>
-
+	
     <DrawingGroup x:Key="KindZFrontView">
         <DrawingGroup>
             <GeometryDrawing Brush="{StaticResource Brush_PrimPartFill}" Pen="{StaticResource Pen_InstanceBorder}">

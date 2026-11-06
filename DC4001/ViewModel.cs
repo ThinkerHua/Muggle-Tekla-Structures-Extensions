@@ -9,15 +9,16 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program. If not, see <http://www.gnu.org/licenses/>.
  *==============================================================================
- *  ViewModel.cs: view model for main window of D42001
+ *  ViewModel.cs: view model for view of DC4001
  *  written by Huang YongXing - thinkerhua@hotmail.com
  *==============================================================================*/
+
 using Muggle.TsExtensions.CodingHelper.Generators;
 using Tekla.Structures.Datatype;
 
 namespace Muggle.TsExtensions.DC4001;
 
-[PartProperties("main", name: "Main")]
+[PartProperties("main", name: "Main", material: "Q345B")]
 [PlateProperties(4, thickness: 16, breadth: 250, name: "4")]
 [PlateProperties(5, thickness: 8, breadth: 90, name: "5")]
 [PlateProperties(10, thickness: 10, breadth: 120, name: "10")]
