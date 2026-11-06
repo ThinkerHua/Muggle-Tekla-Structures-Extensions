@@ -1,0 +1,56 @@
+            <TabItem Header="General">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="16" />
+                        <ColumnDefinition Width="80" />
+                        <ColumnDefinition Width="16" />
+                        <ColumnDefinition Width="80" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="0" Grid.Column="0" Text="Plane" />
+                    <tsuic:WpfFilterCheckBox Grid.Row="0" Grid.Column="1" AttributeName="OnPlane" />
+                    <ComboBox Grid.Row="0" Grid.Column="2" SelectedIndex="{Binding OnPlane, Mode=TwoWay}">
+                        <ComboBoxItem Content="Middle" />
+                        <ComboBoxItem Content="Left" />
+                        <ComboBoxItem Content="Right" />
+                    </ComboBox>
+                    <tsuic:WpfFilterCheckBox Grid.Row="0" Grid.Column="3" AttributeName="OnPlaneValue" />
+                    <TextBox Grid.Row="0" Grid.Column="4" Text="{Binding OnPlaneValue, Mode=TwoWay}" />
+
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="Rotation" />
+                    <tsuic:WpfFilterCheckBox Grid.Row="1" Grid.Column="1" AttributeName="Rotation" />
+                    <ComboBox Grid.Row="1" Grid.Column="2" SelectedIndex="{Binding Rotation, Mode=TwoWay}">
+                        <ComboBoxItem Content="Front" />
+                        <ComboBoxItem Content="Top" />
+                        <ComboBoxItem Content="Back" />
+                        <ComboBoxItem Content="Below" />
+                    </ComboBox>
+                    <tsuic:WpfFilterCheckBox Grid.Row="1" Grid.Column="3" AttributeName="RotationValue" />
+                    <TextBox Grid.Row="1" Grid.Column="4" Text="{Binding RotationValue, Mode=TwoWay}" />
+
+                    <TextBlock Grid.Row="2" Grid.Column="0" Text="Depth" />
+                    <tsuic:WpfFilterCheckBox Grid.Row="2" Grid.Column="1" AttributeName="AtDepth" />
+                    <ComboBox Grid.Row="2" Grid.Column="2" SelectedIndex="{Binding AtDepth, Mode=TwoWay}">
+                        <ComboBoxItem Content="Middle" />
+                        <ComboBoxItem Content="Front" />
+                        <ComboBoxItem Content="Behind" />
+                    </ComboBox>
+                    <tsuic:WpfFilterCheckBox Grid.Row="2" Grid.Column="3" AttributeName="AtDepthValue" />
+                    <TextBox Grid.Row="2" Grid.Column="4" Text="{Binding AtDepthValue, Mode=TwoWay}" />
+
+                    <TextBlock Grid.Row="3" Grid.Column="0" Text="Show third handle" />
+                    <tsuic:WpfFilterCheckBox Grid.Row="3" Grid.Column="1" AttributeName="ThirdHandle" />
+                    <ComboBox Grid.Row="3" Grid.Column="2" SelectedIndex="{Binding ThirdHandle, Mode=TwoWay}">
+                        <ComboBoxItem Content="No" />
+                        <ComboBoxItem Content="Above" />
+                        <ComboBoxItem Content="On The Left" />
+                    </ComboBox>
+                </Grid>
+            </TabItem>

@@ -1,0 +1,127 @@
+            <TabItem Header="General">
+            	<Grid>
+            		<Grid.ColumnDefinitions>
+            			<ColumnDefinition Width="1*" />
+            			<ColumnDefinition Width="16" />
+            			<ColumnDefinition Width="100" />
+            		</Grid.ColumnDefinitions>
+            		<Grid.RowDefinitions>
+            			<RowDefinition Height="Auto" />
+            			<RowDefinition Height="Auto" />
+            			<RowDefinition Height="Auto" />
+            			<RowDefinition Height="Auto" />
+            			<RowDefinition Height="Auto" />
+            			<RowDefinition Height="Auto" />
+            			<RowDefinition Height="Auto" />
+            			<RowDefinition Height="Auto" />
+            			<RowDefinition Height="Auto" />
+            			<RowDefinition Height="Auto" />
+            			<RowDefinition Height="Auto" />
+            			<RowDefinition Height="Auto" />
+            			<RowDefinition Height="Auto" />
+            		</Grid.RowDefinitions>
+            
+            		<TextBlock Grid.Row="0" Grid.Column="0" Text="Up direction" />
+            		<tsuic:WpfFilterCheckBox Grid.Row="0" Grid.Column="1" AttributeName="zsuunta" />
+            		<ComboBox Grid.Row="0" Grid.Column="2" SelectedIndex="{Binding UpDirection, Mode=TwoWay}">
+            			<ComboBoxItem Content="None" />
+            			<ComboBoxItem Content="-z" />
+            			<ComboBoxItem Content="+z" />
+            			<ComboBoxItem Content="+x" />
+            			<ComboBoxItem Content="-x" />
+            			<ComboBoxItem Content="-y" />
+            			<ComboBoxItem Content="+y" />
+            			<ComboBoxItem Content="Auto" />
+            		</ComboBox>
+            
+            		<TextBlock Grid.Row="1" Grid.Column="0" Text="Rotation angle Y" />
+            		<tsuic:WpfFilterCheckBox Grid.Row="1" Grid.Column="1" AttributeName="zang1" />
+            		<TextBox Grid.Row="1" Grid.Column="2" Text="{Binding RotationAngleY, Mode=TwoWay}" />
+            
+            		<TextBlock Grid.Row="2" Grid.Column="0" Text="Rotation angle X" />
+            		<tsuic:WpfFilterCheckBox Grid.Row="2" Grid.Column="1" AttributeName="zang2" />
+            		<TextBox Grid.Row="2" Grid.Column="2" Text="{Binding RotationAngleX, Mode=TwoWay}" />
+            
+            		<TextBlock Grid.Row="3" Grid.Column="0" Text="Position in relation to primary part" />
+            		<tsuic:WpfFilterCheckBox x:Name="filterVerticalPosition" Grid.Row="3" Grid.Column="1" AttributeName="vertical_position" />
+            		<tsuic:WpfFilterCheckBox Grid.Row="3"
+            								 Grid.Column="1"
+            								 AttributeName="horizontal_position"
+            								 Visibility="Hidden"
+            								 IsChecked="{Binding ElementName=filterVerticalPosition, Path=IsChecked, Mode=TwoWay}" />
+            
+            		<Grid Grid.Row="3" Grid.Column="2">
+            			<Grid.ColumnDefinitions>
+            				<ColumnDefinition Width="1*" />
+            				<ColumnDefinition Width="Auto" />
+            			</Grid.ColumnDefinitions>
+            			<RadioButton Grid.Column="0" IsChecked="{Binding UpMiddleLeft, Mode=TwoWay}" />
+            			<StackPanel Grid.Column="1" Orientation="Horizontal">
+            				<RadioButton IsChecked="{Binding TopLeft, Mode=TwoWay}" />
+            				<RadioButton IsChecked="{Binding TopMiddle, Mode=TwoWay}" />
+            				<RadioButton IsChecked="{Binding TopRight, Mode=TwoWay}" />
+            			</StackPanel>
+            		</Grid>
+            
+            		<Grid Grid.Row="4" Grid.Column="2">
+            			<Grid.ColumnDefinitions>
+            				<ColumnDefinition Width="1*" />
+            				<ColumnDefinition Width="Auto" />
+            			</Grid.ColumnDefinitions>
+            			<RadioButton Grid.Column="0" IsChecked="{Binding UpMiddleMiddle, Mode=TwoWay}" />
+            			<StackPanel Grid.Column="1" Orientation="Horizontal">
+            				<RadioButton IsChecked="{Binding MiddleLeft, Mode=TwoWay}" />
+            				<RadioButton IsChecked="{Binding MiddleMiddle, Mode=TwoWay}" />
+            				<RadioButton IsChecked="{Binding MiddleRight, Mode=TwoWay}" />
+            			</StackPanel>
+            		</Grid>
+            
+            		<Grid Grid.Row="5" Grid.Column="2">
+            			<Grid.ColumnDefinitions>
+            				<ColumnDefinition Width="1*" />
+            				<ColumnDefinition Width="Auto" />
+            			</Grid.ColumnDefinitions>
+            			<RadioButton Grid.Column="0" IsChecked="{Binding UpMiddleRight, Mode=TwoWay}" />
+            			<StackPanel Grid.Column="1" Orientation="Horizontal">
+            				<RadioButton IsChecked="{Binding BottomLeft, Mode=TwoWay}" />
+            				<RadioButton IsChecked="{Binding BottomMiddle, Mode=TwoWay}" />
+            				<RadioButton IsChecked="{Binding BottomRight, Mode=TwoWay}" />
+            			</StackPanel>
+            		</Grid>
+            
+            		<TextBlock Grid.Row="6" Grid.Column="0" Text="Vertical offset" />
+            		<tsuic:WpfFilterCheckBox Grid.Row="6" Grid.Column="1" AttributeName="vertical_offset" />
+            		<TextBox Grid.Row="6" Grid.Column="2" Text="{Binding VerticalOffset, Mode=TwoWay}" />
+            
+            		<TextBlock Grid.Row="7" Grid.Column="0" Text="Horizontal offset" />
+            		<tsuic:WpfFilterCheckBox Grid.Row="7" Grid.Column="1" AttributeName="horizontal_offset" />
+            		<TextBox Grid.Row="7" Grid.Column="2" Text="{Binding HorizontalOffset, Mode=TwoWay}" />
+            
+            		<TextBlock Grid.Row="8" Grid.Column="0" Text="Detail type" />
+            		<tsuic:WpfFilterCheckBox Grid.Row="8" Grid.Column="1" AttributeName="detail_type" />
+            		<ComboBox Grid.Row="8" Grid.Column="2" SelectedIndex="{Binding DetailType, Mode=TwoWay}">
+            			<ComboBoxItem Content="End detail" />
+            			<ComboBoxItem Content="Intermediate detail" />
+            			<ComboBoxItem Content="Intermediate detail reverse" />
+            		</ComboBox>
+            
+            		<TextBlock Grid.Row="9" Grid.Column="0" Text="Locked" />
+            		<tsuic:WpfFilterCheckBox Grid.Row="9" Grid.Column="1" AttributeName="OBJECT_LOCKED" />
+            		<ComboBox Grid.Row="9" Grid.Column="2" SelectedIndex="{Binding Locked, Mode=TwoWay}">
+            			<ComboBoxItem Content="No" />
+            			<ComboBoxItem Content="Yes" />
+            		</ComboBox>
+            
+            		<TextBlock Grid.Row="10" Grid.Column="0" Text="Class" />
+            		<tsuic:WpfFilterCheckBox Grid.Row="10" Grid.Column="1" AttributeName="group_no" />
+            		<TextBox Grid.Row="10" Grid.Column="2" Text="{Binding Class, Mode=TwoWay}" />
+            
+            		<TextBlock Grid.Row="11" Grid.Column="0" Text="Connection code" />
+            		<tsuic:WpfFilterCheckBox Grid.Row="11" Grid.Column="1" AttributeName="joint_code" />
+            		<TextBox Grid.Row="11" Grid.Column="2" Text="{Binding ConnectionCode, Mode=TwoWay}" />
+            
+            		<TextBlock Grid.Row="12" Grid.Column="0" Text="Auto defaults rule group" />
+            		<tsuic:WpfFilterCheckBox Grid.Row="12" Grid.Column="1" AttributeName="ad_root" />
+            		<TextBox Grid.Row="12" Grid.Column="2" Text="{Binding AutoDefaults, Mode=TwoWay}" />
+            	</Grid>
+            </TabItem>

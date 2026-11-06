@@ -2,19 +2,19 @@
     internal record struct UserInterfaceInfo(
         UserInterfaceType UiType,
         string ViewModelQualifiedName,
-        PluginDataFieldsInfo PluginDataFieldsInfo) {
-
-        /// <summary>
-        /// <inheritdoc cref="UserInterfaceAttribute.UiType"/>
-        /// </summary>
+        ClassInfo ClassInfo,
+        PluginTypes PluginType,
+        ArgumentsDictionary<IdSet> Arguments) {
+        
         public UserInterfaceType UiType = UiType;
         
-        /// <summary>
-        /// <inheritdoc cref="UserInterfaceAttribute.ViewModelQualifiedName"/>
-        /// </summary>
         public string ViewModelQualifiedName = ViewModelQualifiedName;
         
-        public PluginDataFieldsInfo PluginDataFieldsInfo = PluginDataFieldsInfo;
+        public ClassInfo ClassInfo = ClassInfo;
+
+        public PluginTypes PluginType = PluginType;
+        
+        public ArgumentsDictionary<IdSet> Arguments = Arguments;
 
     }
 }

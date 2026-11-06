@@ -98,6 +98,10 @@ public class PluginDataFieldsGenerator : IIncrementalGenerator {
         ("Preparation", "PREP", "int"),
         ("Intermittent", "INTMI", "int"),
         ("ReferenceText", "TEXT", "string"),
+        ("PrefixAbove", "PRFXA", "string"),
+        ("PrefixBelow", "PRFXB", "string"),
+        ("AdditionalSizeAbove", "ADDSA", "double"),
+        ("AdditionalSizeBelow", "ADDSB", "double"),
     ];
 
     internal static IReadOnlyList<FieldInfo> BoltFieldInfos(Version tsmVersion) {
@@ -252,7 +256,7 @@ public class PluginDataFieldsGenerator : IIncrementalGenerator {
             : new GatheredInfo<PluginDataFieldsInfo>(gatheredInfo.Item1, gatheredInfo.Item2.ToImmutableArray());
     }
 
-    internal static (PluginDataFieldsInfo, ImmutableArray<DiagnosticInfo>.Builder) Transform(
+    private static (PluginDataFieldsInfo, ImmutableArray<DiagnosticInfo>.Builder) Transform(
         ClassDeclarationSyntax classDeclarationSyntax,
         SemanticModel semanticModel,
         CancellationToken token) {

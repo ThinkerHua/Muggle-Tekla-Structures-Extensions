@@ -156,36 +156,7 @@ public class PluginFieldDefaultValuesGenerator : IIncrementalGenerator {
             return result;
         }
 
-        var dataClassAttArgs = dataMemberType.GetAttributes()
-            // .Where(a => PluginDataFieldsGenerator.ConcernedAttributes.Contains(a.AttributeClass?.ToDisplayString()))
-            .Where(a =>
-                PluginDataFieldsGenerator.ConcernedAttributes.Any(x => x.Contains(a.AttributeClass?.ToDisplayString())))
-            .Select(a => {
-                var attName = a.AttributeClass!.ToDisplayString();
-                attName = attName.Substring(attName.LastIndexOf('.') + 1);
-
-                return attName switch {
-                    "GeneralFieldsAttribute" =>
-                        // (type, ids) => (int, [param1, param2, ...])
-                        (category: a.ConstructorArguments
-                                .Single(typedConstant => typedConstant.Kind == TypedConstantKind.Type).Value!
-                                .ToString(),
-                            ids: a.ConstructorArguments
-                                .Single(typedConstant => typedConstant.Kind == TypedConstantKind.Array).Values
-                                .Select(arg => arg.Value!.ToString())
-                                .ToArray()
-                        ),
-                    _ =>
-                        // (attribute, ids) => (PartFieldsAttribute, [Part1, Part2, ...])
-                        (category: attName,
-                            ids: a.ConstructorArguments
-                                .Where(typedConstant => typedConstant.Kind == TypedConstantKind.Array)
-                                .SelectMany(typedConstant => typedConstant.Values.Select(arg => arg.Value!.ToString()))
-                                .OrderBy(s => s)
-                                .ToArray()
-                        )
-                };
-            }).OrderBy(t => t.category).ToArray();
+        var dataClassAttArgs = AnalyzeDataClassAttributeArguments(dataMemberType);
 
         //  Key - attribute name
         //  Value - 
@@ -276,6 +247,41 @@ public class PluginFieldDefaultValuesGenerator : IIncrementalGenerator {
 
         return result;
 
+    }
+
+    internal static (string category, string[] ids)[] AnalyzeDataClassAttributeArguments(ITypeSymbol dataMemberType) {
+
+        var dataClassAttArgs = dataMemberType.GetAttributes()
+            // .Where(a => PluginDataFieldsGenerator.ConcernedAttributes.Contains(a.AttributeClass?.ToDisplayString()))
+            .Where(a =>
+                PluginDataFieldsGenerator.ConcernedAttributes.Any(x => x.Contains(a.AttributeClass?.ToDisplayString())))
+            .Select(a => {
+                var attName = a.AttributeClass!.ToDisplayString();
+                attName = attName.Substring(attName.LastIndexOf('.') + 1);
+
+                return attName switch {
+                    "GeneralFieldsAttribute" =>
+                        // (type, ids) => (int, [param1, param2, ...])
+                        (category: a.ConstructorArguments
+                                .Single(typedConstant => typedConstant.Kind == TypedConstantKind.Type).Value!
+                                .ToString(),
+                            ids: a.ConstructorArguments
+                                .Single(typedConstant => typedConstant.Kind == TypedConstantKind.Array).Values
+                                .Select(arg => arg.Value!.ToString())
+                                .ToArray()
+                        ),
+                    _ =>
+                        // (attribute, ids) => (PartFieldsAttribute, [Part1, Part2, ...])
+                        (category: attName,
+                            ids: a.ConstructorArguments
+                                .Where(typedConstant => typedConstant.Kind == TypedConstantKind.Array)
+                                .SelectMany(typedConstant => typedConstant.Values.Select(arg => arg.Value!.ToString()))
+                                .OrderBy(s => s)
+                                .ToArray()
+                        )
+                };
+            }).OrderBy(t => t.category).ToArray();
+        return dataClassAttArgs;
     }
 
     private static int AnalyzeAppliedPlaces(ClassDeclarationSyntax classDclrSyntax, SemanticModel semanticModel,
@@ -777,8 +783,12 @@ public class PluginFieldDefaultValuesGenerator : IIncrementalGenerator {
                     $"        /// <returns>The <typeparamref name=\"T\"/> type model object created.</returns>\n" +
                     $"        private T CreateWeld{ToPropertyNameStyle(id)}<T>() where T : {TsmNameSpace}.BaseWeld, new() {{\n" +
                     $"            T weld = new T();\n" +
+                    $"            weld.PrefixAboveLine = {propertyAccess}PrefixAbove;\n" +
+                    $"            weld.PrefixBelowLine = {propertyAccess}PrefixBelow;\n" +
                     $"            weld.SizeAbove = {propertyAccess}SizeAbove;\n" +
                     $"            weld.SizeBelow = {propertyAccess}SizeBelow;\n" +
+                    $"            weld.AdditionalSizeAbove = {propertyAccess}AdditionalSizeAbove;\n" +
+                    $"            weld.AdditionalSizeBelow = {propertyAccess}AdditionalSizeBelow;\n" +
                     $"            weld.TypeAbove = ({TsmNameSpace}.BaseWeld.WeldTypeEnum) global::System.Enum.Parse(typeof({TsmNameSpace}.BaseWeld.WeldTypeEnum), {propertyAccess}TypeAbove.ToString(), true);\n" +
                     $"            weld.TypeBelow = ({TsmNameSpace}.BaseWeld.WeldTypeEnum) global::System.Enum.Parse(typeof({TsmNameSpace}.BaseWeld.WeldTypeEnum), {propertyAccess}TypeBelow.ToString(), true);\n" +
                     $"            weld.AngleAbove = {propertyAccess}AngleAbove;\n" +
@@ -816,8 +826,12 @@ public class PluginFieldDefaultValuesGenerator : IIncrementalGenerator {
                     $"        /// <param name=\"weld\">The weld to be modified.</param>\n" +
                     $"        /// <typeparam name=\"T\">The original type of <paramref name=\"weld\"/>.</typeparam>\n" +
                     $"        private void ModifyToWeld{ToPropertyNameStyle(id)}<T>(ref T weld) where T : {TsmNameSpace}.BaseWeld {{\n" +
+                    $"            weld.PrefixAboveLine = {propertyAccess}PrefixAbove;\n" +
+                    $"            weld.PrefixBelowLine = {propertyAccess}PrefixBelow;\n" +
                     $"            weld.SizeAbove = {propertyAccess}SizeAbove;\n" +
                     $"            weld.SizeBelow = {propertyAccess}SizeBelow;\n" +
+                    $"            weld.AdditionalSizeAbove = {propertyAccess}AdditionalSizeAbove;\n" +
+                    $"            weld.AdditionalSizeBelow = {propertyAccess}AdditionalSizeBelow;\n" +
                     $"            weld.TypeAbove = ({TsmNameSpace}.BaseWeld.WeldTypeEnum) global::System.Enum.Parse(typeof({TsmNameSpace}.BaseWeld.WeldTypeEnum), {propertyAccess}TypeAbove.ToString(), true);\n" +
                     $"            weld.TypeBelow = ({TsmNameSpace}.BaseWeld.WeldTypeEnum) global::System.Enum.Parse(typeof({TsmNameSpace}.BaseWeld.WeldTypeEnum), {propertyAccess}TypeBelow.ToString(), true);\n" +
                     $"            weld.AngleAbove = {propertyAccess}AngleAbove;\n" +

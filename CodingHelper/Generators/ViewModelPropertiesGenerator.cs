@@ -102,6 +102,10 @@ public class ViewModelPropertiesGenerator : IIncrementalGenerator {
         ("Preparation", "PREP", "Integer", "value < 0 || value > 3"),
         ("Intermittent", "INTMI", "Integer", "value < 0 || value > 2"),
         ("ReferenceText", "TEXT", "String", "string.IsNullOrEmpty(value)"),
+        ("PrefixAbove", "PRFXA", "String", "string.IsNullOrEmpty(value)"),
+        ("PrefixBelow", "PRFXB", "String", "string.IsNullOrEmpty(value)"),
+        ("AdditionalSizeAbove", "ADDSA", "Double", "value == int.MinValue"),
+        ("AdditionalSizeBelow", "ADDSB", "Double", "value == int.MinValue"),
     ];
 
     internal static IReadOnlyList<PropertyInfo> BoltPropertyInfos(Version tsmVersion) {

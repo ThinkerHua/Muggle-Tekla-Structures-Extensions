@@ -167,6 +167,40 @@ internal class InternalAttributesDiagnoser : DiagnosticAnalyzer {
         DiagnosticSeverity.Error,
         true);
 
+    internal static readonly DiagnosticDescriptor BaseTypeNotFound = new(
+        "MTSECH023",
+        "Base type not found",
+        "A plugin should inherit from one of \"ConnectionBase\", \"CustomPartBase\", \"PluginBase\", or \"DrawingPluginBase\"",
+        Category,
+        DiagnosticSeverity.Error,
+        true);
+
+    internal static readonly DiagnosticDescriptor ShouldRemovePluginUserInterfaceAttribute = new(
+        "MTSECH024",
+        "Should remove \"PluginUserInterfaceAttribute\"",
+        "Since the \"UserInterfaceAttribute\" has already been applied, " +
+        "\"PluginUserInterfaceAttribute\" will be automatically applied in the generated code, " +
+        "so the manually applied \"PluginUserInterfaceAttribute\" should be removed",
+        Category,
+        DiagnosticSeverity.Error,
+        true);
+
+    internal static readonly DiagnosticDescriptor UniqueConstructorNotFound = new(
+        "MTSECH025",
+        "The unique constructor not found",
+        "There should be a unique constructor",
+        Category,
+        DiagnosticSeverity.Error,
+        true);
+
+    internal static readonly DiagnosticDescriptor UniqueParameterNotFound = new(
+        "MTSECH026",
+        "The unique parameter for the constructor not found",
+        "There should be a unique parameter for the constructor",
+        Category,
+        DiagnosticSeverity.Error,
+        true);
+
     #endregion
 
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => [
@@ -174,7 +208,8 @@ internal class InternalAttributesDiagnoser : DiagnosticAnalyzer {
         ContainsUnsuggestedCharacters, FieldsFromAttributeNotApplied, AppliedOnOverOnePlace,
         DataTypeDoesNotContainTheseFields, SetDefaultValueMultiTimes, NameStartsWithNumber,
         ArgumentsMustBePassedInPairs, NotSupportedDataType, NotExpectedDataType, RegisterFieldOrPropertyMultiTimes,
-        ShouldNotUseBooleanType, NeedViewModelQualifiedName
+        ShouldNotUseBooleanType, NeedViewModelQualifiedName, BaseTypeNotFound, ShouldRemovePluginUserInterfaceAttribute,
+        UniqueConstructorNotFound, UniqueParameterNotFound
     ];
 
     public override void Initialize(AnalysisContext context) {
