@@ -1,101 +1,49 @@
-﻿string_utf8 albl_HJ1001_title
-{
+﻿string_utf8 albl_HJ1001_title {
 	entry = ("enu", "HJ1001 - Round tube butting");
 	entry = ("chs", "HJ1001 - 圆管对接");
 };
 
-string_utf8 albl_parameters
-{
-	entry = ("enu", "Parameters");
-	entry = ("chs", "参数");
+string_utf8 albl_stiffener_quantity {
+	entry = ("enu", "Stiffener quantity");
+	entry = ("chs", "加劲肋数量");
 };
 
-string_utf8 albl_end_plate_thickness
-{
-	entry = ("enu", "End plate's thickness");
-	entry = ("chs", "端板厚度");
+string_utf8 albl_margin {
+	entry = ("enu", "Margin");
+	entry = ("chs", "边距");
 };
 
-string_utf8 albl_end_plate_diameter
-{
-	entry = ("enu", "End plate's diameter");
-	entry = ("chs", "端板直径");
+string_utf8 albl_stiffener_kind {
+	entry = ("enu", "Stiffener kind");
+	entry = ("chs", "加劲肋类型");
 };
 
-string_utf8 albl_creat_primary_stiffeners
-{
-	entry = ("enu", "Creat primary stiffeners");
-	entry = ("chs", "创建主零件加劲肋");
+string_utf8 albl_end_plate {
+	entry = ("enu", "End plate");
+	entry = ("chs", "端板");
 };
 
-string_utf8 albl_creat_secondary_stiffeners
-{
-	entry = ("enu", "Creat secondary stiffeners");
-	entry = ("chs", "创建次零件加劲肋");
+string_utf8 albl_stiffener {
+	entry = ("enu", "Stiffener");
+	entry = ("chs", "加劲肋");
 };
 
-string_utf8 albl_stiffener_thickness
-{
-	entry = ("enu", "Stiffener's thickness");
-	entry = ("chs", "加劲肋厚度");
+string_utf8 albl_inside {
+	entry = ("enu", "Inside");
+	entry = ("chs", "内侧");
 };
 
-string_utf8 albl_stiffener_width
-{
-	entry = ("enu", "Stiffener's width");
-	entry = ("chs", "加劲肋宽度");
+string_utf8 albl_outside {
+	entry = ("enu", "Outside");
+	entry = ("chs", "外侧");
 };
 
-string_utf8 albl_chamfer_size_X
-{
-	entry = ("enu", "Chamfer's size X");
-	entry = ("chs", "倒角尺寸X");
+string_utf8 exception_primary_profile_not_supported {
+    entry = ("enu", "Only perfect circular type primary profile be supported");
+    entry = ("chs", "仅支持正圆截面主零件");
 };
 
-string_utf8 albl_chamfer_size_Y
-{
-	entry = ("enu", "Chamfer's size Y");
-	entry = ("chs", "倒角尺寸Y");
-};
-
-string_utf8 albl_distance_to_edge
-{
-	entry = ("enu", "Distance to edge");
-	entry = ("chs", "加劲肋到端板边缘距离");
-};
-
-string_utf8 albl_quantity
-{
-	entry = ("enu", "Quantity");
-	entry = ("chs", "数量");
-};
-
-string_utf8 albl_creat_bolt
-{
-	entry = ("enu", "Creat bolt");
-	entry = ("chs", "创建螺栓");
-};
-
-string_utf8 albl_bolt_standard
-{
-	entry = ("enu", "Bolt's standard");
-	entry = ("chs", "螺栓等级");
-};
-
-string_utf8 albl_bolt_size
-{
-	entry = ("enu", "Bolt's size");
-	entry = ("chs", "螺栓尺寸");
-};
-
-string_utf8 albl_bolt_circle_diameter
-{
-	entry = ("enu", "Bolt circle's diameter");
-	entry = ("chs", "环形螺栓直径");
-};
-
-string_utf8 albl_material
-{
-	entry = ("enu", "Material");
-	entry = ("chs", "材质");
+string_utf8 exception_secondary_profile_not_supported {
+    entry = ("enu", "Only perfect circular type secondary profile be supported");
+    entry = ("chs", "仅支持正圆截面次零件");
 };
