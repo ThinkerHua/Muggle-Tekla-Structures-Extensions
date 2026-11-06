@@ -9,10 +9,12 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program. If not, see <http://www.gnu.org/licenses/>.
  *==============================================================================
- *  DC2001.cs: "DC2001" detail
+ *  DC2001.cs: crane girder support corbel
  *  written by Huang YongXing - thinkerhua@hotmail.com
  *==============================================================================*/
+
 using System;
+using System.Collections;
 using System.Linq;
 using Muggle.TsExtensions.CodingHelper.Generators;
 using Muggle.TsExtensions.Common.Geometry3d;
@@ -21,19 +23,11 @@ using Muggle.TsExtensions.Common.Profile;
 using Tekla.Structures;
 using Tekla.Structures.Geometry3d;
 using Tekla.Structures.Model;
+using Tekla.Structures.Model.Operations;
 using Tekla.Structures.Plugins;
-using static Muggle.TsExtensions.Common.Operation;
 using static TeklaStructuresAttributes.Attributes;
-using Win = System.Windows;
 
 namespace Muggle.TsExtensions.DC2001 {
-    [PartFields("LeftCorbel", "RightCorbel")]
-    [PlateFields("PrimStif", "LCorbelStif", "RCorbelStif", "LeftPad", "RightPad")]
-    [WeldFields("Corbel", "PrimStif", "CorbelStif", "Pad")]
-    [GeneralFields(typeof(int), "PrimStifChamferType", "RightCorbelCreation")]
-    [GeneralFields(typeof(double), "LeftCorbelLength", "RightCorbelLength", "LeftCorbelStifDist", "RightCorbelStifDist",
-        "PrimStifChamferX", "PrimStifChamferY", "PrimStifChamferDz1", "PrimStifChamferDz2")]
-    public partial class PluginData;
 
     [Plugin("DC2001")]
     [PluginUserInterface("Muggle.TsExtensions.DC2001.View")]
@@ -47,294 +41,78 @@ namespace Muggle.TsExtensions.DC2001 {
         private Model Model { get; }
 
         [PartFieldDefaultValues("LeftCorbel", profile: "HI530-270-30-30*600", name: "LeftCorbel")]
-        [PartFieldDefaultValues("RightCorbel", profile: "HI600-300-30-30*600", name: "RightCorbel")]
+        [PartFieldDefaultValues("RightCorbel", name: "RightCorbel")]
         [PlateFieldDefaultValues("PrimStif", 20, name: "ColumnStiffener")]
         [PlateFieldDefaultValues("LCorbelStif", 20, 185, name: "LeftCorbelStiffener")]
         [PlateFieldDefaultValues("RCorbelStif", 20, 185, name: "RightCorbelStiffener")]
         [PlateFieldDefaultValues("LeftPad", 30, 560, 560, name: "LeftPad")]
         [PlateFieldDefaultValues("RightPad", 30, 560, 560, name: "RightPad")]
+        [ChamferFieldDefaultValues("PrimStif", 1, 25, 25)]
         [WeldFieldDefaultValues("Corbel", typeAbove: 10, sizeAbove: 6, around: 1, shop: 1)]
         [WeldFieldDefaultValues("PrimStif", typeAbove: 10, typeBelow: 10, sizeAbove: 6, sizeBelow: 6, shop: 1)]
         [WeldFieldDefaultValues("CorbelStif", typeAbove: 10, typeBelow: 10, sizeAbove: 6, sizeBelow: 6, shop: 1)]
         [WeldFieldDefaultValues("Pad", typeAbove: 10, sizeAbove: 6, around: 1, shop: 1)]
-        [GeneralFieldDefaultValues("RightCorbelCreation", 0, "LeftCorbelLength", 800, "RightCorbelLength", 800,
-            "LeftCorbelStifDist", 500, "RightCorbelStifDist", 500, "PrimStifChamferType", 1,
-            "PrimStifChamferX", 25, "PrimStifChamferY", 25,
-            "PrimStifChamferDz1", 0, "PrimStifChamferDz2", 0)]
+        [GeneralFieldDefaultValues("LeftCorbelLength", 800, "RightCorbelLength", 800,
+            "LeftCorbelStifPos", 500, "RightCorbelStifPos", 500)]
         private PluginData Data { get; }
 
         public DC2001(PluginData data) {
             Model = new Model();
             Data = data;
-
-            SetDataToDefaultIfUnset();
-            GetFieldValuesFrom(Data);
         }
 
         public override bool Run() {
             try {
-                var globalTp = new TransformationPlane();
-                var originTp = Model.GetWorkPlaneHandler().GetCurrentTransformationPlane();
+                SetDataToDefaultIfUnset();
 
-                var globalZ = new Vector(0, 0, 1000);
-                var axisX = new Vector(1000, 0, 0);
-                var axisY = new Vector(0, 1000, 0);
-                var axisZ = new Vector(0, 0, 1000);
+                var prim = (Part)Model.SelectModelObject(Primary);
+                if (IsDefaultValue(Data.PartLeftCorbelMaterial))
+                    Data.PartLeftCorbelMaterial = prim.Material.MaterialString;
+                if (IsDefaultValue(Data.PartRightCorbelMaterial))
+                    Data.PartRightCorbelMaterial = prim.Material.MaterialString;
+                if (IsDefaultValue(Data.PlatePrimStifMaterial))
+                    Data.PlatePrimStifMaterial = prim.Material.MaterialString;
+                if (IsDefaultValue(Data.PlateLCorbelStifMaterial))
+                    Data.PlateLCorbelStifMaterial = prim.Material.MaterialString;
+                if (IsDefaultValue(Data.PlateRCorbelStifMaterial))
+                    Data.PlateRCorbelStifMaterial = prim.Material.MaterialString;
+                if (IsDefaultValue(Data.PlateLeftPadMaterial))
+                    Data.PlateLeftPadMaterial = prim.Material.MaterialString;
+                if (IsDefaultValue(Data.PlateRightPadMaterial))
+                    Data.PlateRightPadMaterial = prim.Material.MaterialString;
 
-                if (axisX.Dot(globalZ.Transform(globalTp, originTp)) < 0) axisZ *= -1;
+                GetFieldValuesFrom(Data);
 
-                var workTp = new TransformationPlane(new Point(), axisY, axisZ);
+                var workTp = GetWorkTransformationPlate();
                 Model.GetWorkPlaneHandler().SetCurrentTransformationPlane(workTp);
 
-                var column = (Beam)Model.SelectModelObject(Primary);
-                var solid = column.GetSolid(Solid.SolidCreationTypeEnum.RAW);
-
-                var p1 = new Point();
-                var p2 = new Point(-1000, 0, 0);
-                var intersects = solid.Intersect(p1, p2);
-                var intersect = intersects.Cast<Point>().OrderBy(p => p.X).First();
-                p1 = intersect;
-                p2 = p1 + p2;
-
-                var depthOffset = DepthOffsetOfVariableHeightSection(_partLeftCorbelProfile);
-                if (depthOffset == 0.0) (p1, p2) = (p2, p1);
-
-                var leftCorbel = CreatPartLeftCorbel<Beam>();
-                leftCorbel.StartPoint = p1;
-                leftCorbel.EndPoint = p2;
-                leftCorbel.Position = new Position {
-                    Rotation = Position.RotationEnum.BELOW,
-                    Depth = Position.DepthEnum.BEHIND,
-                    DepthOffset = depthOffset,
-                };
-                leftCorbel.Insert();
-
-                var weld = CreatWeldCorbel<Weld>();
-                weld.MainObject = column;
-                weld.SecondaryObject = leftCorbel;
-                weld.Insert();
-
-                Beam rightCorbel = null;
-                Point p3 = null, p4 = null;
-                switch (_rightCorbelCreation) {
-                case 1:
-                    p3 = new Point(p1.X * -1, p1.Y, p1.Z);
-                    p4 = new Point(p2.X * -1, p2.Y, p2.Z);
-                    rightCorbel = CreatPartLeftCorbel<Beam>();
-                    rightCorbel.StartPoint = p3;
-                    rightCorbel.EndPoint = p4;
-                    break;
-                case 2:
-                    p3 = new Point(p1.X * -1, p1.Y, p1.Z);
-                    p4 = p3 + new Point(_rightCorbelLength, 0, 0);
-                    depthOffset = DepthOffsetOfVariableHeightSection(_partRightCorbelProfile);
-                    if (depthOffset == 0.0) (p3, p4) = (p4, p3);
-
-                    rightCorbel = CreatPartRightCorbel<Beam>();
-                    rightCorbel.StartPoint = p3;
-                    rightCorbel.EndPoint = p4;
-                    break;
-                }
-
-                if (rightCorbel is not null) {
-                    rightCorbel.Position = new Position {
-                        Rotation = Position.RotationEnum.BELOW,
-                        Depth = Position.DepthEnum.BEHIND,
-                        DepthOffset = depthOffset,
-                    };
-                    rightCorbel.Insert();
-
-                    weld = CreatWeldCorbel<Weld>();
-                    weld.MainObject = column;
-                    weld.SecondaryObject = rightCorbel;
-                    weld.Insert();
-                }
-
-                double leftCorbelHeight = 0.0,
-                    leftCorbelWidth = 0.0,
-                    leftCorbelWebThickness = 0.0,
-                    rightCorbelHeight = 0.0,
-                    rightCorbelWidth = 0.0,
-                    rightCorbelWebThickness = 0.0;
-                leftCorbel.GetReportProperty(HEIGHT, ref leftCorbelHeight);
-                leftCorbel.GetReportProperty(WIDTH, ref leftCorbelWidth);
-                leftCorbel.GetReportProperty(WEB_THICKNESS, ref leftCorbelWebThickness);
-                if (rightCorbel is not null) {
-                    rightCorbel.GetReportProperty(HEIGHT, ref rightCorbelHeight);
-                    rightCorbel.GetReportProperty(WIDTH, ref rightCorbelWidth);
-                    rightCorbel.GetReportProperty(WEB_THICKNESS, ref rightCorbelWebThickness);
-                }
-
-                solid = leftCorbel.GetSolid(Solid.SolidCreationTypeEnum.RAW);
-                var p = solid.MaximumPoint + new Point(0, 0, _platePrimStifThickness * -0.5);
-
-                var primStifs = ModelOperation.CreatStiffeners(column, p,
-                    _platePrimStifThickness,
-                    _platePrimStifMaterial,
-                    _platePrimStifClass.ToString(),
-                    chamferType: EnumParse<Chamfer.ChamferTypeEnum>(_primStifChamferType),
-                    chamferSizeX: _primStifChamferX, chamferSizeY: _primStifChamferY,
-                    chamferDz1: _primStifChamferDz1, chamferDz2: _primStifChamferDz2);
-
-                p = solid.MinimumPoint + new Point(0, 0, _platePrimStifThickness * 0.5);
-                primStifs = primStifs.Concat(ModelOperation.CreatStiffeners(column, p,
-                    _platePrimStifThickness,
-                    _platePrimStifMaterial,
-                    _platePrimStifClass.ToString(),
-                    chamferType: EnumParse<Chamfer.ChamferTypeEnum>(_primStifChamferType),
-                    chamferSizeX: _primStifChamferX, chamferSizeY: _primStifChamferY,
-                    chamferDz1: _primStifChamferDz1, chamferDz2: _primStifChamferDz2));
-
-                if (rightCorbel is not null &&
-                    Math.Abs(rightCorbelHeight - leftCorbelHeight) > GeometryConstants.DISTANCE_EPSILON) {
-                    solid = rightCorbel.GetSolid(Solid.SolidCreationTypeEnum.RAW);
-                    p = solid.MinimumPoint + new Point(0, 0, _platePrimStifThickness * 0.5);
-                    primStifs = primStifs.Concat(ModelOperation.CreatStiffeners(column, p,
-                        _platePrimStifThickness,
-                        _platePrimStifMaterial,
-                        _platePrimStifClass.ToString(),
-                        chamferType: EnumParse<Chamfer.ChamferTypeEnum>(_primStifChamferType),
-                        chamferSizeX: _primStifChamferX, chamferSizeY: _primStifChamferY,
-                        chamferDz1: _primStifChamferDz1, chamferDz2: _primStifChamferDz2));
-                }
-
-                var primCs = column.GetCoordinateSystem();
-                Model.GetWorkPlaneHandler().SetCurrentTransformationPlane(new TransformationPlane(primCs));
-
-                var primSectionType = SectionType(column.Profile.ProfileString);
-
-                var cnt = 0;
-                foreach (var stif in primStifs) {
-                    cnt++;
-
-                    weld = CreatWeldPrimStif<Weld>();
-                    weld.MainObject = column;
-                    weld.SecondaryObject = stif;
-                    weld.Position = Weld.WeldPositionEnum.WELD_POSITION_PLUS_Y;
-                    weld.Insert();
-                    weld.Position = Weld.WeldPositionEnum.WELD_POSITION_MINUS_Y;
-                    weld.Insert();
-
-                    switch (primSectionType) {
-                    case "H":
-                        weld.Position = cnt % 2 == 1
-                            ? Weld.WeldPositionEnum.WELD_POSITION_MINUS_Z
-                            : Weld.WeldPositionEnum.WELD_POSITION_PLUS_Z;
-
-                        weld.Insert();
-
-                        break;
-                    case "R":
-                        weld.Position = Weld.WeldPositionEnum.WELD_POSITION_MINUS_Z;
-                        weld.Insert();
-                        weld.Position = Weld.WeldPositionEnum.WELD_POSITION_PLUS_Z;
-                        weld.Insert();
-                        break;
-                    }
-                }
-
-                Model.GetWorkPlaneHandler().SetCurrentTransformationPlane(workTp);
-
-                p = intersect + new Vector(-_leftCorbelStifDist, 0, 0);
-                var indent = (leftCorbelWidth - leftCorbelWebThickness) * 0.5 - _plateLCorbelStifBreadth;
-                var corbelStifs = ModelOperation.CreatStiffeners(leftCorbel, p, _plateLCorbelStifThickness,
-                    _plateLCorbelStifMaterial, _plateLCorbelStifClass.ToString(), indent: indent);
-
-                Model.GetWorkPlaneHandler()
-                    .SetCurrentTransformationPlane(new TransformationPlane(leftCorbel.GetCoordinateSystem()));
-
-                cnt = 0;
-                foreach (var stif in corbelStifs) {
-                    cnt++;
-
-                    weld = CreatWeldCorbelStif<Weld>();
-                    weld.MainObject = leftCorbel;
-                    weld.SecondaryObject = stif;
-                    weld.AroundWeld = false;
-                    weld.Position = Weld.WeldPositionEnum.WELD_POSITION_PLUS_Y;
-                    weld.Insert();
-
-                    weld.Position = Weld.WeldPositionEnum.WELD_POSITION_MINUS_Y;
-                    weld.Insert();
-
-                    weld.Position = cnt % 2 == 1
-                        ? Weld.WeldPositionEnum.WELD_POSITION_MINUS_Z
-                        : Weld.WeldPositionEnum.WELD_POSITION_PLUS_Z;
-
-                    weld.Insert();
-                }
-
-                Model.GetWorkPlaneHandler().SetCurrentTransformationPlane(workTp);
-
-                if (rightCorbel is not null) {
-                    p = intersect.Multiply(-1) + new Vector(_rightCorbelStifDist, 0, 0);
-                    indent = (rightCorbelWidth - rightCorbelWebThickness) * 0.5 - _plateRCorbelStifBreadth;
-                    corbelStifs = ModelOperation.CreatStiffeners(rightCorbel, p, _plateRCorbelStifThickness,
-                        _plateRCorbelStifMaterial, _plateRCorbelStifClass.ToString(), indent: indent);
-
-                    Model.GetWorkPlaneHandler()
-                        .SetCurrentTransformationPlane(new TransformationPlane(rightCorbel.GetCoordinateSystem()));
-
-                    cnt = 0;
-                    foreach (var stif in corbelStifs) {
-                        cnt++;
-
-                        weld = CreatWeldCorbelStif<Weld>();
-                        weld.MainObject = rightCorbel;
-                        weld.SecondaryObject = stif;
-                        weld.AroundWeld = false;
-                        weld.Position = Weld.WeldPositionEnum.WELD_POSITION_PLUS_Y;
-                        weld.Insert();
-
-                        weld.Position = Weld.WeldPositionEnum.WELD_POSITION_MINUS_Y;
-                        weld.Insert();
-
-                        weld.Position = cnt % 2 == 1
-                            ? Weld.WeldPositionEnum.WELD_POSITION_MINUS_Z
-                            : Weld.WeldPositionEnum.WELD_POSITION_PLUS_Z;
-
-                        weld.Insert();
-                    }
-                }
-
-                Model.GetWorkPlaneHandler().SetCurrentTransformationPlane(workTp);
-
-                p1 += new Point(-_leftCorbelStifDist + _plateLeftPadHeight * 0.5, 0, 0);
-                p2 = p1 + new Point(-_plateLeftPadHeight, 0, 0);
-
-                var leftPad = CreatPlateLeftPad<Beam>();
-                leftPad.StartPoint = p1;
-                leftPad.EndPoint = p2;
-                leftPad.Position.Rotation = Position.RotationEnum.FRONT;
-                leftPad.Position.Depth = Position.DepthEnum.FRONT;
-                leftPad.Insert();
-
-                weld = CreatWeldPad<Weld>();
-                weld.MainObject = leftCorbel;
-                weld.SecondaryObject = leftPad;
-                weld.Insert();
-
-                if (rightCorbel is not null) {
-                    p3 += new Point(_rightCorbelStifDist - _plateRightPadHeight * 0.5, 0, 0);
-                    p4 = p3 + new Point(_plateRightPadHeight, 0, 0);
-                    var rightPad = CreatPlateRightPad<Beam>();
-                    rightPad.StartPoint = p3;
-                    rightPad.EndPoint = p4;
-                    rightPad.Position.Rotation = Position.RotationEnum.FRONT;
-                    rightPad.Position.Depth = Position.DepthEnum.FRONT;
-                    rightPad.Insert();
-
-                    weld = CreatWeldPad<Weld>();
-                    weld.MainObject = rightCorbel;
-                    weld.SecondaryObject = rightPad;
-                    weld.Insert();
-                }
+                CreateDetail();
 
                 return true;
             } catch (Exception e) {
-                Win.MessageBox.Show(e.ToString(), "Error", Win.MessageBoxButton.OK, Win.MessageBoxImage.Error);
+                Operation.DisplayPrompt(e.Message);
                 return false;
             }
+        }
+
+        /// <summary>
+        /// 获取工作变换平面，
+        /// 以主零件坐标系的 Y 轴作为工作平面的 X 轴且同向，
+        /// 以主零件坐标系的 Z 轴作为工作平面 Y 轴，方向根据组成的坐标系 Z 轴是否与全局 Z 轴同向确定。
+        /// </summary>
+        /// <returns>工作变换平面。</returns>
+        private TransformationPlane GetWorkTransformationPlate() {
+            var globalTp = new TransformationPlane();
+            var originTp = Model.GetWorkPlaneHandler().GetCurrentTransformationPlane();
+
+            var globalZ = new Vector(0, 0, 1000).Transform(globalTp, originTp);
+            var axisX = new Vector(1000, 0, 0);
+            var axisY = new Vector(0, 1000, 0);
+            var axisZ = new Vector(0, 0, 1000);
+
+            if (axisX.Dot(globalZ) < 0) axisZ *= -1;
+
+            return new TransformationPlane(new Point(), axisY, axisZ);
         }
 
         private static string SectionType(string profileText) {
@@ -356,16 +134,280 @@ namespace Muggle.TsExtensions.DC2001 {
         }
 
         private static double DepthOffsetOfVariableHeightSection(string profileText) {
-            var planeOffset = 0.0;
+            var depthOffset = 0.0;
             try {
                 var profile = new ProfileH(profileText);
                 if (profile.h1 > profile.h2)
-                    planeOffset = (profile.h2 - profile.h1) * 0.5;
+                    depthOffset = (profile.h2 - profile.h1) * 0.5;
             } catch {
                 // ignored
             }
 
-            return planeOffset;
+            return depthOffset;
+        }
+
+        private void CreateDetail() {
+            var origin = new Point();
+            var axisX = new Vector(1, 0, 0);
+            var axisZ = new Vector(0, 0, 1);
+
+            var workTp = Model.GetWorkPlaneHandler().GetCurrentTransformationPlane();
+
+            var column = (Beam)Model.SelectModelObject(Primary);
+            var solid = column.GetSolid(Solid.SolidCreationTypeEnum.RAW);
+            var intersections = solid.Intersect(origin - axisX * int.MaxValue, origin + axisX * int.MaxValue)
+                .Cast<Point>().ToList();
+            var intersectionPlusX = intersections.OrderByDescending(p => p.X).First();
+            var intersectionMinusX = intersections.OrderBy(p => p.X).First();
+
+            #region LeftCorbel
+
+            var p2 = intersectionMinusX;
+            var p1 = p2 - axisX * _leftCorbelLength;
+
+            var depthOffset = DepthOffsetOfVariableHeightSection(_partLeftCorbelProfile);
+            if (depthOffset != 0.0) (p1, p2) = (p2, p1);
+
+            var leftCorbel = CreatePartLeftCorbel<Beam>();
+            leftCorbel.StartPoint = p1;
+            leftCorbel.EndPoint = p2;
+            leftCorbel.Position = new Position {
+                Rotation = Position.RotationEnum.BELOW, Depth = Position.DepthEnum.BEHIND, DepthOffset = depthOffset,
+            };
+            leftCorbel.Insert();
+
+            var weld = CreateWeldCorbel<Weld>();
+            weld.MainObject = column;
+            weld.SecondaryObject = leftCorbel;
+            weld.Insert();
+
+            double leftCorbelHeight = 0.0, leftCorbelWidth = 0.0, leftCorbelWebThickness = 0.0;
+            leftCorbel.GetReportProperty(HEIGHT, ref leftCorbelHeight);
+            leftCorbel.GetReportProperty(WIDTH, ref leftCorbelWidth);
+            leftCorbel.GetReportProperty(WEB_THICKNESS, ref leftCorbelWebThickness);
+
+            #endregion
+
+            #region RightCorbel
+
+            Beam rightCorbel = null;
+            double rightCorbelHeight = 0.0, rightCorbelWidth = 0.0, rightCorbelWebThickness = 0.0;
+
+            if (string.IsNullOrEmpty(_partRightCorbelProfile)) goto SkipRightCorbel;
+
+            p2 = intersectionPlusX;
+            p1 = p2 + axisX * _rightCorbelLength;
+
+            depthOffset = DepthOffsetOfVariableHeightSection(_partRightCorbelProfile);
+            if (depthOffset != 0.0) (p1, p2) = (p2, p1);
+
+            rightCorbel = CreatePartRightCorbel<Beam>();
+            rightCorbel.StartPoint = p1;
+            rightCorbel.EndPoint = p2;
+            rightCorbel.Position = new Position {
+                Rotation = Position.RotationEnum.BELOW, Depth = Position.DepthEnum.BEHIND, DepthOffset = depthOffset,
+            };
+            rightCorbel.Insert();
+
+            weld = CreateWeldCorbel<Weld>();
+            weld.MainObject = column;
+            weld.SecondaryObject = rightCorbel;
+            weld.Insert();
+
+            rightCorbel.GetReportProperty(HEIGHT, ref rightCorbelHeight);
+            rightCorbel.GetReportProperty(WIDTH, ref rightCorbelWidth);
+            rightCorbel.GetReportProperty(WEB_THICKNESS, ref rightCorbelWebThickness);
+
+            SkipRightCorbel: ;
+
+            #endregion
+
+            #region PrimStiffeners
+
+            ContourPlate InsertContourPlate(Func<ContourPlate> CreateContourPlate, ArrayList contourPoints) {
+                var contourPlate = CreateContourPlate.Invoke();
+                contourPlate.Contour.ContourPoints = contourPoints;
+                contourPlate.Position.Depth = Position.DepthEnum.MIDDLE;
+                contourPlate.Insert();
+                return contourPlate;
+            }
+
+            solid = leftCorbel.GetSolid(Solid.SolidCreationTypeEnum.RAW);
+            var p = solid.MaximumPoint - axisZ * (_platePrimStifThickness * 0.5);
+
+            var chamfer = CreateChamferPrimStif();
+            var contours = ModelOperation.CalculateStiffeners(column, p, _platePrimStifThickness, chamfer: chamfer);
+            var primStifs = contours.Select(arr => InsertContourPlate(CreatePlatePrimStif<ContourPlate>, arr)).ToList();
+
+            p = solid.MinimumPoint + axisZ * (_platePrimStifThickness * 0.5);
+            contours = ModelOperation.CalculateStiffeners(column, p, _platePrimStifThickness, chamfer: chamfer);
+            primStifs.AddRange(contours.Select(arr => InsertContourPlate(CreatePlatePrimStif<ContourPlate>, arr)));
+
+            if (rightCorbel is not null &&
+                Math.Abs(rightCorbelHeight - leftCorbelHeight) > GeometryConstants.DISTANCE_EPSILON) {
+                solid = rightCorbel.GetSolid(Solid.SolidCreationTypeEnum.RAW);
+                p = solid.MinimumPoint + axisZ * (_platePrimStifThickness * 0.5);
+                contours = ModelOperation.CalculateStiffeners(column, p, _platePrimStifThickness, chamfer: chamfer);
+                primStifs.AddRange(contours.Select(arr => InsertContourPlate(CreatePlatePrimStif<ContourPlate>, arr)));
+            }
+
+            var primCs = column.GetCoordinateSystem();
+            Model.GetWorkPlaneHandler().SetCurrentTransformationPlane(new TransformationPlane(primCs));
+
+            var primSectionType = SectionType(column.Profile.ProfileString);
+
+            var cnt = 0;
+            foreach (var stif in primStifs) {
+                cnt++;
+
+                weld = CreateWeldPrimStif<Weld>();
+                weld.MainObject = column;
+                weld.SecondaryObject = stif;
+                weld.Position = Weld.WeldPositionEnum.WELD_POSITION_PLUS_Y;
+                weld.Insert();
+                weld.Position = Weld.WeldPositionEnum.WELD_POSITION_MINUS_Y;
+                weld.Insert();
+
+                switch (primSectionType) {
+                case "H":
+                    weld.Position = cnt % 2 == 1
+                        ? Weld.WeldPositionEnum.WELD_POSITION_MINUS_Z
+                        : Weld.WeldPositionEnum.WELD_POSITION_PLUS_Z;
+
+                    weld.Insert();
+
+                    break;
+                case "R":
+                    weld.Position = Weld.WeldPositionEnum.WELD_POSITION_MINUS_Z;
+                    weld.Insert();
+                    weld.Position = Weld.WeldPositionEnum.WELD_POSITION_PLUS_Z;
+                    weld.Insert();
+                    break;
+                }
+            }
+
+            Model.GetWorkPlaneHandler().SetCurrentTransformationPlane(workTp);
+
+            #endregion
+
+            #region LeftCorbelStiffeners
+
+            p = intersectionMinusX - axisX * _leftCorbelStifPos;
+            var indent = (leftCorbelWidth - leftCorbelWebThickness) * 0.5 - _plateLCorbelStifBreadth;
+            contours = ModelOperation.CalculateStiffeners(leftCorbel, p, _plateLCorbelStifThickness, indent: indent);
+            var corbelStifs = contours
+                .Select(arr => InsertContourPlate(CreatePlateLCorbelStif<ContourPlate>, arr))
+                .ToList();
+
+            Model.GetWorkPlaneHandler()
+                .SetCurrentTransformationPlane(new TransformationPlane(leftCorbel.GetCoordinateSystem()));
+
+            cnt = 0;
+            foreach (var stif in corbelStifs) {
+                cnt++;
+
+                weld = CreateWeldCorbelStif<Weld>();
+                weld.MainObject = leftCorbel;
+                weld.SecondaryObject = stif;
+                weld.AroundWeld = false;
+                weld.Position = Weld.WeldPositionEnum.WELD_POSITION_PLUS_Y;
+                weld.Insert();
+
+                weld.Position = Weld.WeldPositionEnum.WELD_POSITION_MINUS_Y;
+                weld.Insert();
+
+                weld.Position = cnt % 2 == 1
+                    ? Weld.WeldPositionEnum.WELD_POSITION_MINUS_Z
+                    : Weld.WeldPositionEnum.WELD_POSITION_PLUS_Z;
+
+                weld.Insert();
+            }
+
+            Model.GetWorkPlaneHandler().SetCurrentTransformationPlane(workTp);
+
+            #endregion
+
+            #region RightCorbelStiffeners
+
+            if (rightCorbel is null) goto SkipRightCorbelStiffeners;
+
+            p = intersectionPlusX + axisX * _rightCorbelStifPos;
+            indent = (rightCorbelWidth - rightCorbelWebThickness) * 0.5 - _plateRCorbelStifBreadth;
+            contours = ModelOperation.CalculateStiffeners(rightCorbel, p, _plateRCorbelStifThickness,
+                indent: indent);
+            corbelStifs = contours.Select(arr => InsertContourPlate(CreatePlateRCorbelStif<ContourPlate>, arr)).ToList();
+
+            Model.GetWorkPlaneHandler()
+                .SetCurrentTransformationPlane(new TransformationPlane(rightCorbel.GetCoordinateSystem()));
+
+            cnt = 0;
+            foreach (var stif in corbelStifs) {
+                cnt++;
+
+                weld = CreateWeldCorbelStif<Weld>();
+                weld.MainObject = rightCorbel;
+                weld.SecondaryObject = stif;
+                weld.AroundWeld = false;
+                weld.Position = Weld.WeldPositionEnum.WELD_POSITION_PLUS_Y;
+                weld.Insert();
+
+                weld.Position = Weld.WeldPositionEnum.WELD_POSITION_MINUS_Y;
+                weld.Insert();
+
+                weld.Position = cnt % 2 == 1
+                    ? Weld.WeldPositionEnum.WELD_POSITION_MINUS_Z
+                    : Weld.WeldPositionEnum.WELD_POSITION_PLUS_Z;
+
+                weld.Insert();
+            }
+
+            Model.GetWorkPlaneHandler().SetCurrentTransformationPlane(workTp);
+
+            SkipRightCorbelStiffeners: ;
+
+            #endregion
+
+            #region LeftPad
+
+            p1 = intersectionMinusX - axisX * (_leftCorbelStifPos + _plateLeftPadHeight * 0.5);
+            p2 = p1 + axisX * _plateLeftPadHeight;
+
+            var leftPad = CreatePlateLeftPad<Beam>();
+            leftPad.StartPoint = p1;
+            leftPad.EndPoint = p2;
+            leftPad.Position.Rotation = Position.RotationEnum.FRONT;
+            leftPad.Position.Depth = Position.DepthEnum.FRONT;
+            leftPad.Insert();
+
+            weld = CreateWeldPad<Weld>();
+            weld.MainObject = leftCorbel;
+            weld.SecondaryObject = leftPad;
+            weld.Insert();
+
+            #endregion
+
+            #region RightPad
+
+            if (rightCorbel is null) goto SkipRightPad;
+
+            p1 = intersectionPlusX + axisX * (_rightCorbelStifPos + _plateRightPadHeight * 0.5);
+            p2 = p1 - axisX * _plateRightPadHeight;
+            var rightPad = CreatePlateRightPad<Beam>();
+            rightPad.StartPoint = p1;
+            rightPad.EndPoint = p2;
+            rightPad.Position.Rotation = Position.RotationEnum.FRONT;
+            rightPad.Position.Depth = Position.DepthEnum.FRONT;
+            rightPad.Insert();
+
+            weld = CreateWeldPad<Weld>();
+            weld.MainObject = rightCorbel;
+            weld.SecondaryObject = rightPad;
+            weld.Insert();
+
+            SkipRightPad: ;
+
+            #endregion
+
         }
     }
 }

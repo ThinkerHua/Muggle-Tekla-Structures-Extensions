@@ -9,9 +9,10 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program. If not, see <http://www.gnu.org/licenses/>.
  *==============================================================================
- *  View.xaml.cs: code behind for main window of DC2001
+ *  View.xaml.cs: code behind for view of DC2001
  *  written by Huang YongXing - thinkerhua@hotmail.com
  *==============================================================================*/
+
 using System;
 using System.Windows;
 using Muggle.TsExtensions.Common.WPF.Localization;
