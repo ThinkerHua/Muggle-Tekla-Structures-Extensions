@@ -3,34 +3,9 @@
 	entry = ("chs", "KJ1002 - 钢梁翼缘侧向约束");
 };
 
-string_utf8 albl_parameters {
-	entry = ("enu", "Parameters");
-	entry = ("chs", "参数");
-};
-
 string_utf8 albl_section_length {
 	entry = ("enu", "Section length");
 	entry = ("chs", "节长");
-};
-
-string_utf8 albl_section_length_tooltip {
-	entry = ("enu", "Keep the default value or enter a value less than or equal to 0 to automatically calculate (0.15 times the beam span and not less than the beam height)");
-	entry = ("chs", "保持默认值或输入小于等于0的值以自动计算（0.15倍梁跨且不小于梁高）");
-};
-
-string_utf8 albl_brace_profile {
-	entry = ("enu", "Brace profile");
-	entry = ("chs", "支撑截面/规格/型号");
-};
-
-string_utf8 albl_stiffener_thickness {
-	entry = ("enu", "Stiffener thickness");
-	entry = ("chs", "加劲板厚度");
-};
-
-string_utf8 albl_gusset_thickness {
-	entry = ("enu", "Gusset thickness");
-	entry = ("chs", "连接板厚度");
 };
 
 string_utf8 albl_clearance {
@@ -43,27 +18,57 @@ string_utf8 albl_extended_distance {
 	entry = ("chs", "外扩距离");
 };
 
-string_utf8 albl_bolt_standard {
-	entry = ("enu", "Bolt standard");
-	entry = ("chs", "螺栓标准/等级");
+string_utf8 albl_bolt_offset_x {
+	entry = ("enu", "Bolt offset X");
+	entry = ("chs", "螺栓偏移X");
 };
 
-string_utf8 albl_bolt_size {
-	entry = ("enu", "Bolt size");
-	entry = ("chs", "螺栓尺寸");
-};
-
-string_utf8 albl_bolt_positions {
-	entry = ("enu", "Bolt positions");
-	entry = ("chs", "螺栓定位");
-};
-
-string_utf8 albl_creat_upper_splices {
-	entry = ("enu", "Creat upper splice");
+string_utf8 albl_upper_splices_creation {
+	entry = ("enu", "Upper splices creation");
 	entry = ("chs", "创建上翼缘约束");
 };
 
-string_utf8 albl_material {
-	entry = ("enu", "Material");
-	entry = ("chs", "材质");
+string_utf8 albl_brace {
+	entry = ("enu", "Brace");
+	entry = ("chs", "支撑");
+};
+
+string_utf8 albl_stiffener {
+	entry = ("enu", "Stiffener");
+	entry = ("chs", "加劲板");
+};
+
+string_utf8 albl_gusset {
+	entry = ("enu", "Gusset");
+	entry = ("chs", "连接板");
+};
+
+string_utf8 exception_cannot_all_beams_parallel {
+    entry = ("enu", "Can't apply connection because all beams are parallel");
+    entry = ("chs", "无法应用节点，因为所有梁都平行");
+};
+
+string_utf8 exception_all_beam_vectors_must_be_coplanar {
+    entry = ("enu", "All beam vectors must be coplanar");
+    entry = ("chs", "所有梁向量必须共面");
+};
+
+string_utf8 exception_all_beam_projection_lines_must_intersect_at_the_same_point {
+    entry = ("enu", "All beam projection center lines must intersect at the same point");
+    entry = ("chs", "所有梁投影线必须交于同一点");
+};
+
+string_utf8 exception_cannot_get_value_for {
+    entry = ("enu", "Cannot get {0} value for {1}");
+    entry = ("chs", "无法获取{1}的{0}值");
+};
+
+string_utf8 exception_angle_between_beam_and_brace_must_in_range {
+    entry = ("enu", "The angle between the beam and brace must be in the range (0, 90) degrees");
+    entry = ("chs", "梁与支撑之间的夹角必须在0~90度范围内");
+};
+
+string_utf8 exception_is_not {
+    entry = ("enu", "{0} is not {1}");
+    entry = ("chs", "{0}不是{1}");
 };
