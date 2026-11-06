@@ -3,5 +3,6 @@
     <PropertyGroup>
         <TeklaVersion Condition="$(Configuration.EndsWith('2021'))">2021.0</TeklaVersion>
         <TeklaVersion Condition="$(Configuration.EndsWith('2024'))">2024.0</TeklaVersion>
+        <XSDATADIR>C:\ProgramData\Trimble\Tekla Structures\$(TeklaVersion)\</XSDATADIR>
     </PropertyGroup>
 </Project>

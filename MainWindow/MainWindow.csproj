@@ -44,6 +44,6 @@
     </ItemGroup>
 
     <Target Name="PostBuild" AfterTargets="PostBuildEvent">
-        <Exec Command="xcopy &quot;$(TargetDir)$(TargetName).exe&quot; &quot;D:\Program Files\Tekla Structures\$(TeklaVersion)\Environments\common\extensions\Muggle.TsExtensions\&quot; /Y /C /Q /R"/>
+        <Exec Command="xcopy &quot;$(TargetDir)$(TargetName).exe&quot; &quot;$(XSDATADIR)Environments\common\extensions\Muggle.TsExtensions\&quot; /Y /C /Q /R"/>
     </Target>
 </Project>
