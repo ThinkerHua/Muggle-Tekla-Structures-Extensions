@@ -3,104 +3,79 @@
 	entry = ("chs", "KJ2001 - 箱型柱外包式柱脚");
 };
 
-string_utf8 albl_basePlate {
+string_utf8 albl_stiffener_distance_to_base_plate {
+	entry = ("enu", "Stiffener distance to base plate");
+	entry = ("chs", "加劲板到底板距离");
+};
+
+string_utf8 albl_pouring_hole_diameter {
+	entry = ("enu", "Pouring hole diameter");
+	entry = ("chs", "浇筑孔直径");
+};
+
+string_utf8 albl_exhaust_hole_diameter {
+	entry = ("enu", "Exhaust hole diameter");
+	entry = ("chs", "透气孔直径");
+};
+
+string_utf8 albl_exhaust_hole_position_X {
+	entry = ("enu", "Exhaust hole position X");
+	entry = ("chs", "透气孔定位X");
+};
+
+string_utf8 albl_exhaust_hole_position_Y {
+	entry = ("enu", "Exhaust hole position Y");
+	entry = ("chs", "透气孔定位Y");
+};
+
+string_utf8 albl_stiffener_chamfer {
+	entry = ("enu", "Stiffener chamfer");
+	entry = ("chs", "加劲板切角");
+};
+
+string_utf8 albl_base_plate {
 	entry = ("enu", "Base plate");
 	entry = ("chs", "底板");
 };
 
-string_utf8 albl_basePlate_material {
-	entry = ("enu", "Base plate's material");
-	entry = ("chs", "底板材质");
+string_utf8 albl_stiffener {
+	entry = ("enu", "Stiffener");
+	entry = ("chs", "加劲板");
 };
 
-string_utf8 albl_basePlate_thickness {
-	entry = ("enu", "Base plate's thickness");
-	entry = ("chs", "底板厚度");
+string_utf8 albl_washer_plate {
+	entry = ("enu", "Washer plate");
+	entry = ("chs", "垫板");
 };
 
-string_utf8 albl_basePlate_width {
-	entry = ("enu", "Base plate's width");
-	entry = ("chs", "底板宽度");
-};
-
-string_utf8 albl_basePlate_length {
-	entry = ("enu", "Base plate's length");
-	entry = ("chs", "底板长度");
-};
-
-string_utf8 albl_anchorRod {
-	entry = ("enu", "Anchor rod");
+string_utf8 albl_anchor {
+	entry = ("enu", "Anchor");
 	entry = ("chs", "锚栓");
 };
 
-string_utf8 albl_bottomElevation_of_basePlate {
-	entry = ("enu", "Bottom elevation of base plate");
-	entry = ("chs", "底板底标高");
+string_utf8 albl_length_1 {
+	entry = ("enu", "Length 1");
+	entry = ("chs", "长度1");
 };
 
-string_utf8 albl_anchorRod_material {
-	entry = ("enu", "Anchor rod's material");
-	entry = ("chs", "锚栓材质");
+string_utf8 albl_length_2 {
+	entry = ("enu", "Length 2");
+	entry = ("chs", "长度2");
 };
 
-string_utf8 albl_anchorRod_size {
-	entry = ("enu", "Anchor rod's size");
-	entry = ("chs", "锚栓尺寸");
+string_utf8 albl_length_3 {
+	entry = ("enu", "Length 3");
+	entry = ("chs", "长度3");
 };
 
-string_utf8 albl_anchorRod_tolerance {
-	entry = ("enu", "Anchor rod's hole tolerance");
-	entry = ("chs", "锚栓孔公差");
+string_utf8 albl_length_4 {
+	entry = ("enu", "Length 4");
+	entry = ("chs", "长度4");
 };
 
-string_utf8 albl_anchorRod_length1 {
-	entry = ("enu", "Anchor rod's length 1");
-	entry = ("chs", "锚栓长度1");
-};
-
-string_utf8 albl_anchorRod_length2 {
-	entry = ("enu", "Anchor rod's length 2");
-	entry = ("chs", "锚栓长度2");
-};
-
-string_utf8 albl_anchorRod_length3 {
-	entry = ("enu", "Anchor rod's length 3");
-	entry = ("chs", "锚栓长度3");
-};
-
-string_utf8 albl_anchorRod_length4 {
-	entry = ("enu", "Anchor rod's length 4");
-	entry = ("chs", "锚栓长度4");
-};
-
-string_utf8 albl_anchorRod_length5 {
-	entry = ("enu", "Anchor rod's length 5");
-	entry = ("chs", "锚栓长度5");
-};
-
-string_utf8 albl_anchorRod_distance_to_edge {
-	entry = ("enu", "Anchor rod's distance to edge of base plate");
-	entry = ("chs", "锚栓到底板边缘的距离");
-};
-
-string_utf8 albl_washerPlate_material {
-	entry = ("enu", "Washer plate's material");
-	entry = ("chs", "垫板材质");
-};
-
-string_utf8 albl_washerPlate_thickness {
-	entry = ("enu", "Washer plate's thickness");
-	entry = ("chs", "垫板厚度");
-};
-
-string_utf8 albl_washerPlate_width {
-	entry = ("enu", "Washer plate's width");
-	entry = ("chs", "垫板宽度");
-};
-
-string_utf8 albl_washerPlate_holeDiameter {
-	entry = ("enu", "Diameter of hole in washer plate");
-	entry = ("chs", "垫板孔直径");
+string_utf8 albl_length_5 {
+	entry = ("enu", "Length 5");
+	entry = ("chs", "长度5");
 };
 
 string_utf8 albl_stud {
@@ -108,87 +83,22 @@ string_utf8 albl_stud {
 	entry = ("chs", "栓钉");
 };
 
-string_utf8 albl_stud_standard {
-	entry = ("enu", "Stud's standard");
-	entry = ("chs", "栓钉标准/等级");
+string_utf8 albl_stud_1 {
+	entry = ("enu", "Stud 1");
+	entry = ("chs", "栓钉1");
 };
 
-string_utf8 albl_stud_size {
-	entry = ("enu", "Stud's size");
-	entry = ("chs", "栓钉尺寸");
+string_utf8 albl_stud_2 {
+	entry = ("enu", "Stud 2");
+	entry = ("chs", "栓钉2");
 };
 
-string_utf8 albl_stud_length {
-	entry = ("enu", "Stud's length");
-	entry = ("chs", "栓钉长度");
+string_utf8 albl_start_offset {
+	entry = ("enu", "Start offset");
+	entry = ("chs", "起始偏移");
 };
 
-string_utf8 albl_stud_distanceList_X {
-	entry = ("enu", "Stud's distance list at X direction");
-	entry = ("chs", "栓钉X向距离列");
-};
-
-string_utf8 albl_stud_distanceList_Y {
-	entry = ("enu", "Stud's distance list at Y direction");
-	entry = ("chs", "栓钉Y向距离列");
-};
-
-string_utf8 albl_stud_offset_XZ {
-	entry = ("enu", "Stud's start offset at XZ direction");
-	entry = ("chs", "栓钉XZ向起点偏移值");
-};
-
-string_utf8 albl_stud_offset_YZ {
-	entry = ("enu", "Stud's start offset at YZ direction");
-	entry = ("chs", "栓钉YZ向起点偏移值");
-};
-
-string_utf8 albl_stud_distanceList_XZ {
-	entry = ("enu", "Stud's distance list at XZ direction");
-	entry = ("chs", "栓钉XZ向距离列");
-};
-
-string_utf8 albl_stud_distanceList_YZ {
-	entry = ("enu", "Stud's distance list at YZ direction");
-	entry = ("chs", "栓钉YZ向距离列");
-};
-
-string_utf8 albl_innerStiffener {
-	entry = ("enu", "Inner stiffener");
-	entry = ("chs", "内部加强板");
-};
-
-string_utf8 albl_innerStiffener_material {
-	entry = ("enu", "Inner stiffener's material");
-	entry = ("chs", "内部加强板材质");
-};
-
-string_utf8 albl_innerStiffener_thickness {
-	entry = ("enu", "Inner stiffener's thickness");
-	entry = ("chs", "内部加强板厚度");
-};
-
-string_utf8 albl_innerStiffener_distance_to_base {
-	entry = ("enu", "Inner stiffener's distance to base plate");
-	entry = ("chs", "内部加强板到底板距离");
-};
-
-string_utf8 albl_pouringHole_diameter {
-	entry = ("enu", "Pouring hole's diameter");
-	entry = ("chs", "浇筑孔直径");
-};
-
-string_utf8 albl_exhaustHole_diameter {
-	entry = ("enu", "Exhaust hole's diameter");
-	entry = ("chs", "排气孔直径");
-};
-
-string_utf8 albl_exhaustHole_position_X {
-	entry = ("enu", "Exhaust hole's position at X direction");
-	entry = ("chs", "排气孔X向定位");
-};
-
-string_utf8 albl_exhaustHole_position_Y {
-	entry = ("enu", "Exhaust hole's position at Y direction");
-	entry = ("chs", "排气孔Y向定位");
+string_utf8 exception_column_profile_not_supported {
+	entry = ("enu", "Only invariant rectangular type column profile be supported");
+	entry = ("chs", "仅支持矩形非变截面柱");
 };

@@ -1,575 +1,399 @@
 ﻿/*==============================================================================
  *  Muggle TsExtensions - extensions for Tekla Structures
  *
- *  Copyright © 2025 Huang YongXing.                 
+ *  Copyright © 2025-2026 Huang YongXing.
  *
- *  This library is free software, licensed under the terms of the GNU 
- *  General Public License as published by the Free Software Foundation, 
- *  either version 3 of the License, or (at your option) any later version. 
- *  You should have received a copy of the GNU General Public License 
- *  along with this program. If not, see <http://www.gnu.org/licenses/>. 
+ *  This library is free software, licensed under the terms of the GNU
+ *  General Public License as published by the Free Software Foundation,
+ *  either version 3 of the License, or (at your option) any later version.
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program. If not, see <http://www.gnu.org/licenses/>.
  *==============================================================================
- *  KJ2001.cs: Box column outer column base
+ *  KJ2001.cs: box column outer column base
  *  written by Huang YongXing - thinkerhua@hotmail.com
  *==============================================================================*/
+
 using System;
+using System.Collections;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Text.RegularExpressions;
+using Muggle.TsExtensions.CodingHelper.Generators;
 using Muggle.TsExtensions.Common.Geometry3d;
 using Muggle.TsExtensions.Common.Model;
 using Muggle.TsExtensions.Common.Profile;
-using Tekla.Structures.Datatype;
+using Muggle.TsExtensions.Common.Resources;
+using Tekla.Structures;
+using Tekla.Structures.Dialog;
 using Tekla.Structures.Geometry3d;
 using Tekla.Structures.Model;
+using Tekla.Structures.Model.Operations;
 using Tekla.Structures.Plugins;
-using MessageBox = System.Windows.MessageBox;
-using MessageBoxButton = System.Windows.MessageBoxButton;
-using MessageBoxImage = System.Windows.MessageBoxImage;
-using TSD = Tekla.Structures.Datatype;
+using Assembly = System.Reflection.Assembly;
+using TsData = Tekla.Structures.Datatype;
 
 namespace Muggle.TsExtensions.KJ2001 {
-    public class PluginData {
-        [StructuresField("base_MATL")]
-        public string basePlate_material;
-        [StructuresField("base_THK")]
-        public double basePlate_thickness;
-        [StructuresField("base_WID")]
-        public double basePlate_width;
-        [StructuresField("base_LEN")]
-        public double basePlate_length;
-        [StructuresField("anchor_MATL")]
-        public string anchorRod_material;
-        [StructuresField("anchor_size")]
-        public double anchorRod_size;
-        [StructuresField("anchor_TOL")]
-        public double anchorRod_tolerance;
-        [StructuresField("anchor_LEN1")]
-        public double anchorRod_length1;
-        [StructuresField("anchor_LEN2")]
-        public double anchorRod_length2;
-        [StructuresField("anchor_LEN3")]
-        public double anchorRod_length3;
-        [StructuresField("anchor_LEN4")]
-        public double anchorRod_length4;
-        [StructuresField("anchor_LEN5")]
-        public double anchorRod_length5;
-        [StructuresField("anchor_D2E")]
-        public double anchorRod_distance_to_edge;
-        [StructuresField("WSHRPLT_MATL")]
-        public string washerPlate_material;
-        [StructuresField("WSHRPLT_THK")]
-        public double washerPlate_thickness;
-        [StructuresField("WSHRPLT_WID")]
-        public double washerPlate_width;
-        [StructuresField("WSHRPLT_Hole_DIA")]
-        public double washerPlate_holeDiameter;
-        [StructuresField("stud_STD")]
-        public string stud_standard = "STUD";
-        [StructuresField("stud_size")]
-        public double stud_size;
-        [StructuresField("stud_LEN")]
-        public double stud_length;
-        [StructuresField("stud_DISLST_X")]
-        public string stud_distanceList_X;
-        [StructuresField("stud_DISLST_Y")]
-        public string stud_distanceList_Y;
-        [StructuresField("stud_offset_XZ")]
-        public double stud_offset_XZ;
-        [StructuresField("stud_offset_YZ")]
-        public double stud_offset_YZ;
-        [StructuresField("stud_DISLST_XZ")]
-        public string stud_distanceList_XZ;
-        [StructuresField("stud_DISLST_YZ")]
-        public string stud_distanceList_YZ;
-        [StructuresField("stif_MATL")]
-        public string innerStiffener_material;
-        [StructuresField("stif_THK")]
-        public double innerStiffener_thickness;
-        [StructuresField("stif_D2B")]
-        public double innerStiffener_distance_to_Base;
-        [StructuresField("pouringHole_DIA")]
-        public double pouringHole_diameter;
-        [StructuresField("exhaustHole_DIA")]
-        public double exhaustHole_diameter;
-        [StructuresField("exhaustHole_POS_X")]
-        public double exhaustHole_position_X;
-        [StructuresField("exhaustHole_POS_Y")]
-        public double exhaustHole_position_Y;
-    }
 
     [Plugin("KJ2001")]
-    [PluginUserInterface("Muggle.TsExtensions.KJ2001.Views.MainWindow")]
+    [PluginUserInterface("Muggle.TsExtensions.KJ2001.View")]
     [SecondaryType(SecondaryType.SECONDARYTYPE_ZERO)]
-    [AutoDirectionType(Tekla.Structures.AutoDirectionTypeEnum.AUTODIR_DETAIL)]
-    [DetailType(Tekla.Structures.DetailTypeEnum.END)]
-    public class KJ2001 : ConnectionBase {
-        #region Fields
-        private Model _Model;
-        private PluginData _Data;
+    [AutoDirectionType(AutoDirectionTypeEnum.AUTODIR_DETAIL)]
+    [DetailType(DetailTypeEnum.END)]
+    [FieldsFrom(typeof(PluginData))]
+    public partial class KJ2001 : ConnectionBase {
 
-        private string basePlate_material;
-        private double basePlate_thickness;
-        private double basePlate_width;
-        private double basePlate_length;
-        private string anchorRod_material;
-        private double anchorRod_size;
-        private double anchorRod_tolerance;
-        private double anchorRod_length1;
-        private double anchorRod_length2;
-        private double anchorRod_length3;
-        private double anchorRod_length4;
-        private double anchorRod_length5;
-        private double anchorRod_distance_to_edge;
-        private string washerPlate_material;
-        private double washerPlate_thickness;
-        private double washerPlate_width;
-        private double washerPlate_holeDiameter;
-        private string stud_standard;
-        private double stud_size;
-        private double stud_length;
-        private string stud_distanceListStr_X;
-        private string stud_distanceListStr_Y;
-        private double stud_offset_XZ;
-        private double stud_offset_YZ;
-        private string stud_distanceListStr_XZ;
-        private string stud_distanceListStr_YZ;
-        private string innerStiffener_material;
-        private double innerStiffener_thickness;
-        private double innerStiffener_distance_to_Base;
-        private double pouringHole_diameter;
-        private double exhaustHole_diameter;
-        private double exhaustHole_position_X;
-        private double exhaustHole_position_Y;
+        private Model Model { get; }
 
-        private DistanceList stud_distanceList_X;
-        private DistanceList stud_distanceList_Y;
-        private DistanceList stud_distanceList_XZ;
-        private DistanceList stud_distanceList_YZ;
-        private ProfileRect_Invariant primaryPartProfile;
-        private TransformationPlane originTP, workTP;
-        #endregion
+        [PartFieldDefaultValues("AnchorRod", material: "Q355", @class: 0)]
+        [PlateFieldDefaultValues("Base", thickness: 22, material: "Q355")]
+        [PlateFieldDefaultValues("Washer", thickness: 22, breadth: 70, height: 70, material: "Q355")]
+        [PlateFieldDefaultValues("Stif", material: "Q355")]
+        [ChamferFieldDefaultValues("Stif", 1, 25, 25)]
+        [BoltFieldDefaultValues("AnchorRod", size: 24)]
+        [BoltFieldDefaultValues("StudX", standard: "STUD", size: 16, length: 80, distXText: "8*200", distYText: "200",
+            type: 1)]
+        [BoltFieldDefaultValues("StudY", standard: "STUD", size: 16, length: 80, distXText: "8*200", distYText: "200",
+            type: 1)]
+        [WeldFieldDefaultValues(1, typeAbove: 10, sizeAbove: 8, around: 1, shop: 1)]
+        [WeldFieldDefaultValues(2, typeAbove: 10, sizeAbove: 8, around: 1, shop: 1)]
+        [GeneralFieldDefaultValues("AnchorLen1", 120, "AnchorLen2", 50, "AnchorLen3", 510, "AnchorLen4", 330,
+            "AnchorLen5", 100, "StudXOffset", 100, "StudYOffset", 100, "StifDistToBase", 1800,
+            "PouringHoleDiameter", 200, "ExhaustHoleDiameter", 25, "ExhaustHolePosX", 100, "ExhaustHolePosY", 100)]
+        private PluginData Data { get; }
 
-        #region Properties
-        private Model Model {
-            get { return this._Model; }
-            set { this._Model = value; }
-        }
+        private Localization Localization { get; }
 
-        private PluginData Data {
-            get { return this._Data; }
-            set { this._Data = value; }
-        }
-        #endregion
+        private ProfileRect_Invariant _primProfile;
 
-        #region Constructor
         public KJ2001(PluginData data) {
             Model = new Model();
             Data = data;
-        }
-        #endregion
 
-        #region Overrides
+            try {
+                var language = string.Empty;
+                TeklaStructuresSettings.GetAdvancedOption("XS_LANGUAGE", ref language);
+                language = LanguageExtension.GetTsLocalizationLanguage(language);
+
+                var xsDataDir = string.Empty;
+                TeklaStructuresSettings.GetAdvancedOption("XSDATADIR", ref xsDataDir);
+
+                var ailPath = Path.Combine(xsDataDir,
+                    $"environments\\common\\extensions\\messages\\Muggle.TsExtensions\\{nameof(KJ2001)}.ail");
+
+                Localization = new Localization(ailPath, language);
+            } catch {
+                Localization = new Localization();
+            }
+        }
+
         public override bool Run() {
             try {
-                var primPart = Model.SelectModelObject(Primary) as Part;
-                primaryPartProfile = new ProfileRect_Invariant(primPart.Profile.ProfileString);
-
-                GetValuesFromDialog();
-
-                if (originTP == null) {
-                    originTP = Model.GetWorkPlaneHandler().GetCurrentTransformationPlane();
+                var prim = (Part)Model.SelectModelObject(Primary);
+                try {
+                    _primProfile = new ProfileRect_Invariant(prim.Profile.ProfileString);
+                } catch (UnAcceptableProfileException) {
+                    throw new Exception(Localization.GetText("exception_column_profile_not_supported"));
                 }
-#if DEBUG
-                //Internal.ShowTransformationPlane(originTP);
-#endif
-                if (workTP == null) {
-                    workTP = GetWorkTransformationPlane();
-                }
-#if DEBUG
-                //Internal.ShowTransformationPlane(workTP);
-#endif
-                Model.GetWorkPlaneHandler().SetCurrentTransformationPlane(workTP);
 
-                CreatDetail();
+                SetDataToDefaultIfUnset();
+                if (Data.PlateBaseBreadth <= 0.0) Data.PlateBaseBreadth = _primProfile.b1 + 200;
+                if (Data.PlateBaseHeight <= 0.0) Data.PlateBaseHeight = _primProfile.h1 + 200;
+                if (IsDefaultValue(Data.BoltAnchorRodDistXText) ||
+                    Regex.IsMatch(Data.BoltAnchorRodDistXText, "0(\\.0+)?"))
+                    Data.BoltAnchorRodDistXText = $"50 2*{_primProfile.h1 * 0.5 + 100} {_primProfile.h1 + 150}";
+                if (IsDefaultValue(Data.BoltAnchorRodDistYText) ||
+                    Regex.IsMatch(Data.BoltAnchorRodDistYText, "0(\\.0+)?"))
+                    Data.BoltAnchorRodDistYText = $"0 {_primProfile.b1 * -0.5 - 50} {_primProfile.b1 * 0.5 + 50} 0";
+                Data.PartAnchorRodProfile = $"D{Data.BoltAnchorRodSize}";
+                Data.PlateStifBreadth = _primProfile.b1 - _primProfile.s * 2;
+                GetFieldValuesFrom(Data);
+
+                var workTp = GetWorkTransformationPlane();
+                Model.GetWorkPlaneHandler().SetCurrentTransformationPlane(workTp);
+
+                CreateDetail();
 
                 return true;
-            } catch (Exception ex) {
-                MessageBox.Show(ex.ToString(), "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            } catch (Exception e) {
+                Operation.DisplayPrompt(e.Message);
                 return false;
             }
         }
-        #endregion
-
-        #region Private methods
-        private void GetValuesFromDialog() {
-            basePlate_material = Data.basePlate_material;
-            basePlate_thickness = Data.basePlate_thickness;
-            basePlate_width = Data.basePlate_width;
-            basePlate_length = Data.basePlate_length;
-            anchorRod_material = Data.anchorRod_material;
-            anchorRod_size = Data.anchorRod_size;
-            anchorRod_tolerance = Data.anchorRod_tolerance;
-            anchorRod_length1 = Data.anchorRod_length1;
-            anchorRod_length2 = Data.anchorRod_length2;
-            anchorRod_length3 = Data.anchorRod_length3;
-            anchorRod_length4 = Data.anchorRod_length4;
-            anchorRod_length5 = Data.anchorRod_length5;
-            anchorRod_distance_to_edge = Data.anchorRod_distance_to_edge;
-            washerPlate_material = Data.washerPlate_material;
-            washerPlate_thickness = Data.washerPlate_thickness;
-            washerPlate_width = Data.washerPlate_width;
-            washerPlate_holeDiameter = Data.washerPlate_holeDiameter;
-            stud_standard = Data.stud_standard;
-            stud_size = Data.stud_size;
-            stud_length = Data.stud_length;
-            stud_distanceListStr_X = Data.stud_distanceList_X;
-            stud_distanceListStr_Y = Data.stud_distanceList_Y;
-            stud_offset_XZ = Data.stud_offset_XZ;
-            stud_offset_YZ = Data.stud_offset_YZ;
-            stud_distanceListStr_XZ = Data.stud_distanceList_XZ;
-            stud_distanceListStr_YZ = Data.stud_distanceList_YZ;
-            innerStiffener_material = Data.innerStiffener_material;
-            innerStiffener_thickness = Data.innerStiffener_thickness;
-            innerStiffener_distance_to_Base = Data.innerStiffener_distance_to_Base;
-            pouringHole_diameter = Data.pouringHole_diameter;
-            exhaustHole_diameter = Data.exhaustHole_diameter;
-            exhaustHole_position_X = Data.exhaustHole_position_X;
-            exhaustHole_position_Y = Data.exhaustHole_position_Y;
-
-            if (IsDefaultValue(basePlate_material))
-                basePlate_material = "Q355";
-            if (IsDefaultValue(basePlate_thickness))
-                basePlate_thickness = 22.0;
-            if (IsDefaultValue(basePlate_width))
-                basePlate_width = 840.0;
-            if (IsDefaultValue(basePlate_length))
-                basePlate_length = 840.0;
-            if (IsDefaultValue(anchorRod_material))
-                anchorRod_material = "Q355";
-            if (IsDefaultValue(anchorRod_size))
-                anchorRod_size = 24.0;
-            if (IsDefaultValue(anchorRod_tolerance))
-                anchorRod_tolerance = 2.0;
-            if (IsDefaultValue(anchorRod_length1))
-                anchorRod_length1 = 120.0;
-            if (IsDefaultValue(anchorRod_length2))
-                anchorRod_length2 = 50.0;
-            if (IsDefaultValue(anchorRod_length3))
-                anchorRod_length3 = 510.0;
-            if (IsDefaultValue(anchorRod_length4))
-                anchorRod_length4 = 330.0;
-            if (IsDefaultValue(anchorRod_length5))
-                anchorRod_length5 = 100.0;
-            if (IsDefaultValue(anchorRod_distance_to_edge))
-                anchorRod_distance_to_edge = 50.0;
-            if (IsDefaultValue(washerPlate_material))
-                washerPlate_material = "Q355";
-            if (IsDefaultValue(washerPlate_thickness))
-                washerPlate_thickness = 22.0;
-            if (IsDefaultValue(washerPlate_width))
-                washerPlate_width = 70.0;
-            if (IsDefaultValue(washerPlate_holeDiameter))
-                washerPlate_holeDiameter = 26.0;
-            if (IsDefaultValue(stud_standard))
-                stud_standard = "STUD";
-            if (IsDefaultValue(stud_size))
-                stud_size = 16.0;
-            if (IsDefaultValue(stud_length))
-                stud_length = 80.0;
-            if (IsDefaultValue(stud_distanceListStr_X))
-                stud_distanceListStr_X = "200";
-            if (IsDefaultValue(stud_distanceListStr_Y))
-                stud_distanceListStr_Y = "200";
-            if (IsDefaultValue(stud_offset_XZ))
-                stud_offset_XZ = 100.0;
-            if (IsDefaultValue(stud_offset_YZ))
-                stud_offset_YZ = 100.0;
-            if (IsDefaultValue(stud_distanceListStr_XZ))
-                stud_distanceListStr_XZ = "8*200";
-            if (IsDefaultValue(stud_distanceListStr_YZ))
-                stud_distanceListStr_YZ = "8*200";
-            if (IsDefaultValue(innerStiffener_material))
-                innerStiffener_material = "Q355";
-            if (IsDefaultValue(innerStiffener_thickness))
-                innerStiffener_thickness = 20.0;
-            if (IsDefaultValue(innerStiffener_distance_to_Base))
-                innerStiffener_distance_to_Base = 1800.0;
-            if (IsDefaultValue(pouringHole_diameter))
-                pouringHole_diameter = 200.0;
-            if (IsDefaultValue(exhaustHole_diameter))
-                exhaustHole_diameter = 25.0;
-            if (IsDefaultValue(exhaustHole_position_X))
-                exhaustHole_position_X = 100.0;
-            if (IsDefaultValue(exhaustHole_position_Y))
-                exhaustHole_position_Y = 100.0;
-
-            stud_distanceList_X = DistanceList.Parse(
-                stud_distanceListStr_X,
-                System.Globalization.CultureInfo.InvariantCulture,
-                TSD.Distance.CurrentUnitType);
-            stud_distanceList_Y = DistanceList.Parse(
-                stud_distanceListStr_Y,
-                System.Globalization.CultureInfo.InvariantCulture,
-                TSD.Distance.CurrentUnitType);
-            stud_distanceList_XZ = DistanceList.Parse(
-                stud_distanceListStr_XZ,
-                System.Globalization.CultureInfo.InvariantCulture,
-                TSD.Distance.CurrentUnitType);
-            stud_distanceList_YZ = DistanceList.Parse(
-                stud_distanceListStr_YZ,
-                System.Globalization.CultureInfo.InvariantCulture,
-                TSD.Distance.CurrentUnitType);
-        }
 
         private TransformationPlane GetWorkTransformationPlane() {
-            var primPart = Model.SelectModelObject(Primary) as Part;
-            var solid = primPart.GetSolid(Solid.SolidCreationTypeEnum.RAW);
+            var prim = (Part)Model.SelectModelObject(Primary);
+
+            var primCs = prim.GetCoordinateSystem();
+            var solid = prim.GetSolid(Solid.SolidCreationTypeEnum.RAW);
             var centerPoint = (solid.MinimumPoint + solid.MaximumPoint).Multiply(0.5);
 
-            var axisX = new Vector(0.0, 1000.0, 0.0);
-            var axisZ = centerPoint.IsZero() ? new Vector(1000.0, 0.0, 0.0) : new Vector(centerPoint);
+            var axisX = primCs.AxisY;
+            var axisZ = centerPoint.IsZero(GeometryConstants.DISTANCE_EPSILON)
+                ? new Vector(1000.0, 0.0, 0.0)
+                : new Vector(centerPoint);
             var axisY = axisZ.Cross(axisX);
 
             return new TransformationPlane(new Point(), axisX, axisY);
         }
 
-        private void CreatDetail() {
-            var primPart = Model.SelectModelObject(Primary) as Part;
+        private void CreateDetail() {
+            var prim = (Part)Model.SelectModelObject(Primary);
             var origin = new Point(0.0, 0.0, 0.0);
-            var axisX = new Vector(1000.0, 0.0, 0.0);
-            var axisY = new Vector(0.0, 1000.0, 0.0);
-            var axisZ = new Vector(0.0, 0.0, 1000.0);
+            var axisX = new Vector(1.0, 0.0, 0.0);
+            var axisY = new Vector(0.0, 1.0, 0.0);
+            var axisZ = new Vector(0.0, 0.0, 1.0);
 
             #region 末端对齐
-            var plane = new Plane { AxisX = axisX.GetNormal(10), AxisY = axisY.GetNormal(10), Origin = origin };
-            var fitting = new Fitting {
-                Father = primPart,
-                Plane = plane
-            };
+
+            var plane = new Plane { AxisX = axisX * 10, AxisY = axisY * 10, Origin = origin };
+            var fitting = new Fitting { Father = prim, Plane = plane };
             fitting.Insert();
+
             #endregion
 
             #region 创建底板、开孔
-            var point1 = new Point(basePlate_length * 0.5, 0.0, 0.0);
-            var point2 = new Point(-basePlate_length * 0.5, 0.0, 0.0);
-            var basePlate = ModelOperation.CreatBeam(
-                point1, point2, "BASEPLATE",
-                $"PL{basePlate_thickness}*{basePlate_width}", basePlate_material,
-                depthEnum: Position.DepthEnum.BEHIND);
 
-            ModelOperation.CreatWeld(primPart, basePlate);
+            var p1 = new Point(_plateBaseHeight * -0.5, 0.0, 0.0);
+            var p2 = new Point(_plateBaseHeight * 0.5, 0.0, 0.0);
 
-            var anchorRod_distanceList_X = new DistanceList {
-                new TSD.Distance(anchorRod_distance_to_edge),
-                new TSD.Distance(basePlate_length * 0.5),
-                new TSD.Distance(basePlate_length * 0.5),
-                new TSD.Distance(basePlate_length - anchorRod_distance_to_edge),
-            };
-            var anchorRod_distanceList_Y = new DistanceList {
-                new TSD.Distance(0.0),
-                new TSD.Distance(basePlate_width * 0.5 - anchorRod_distance_to_edge),
-                new TSD.Distance(-basePlate_width * 0.5 + anchorRod_distance_to_edge),
-                new TSD.Distance(0.0),
-            };
-            ModelOperation.CreatBoltXYList(
-                basePlate, basePlate, null,
-                basePlate.StartPoint, basePlate.EndPoint, anchorRod_distanceList_X, anchorRod_distanceList_Y,
-                new Position { Rotation = Position.RotationEnum.FRONT },
-                boltSize: anchorRod_size, boltType: BoltGroup.BoltTypeEnum.BOLT_TYPE_WORKSHOP,
-                tolerance: anchorRod_tolerance, bolt: false);
+            var basePlate = CreatePlateBase<Beam>();
+            basePlate.StartPoint = p1;
+            basePlate.EndPoint = p2;
+            basePlate.Position.Rotation = Position.RotationEnum.FRONT;
+            basePlate.Position.Plane = Position.PlaneEnum.MIDDLE;
+            basePlate.Position.Depth = Position.DepthEnum.BEHIND;
+            basePlate.Insert();
+
+            var weld = CreateWeld1<Weld>();
+            weld.MainObject = prim;
+            weld.SecondaryObject = basePlate;
+
+            if (_weld1Around != 0) {
+                weld.Position = Weld.WeldPositionEnum.WELD_POSITION_PLUS_Z;
+                weld.Insert();
+            } else {
+                weld.Position = Weld.WeldPositionEnum.WELD_POSITION_PLUS_X;
+                weld.Insert();
+
+                weld.Position = Weld.WeldPositionEnum.WELD_POSITION_MINUS_X;
+                weld.Insert();
+
+                weld.Position = Weld.WeldPositionEnum.WELD_POSITION_PLUS_Y;
+                weld.Insert();
+
+                weld.Position = Weld.WeldPositionEnum.WELD_POSITION_MINUS_Y;
+                weld.Insert();
+            }
+
+            var anchorRodDistListX = TsData.DistanceList.Parse(_boltAnchorRodDistXText, CultureInfo.CurrentCulture,
+                TsData.Distance.CurrentUnitType);
+            var anchorRodDistListY = TsData.DistanceList.Parse(_boltAnchorRodDistYText, CultureInfo.CurrentCulture,
+                TsData.Distance.CurrentUnitType);
+
+            var bolt = CreateBoltAnchorRod<BoltXYList>();
+            bolt.PartToBoltTo = basePlate;
+            bolt.PartToBeBolted = basePlate;
+            bolt.FirstPosition = p1;
+            bolt.SecondPosition = p2;
+            bolt.Bolt = false;
+            bolt.BoltType = BoltGroup.BoltTypeEnum.BOLT_TYPE_WORKSHOP;
+            bolt.Position.Rotation = Position.RotationEnum.FRONT;
+            bolt.Insert();
+
             #endregion
 
             #region 创建锚栓
-            var assembly = primPart.GetAssembly();
-            var matrix = MatrixFactoryExtension.Rotate(new Line(origin, axisZ), Math.PI);
-            point1 = new Point(basePlate_length * 0.5 - anchorRod_distance_to_edge, 0.0, -basePlate_thickness);
-            point2 = point1 - axisZ;
-            var anchorRods = ModelOperation.CreatAnchorRod(
-                point1, point2,
-                anchorRod_length1, anchorRod_length2, anchorRod_length3, anchorRod_length4, anchorRod_length5,
-                axisX, material: anchorRod_material, size: anchorRod_size, @class: "0",
-                washerPlateThickness: washerPlate_thickness, washerPlateWidth: washerPlate_width,
-                washerPlatePosition: basePlate_thickness, washerPlateHoleDiameter: washerPlate_holeDiameter);
-            foreach (var obj in anchorRods) {
-                assembly.Add(obj);
+
+            var positions = anchorRodDistListX
+                .Select(dis => _plateBaseHeight * -0.5 + dis.Value)
+                .Zip(anchorRodDistListY.Select(dis => dis.Value), (x, y) => new Point(x, y, -_plateBaseThickness))
+                .ToList();
+            var hookDirections = positions
+                .Select(p => Math.Abs(p.X) >= Math.Abs(p.Y)
+                    ? new Vector(p.X, 0, 0)
+                    : new Vector(0, p.Y, 0))
+                .ToList();
+
+            foreach (var (p, v) in positions.Zip(hookDirections, (p, v) => (p, v))) {
+                var anchorRodParts = ModelOperation.InsertAnchorRod(
+                    p, p - axisZ * 100, _anchorLen1, _anchorLen2, _anchorLen3, _anchorLen4, _anchorLen5,
+                    v, 3.5, _partAnchorRodMaterial, _boltAnchorRodSize, _boltAnchorRodTolerance,
+                    _partAnchorRodClass.ToString(), _plateWasherThickness > 0, _plateWasherThickness,
+                    _plateWasherBreadth, _plateBaseThickness, _boltAnchorRodSize + _boltAnchorRodTolerance * 2,
+                    _boltAnchorRodUseWasher1 != 0, _boltAnchorRodUseWasher2 != 0, _boltAnchorRodUseWasher3 != 0,
+                    _boltAnchorRodUseNut1 != 0, _boltAnchorRodUseNut2 != 0);
+
+                var anchorRod = anchorRodParts.FirstOrDefault(part => part.Name == "ANCHORROD");
+                if (anchorRod is not null) {
+                    ModifyToPartAnchorRod(ref anchorRod);
+                    anchorRod.Modify();
+                }
+
+                if (anchorRodParts.FirstOrDefault(part => part.Name == "WASHERPLATE") is Beam washerPlate) {
+                    ModifyToPlateWasher(ref washerPlate);
+                    washerPlate.Modify();
+                }
             }
 
-            anchorRods = ModelOperation.CreatAnchorRod(
-                matrix.Transform(point1), matrix.Transform(point2),
-                anchorRod_length1, anchorRod_length2, anchorRod_length3, anchorRod_length4, anchorRod_length5,
-                MatrixExtension.Transform(matrix, axisX), material: anchorRod_material, size: anchorRod_size,
-                @class: "0",
-                washerPlateThickness: washerPlate_thickness, washerPlateWidth: washerPlate_width,
-                washerPlatePosition: basePlate_thickness, washerPlateHoleDiameter: washerPlate_holeDiameter);
-            foreach (var obj in anchorRods) {
-                assembly.Add(obj);
-            }
-
-            point1 = new Point(0.0, basePlate_width * 0.5 - anchorRod_distance_to_edge, -basePlate_thickness);
-            point2 = point1 - axisZ;
-            anchorRods = ModelOperation.CreatAnchorRod(
-                point1, point2,
-                anchorRod_length1, anchorRod_length2, anchorRod_length3, anchorRod_length4, anchorRod_length5,
-                axisY, material: anchorRod_material, size: anchorRod_size, @class: "0",
-                washerPlateThickness: washerPlate_thickness, washerPlateWidth: washerPlate_width,
-                washerPlatePosition: basePlate_thickness, washerPlateHoleDiameter: washerPlate_holeDiameter);
-            foreach (var obj in anchorRods) {
-                assembly.Add(obj);
-            }
-
-            anchorRods = ModelOperation.CreatAnchorRod(
-                matrix.Transform(point1), matrix.Transform(point2),
-                anchorRod_length1, anchorRod_length2, anchorRod_length3, anchorRod_length4, anchorRod_length5,
-                MatrixExtension.Transform(matrix, axisY), material: anchorRod_material, size: anchorRod_size,
-                @class: "0",
-                washerPlateThickness: washerPlate_thickness, washerPlateWidth: washerPlate_width,
-                washerPlatePosition: basePlate_thickness, washerPlateHoleDiameter: washerPlate_holeDiameter);
-            foreach (var obj in anchorRods) {
-                assembly.Add(obj);
-            }
-
-            assembly.Modify();
             #endregion
 
             #region 创建栓钉
-            point1 = new Point(primaryPartProfile.h1 * 0.5, 0.0, 0.0);
-            point2 = new Point(primaryPartProfile.h1 * 0.5, 0.0, 1000.0);
-            var stud1 = ModelOperation.CreatBoltArray(
-                primPart, primPart, null,
-                point1, point2,
-                stud_distanceList_XZ, stud_distanceList_X,
-                position: new Position { Rotation = Position.RotationEnum.BACK },
-                startOffset: new Offset { Dx = stud_offset_XZ },
-                boltStandard: stud_standard, boltSize: stud_size, boltType: BoltGroup.BoltTypeEnum.BOLT_TYPE_WORKSHOP);
-            stud1.Length = stud_length;
-            stud1.Modify();
 
-            point1 = new Point(-primaryPartProfile.h1 * 0.5, 0.0, 0.0);
-            point2 = new Point(-primaryPartProfile.h1 * 0.5, 0.0, 1000.0);
-            var stud2 = ModelOperation.CreatBoltArray(
-                primPart, primPart, null,
-                point1, point2,
-                stud_distanceList_XZ, stud_distanceList_X,
-                position: new Position { Rotation = Position.RotationEnum.FRONT },
-                startOffset: new Offset { Dx = stud_offset_XZ },
-                boltStandard: stud_standard, boltSize: stud_size, boltType: BoltGroup.BoltTypeEnum.BOLT_TYPE_WORKSHOP);
-            stud2.Length = stud_length;
-            stud2.Modify();
+            p1 = new Point(0, _primProfile.b1 * -0.5);
+            p2 = p1 + axisZ * _stifDistToBase;
 
-            point1 = new Point(0.0, primaryPartProfile.b1 * 0.5, 0.0);
-            point2 = new Point(0.0, primaryPartProfile.b1 * 0.5, 1000.0);
-            var stud3 = ModelOperation.CreatBoltArray(
-                primPart, primPart, null,
-                point1, point2,
-                stud_distanceList_YZ, stud_distanceList_Y,
-                position: new Position { Rotation = Position.RotationEnum.BELOW },
-                startOffset: new Offset { Dx = stud_offset_YZ },
-                boltStandard: stud_standard, boltSize: stud_size, boltType: BoltGroup.BoltTypeEnum.BOLT_TYPE_WORKSHOP);
-            stud3.Length = stud_length;
-            stud3.Modify();
+            var stud = CreateBoltStudX<BoltArray>();
+            stud.PartToBoltTo = prim;
+            stud.PartToBeBolted = prim;
+            stud.FirstPosition = p1;
+            stud.SecondPosition = p2;
+            stud.Position.Rotation = Position.RotationEnum.TOP;
+            stud.StartPointOffset.Dx = _studXOffset;
+            stud.Insert();
 
-            point1 = new Point(0.0, -primaryPartProfile.b1 * 0.5, 0.0);
-            point2 = new Point(0.0, -primaryPartProfile.b1 * 0.5, 1000.0);
-            var stud4 = ModelOperation.CreatBoltArray(
-                primPart, primPart, null,
-                point1, point2,
-                stud_distanceList_YZ, stud_distanceList_Y,
-                position: new Position { Rotation = Position.RotationEnum.TOP },
-                startOffset: new Offset { Dx = stud_offset_YZ },
-                boltStandard: stud_standard, boltSize: stud_size, boltType: BoltGroup.BoltTypeEnum.BOLT_TYPE_WORKSHOP);
-            stud4.Length = stud_length;
-            stud4.Modify();
+            p1.Y *= -1;
+            p2.Y *= -1;
+
+            stud.FirstPosition = p1;
+            stud.SecondPosition = p2;
+            stud.Position.Rotation = Position.RotationEnum.BELOW;
+            stud.Insert();
+
+            p1 = new Point(_primProfile.h1 * -0.5, 0);
+            p2 = p1 + axisZ * _stifDistToBase;
+
+            stud = CreateBoltStudY<BoltArray>();
+            stud.PartToBoltTo = prim;
+            stud.PartToBeBolted = prim;
+            stud.FirstPosition = p1;
+            stud.SecondPosition = p2;
+            stud.Position.Rotation = Position.RotationEnum.FRONT;
+            stud.StartPointOffset.Dx = _studYOffset;
+            stud.Insert();
+
+            p1.X *= -1;
+            p2.X *= -1;
+
+            stud.FirstPosition = p1;
+            stud.SecondPosition = p2;
+            stud.Position.Rotation = Position.RotationEnum.BACK;
+            stud.Insert();
+
             #endregion
 
             #region 创建内部加劲板
-            point1 = new Point(
-                primaryPartProfile.h1 * 0.5 - primaryPartProfile.t,
-                primaryPartProfile.b1 * 0.5 - primaryPartProfile.s,
-                innerStiffener_distance_to_Base);
-            point2 = new Point(point1.X, -point1.Y, point1.Z);
-            var liner1 = ModelOperation.CreatBeam(
-                point1, point2, "LINER", $"PL10*30", innerStiffener_material,
-                planeEnum: Position.PlaneEnum.RIGHT,
-                depthEnum: Position.DepthEnum.BEHIND, depthOffset: innerStiffener_thickness);
-            point1 = new Point(
-                -primaryPartProfile.h1 * 0.5 + primaryPartProfile.t,
-                primaryPartProfile.b1 * 0.5 - primaryPartProfile.s,
-                innerStiffener_distance_to_Base);
-            point2 = new Point(point1.X, -point1.Y, point1.Z);
-            var liner2 = ModelOperation.CreatBeam(
-                point1, point2, "LINER", $"PL10*30", innerStiffener_material,
-                planeEnum: Position.PlaneEnum.LEFT,
-                depthEnum: Position.DepthEnum.BEHIND, depthOffset: innerStiffener_thickness);
 
-            point1 = new Point(
-                primaryPartProfile.h1 * 0.5 - primaryPartProfile.t,
-                0.0,
-                innerStiffener_distance_to_Base);
-            point2 = new Point(-point1.X, point1.Y, point1.Z);
-            var innerStiffener = ModelOperation.CreatBeam(
-                point1, point2, "INNERSTIFFENER",
-                $"PL{innerStiffener_thickness}*{primaryPartProfile.b1 - 2 * primaryPartProfile.s}",
-                innerStiffener_material, depthEnum: Position.DepthEnum.BEHIND);
+            if (_plateStifThickness <= 0) goto SkipStiffener;
 
-            ModelOperation.CreatWeld(primPart, liner1);
-            ModelOperation.CreatWeld(primPart, liner2);
-            ModelOperation.CreatWeld(primPart, innerStiffener);
+            p1 = new Point(_primProfile.h1 * 0.5 - _primProfile.t, _primProfile.b1 * -0.5 + _primProfile.s,
+                _stifDistToBase);
+            p2 = new Point(_primProfile.h1 * -0.5 + _primProfile.t, _primProfile.b1 * -0.5 + _primProfile.s,
+                _stifDistToBase);
+            var p3 = new Point(p2.X, -p2.Y, _stifDistToBase);
+            var p4 = new Point(p1.X, -p1.Y, _stifDistToBase);
+
+            var chamfer = CreateChamferStif();
+            var chamferReversed = chamfer.GetReversed();
+            var contours = new ArrayList {
+                new ContourPoint(p1, chamfer),
+                new ContourPoint(p2, chamferReversed),
+                new ContourPoint(p3, chamfer),
+                new ContourPoint(p4, chamferReversed)
+            };
+
+            var stif = CreatePlateStif<ContourPlate>();
+            stif.Contour.ContourPoints = contours;
+            stif.Position.Depth = Position.DepthEnum.BEHIND;
+            stif.Insert();
+
+            weld = CreateWeld2<Weld>();
+            weld.MainObject = prim;
+            weld.SecondaryObject = stif;
+            if (_weld1Around != 0) {
+                weld.Position = Weld.WeldPositionEnum.WELD_POSITION_PLUS_Z;
+                weld.Insert();
+            } else {
+                weld.Position = Weld.WeldPositionEnum.WELD_POSITION_PLUS_X;
+                weld.Insert();
+
+                weld.Position = Weld.WeldPositionEnum.WELD_POSITION_MINUS_X;
+                weld.Insert();
+
+                weld.Position = Weld.WeldPositionEnum.WELD_POSITION_PLUS_Y;
+                weld.Insert();
+
+                weld.Position = Weld.WeldPositionEnum.WELD_POSITION_MINUS_Y;
+                weld.Insert();
+            }
+
             #endregion
 
             #region 开浇筑孔、排气孔
-            point1 = new Point(0.0, 0.0, innerStiffener_distance_to_Base);
-            point2 = new Point(0.0, 0.0, innerStiffener_distance_to_Base - innerStiffener_thickness);
-            var pourintHole = ModelOperation.CreatBeam(
-                point1, point2,
-                "POURINGHOLE",
-                $"D{pouringHole_diameter}",
-                innerStiffener_material);
-            ModelOperation.ApplyBooleanOperation(innerStiffener, pourintHole);
-            pourintHole.Delete();
 
-            point1 = new Point(
-                primaryPartProfile.h1 * 0.5 - primaryPartProfile.t - exhaustHole_position_X,
-                primaryPartProfile.b1 * 0.5 - primaryPartProfile.s - exhaustHole_position_Y,
-                innerStiffener_distance_to_Base);
-            point2 = new Point(point1.X, point1.Y, point1.Z - innerStiffener_thickness);
-            var exhaustHole1 = ModelOperation.CreatBeam(
-                point1, point2,
-                "EXHAUSTHOLE",
-                $"D{exhaustHole_diameter}",
-                innerStiffener_material);
+            if (_pouringHoleDiameter <= 0) goto SkipPouringHole;
 
-            point1 = new Point(-point1.X, point1.Y, point1.Z);
-            point2 = new Point(point1.X, point1.Y, point1.Z - innerStiffener_thickness);
-            var exhaustHole2 = ModelOperation.CreatBeam(
-                point1, point2,
-                "EXHAUSTHOLE",
-                $"D{exhaustHole_diameter}",
-                innerStiffener_material);
+            p1 = new Point(0.0, 0.0, _stifDistToBase);
+            p2 = new Point(0.0, 0.0, _stifDistToBase - _plateStifThickness);
 
-            point1 = new Point(point1.X, -point1.Y, point1.Z);
-            point2 = new Point(point1.X, point1.Y, point1.Z - innerStiffener_thickness);
-            var exhaustHole3 = ModelOperation.CreatBeam(
-                point1, point2,
-                "EXHAUSTHOLE",
-                $"D{exhaustHole_diameter}",
-                innerStiffener_material);
+            var pouringHole = new Beam {
+                StartPoint = p1,
+                EndPoint = p2,
+                Profile = { ProfileString = $"D{_pouringHoleDiameter}" },
+                Position = { Plane = Position.PlaneEnum.MIDDLE, Depth = Position.DepthEnum.MIDDLE }
+            };
+            pouringHole.Insert();
+            _ = ModelOperation.ApplyBooleanOperation(stif, pouringHole);
+            pouringHole.Delete();
 
-            point1 = new Point(-point1.X, point1.Y, point1.Z);
-            point2 = new Point(point1.X, point1.Y, point1.Z - innerStiffener_thickness);
-            var exhaustHole4 = ModelOperation.CreatBeam(
-                point1, point2,
-                "EXHAUSTHOLE",
-                $"D{exhaustHole_diameter}",
-                innerStiffener_material);
+            SkipPouringHole: ;
 
-            ModelOperation.ApplyBooleanOperation(innerStiffener, exhaustHole1);
-            ModelOperation.ApplyBooleanOperation(innerStiffener, exhaustHole2);
-            ModelOperation.ApplyBooleanOperation(innerStiffener, exhaustHole3);
-            ModelOperation.ApplyBooleanOperation(innerStiffener, exhaustHole4);
-            exhaustHole1.Delete();
-            exhaustHole2.Delete();
-            exhaustHole3.Delete();
-            exhaustHole4.Delete();
+            if (_exhaustHoleDiameter <= 0) goto SkipExhaustHole;
+
+            p1 = new Point(
+                _primProfile.h1 * -0.5 + _primProfile.t + _exhaustHolePosX,
+                _primProfile.b1 * -0.5 + _primProfile.s + _exhaustHolePosY,
+                _stifDistToBase);
+            p2 = new Point(p1.X, p1.Y, p1.Z - _plateStifThickness);
+
+            var exhaustHole = new Beam {
+                StartPoint = p1,
+                EndPoint = p2,
+                Profile = { ProfileString = $"D{_exhaustHoleDiameter}" },
+                Position = { Plane = Position.PlaneEnum.MIDDLE, Depth = Position.DepthEnum.MIDDLE }
+            };
+            exhaustHole.Insert();
+            _ = ModelOperation.ApplyBooleanOperation(stif, exhaustHole);
+
+            p1.X *= -1;
+            p2.X *= -1;
+            exhaustHole.StartPoint = p1;
+            exhaustHole.EndPoint = p2;
+            exhaustHole.Modify();
+            _ = ModelOperation.ApplyBooleanOperation(stif, exhaustHole);
+
+            p1.Y *= -1;
+            p2.Y *= -1;
+            exhaustHole.StartPoint = p1;
+            exhaustHole.EndPoint = p2;
+            exhaustHole.Modify();
+            _ = ModelOperation.ApplyBooleanOperation(stif, exhaustHole);
+
+            p1.X *= -1;
+            p2.X *= -1;
+            exhaustHole.StartPoint = p1;
+            exhaustHole.EndPoint = p2;
+            exhaustHole.Modify();
+            _ = ModelOperation.ApplyBooleanOperation(stif, exhaustHole);
+
+            exhaustHole.Delete();
+
+            SkipExhaustHole: ;
+
+            SkipStiffener: ;
+
             #endregion
+
         }
-        #endregion
     }
 }

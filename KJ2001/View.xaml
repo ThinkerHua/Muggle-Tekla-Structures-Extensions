@@ -1,0 +1,963 @@
+<!--==============================================================================
+ *  Muggle TsExtensions - extensions for Tekla Structures
+ *
+ *  Copyright © 2025-2026 Huang YongXing.
+ *
+ *  This library is free software, licensed under the terms of the GNU
+ *  General Public License as published by the Free Software Foundation,
+ *  either version 3 of the License, or (at your option) any later version.
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program. If not, see<http://www.gnu.org/licenses/> .
+ *==============================================================================
+ *  View.xaml: user interface for the plugin KJ2001
+ *  written by Huang YongXing - thinkerhua@hotmail.com
+ *==============================================================================-->
+<tsdlg:PluginWindowBase x:Class="Muggle.TsExtensions.KJ2001.View"
+                        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                        xmlns:local="clr-namespace:Muggle.TsExtensions.KJ2001"
+                        xmlns:tsdlg="clr-namespace:Tekla.Structures.Dialog;assembly=Tekla.Structures.Dialog"
+                        xmlns:tsuic="clr-namespace:Tekla.Structures.Dialog.UIControls;assembly=Tekla.Structures.Dialog"
+                        xmlns:uc="clr-namespace:Muggle.TsExtensions.Common.WPF.Controls;assembly=Common.WPF"
+                        xmlns:vc="clr-namespace:Muggle.TsExtensions.Common.WPF.ValueConverters;assembly=Common.WPF"
+                        xmlns:tr="clr-namespace:Muggle.TsExtensions.Common.WPF.Localization;assembly=Common.WPF"
+                        xmlns:assets="clr-namespace:Muggle.TsExtensions.Common.WPF.Assets;assembly=Common.WPF"
+                        Title="{tsdlg:Loc albl_KJ2001_title}"
+                        ResizeMode="NoResize"
+                        SizeToContent="WidthAndHeight"
+                        UseDefaultStyle="False"
+                        Background="#F3F3F7"
+                        mc:Ignorable="d">
+
+    <tsdlg:PluginWindowBase.DataContext>
+        <local:ViewModel />
+    </tsdlg:PluginWindowBase.DataContext>
+
+    <tsdlg:PluginWindowBase.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Common.WPF;component/DataTemplates/SymbolDataTemplate.xaml" />
+                <ResourceDictionary Source="/Common.WPF;component/Controls/PresetControlGroups.xaml" />
+                <ResourceDictionary Source="Assets/Backgrounds.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <vc:BoltHoleTypeToSlottedHoleXDisplayNameConverter x:Key="BoltHoleTypeToSlottedHoleXDisplayName" />
+            <vc:BoltHoleTypeToSlottedHoleXIsEnabledConverter x:Key="BoltHoleTypeToSlottedHoleXIsEnabled" />
+            <vc:BoltHoleTypeToSlottedHoleYIsEnabledConverter x:Key="BoltHoleTypeToSlottedHoleYIsEnabled" />
+            <vc:BoltHoleTypeToRotateSlotsIsEnabledConverter x:Key="BoltHoleTypeToRotateSlotsIsEnabled" />
+            <vc:BoltPlainHoleTypeToBlindHoleDepthIsEnabledConverter x:Key="BoltPlainHoleTypeToBlindHoleDepthIsEnabled" />
+            <vc:ChamferTypeToXIsEnabledConverter x:Key="ChamferTypeToXIsEnabled" />
+            <vc:ChamferTypeToYIsEnabledConverter x:Key="ChamferTypeToYIsEnabled" />
+
+            <Style x:Key="Element" TargetType="FrameworkElement">
+                <Setter Property="Margin" Value="2" />
+                <Setter Property="VerticalAlignment" Value="Center" />
+            </Style>
+            <Style x:Key="ContainingTextBoxElement" TargetType="FrameworkElement" BasedOn="{StaticResource Element}">
+                <Setter Property="Height" Value="20" />
+            </Style>
+            <Style BasedOn="{StaticResource Element}" TargetType="TextBlock">
+                <Setter Property="HorizontalAlignment" Value="Right" />
+            </Style>
+            <Style BasedOn="{StaticResource Element}" TargetType="CheckBox" />
+            <Style BasedOn="{StaticResource ContainingTextBoxElement}" TargetType="TextBox">
+                <Setter Property="HorizontalContentAlignment" Value="Center" />
+                <Setter Property="VerticalContentAlignment" Value="Center" />
+            </Style>
+            <Style BasedOn="{StaticResource ContainingTextBoxElement}" TargetType="ComboBox" />
+            <Style BasedOn="{StaticResource Element}" TargetType="tsuic:WpfFilterCheckBox">
+                <Setter Property="Margin" Value="2,2,-2,2" />
+            </Style>
+            <Style BasedOn="{StaticResource Element}" TargetType="uc:BoltAssembly" />
+            <Style BasedOn="{StaticResource Element}" TargetType="uc:BoltSpecialHole" />
+            <Style BasedOn="{StaticResource Element}" TargetType="tsuic:WpfProfileCatalog" />
+            <Style BasedOn="{StaticResource Element}" TargetType="tsuic:WpfMaterialCatalog" />
+            <Style BasedOn="{StaticResource ContainingTextBoxElement}" TargetType="tsuic:WpfBoltCatalogSize" />
+            <Style BasedOn="{StaticResource ContainingTextBoxElement}" TargetType="tsuic:WpfBoltCatalogStandard" />
+        </ResourceDictionary>
+    </tsdlg:PluginWindowBase.Resources>
+
+    <DockPanel>
+        <tsuic:WpfSaveLoad DockPanel.Dock="Top" Margin="0,0,0,0" />
+        <tsuic:WpfOkApplyModifyGetOnOffCancel DockPanel.Dock="Bottom"
+                                              ApplyClicked="WPFOkApplyModifyGetOnOffCancel_ApplyClicked"
+                                              CancelClicked="WPFOkApplyModifyGetOnOffCancel_CancelClicked"
+                                              GetClicked="WPFOkApplyModifyGetOnOffCancel_GetClicked"
+                                              ModifyClicked="WPFOkApplyModifyGetOnOffCancel_ModifyClicked"
+                                              OkClicked="WPFOkApplyModifyGetOnOffCancel_OkClicked"
+                                              OnOffClicked="WPFOkApplyModifyGetOnOffCancel_OnOffClicked" />
+        <TextBlock DockPanel.Dock="Bottom" Margin="4" TextWrapping="Wrap">
+            <Run>Huang YongXing -</Run>
+            <Hyperlink NavigateUri="mailto:thinkerhua@hotmail.com">thinkerhua@hotmail.com</Hyperlink>
+        </TextBlock>
+
+        <TabControl>
+
+            <TabItem Header="{tr:Translate albl_Parameters}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <Canvas Grid.Column="0" Height="440">
+                        <Image Canvas.Left="15" Canvas.Top="10" Stretch="None">
+                            <Image.Source>
+                                <DrawingImage Drawing="{StaticResource FrontViewWidthDimension}" />
+                            </Image.Source>
+                        </Image>
+
+                        <Image Canvas.Left="30.7" Canvas.Top="250" Stretch="None">
+                            <Image.Source>
+                                <DrawingImage Drawing="{StaticResource TopViewWithDimension}" />
+                            </Image.Source>
+                        </Image>
+
+                        <TextBlock Canvas.Left="3" Canvas.Top="100" Text="D" />
+                        <TextBlock Canvas.Left="164" Canvas.Top="304" Text="d1" />
+                        <TextBlock Canvas.Left="114" Canvas.Top="338" Text="d2" />
+                        <TextBlock Canvas.Left="74" Canvas.Top="314" Text="px" />
+                        <TextBlock Canvas.Left="110" Canvas.Top="280" Text="py" />
+                        <TextBlock Canvas.Left="174" Canvas.Top="176" Text="o1" />
+                        <TextBlock Canvas.Left="174" Canvas.Top="156" Text="dx1" />
+                        <TextBlock Canvas.Left="120" Canvas.Top="158" Text="dy1" />
+                        <TextBlock Canvas.Left="120" Canvas.Top="418" Text="dy1" />
+                        <TextBlock Canvas.Left="244" Canvas.Top="182" Text="o2" />
+                        <TextBlock Canvas.Left="244" Canvas.Top="166" Text="dx2" />
+                        <TextBlock Canvas.Left="244" Canvas.Top="320" Text="dy2" />
+                    </Canvas>
+
+                    <Grid Grid.Column="1">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="1*" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="16" />
+                            <ColumnDefinition Width="80" />
+                        </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Grid.Row="0" Grid.Column="0" Text="{tsdlg:Loc albl_stiffener_distance_to_base_plate}" />
+                        <TextBlock Grid.Row="0" Grid.Column="1" Text="D" />
+                        <tsuic:WpfFilterCheckBox Grid.Row="0" Grid.Column="2" AttributeName="StifDistToBase" />
+                        <TextBox Grid.Row="0" Grid.Column="3" Text="{Binding StifDistToBase, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                        <TextBlock Grid.Row="1" Grid.Column="0" Text="{tsdlg:Loc albl_pouring_hole_diameter}" />
+                        <TextBlock Grid.Row="1" Grid.Column="1" Text="d1" />
+                        <tsuic:WpfFilterCheckBox Grid.Row="1" Grid.Column="2" AttributeName="PouringHoleDiameter" />
+                        <TextBox Grid.Row="1" Grid.Column="3" Text="{Binding PouringHoleDiameter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                        <TextBlock Grid.Row="2" Grid.Column="0" Text="{tsdlg:Loc albl_exhaust_hole_diameter}" />
+                        <TextBlock Grid.Row="2" Grid.Column="1" Text="d2" />
+                        <tsuic:WpfFilterCheckBox Grid.Row="2" Grid.Column="2" AttributeName="ExhaustHoleDiameter" />
+                        <TextBox Grid.Row="2" Grid.Column="3" Text="{Binding ExhaustHoleDiameter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                        <TextBlock Grid.Row="3" Grid.Column="0" Text="{tsdlg:Loc albl_exhaust_hole_position_X}" />
+                        <TextBlock Grid.Row="3" Grid.Column="1" Text="px" />
+                        <tsuic:WpfFilterCheckBox Grid.Row="3" Grid.Column="2" AttributeName="ExhaustHolePosX" />
+                        <TextBox Grid.Row="3" Grid.Column="3" Text="{Binding ExhaustHolePosX, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                        <TextBlock Grid.Row="4" Grid.Column="0" Text="{tsdlg:Loc albl_exhaust_hole_position_Y}" />
+                        <TextBlock Grid.Row="4" Grid.Column="1" Text="py" />
+                        <tsuic:WpfFilterCheckBox Grid.Row="4" Grid.Column="2" AttributeName="ExhaustHolePosY" />
+                        <TextBox Grid.Row="4" Grid.Column="3" Text="{Binding ExhaustHolePosY, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                        <Separator Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="4" />
+                        <TextBlock Grid.Row="6" Grid.Column="0" Text="{tsdlg:Loc albl_stiffener_chamfer}" />
+
+                        <TextBlock Grid.Row="8" Grid.Column="0" Text="{tr:Translate albl_Chamfer_Header_Type}" />
+                        <tsuic:WpfFilterCheckBox Grid.Row="8" Grid.Column="2" AttributeName="CFStifTYPE" />
+                        <ComboBox Grid.Row="8"
+                                  Grid.Column="3"
+                                  SelectedIndex="{Binding ChamferStifType, Mode=TwoWay}"
+                                  ItemTemplate="{StaticResource SymbolDataTemplate}"
+                                  ItemsSource="{x:Static assets:ChamferSymbols.ChamferTypeSet}" />
+
+                        <TextBlock Grid.Row="9" Grid.Column="0" Text="{tr:Translate albl_Chamfer_Header_X}" />
+                        <tsuic:WpfFilterCheckBox Grid.Row="9" Grid.Column="2" AttributeName="CFStifX" IsEnabled="{Binding ChamferStifType, Mode=OneWay, Converter={StaticResource ChamferTypeToXIsEnabled}}" />
+                        <TextBox Grid.Row="9" Grid.Column="3" Text="{Binding ChamferStifX, Mode=TwoWay}" IsEnabled="{Binding ChamferStifType, Mode=OneWay, Converter={StaticResource ChamferTypeToXIsEnabled}}" />
+
+                        <TextBlock Grid.Row="10" Grid.Column="0" Text="{tr:Translate albl_Chamfer_Header_Y}" />
+                        <tsuic:WpfFilterCheckBox Grid.Row="10" Grid.Column="2" AttributeName="CFStifY" IsEnabled="{Binding ChamferStifType, Mode=OneWay, Converter={StaticResource ChamferTypeToYIsEnabled}}" />
+                        <TextBox Grid.Row="10" Grid.Column="3" Text="{Binding ChamferStifY, Mode=TwoWay}" IsEnabled="{Binding ChamferStifType, Mode=OneWay, Converter={StaticResource ChamferTypeToYIsEnabled}}" />
+
+                        <TextBlock Grid.Row="11" Grid.Column="0" Text="{tr:Translate albl_Chamfer_Header_Dz1}" />
+                        <tsuic:WpfFilterCheckBox Grid.Row="11" Grid.Column="2" AttributeName="CFStifDZ1" />
+                        <TextBox Grid.Row="11" Grid.Column="3" Text="{Binding ChamferStifDz1, Mode=TwoWay}" />
+
+                        <TextBlock Grid.Row="12" Grid.Column="0" Text="{tr:Translate albl_Chamfer_Header_Dz2}" />
+                        <tsuic:WpfFilterCheckBox Grid.Row="12" Grid.Column="2" AttributeName="CFStifDZ2" />
+                        <TextBox Grid.Row="12" Grid.Column="3" Text="{Binding ChamferStifDz2, Mode=TwoWay}" />
+
+                    </Grid>
+                </Grid>
+            </TabItem>
+
+            <TabItem Header="{tr:Translate albl_Parts}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="16" />
+                        <ColumnDefinition Width="60" />
+                        <ColumnDefinition Width="16" />
+                        <ColumnDefinition Width="40" />
+                        <ColumnDefinition Width="16" />
+                        <ColumnDefinition Width="40" />
+                        <ColumnDefinition Width="16" />
+                        <ColumnDefinition Width="40" />
+                        <ColumnDefinition Width="0" />
+                        <ColumnDefinition Width="16" />
+                        <ColumnDefinition Width="60" />
+                        <ColumnDefinition Width="30" />
+                        <ColumnDefinition Width="16" />
+                        <ColumnDefinition Width="60" />
+                        <ColumnDefinition Width="16" />
+                        <ColumnDefinition Width="60" />
+                        <ColumnDefinition Width="16" />
+                        <ColumnDefinition Width="60" />
+                        <ColumnDefinition Width="16" />
+                        <ColumnDefinition Width="40" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="0" Grid.Column="0" HorizontalAlignment="Center" Text="{tr:Translate albl_Part_Header_Id}" />
+                    <TextBlock Grid.Row="0" Grid.Column="2" HorizontalAlignment="Center" Text="{tr:Translate albl_Part_Header_Name}" />
+                    <TextBlock Grid.Row="0" Grid.Column="4" HorizontalAlignment="Center" Text="{tr:Translate albl_Part_Header_Thickness}" />
+                    <TextBlock Grid.Row="0" Grid.Column="6" HorizontalAlignment="Center" Text="{tr:Translate albl_Part_Header_Breadth}" />
+                    <TextBlock Grid.Row="0" Grid.Column="8" HorizontalAlignment="Center" Text="{tr:Translate albl_Part_Header_Height}" />
+                    <TextBlock Grid.Row="0" Grid.Column="11" HorizontalAlignment="Center" Text="{tr:Translate albl_Part_Header_Material}" />
+                    <TextBlock Grid.Row="0" Grid.Column="14" HorizontalAlignment="Center" Text="{tr:Translate albl_Part_Header_Finish}" />
+                    <TextBlock Grid.Row="0" Grid.Column="16" HorizontalAlignment="Center" Text="{tr:Translate albl_Part_Header_Class}" />
+                    <TextBlock Grid.Row="0" Grid.Column="18" HorizontalAlignment="Center" Text="{tr:Translate albl_Part_Header_NumberingSeries_Prefix}" />
+                    <TextBlock Grid.Row="0" Grid.Column="20" HorizontalAlignment="Center" Text="{tr:Translate albl_Part_Header_NumberingSeries_StartNumber}" />
+
+                    <TextBlock Grid.Row="1" Grid.RowSpan="2" Grid.Column="0" Text="{tsdlg:Loc albl_base_plate}" />
+
+                    <tsuic:WpfFilterCheckBox Grid.Row="1" Grid.RowSpan="2" Grid.Column="1" AttributeName="PLBaseName" />
+                    <TextBox Grid.Row="1" Grid.RowSpan="2" Grid.Column="2" Text="{Binding PlateBaseName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <tsuic:WpfFilterCheckBox Grid.Row="1" Grid.RowSpan="2" Grid.Column="3" AttributeName="PLBaseT" />
+                    <TextBox Grid.Row="1" Grid.RowSpan="2" Grid.Column="4" Text="{Binding PlateBaseThickness, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <tsuic:WpfFilterCheckBox Grid.Row="1" Grid.RowSpan="2" Grid.Column="5" AttributeName="PLBaseB" />
+                    <TextBox Grid.Row="1" Grid.RowSpan="2" Grid.Column="6" Text="{Binding PlateBaseBreadth, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <tsuic:WpfFilterCheckBox Grid.Row="1" Grid.RowSpan="2" Grid.Column="7" AttributeName="PLBaseH" />
+                    <TextBox Grid.Row="1" Grid.RowSpan="2" Grid.Column="8" Text="{Binding PlateBaseHeight, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <tsuic:WpfFilterCheckBox Grid.Row="1" Grid.RowSpan="2" Grid.Column="10" AttributeName="PLBaseMATL" />
+                    <TextBox Grid.Row="1" Grid.RowSpan="2" Grid.Column="11" Text="{Binding PlateBaseMaterial, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <tsuic:WpfMaterialCatalog Grid.Row="1"
+                                              Grid.RowSpan="2"
+                                              Grid.Column="12"
+                                              Tag="PlateBaseMaterial"
+                                              SelectClicked="WpfMaterialCatalog_SelectClicked"
+                                              SelectionDone="WpfMaterialCatalog_SelectionDone" />
+
+                    <tsuic:WpfFilterCheckBox Grid.Row="1" Grid.RowSpan="2" Grid.Column="13" AttributeName="PLBaseFNSH" />
+                    <TextBox Grid.Row="1" Grid.RowSpan="2" Grid.Column="14" Text="{Binding PlateBaseFinish, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <tsuic:WpfFilterCheckBox Grid.Row="1" Grid.RowSpan="2" Grid.Column="15" AttributeName="PLBaseCLS" />
+                    <TextBox Grid.Row="1" Grid.RowSpan="2" Grid.Column="16" Text="{Binding PlateBaseClass, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <tsuic:WpfFilterCheckBox Grid.Row="1" Grid.Column="17" AttributeName="PLBasePTP" />
+                    <TextBox Grid.Row="1" Grid.Column="18" Text="{Binding PlateBasePartPrefix, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <tsuic:WpfFilterCheckBox Grid.Row="1" Grid.Column="19" AttributeName="PLBasePTN" />
+                    <TextBox Grid.Row="1" Grid.Column="20" Text="{Binding PlateBasePartStartNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <tsuic:WpfFilterCheckBox Grid.Row="2" Grid.Column="17" AttributeName="PLBaseASMP" />
+                    <TextBox Grid.Row="2" Grid.Column="18" Text="{Binding PlateBaseAssemblyPrefix, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <tsuic:WpfFilterCheckBox Grid.Row="2" Grid.Column="19" AttributeName="PLBaseASMN" />
+                    <TextBox Grid.Row="2" Grid.Column="20" Text="{Binding PlateBaseAssemblyStartNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <TextBlock Grid.Row="3" Grid.RowSpan="2" Grid.Column="0" Text="{tsdlg:Loc albl_stiffener}" />
+
+                    <tsuic:WpfFilterCheckBox Grid.Row="3" Grid.RowSpan="2" Grid.Column="1" AttributeName="PLStifName" />
+                    <TextBox Grid.Row="3" Grid.RowSpan="2" Grid.Column="2" Text="{Binding PlateStifName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <tsuic:WpfFilterCheckBox Grid.Row="3" Grid.RowSpan="2" Grid.Column="3" AttributeName="PLStifT" />
+                    <TextBox Grid.Row="3" Grid.RowSpan="2" Grid.Column="4" Text="{Binding PlateStifThickness, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <tsuic:WpfFilterCheckBox Grid.Row="3" Grid.RowSpan="2" Grid.Column="10" AttributeName="PLStifMATL" />
+                    <TextBox Grid.Row="3" Grid.RowSpan="2" Grid.Column="11" Text="{Binding PlateStifMaterial, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <tsuic:WpfMaterialCatalog Grid.Row="3"
+                                              Grid.RowSpan="2"
+                                              Grid.Column="12"
+                                              Tag="PlateStifMaterial"
+                                              SelectClicked="WpfMaterialCatalog_SelectClicked"
+                                              SelectionDone="WpfMaterialCatalog_SelectionDone" />
+
+                    <tsuic:WpfFilterCheckBox Grid.Row="3" Grid.RowSpan="2" Grid.Column="13" AttributeName="PLStifFNSH" />
+                    <TextBox Grid.Row="3" Grid.RowSpan="2" Grid.Column="14" Text="{Binding PlateStifFinish, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <tsuic:WpfFilterCheckBox Grid.Row="3" Grid.RowSpan="2" Grid.Column="15" AttributeName="PLStifCLS" />
+                    <TextBox Grid.Row="3" Grid.RowSpan="2" Grid.Column="16" Text="{Binding PlateStifClass, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <tsuic:WpfFilterCheckBox Grid.Row="3" Grid.Column="17" AttributeName="PLStifPTP" />
+                    <TextBox Grid.Row="3" Grid.Column="18" Text="{Binding PlateStifPartPrefix, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <tsuic:WpfFilterCheckBox Grid.Row="3" Grid.Column="19" AttributeName="PLStifPTN" />
+                    <TextBox Grid.Row="3" Grid.Column="20" Text="{Binding PlateStifPartStartNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <tsuic:WpfFilterCheckBox Grid.Row="4" Grid.Column="17" AttributeName="PLStifASMP" />
+                    <TextBox Grid.Row="4" Grid.Column="18" Text="{Binding PlateStifAssemblyPrefix, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <tsuic:WpfFilterCheckBox Grid.Row="4" Grid.Column="19" AttributeName="PLStifASMN" />
+                    <TextBox Grid.Row="4" Grid.Column="20" Text="{Binding PlateStifAssemblyStartNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <TextBlock Grid.Row="5" Grid.RowSpan="2" Grid.Column="0" Text="{tsdlg:Loc albl_washer_plate}" />
+
+                    <tsuic:WpfFilterCheckBox Grid.Row="5" Grid.RowSpan="2" Grid.Column="1" AttributeName="PLWasherName" />
+                    <TextBox Grid.Row="5" Grid.RowSpan="2" Grid.Column="2" Text="{Binding PlateWasherName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <tsuic:WpfFilterCheckBox Grid.Row="5" Grid.RowSpan="2" Grid.Column="3" AttributeName="PLWasherT" />
+                    <TextBox Grid.Row="5" Grid.RowSpan="2" Grid.Column="4" Text="{Binding PlateWasherThickness, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <tsuic:WpfFilterCheckBox Grid.Row="5" Grid.RowSpan="2" Grid.Column="5" AttributeName="PLWasherB" />
+                    <TextBox Grid.Row="5" Grid.RowSpan="2" Grid.Column="6" Text="{Binding PlateWasherBreadth, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <tsuic:WpfFilterCheckBox Grid.Row="5" Grid.RowSpan="2" Grid.Column="10" AttributeName="PLWasherMATL" />
+                    <TextBox Grid.Row="5" Grid.RowSpan="2" Grid.Column="11" Text="{Binding PlateWasherMaterial, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <tsuic:WpfMaterialCatalog Grid.Row="5"
+                                              Grid.RowSpan="2"
+                                              Grid.Column="12"
+                                              Tag="PlateWasherMaterial"
+                                              SelectClicked="WpfMaterialCatalog_SelectClicked"
+                                              SelectionDone="WpfMaterialCatalog_SelectionDone" />
+
+                    <tsuic:WpfFilterCheckBox Grid.Row="5" Grid.RowSpan="2" Grid.Column="13" AttributeName="PLWasherFNSH" />
+                    <TextBox Grid.Row="5" Grid.RowSpan="2" Grid.Column="14" Text="{Binding PlateWasherFinish, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <tsuic:WpfFilterCheckBox Grid.Row="5" Grid.RowSpan="2" Grid.Column="15" AttributeName="PLWasherCLS" />
+                    <TextBox Grid.Row="5" Grid.RowSpan="2" Grid.Column="16" Text="{Binding PlateWasherClass, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <tsuic:WpfFilterCheckBox Grid.Row="5" Grid.Column="17" AttributeName="PLWasherPTP" />
+                    <TextBox Grid.Row="5" Grid.Column="18" Text="{Binding PlateWasherPartPrefix, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <tsuic:WpfFilterCheckBox Grid.Row="5" Grid.Column="19" AttributeName="PLWasherPTN" />
+                    <TextBox Grid.Row="5" Grid.Column="20" Text="{Binding PlateWasherPartStartNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <tsuic:WpfFilterCheckBox Grid.Row="6" Grid.Column="17" AttributeName="PLWasherASMP" />
+                    <TextBox Grid.Row="6" Grid.Column="18" Text="{Binding PlateWasherAssemblyPrefix, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <tsuic:WpfFilterCheckBox Grid.Row="6" Grid.Column="19" AttributeName="PLWasherASMN" />
+                    <TextBox Grid.Row="6" Grid.Column="20" Text="{Binding PlateWasherAssemblyStartNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <TextBlock Grid.Row="7" Grid.RowSpan="2" Grid.Column="0" Text="{tsdlg:Loc albl_anchor}" />
+
+                    <tsuic:WpfFilterCheckBox Grid.Row="7" Grid.RowSpan="2" Grid.Column="1" AttributeName="PTAnchorRodName" />
+                    <TextBox Grid.Row="7" Grid.RowSpan="2" Grid.Column="2" Text="{Binding PartAnchorRodName, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <tsuic:WpfFilterCheckBox Grid.Row="7" Grid.RowSpan="2" Grid.Column="10" AttributeName="PTAnchorRodMATL" />
+                    <TextBox Grid.Row="7" Grid.RowSpan="2" Grid.Column="11" Text="{Binding PartAnchorRodMaterial, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <tsuic:WpfMaterialCatalog Grid.Row="7"
+                                              Grid.RowSpan="2"
+                                              Grid.Column="12"
+                                              Tag="PartAnchorRodMaterial"
+                                              SelectClicked="WpfMaterialCatalog_SelectClicked"
+                                              SelectionDone="WpfMaterialCatalog_SelectionDone" />
+
+                    <tsuic:WpfFilterCheckBox Grid.Row="7" Grid.RowSpan="2" Grid.Column="13" AttributeName="PTAnchorRodFNSH" />
+                    <TextBox Grid.Row="7" Grid.RowSpan="2" Grid.Column="14" Text="{Binding PartAnchorRodFinish, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <tsuic:WpfFilterCheckBox Grid.Row="7" Grid.RowSpan="2" Grid.Column="15" AttributeName="PTAnchorRodCLS" />
+                    <TextBox Grid.Row="7" Grid.RowSpan="2" Grid.Column="16" Text="{Binding PartAnchorRodClass, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <tsuic:WpfFilterCheckBox Grid.Row="7" Grid.Column="17" AttributeName="PTAnchorRodPTP" />
+                    <TextBox Grid.Row="7" Grid.Column="18" Text="{Binding PartAnchorRodPartPrefix, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <tsuic:WpfFilterCheckBox Grid.Row="7" Grid.Column="19" AttributeName="PTAnchorRodPTN" />
+                    <TextBox Grid.Row="7" Grid.Column="20" Text="{Binding PartAnchorRodPartStartNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <tsuic:WpfFilterCheckBox Grid.Row="8" Grid.Column="17" AttributeName="PTAnchorRodASMP" />
+                    <TextBox Grid.Row="8" Grid.Column="18" Text="{Binding PartAnchorRodAssemblyPrefix, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <tsuic:WpfFilterCheckBox Grid.Row="8" Grid.Column="19" AttributeName="PTAnchorRodASMN" />
+                    <TextBox Grid.Row="8" Grid.Column="20" Text="{Binding PartAnchorRodAssemblyStartNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                </Grid>
+            </TabItem>
+
+            <TabItem Header="{tsdlg:Loc albl_anchor}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="16" />
+                        <ColumnDefinition Width="100" />
+                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="16" />
+                        <ColumnDefinition Width="110" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <Canvas Grid.Row="0" Grid.RowSpan="11" Grid.Column="3" Width="130">
+                        <Image Canvas.Left="20" Canvas.Top="10" Stretch="None">
+                            <Image.Source>
+                                <DrawingImage Drawing="{StaticResource AnchorRodFrontViewWidthDimension}" />
+                            </Image.Source>
+                        </Image>
+
+                        <TextBlock Canvas.Left="5" Canvas.Top="16" Text="L1" />
+                        <TextBlock Canvas.Left="5" Canvas.Top="36" Text="L2" />
+                        <TextBlock Canvas.Left="5" Canvas.Top="86" Text="L3" />
+                        <TextBlock Canvas.Left="68" Canvas.Top="156" Text="L4" />
+                        <TextBlock Canvas.Left="114" Canvas.Top="122" Text="L5" />
+                    </Canvas>
+
+                    <TextBlock Grid.Row="0" Grid.Column="0" Text="{tr:Translate albl_Bolt_Header_Size}" />
+                    <tsuic:WpfFilterCheckBox Grid.Row="0" Grid.Column="1" AttributeName="BAnchorRodSIZE" />
+                    <TextBox Grid.Row="0" Grid.Column="2" Text="{Binding BoltAnchorRodSize, Mode=TwoWay}" />
+
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="{tr:Translate albl_Bolt_Header_Tolerance}" />
+                    <tsuic:WpfFilterCheckBox Grid.Row="1" Grid.Column="1" AttributeName="BAnchorRodTOL" />
+                    <TextBox Grid.Row="1" Grid.Column="2" Text="{Binding BoltAnchorRodTolerance, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <TextBlock Grid.Row="2" Grid.Column="0" Text="{tr:Translate albl_Bolt_Header_SpecialHoleType}" />
+                    <tsuic:WpfFilterCheckBox Grid.Row="2" Grid.Column="1" AttributeName="BAnchorRodHOLTY" />
+                    <ComboBox Grid.Row="2" Grid.Column="2" SelectedIndex="{Binding BoltAnchorRodHoleType, Mode=TwoWay}" ItemsSource="{x:Static assets:BoltSymbols.BoltSpecialHoleTypeSet}" />
+
+                    <TextBlock Grid.Row="3" Grid.Column="0" Text="{Binding BoltAnchorRodHoleType, Mode=OneWay, Converter={StaticResource BoltHoleTypeToSlottedHoleXDisplayName}}" />
+                    <tsuic:WpfFilterCheckBox Grid.Row="3" Grid.Column="1" AttributeName="BAnchorRodSLOTX" IsEnabled="{Binding BoltAnchorRodHoleType, Mode=OneWay, Converter={StaticResource BoltHoleTypeToSlottedHoleXIsEnabled}}" />
+                    <TextBox Grid.Row="3" Grid.Column="2" Text="{Binding BoltAnchorRodSlottedHoleX, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding BoltAnchorRodHoleType, Mode=OneWay, Converter={StaticResource BoltHoleTypeToSlottedHoleXIsEnabled}}" />
+
+                    <TextBlock Grid.Row="4" Grid.Column="0" Text="{tr:Translate albl_Bolt_Header_SlottedHoleY}" />
+                    <tsuic:WpfFilterCheckBox Grid.Row="4" Grid.Column="1" AttributeName="BAnchorRodSLOTY" IsEnabled="{Binding BoltAnchorRodHoleType, Mode=OneWay, Converter={StaticResource BoltHoleTypeToSlottedHoleYIsEnabled}}" />
+                    <TextBox Grid.Row="4" Grid.Column="2" Text="{Binding BoltAnchorRodSlottedHoleY, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding BoltAnchorRodHoleType, Mode=OneWay, Converter={StaticResource BoltHoleTypeToSlottedHoleYIsEnabled}}" />
+
+                    <TextBlock Grid.Row="5" Grid.Column="0" Text="{tr:Translate albl_Bolt_Header_RotateSlots}" />
+                    <tsuic:WpfFilterCheckBox Grid.Row="5" Grid.Column="1" AttributeName="BAnchorRodRSLOT" IsEnabled="{Binding BoltAnchorRodHoleType, Mode=OneWay, Converter={StaticResource BoltHoleTypeToRotateSlotsIsEnabled}}" />
+                    <ComboBox Grid.Row="5"
+                              Grid.Column="2"
+                              SelectedIndex="{Binding BoltAnchorRodRotateSlots, Mode=TwoWay}"
+                              ItemsSource="{x:Static assets:BoltSymbols.BoltRotateSlotsSet}"
+                              IsEnabled="{Binding BoltAnchorRodHoleType, Mode=OneWay, Converter={StaticResource BoltHoleTypeToRotateSlotsIsEnabled}}" />
+
+                    <TextBlock Grid.Row="6" Grid.Column="0" Text="{tr:Translate albl_Bolt_Header_DistX}" />
+                    <tsuic:WpfFilterCheckBox Grid.Row="6" Grid.Column="1" AttributeName="BAnchorRodDISTX" />
+                    <TextBox Grid.Row="6" Grid.Column="2" Text="{Binding BoltAnchorRodDistX, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <TextBlock Grid.Row="7" Grid.Column="0" Text="{tr:Translate albl_Bolt_Header_DistY}" />
+                    <tsuic:WpfFilterCheckBox Grid.Row="7" Grid.Column="1" AttributeName="BAnchorRodDISTY" />
+                    <TextBox Grid.Row="7" Grid.Column="2" Text="{Binding BoltAnchorRodDistY, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <TextBlock Grid.Row="0" Grid.Column="4" Text="{tsdlg:Loc albl_length_1}" />
+                    <TextBlock Grid.Row="0" Grid.Column="5" Text="L1" />
+                    <tsuic:WpfFilterCheckBox Grid.Row="0" Grid.Column="6" AttributeName="AnchorLen1" />
+                    <TextBox Grid.Row="0" Grid.Column="7" Text="{Binding AnchorLen1, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <TextBlock Grid.Row="1" Grid.Column="4" Text="{tsdlg:Loc albl_length_2}" />
+                    <TextBlock Grid.Row="1" Grid.Column="5" Text="L2" />
+                    <tsuic:WpfFilterCheckBox Grid.Row="1" Grid.Column="6" AttributeName="AnchorLen2" />
+                    <TextBox Grid.Row="1" Grid.Column="7" Text="{Binding AnchorLen2, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <TextBlock Grid.Row="2" Grid.Column="4" Text="{tsdlg:Loc albl_length_3}" />
+                    <TextBlock Grid.Row="2" Grid.Column="5" Text="L3" />
+                    <tsuic:WpfFilterCheckBox Grid.Row="2" Grid.Column="6" AttributeName="AnchorLen3" />
+                    <TextBox Grid.Row="2" Grid.Column="7" Text="{Binding AnchorLen3, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <TextBlock Grid.Row="3" Grid.Column="4" Text="{tsdlg:Loc albl_length_4}" />
+                    <TextBlock Grid.Row="3" Grid.Column="5" Text="L4" />
+                    <tsuic:WpfFilterCheckBox Grid.Row="3" Grid.Column="6" AttributeName="AnchorLen4" />
+                    <TextBox Grid.Row="3" Grid.Column="7" Text="{Binding AnchorLen4, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <TextBlock Grid.Row="4" Grid.Column="4" Text="{tsdlg:Loc albl_length_5}" />
+                    <TextBlock Grid.Row="4" Grid.Column="5" Text="L5" />
+                    <tsuic:WpfFilterCheckBox Grid.Row="4" Grid.Column="6" AttributeName="AnchorLen5" />
+                    <TextBox Grid.Row="4" Grid.Column="7" Text="{Binding AnchorLen5, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <uc:BoltAssembly Grid.Row="5"
+                                     Grid.RowSpan="2"
+                                     Grid.Column="6"
+                                     Grid.ColumnSpan="2"
+                                     Height="44"
+                                     Direction="Left"
+                                     Bolt="{Binding BoltAnchorRodIsBolt, Mode=TwoWay}"
+                                     Washer1="{Binding BoltAnchorRodUseWasher1, Mode=TwoWay}"
+                                     Washer2="{Binding BoltAnchorRodUseWasher2, Mode=TwoWay}"
+                                     Washer3="{Binding BoltAnchorRodUseWasher3, Mode=TwoWay}"
+                                     Nut1="{Binding BoltAnchorRodUseNut1, Mode=TwoWay}"
+                                     Nut2="{Binding BoltAnchorRodUseNut2, Mode=TwoWay}" />
+                    <StackPanel Grid.Row="7" Grid.Column="6" Grid.ColumnSpan="2" Orientation="Horizontal">
+                        <StackPanel.Resources>
+                            <Style TargetType="tsuic:WpfFilterCheckBox" BasedOn="{StaticResource Element}" />
+                        </StackPanel.Resources>
+                        <tsuic:WpfFilterCheckBox AttributeName="BAnchorRodISBOT" />
+                        <tsuic:WpfFilterCheckBox AttributeName="BAnchorRodWSHR1" />
+                        <tsuic:WpfFilterCheckBox AttributeName="BAnchorRodWSHR2" />
+                        <tsuic:WpfFilterCheckBox AttributeName="BAnchorRodWSHR3" />
+                        <tsuic:WpfFilterCheckBox AttributeName="BAnchorRodNUT1" />
+                        <tsuic:WpfFilterCheckBox AttributeName="BAnchorRodNUT2" />
+                    </StackPanel>
+
+                    <uc:BoltSpecialHole Grid.Row="8"
+                                        Grid.RowSpan="2"
+                                        Grid.Column="6"
+                                        Grid.ColumnSpan="2"
+                                        Height="44"
+                                        Direction="Left"
+                                        SpecialHole1="{Binding BoltAnchorRodHole1, Mode=TwoWay}"
+                                        SpecialHole2="{Binding BoltAnchorRodHole2, Mode=TwoWay}"
+                                        SpecialHole3="{Binding BoltAnchorRodHole3, Mode=TwoWay}"
+                                        SpecialHole4="{Binding BoltAnchorRodHole4, Mode=TwoWay}"
+                                        SpecialHole5="{Binding BoltAnchorRodHole5, Mode=TwoWay}" />
+                    <StackPanel Grid.Row="10" Grid.Column="6" Grid.ColumnSpan="2" Orientation="Horizontal">
+                        <StackPanel.Resources>
+                            <Style TargetType="tsuic:WpfFilterCheckBox" BasedOn="{StaticResource Element}" />
+                        </StackPanel.Resources>
+                        <tsuic:WpfFilterCheckBox AttributeName="BAnchorRodHOLE1" />
+                        <tsuic:WpfFilterCheckBox AttributeName="BAnchorRodHOLE2" />
+                        <tsuic:WpfFilterCheckBox AttributeName="BAnchorRodHOLE3" />
+                        <tsuic:WpfFilterCheckBox AttributeName="BAnchorRodHOLE4" />
+                        <tsuic:WpfFilterCheckBox AttributeName="BAnchorRodHOLE5" />
+                    </StackPanel>
+                </Grid>
+            </TabItem>
+
+            <TabItem Header="{tsdlg:Loc albl_stud}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="16" />
+                        <ColumnDefinition Width="100" />
+                        <ColumnDefinition Width="10" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="16" />
+                        <ColumnDefinition Width="100" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="0" Grid.Column="3" HorizontalAlignment="Center" Text="{tsdlg:Loc albl_stud_1}" />
+                    <TextBlock Grid.Row="0" Grid.Column="7" HorizontalAlignment="Center" Text="{tsdlg:Loc albl_stud_2}" />
+                    <TextBlock Grid.Row="1" Grid.Column="0" Text="{tr:Translate albl_Bolt_Header_Size}" />
+                    <TextBlock Grid.Row="2" Grid.Column="0" Text="{tr:Translate albl_Bolt_Header_Standard}" />
+                    <TextBlock Grid.Row="3" Grid.Column="0" Text="{tr:Translate albl_Bolt_Header_BoltType}" />
+                    <TextBlock Grid.Row="4" Grid.Column="0" Text="{tr:Translate albl_Bolt_Header_Length}" />
+                    <TextBlock Grid.Row="5" Grid.Column="0" Text="{tr:Translate albl_Bolt_Header_CutLength}" />
+                    <TextBlock Grid.Row="6" Grid.Column="0" Text="{tsdlg:Loc albl_start_offset}" />
+                    <TextBlock Grid.Row="7" Grid.Column="0" Text="{tr:Translate albl_Bolt_Header_DistX}" />
+                    <TextBlock Grid.Row="8" Grid.Column="0" Text="{tr:Translate albl_Bolt_Header_DistY}" />
+
+                    <tsuic:WpfFilterCheckBox Grid.Row="1" Grid.Column="2" AttributeName="BStudXSIZE" />
+                    <tsuic:WpfBoltCatalogSize Grid.Row="1" Grid.Column="3" SelectedItem="{Binding BoltStudXSize, Mode=TwoWay}" ItemsSource="{Binding Path=BoltSizes, ElementName=BoltStudXStdCatalog}" />
+
+                    <tsuic:WpfFilterCheckBox Grid.Row="2" Grid.Column="2" AttributeName="BStudXSTD" />
+                    <tsuic:WpfBoltCatalogStandard x:Name="BoltStudXStdCatalog" Grid.Row="2" Grid.Column="3" SelectedItem="{Binding BoltStudXStandard, Mode=TwoWay}" />
+
+                    <tsuic:WpfFilterCheckBox Grid.Row="3" Grid.Column="2" AttributeName="BStudXTYPE" />
+                    <ComboBox Grid.Row="3" Grid.Column="3" SelectedIndex="{Binding BoltStudXType, Mode=TwoWay}" ItemsSource="{x:Static assets:BoltSymbols.BoltTypeSet}" />
+
+                    <tsuic:WpfFilterCheckBox Grid.Row="4" Grid.Column="2" AttributeName="BStudXLEN" />
+                    <TextBox Grid.Row="4" Grid.Column="3" Text="{Binding BoltStudXLength, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <tsuic:WpfFilterCheckBox Grid.Row="5" Grid.Column="2" AttributeName="BStudXCLEN" />
+                    <TextBox Grid.Row="5" Grid.Column="3" Text="{Binding BoltStudXCutLength, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <TextBlock Grid.Row="6" Grid.Column="1" Text="o1" />
+                    <tsuic:WpfFilterCheckBox Grid.Row="6" Grid.Column="2" AttributeName="StudXOffset" />
+                    <TextBox Grid.Row="6" Grid.Column="3" Text="{Binding StudXOffset, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <tsuic:WpfFilterCheckBox Grid.Row="7" Grid.Column="2" AttributeName="BStudXDISTX" />
+                    <TextBox Grid.Row="7" Grid.Column="3" Text="{Binding BoltStudXDistX, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <tsuic:WpfFilterCheckBox Grid.Row="8" Grid.Column="2" AttributeName="BStudXDISTY" />
+                    <TextBox Grid.Row="8" Grid.Column="3" Text="{Binding BoltStudXDistY, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <tsuic:WpfFilterCheckBox Grid.Row="1" Grid.Column="6" AttributeName="BStudYSIZE" />
+                    <tsuic:WpfBoltCatalogSize Grid.Row="1" Grid.Column="7" SelectedItem="{Binding BoltStudYSize, Mode=TwoWay}" ItemsSource="{Binding Path=BoltSizes, ElementName=BoltStudYStdCatalog}" />
+
+                    <tsuic:WpfFilterCheckBox Grid.Row="2" Grid.Column="6" AttributeName="BStudYSTD" />
+                    <tsuic:WpfBoltCatalogStandard x:Name="BoltStudYStdCatalog" Grid.Row="2" Grid.Column="7" SelectedItem="{Binding BoltStudYStandard, Mode=TwoWay}" />
+
+                    <tsuic:WpfFilterCheckBox Grid.Row="3" Grid.Column="6" AttributeName="BStudYTYPE" />
+                    <ComboBox Grid.Row="3" Grid.Column="7" SelectedIndex="{Binding BoltStudYType, Mode=TwoWay}" ItemsSource="{x:Static assets:BoltSymbols.BoltTypeSet}" />
+
+                    <tsuic:WpfFilterCheckBox Grid.Row="4" Grid.Column="6" AttributeName="BStudYLEN" />
+                    <TextBox Grid.Row="4" Grid.Column="7" Text="{Binding BoltStudYLength, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <tsuic:WpfFilterCheckBox Grid.Row="5" Grid.Column="6" AttributeName="BStudYCLEN" />
+                    <TextBox Grid.Row="5" Grid.Column="7" Text="{Binding BoltStudYCutLength, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <TextBlock Grid.Row="6" Grid.Column="5" Text="o2" />
+                    <tsuic:WpfFilterCheckBox Grid.Row="6" Grid.Column="6" AttributeName="StudYOffset" />
+                    <TextBox Grid.Row="6" Grid.Column="7" Text="{Binding StudYOffset, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <tsuic:WpfFilterCheckBox Grid.Row="7" Grid.Column="6" AttributeName="BStudYDISTX" />
+                    <TextBox Grid.Row="7" Grid.Column="7" Text="{Binding BoltStudYDistX, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <tsuic:WpfFilterCheckBox Grid.Row="8" Grid.Column="6" AttributeName="BStudYDISTY" />
+                    <TextBox Grid.Row="8" Grid.Column="7" Text="{Binding BoltStudYDistY, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                </Grid>
+            </TabItem>
+
+            <TabItem Header="{tr:Translate albl_Welds}">
+                <Grid>
+                    <Grid.Resources>
+                        <Style TargetType="ComboBox" BasedOn="{StaticResource Element}">
+                            <Setter Property="ItemTemplate" Value="{StaticResource SymbolDataTemplate}" />
+                        </Style>
+                    </Grid.Resources>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="16" />
+                        <ColumnDefinition Width="48" />
+                        <ColumnDefinition Width="16" />
+                        <ColumnDefinition Width="60" />
+                        <ColumnDefinition Width="16" />
+                        <ColumnDefinition Width="48" />
+                        <ColumnDefinition Width="16" />
+                        <ColumnDefinition Width="48" />
+                        <ColumnDefinition Width="16" />
+                        <ColumnDefinition Width="48" />
+                        <ColumnDefinition Width="16" />
+                        <ColumnDefinition Width="60" />
+                        <ColumnDefinition Width="16" />
+                        <ColumnDefinition Width="60" />
+                        <ColumnDefinition Width="16" />
+                        <ColumnDefinition Width="48" />
+                        <ColumnDefinition Width="16" />
+                        <ColumnDefinition Width="48" />
+                        <ColumnDefinition Width="16" />
+                        <ColumnDefinition Width="48" />
+                        <ColumnDefinition Width="16" />
+                        <ColumnDefinition Width="60" />
+                        <ColumnDefinition Width="16" />
+                        <ColumnDefinition Width="60" />
+                        <ColumnDefinition Width="16" />
+                        <ColumnDefinition Width="60" />
+                        <ColumnDefinition Width="16" />
+                        <ColumnDefinition Width="60" />
+                        <ColumnDefinition Width="16" />
+                        <ColumnDefinition Width="60" />
+                        <ColumnDefinition Width="16" />
+                        <ColumnDefinition Width="40" />
+                        <ColumnDefinition Width="16" />
+                        <ColumnDefinition Width="48" />
+                        <ColumnDefinition Width="16" />
+                        <ColumnDefinition Width="48" />
+                        <ColumnDefinition Width="16" />
+                        <ColumnDefinition Width="60" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="0" Grid.Column="0" HorizontalAlignment="Center" Text="{tr:Translate albl_Weld_Header_Id}" />
+                    <TextBlock Grid.Row="0" Grid.Column="2" HorizontalAlignment="Center" Text="{tr:Translate albl_Weld_Header_Prefix}" />
+                    <TextBlock Grid.Row="0" Grid.Column="4" HorizontalAlignment="Center" Text="{tr:Translate albl_Weld_Header_Type}" />
+                    <TextBlock Grid.Row="0" Grid.Column="6" HorizontalAlignment="Center" Text="{tr:Translate albl_Weld_Header_Size}" />
+                    <TextBlock Grid.Row="0" Grid.Column="8" HorizontalAlignment="Center" Text="{tr:Translate albl_Weld_Header_AdditionalSize}" />
+                    <TextBlock Grid.Row="0" Grid.Column="10" HorizontalAlignment="Center" Text="{tr:Translate albl_Weld_Header_Angle}" />
+                    <TextBlock Grid.Row="0" Grid.Column="12" HorizontalAlignment="Center" Text="{tr:Translate albl_Weld_Header_Contour}" />
+                    <TextBlock Grid.Row="0" Grid.Column="14" HorizontalAlignment="Center" Text="{tr:Translate albl_Weld_Header_Finish}" />
+                    <TextBlock Grid.Row="0" Grid.Column="16" HorizontalAlignment="Center" Text="{tr:Translate albl_Weld_Header_RootFace}" />
+                    <TextBlock Grid.Row="0" Grid.Column="18" HorizontalAlignment="Center" Text="{tr:Translate albl_Weld_Header_EffectiveThroat}" />
+                    <TextBlock Grid.Row="0" Grid.Column="20" HorizontalAlignment="Center" Text="{tr:Translate albl_Weld_Header_RootOpening}" />
+                    <TextBlock Grid.Row="0" Grid.Column="22" HorizontalAlignment="Center" Text="{tr:Translate albl_Weld_Header_EdgeOrAround}" />
+                    <TextBlock Grid.Row="0" Grid.Column="24" HorizontalAlignment="Center" Text="{tr:Translate albl_Weld_Header_SiteOrWorkshop}" />
+                    <TextBlock Grid.Row="0" Grid.Column="26" HorizontalAlignment="Center" Text="{tr:Translate albl_Weld_Header_Placement}" />
+                    <TextBlock Grid.Row="0" Grid.Column="28" HorizontalAlignment="Center" Text="{tr:Translate albl_Weld_Header_Preparation}" />
+                    <TextBlock Grid.Row="0" Grid.Column="30" HorizontalAlignment="Center" Text="{tr:Translate albl_Weld_Header_IntermittentType}" />
+                    <TextBlock Grid.Row="0" Grid.Column="32" HorizontalAlignment="Center" Text="{tr:Translate albl_Weld_Header_IncrementAmount}" />
+                    <TextBlock Grid.Row="0" Grid.Column="34" HorizontalAlignment="Center" Text="{tr:Translate albl_Weld_Header_Length}" />
+                    <TextBlock Grid.Row="0" Grid.Column="36" HorizontalAlignment="Center" Text="{tr:Translate albl_Weld_Header_Pitch}" />
+                    <TextBlock Grid.Row="0" Grid.Column="38" HorizontalAlignment="Center" Text="{tr:Translate albl_Weld_Header_ReferenceText}" />
+
+                    <TextBlock Grid.Row="1" Grid.RowSpan="2" Grid.Column="0" Text="1" />
+
+                    <tsuic:WpfFilterCheckBox Grid.Row="1" Grid.Column="1" AttributeName="W1PRFXA" />
+                    <TextBox Grid.Row="1" Grid.Column="2" Text="{Binding Weld1PrefixAbove, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <tsuic:WpfFilterCheckBox Grid.Row="2" Grid.Column="1" AttributeName="W1PRFXB" />
+                    <TextBox Grid.Row="2" Grid.Column="2" Text="{Binding Weld1PrefixBelow, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <tsuic:WpfFilterCheckBox Grid.Row="1" Grid.Column="3" AttributeName="W1TYPEA" />
+                    <ComboBox Grid.Row="1" Grid.Column="4" SelectedIndex="{Binding Weld1TypeAbove, Mode=TwoWay}" ItemsSource="{x:Static assets:WeldSymbols.WeldTypeSet}" />
+                    <tsuic:WpfFilterCheckBox Grid.Row="2" Grid.Column="3" AttributeName="W1TYPEB" />
+                    <ComboBox Grid.Row="2" Grid.Column="4" SelectedIndex="{Binding Weld1TypeBelow, Mode=TwoWay}" ItemsSource="{x:Static assets:WeldSymbols.WeldTypeSet}" />
+
+                    <tsuic:WpfFilterCheckBox Grid.Row="1" Grid.Column="5" AttributeName="W1SIZEA" />
+                    <TextBox Grid.Row="1" Grid.Column="6" Text="{Binding Weld1SizeAbove, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <tsuic:WpfFilterCheckBox Grid.Row="2" Grid.Column="5" AttributeName="W1SIZEB" />
+                    <TextBox Grid.Row="2" Grid.Column="6" Text="{Binding Weld1SizeBelow, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <tsuic:WpfFilterCheckBox Grid.Row="1" Grid.Column="7" AttributeName="W1ADDSA" />
+                    <TextBox Grid.Row="1" Grid.Column="8" Text="{Binding Weld1AdditionalSizeAbove, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <tsuic:WpfFilterCheckBox Grid.Row="2" Grid.Column="7" AttributeName="W1ADDSB" />
+                    <TextBox Grid.Row="2" Grid.Column="8" Text="{Binding Weld1AdditionalSizeBelow, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <tsuic:WpfFilterCheckBox Grid.Row="1" Grid.Column="9" AttributeName="W1ANGA" />
+                    <TextBox Grid.Row="1" Grid.Column="10" Text="{Binding Weld1AngleAbove, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <tsuic:WpfFilterCheckBox Grid.Row="2" Grid.Column="9" AttributeName="W1ANGB" />
+                    <TextBox Grid.Row="2" Grid.Column="10" Text="{Binding Weld1AngleBelow, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <tsuic:WpfFilterCheckBox Grid.Row="1" Grid.Column="11" AttributeName="W1CTRA" />
+                    <ComboBox Grid.Row="1" Grid.Column="12" SelectedIndex="{Binding Weld1ContourAbove, Mode=TwoWay}" ItemsSource="{x:Static assets:WeldSymbols.WeldContourSet}" />
+                    <tsuic:WpfFilterCheckBox Grid.Row="2" Grid.Column="11" AttributeName="W1CTRB" />
+                    <ComboBox Grid.Row="2" Grid.Column="12" SelectedIndex="{Binding Weld1ContourBelow, Mode=TwoWay}" ItemsSource="{x:Static assets:WeldSymbols.WeldContourSet}" />
+
+                    <tsuic:WpfFilterCheckBox Grid.Row="1" Grid.Column="13" AttributeName="W1FNSHA" />
+                    <ComboBox Grid.Row="1" Grid.Column="14" SelectedIndex="{Binding Weld1FinishAbove, Mode=TwoWay}" ItemsSource="{x:Static assets:WeldSymbols.WeldFinishSet}" />
+                    <tsuic:WpfFilterCheckBox Grid.Row="2" Grid.Column="13" AttributeName="W1FNSHB" />
+                    <ComboBox Grid.Row="2" Grid.Column="14" SelectedIndex="{Binding Weld1FinishBelow, Mode=TwoWay}" ItemsSource="{x:Static assets:WeldSymbols.WeldFinishSet}" />
+
+                    <tsuic:WpfFilterCheckBox Grid.Row="1" Grid.Column="15" AttributeName="W1FACEA" />
+                    <TextBox Grid.Row="1" Grid.Column="16" Text="{Binding Weld1RootFaceAbove, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <tsuic:WpfFilterCheckBox Grid.Row="2" Grid.Column="15" AttributeName="W1FACEB" />
+                    <TextBox Grid.Row="2" Grid.Column="16" Text="{Binding Weld1RootFaceBelow, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <tsuic:WpfFilterCheckBox Grid.Row="1" Grid.Column="17" AttributeName="W1THROA" />
+                    <TextBox Grid.Row="1" Grid.Column="18" Text="{Binding Weld1EffectiveThroatAbove, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <tsuic:WpfFilterCheckBox Grid.Row="2" Grid.Column="17" AttributeName="W1THROB" />
+                    <TextBox Grid.Row="2" Grid.Column="18" Text="{Binding Weld1EffectiveThroatBelow, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <tsuic:WpfFilterCheckBox Grid.Row="1" Grid.Column="19" AttributeName="W1OPNGA" />
+                    <TextBox Grid.Row="1" Grid.Column="20" Text="{Binding Weld1RootOpeningAbove, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <tsuic:WpfFilterCheckBox Grid.Row="2" Grid.Column="19" AttributeName="W1OPNGB" />
+                    <TextBox Grid.Row="2" Grid.Column="20" Text="{Binding Weld1RootOpeningBelow, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <tsuic:WpfFilterCheckBox Grid.Row="1" Grid.RowSpan="2" Grid.Column="21" AttributeName="W1ARND" />
+                    <ComboBox Grid.Row="1"
+                              Grid.RowSpan="2"
+                              Grid.Column="22"
+                              SelectedIndex="{Binding Weld1Around, Mode=TwoWay}"
+                              ItemsSource="{x:Static assets:WeldSymbols.AroundWeldSet}" />
+
+                    <tsuic:WpfFilterCheckBox Grid.Row="1" Grid.RowSpan="2" Grid.Column="23" AttributeName="W1SHOP" />
+                    <ComboBox Grid.Row="1"
+                              Grid.RowSpan="2"
+                              Grid.Column="24"
+                              SelectedIndex="{Binding Weld1Shop, Mode=TwoWay}"
+                              ItemsSource="{x:Static assets:WeldSymbols.ShopWeldSet}" />
+
+                    <tsuic:WpfFilterCheckBox Grid.Row="1" Grid.RowSpan="2" Grid.Column="25" AttributeName="W1PLACE" />
+                    <ComboBox Grid.Row="1"
+                              Grid.RowSpan="2"
+                              Grid.Column="26"
+                              ItemTemplate="{x:Null}"
+                              SelectedIndex="{Binding Weld1Placement, Mode=TwoWay}"
+                              ItemsSource="{x:Static assets:WeldSymbols.WeldPlacementSet}" />
+
+                    <tsuic:WpfFilterCheckBox Grid.Row="1" Grid.RowSpan="2" Grid.Column="27" AttributeName="W1PREP" />
+                    <ComboBox Grid.Row="1"
+                              Grid.RowSpan="2"
+                              Grid.Column="28"
+                              ItemTemplate="{x:Null}"
+                              SelectedIndex="{Binding Weld1Preparation, Mode=TwoWay}"
+                              ItemsSource="{x:Static assets:WeldSymbols.WeldPreparationSet}" />
+
+                    <tsuic:WpfFilterCheckBox Grid.Row="1" Grid.RowSpan="2" Grid.Column="29" AttributeName="W1INTMI" />
+                    <ComboBox Grid.Row="1"
+                              Grid.RowSpan="2"
+                              Grid.Column="30"
+                              SelectedIndex="{Binding Weld1Intermittent, Mode=TwoWay}"
+                              ItemsSource="{x:Static assets:WeldSymbols.WeldIntermittentSet}" />
+
+                    <tsuic:WpfFilterCheckBox Grid.Row="1" Grid.Column="31" AttributeName="W1INCRA" />
+                    <TextBox Grid.Row="1" Grid.Column="32" Text="{Binding Weld1IncrementAmountAbove, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <tsuic:WpfFilterCheckBox Grid.Row="2" Grid.Column="31" AttributeName="W1INCRB" />
+                    <TextBox Grid.Row="2" Grid.Column="32" Text="{Binding Weld1IncrementAmountBelow, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <tsuic:WpfFilterCheckBox Grid.Row="1" Grid.Column="33" AttributeName="W1LENA" />
+                    <TextBox Grid.Row="1" Grid.Column="34" Text="{Binding Weld1LengthAbove, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <tsuic:WpfFilterCheckBox Grid.Row="2" Grid.Column="33" AttributeName="W1LENB" />
+                    <TextBox Grid.Row="2" Grid.Column="34" Text="{Binding Weld1LengthBelow, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <tsuic:WpfFilterCheckBox Grid.Row="1" Grid.Column="35" AttributeName="W1PITA" />
+                    <TextBox Grid.Row="1" Grid.Column="36" Text="{Binding Weld1PitchAbove, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <tsuic:WpfFilterCheckBox Grid.Row="2" Grid.Column="35" AttributeName="W1PITB" />
+                    <TextBox Grid.Row="2" Grid.Column="36" Text="{Binding Weld1PitchBelow, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <tsuic:WpfFilterCheckBox Grid.Row="1" Grid.RowSpan="2" Grid.Column="37" AttributeName="W1TEXT" />
+                    <TextBox Grid.Row="1" Grid.RowSpan="2" Grid.Column="38" Text="{Binding Weld1ReferenceText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <TextBlock Grid.Row="3" Grid.RowSpan="2" Grid.Column="0" Text="2" />
+
+                    <tsuic:WpfFilterCheckBox Grid.Row="3" Grid.Column="1" AttributeName="W2PRFXA" />
+                    <TextBox Grid.Row="3" Grid.Column="2" Text="{Binding Weld2PrefixAbove, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <tsuic:WpfFilterCheckBox Grid.Row="4" Grid.Column="1" AttributeName="W2PRFXB" />
+                    <TextBox Grid.Row="4" Grid.Column="2" Text="{Binding Weld2PrefixBelow, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <tsuic:WpfFilterCheckBox Grid.Row="3" Grid.Column="3" AttributeName="W2TYPEA" />
+                    <ComboBox Grid.Row="3" Grid.Column="4" SelectedIndex="{Binding Weld2TypeAbove, Mode=TwoWay}" ItemsSource="{x:Static assets:WeldSymbols.WeldTypeSet}" />
+                    <tsuic:WpfFilterCheckBox Grid.Row="4" Grid.Column="3" AttributeName="W2TYPEB" />
+                    <ComboBox Grid.Row="4" Grid.Column="4" SelectedIndex="{Binding Weld2TypeBelow, Mode=TwoWay}" ItemsSource="{x:Static assets:WeldSymbols.WeldTypeSet}" />
+
+                    <tsuic:WpfFilterCheckBox Grid.Row="3" Grid.Column="5" AttributeName="W2SIZEA" />
+                    <TextBox Grid.Row="3" Grid.Column="6" Text="{Binding Weld2SizeAbove, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <tsuic:WpfFilterCheckBox Grid.Row="4" Grid.Column="5" AttributeName="W2SIZEB" />
+                    <TextBox Grid.Row="4" Grid.Column="6" Text="{Binding Weld2SizeBelow, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <tsuic:WpfFilterCheckBox Grid.Row="3" Grid.Column="7" AttributeName="W2ADDSA" />
+                    <TextBox Grid.Row="3" Grid.Column="8" Text="{Binding Weld2AdditionalSizeAbove, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <tsuic:WpfFilterCheckBox Grid.Row="4" Grid.Column="7" AttributeName="W2ADDSB" />
+                    <TextBox Grid.Row="4" Grid.Column="8" Text="{Binding Weld2AdditionalSizeBelow, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <tsuic:WpfFilterCheckBox Grid.Row="3" Grid.Column="9" AttributeName="W2ANGA" />
+                    <TextBox Grid.Row="3" Grid.Column="10" Text="{Binding Weld2AngleAbove, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <tsuic:WpfFilterCheckBox Grid.Row="4" Grid.Column="9" AttributeName="W2ANGB" />
+                    <TextBox Grid.Row="4" Grid.Column="10" Text="{Binding Weld2AngleBelow, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <tsuic:WpfFilterCheckBox Grid.Row="3" Grid.Column="11" AttributeName="W2CTRA" />
+                    <ComboBox Grid.Row="3" Grid.Column="12" SelectedIndex="{Binding Weld2ContourAbove, Mode=TwoWay}" ItemsSource="{x:Static assets:WeldSymbols.WeldContourSet}" />
+                    <tsuic:WpfFilterCheckBox Grid.Row="4" Grid.Column="11" AttributeName="W2CTRB" />
+                    <ComboBox Grid.Row="4" Grid.Column="12" SelectedIndex="{Binding Weld2ContourBelow, Mode=TwoWay}" ItemsSource="{x:Static assets:WeldSymbols.WeldContourSet}" />
+
+                    <tsuic:WpfFilterCheckBox Grid.Row="3" Grid.Column="13" AttributeName="W2FNSHA" />
+                    <ComboBox Grid.Row="3" Grid.Column="14" SelectedIndex="{Binding Weld2FinishAbove, Mode=TwoWay}" ItemsSource="{x:Static assets:WeldSymbols.WeldFinishSet}" />
+                    <tsuic:WpfFilterCheckBox Grid.Row="4" Grid.Column="13" AttributeName="W2FNSHB" />
+                    <ComboBox Grid.Row="4" Grid.Column="14" SelectedIndex="{Binding Weld2FinishBelow, Mode=TwoWay}" ItemsSource="{x:Static assets:WeldSymbols.WeldFinishSet}" />
+
+                    <tsuic:WpfFilterCheckBox Grid.Row="3" Grid.Column="15" AttributeName="W2FACEA" />
+                    <TextBox Grid.Row="3" Grid.Column="16" Text="{Binding Weld2RootFaceAbove, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <tsuic:WpfFilterCheckBox Grid.Row="4" Grid.Column="15" AttributeName="W2FACEB" />
+                    <TextBox Grid.Row="4" Grid.Column="16" Text="{Binding Weld2RootFaceBelow, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <tsuic:WpfFilterCheckBox Grid.Row="3" Grid.Column="17" AttributeName="W2THROA" />
+                    <TextBox Grid.Row="3" Grid.Column="18" Text="{Binding Weld2EffectiveThroatAbove, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <tsuic:WpfFilterCheckBox Grid.Row="4" Grid.Column="17" AttributeName="W2THROB" />
+                    <TextBox Grid.Row="4" Grid.Column="18" Text="{Binding Weld2EffectiveThroatBelow, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <tsuic:WpfFilterCheckBox Grid.Row="3" Grid.Column="19" AttributeName="W2OPNGA" />
+                    <TextBox Grid.Row="3" Grid.Column="20" Text="{Binding Weld2RootOpeningAbove, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <tsuic:WpfFilterCheckBox Grid.Row="4" Grid.Column="19" AttributeName="W2OPNGB" />
+                    <TextBox Grid.Row="4" Grid.Column="20" Text="{Binding Weld2RootOpeningBelow, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <tsuic:WpfFilterCheckBox Grid.Row="3" Grid.RowSpan="2" Grid.Column="21" AttributeName="W2ARND" />
+                    <ComboBox Grid.Row="3"
+                              Grid.RowSpan="2"
+                              Grid.Column="22"
+                              SelectedIndex="{Binding Weld2Around, Mode=TwoWay}"
+                              ItemsSource="{x:Static assets:WeldSymbols.AroundWeldSet}" />
+
+                    <tsuic:WpfFilterCheckBox Grid.Row="3" Grid.RowSpan="2" Grid.Column="23" AttributeName="W2SHOP" />
+                    <ComboBox Grid.Row="3"
+                              Grid.RowSpan="2"
+                              Grid.Column="24"
+                              SelectedIndex="{Binding Weld2Shop, Mode=TwoWay}"
+                              ItemsSource="{x:Static assets:WeldSymbols.ShopWeldSet}" />
+
+                    <tsuic:WpfFilterCheckBox Grid.Row="3" Grid.RowSpan="2" Grid.Column="25" AttributeName="W2PLACE" />
+                    <ComboBox Grid.Row="3"
+                              Grid.RowSpan="2"
+                              Grid.Column="26"
+                              ItemTemplate="{x:Null}"
+                              SelectedIndex="{Binding Weld2Placement, Mode=TwoWay}"
+                              ItemsSource="{x:Static assets:WeldSymbols.WeldPlacementSet}" />
+
+                    <tsuic:WpfFilterCheckBox Grid.Row="3" Grid.RowSpan="2" Grid.Column="27" AttributeName="W2PREP" />
+                    <ComboBox Grid.Row="3"
+                              Grid.RowSpan="2"
+                              Grid.Column="28"
+                              ItemTemplate="{x:Null}"
+                              SelectedIndex="{Binding Weld2Preparation, Mode=TwoWay}"
+                              ItemsSource="{x:Static assets:WeldSymbols.WeldPreparationSet}" />
+
+                    <tsuic:WpfFilterCheckBox Grid.Row="3" Grid.RowSpan="2" Grid.Column="29" AttributeName="W2INTMI" />
+                    <ComboBox Grid.Row="3"
+                              Grid.RowSpan="2"
+                              Grid.Column="30"
+                              SelectedIndex="{Binding Weld2Intermittent, Mode=TwoWay}"
+                              ItemsSource="{x:Static assets:WeldSymbols.WeldIntermittentSet}" />
+
+                    <tsuic:WpfFilterCheckBox Grid.Row="3" Grid.Column="31" AttributeName="W2INCRA" />
+                    <TextBox Grid.Row="3" Grid.Column="32" Text="{Binding Weld2IncrementAmountAbove, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <tsuic:WpfFilterCheckBox Grid.Row="4" Grid.Column="31" AttributeName="W2INCRB" />
+                    <TextBox Grid.Row="4" Grid.Column="32" Text="{Binding Weld2IncrementAmountBelow, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <tsuic:WpfFilterCheckBox Grid.Row="3" Grid.Column="33" AttributeName="W2LENA" />
+                    <TextBox Grid.Row="3" Grid.Column="34" Text="{Binding Weld2LengthAbove, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <tsuic:WpfFilterCheckBox Grid.Row="4" Grid.Column="33" AttributeName="W2LENB" />
+                    <TextBox Grid.Row="4" Grid.Column="34" Text="{Binding Weld2LengthBelow, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <tsuic:WpfFilterCheckBox Grid.Row="3" Grid.Column="35" AttributeName="W2PITA" />
+                    <TextBox Grid.Row="3" Grid.Column="36" Text="{Binding Weld2PitchAbove, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <tsuic:WpfFilterCheckBox Grid.Row="4" Grid.Column="35" AttributeName="W2PITB" />
+                    <TextBox Grid.Row="4" Grid.Column="36" Text="{Binding Weld2PitchBelow, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <tsuic:WpfFilterCheckBox Grid.Row="3" Grid.RowSpan="2" Grid.Column="37" AttributeName="W2TEXT" />
+                    <TextBox Grid.Row="3" Grid.RowSpan="2" Grid.Column="38" Text="{Binding Weld2ReferenceText, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+                    <Canvas Grid.Row="5" Grid.Column="0" Grid.ColumnSpan="39" Height="240">
+                        <Image Canvas.Left="10" Canvas.Top="10" Stretch="None">
+                            <Image.Source>
+                                <DrawingImage Drawing="{StaticResource FrontViewWithWeldDimension}" />
+                            </Image.Source>
+                        </Image>
+                        <Image Canvas.Left="240" Canvas.Top="40" Stretch="None">
+                            <Image.Source>
+                                <DrawingImage Drawing="{StaticResource TopViewWithWeldDimension}" />
+                            </Image.Source>
+                        </Image>
+
+                        <TextBlock Canvas.Left="146" Canvas.Top="180" Text="1" />
+                        <TextBlock Canvas.Left="416" Canvas.Top="40" Text="1" />
+                        <TextBlock Canvas.Left="326" Canvas.Top="136" Text="2" />
+                    </Canvas>
+                </Grid>
+            </TabItem>
+
+            <TabItem Header="{tr:Translate albl_General}" Content="{StaticResource DetailGeneralTab}" />
+        </TabControl>
+    </DockPanel>
+</tsdlg:PluginWindowBase>
