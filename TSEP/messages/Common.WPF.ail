@@ -13,8 +13,18 @@ string_utf8 albl_Parameters {
     entry = ("chs", "参数");
 };
 
+string_utf8 albl_Parameter {
+    entry = ("enu", "Parameter");
+    entry = ("chs", "参数");
+};
+
 string_utf8 albl_Parts {
     entry = ("enu", "Parts");
+    entry = ("chs", "零件");
+};
+
+string_utf8 albl_Part {
+    entry = ("enu", "Part");
     entry = ("chs", "零件");
 };
 
@@ -23,9 +33,34 @@ string_utf8 albl_Plates {
     entry = ("chs", "板件");
 };
 
+string_utf8 albl_Plate {
+    entry = ("enu", "Plate");
+    entry = ("chs", "板件");
+};
+
 string_utf8 albl_Bolts {
     entry = ("enu", "Bolts");
     entry = ("chs", "螺栓");
+};
+
+string_utf8 albl_Bolt {
+    entry = ("enu", "Bolt");
+    entry = ("chs", "螺栓");
+};
+
+string_utf8 albl_BoltArray {
+    entry = ("enu", "BoltArray");
+    entry = ("chs", "阵列螺栓");
+};
+
+string_utf8 albl_BoltList {
+    entry = ("enu", "BoltList");
+    entry = ("chs", "列表螺栓");
+};
+
+string_utf8 albl_BoltCircle {
+    entry = ("enu", "BoltCircle");
+    entry = ("chs", "圆环螺栓");
 };
 
 string_utf8 albl_Welds {
@@ -33,9 +68,19 @@ string_utf8 albl_Welds {
     entry = ("chs", "焊缝");
 };
 
+string_utf8 albl_Weld {
+    entry = ("enu", "Weld");
+    entry = ("chs", "焊缝");
+};
+
 string_utf8 albl_Chamfers {
     entry = ("enu", "Chamfers");
-    entry = ("chs", "倒角");
+    entry = ("chs", "切角");
+};
+
+string_utf8 albl_Chamfer {
+    entry = ("enu", "Chamfer");
+    entry = ("chs", "切角");
 };
 
 string_utf8 albl_UpDirection {
@@ -153,6 +198,11 @@ string_utf8 albl_Part_Header_Profile {
     entry = ("chs", "截面规格");
 };
 
+string_utf8 albl_Part_Header_ProfileOrSize {
+    entry = ("enu", "Profile / t*b*h");
+    entry = ("chs", "截面规格/厚*宽*高");
+};
+
 string_utf8 albl_Part_Header_Material {
     entry = ("enu", "Material");
     entry = ("chs", "材质");
@@ -178,9 +228,19 @@ string_utf8 albl_Part_Header_NumberingSeries_StartNumber {
     entry = ("chs", "起始号");
 };
 
-string_utf8 albl_Weld_Header_Number {
-    entry = ("enu", "No.");
-    entry = ("chs", "序号");
+string_utf8 albl_Weld_Header_Id {
+    entry = ("enu", "Id");
+    entry = ("chs", "标识");
+};
+
+string_utf8 albl_Weld_Header_Prefix {
+    entry = ("enu", "Prefix");
+    entry = ("chs", "前缀");
+};
+
+string_utf8 albl_Weld_Header_Type {
+    entry = ("enu", "Type");
+    entry = ("chs", "类型");
 };
 
 string_utf8 albl_Weld_Header_Size {
@@ -188,9 +248,9 @@ string_utf8 albl_Weld_Header_Size {
     entry = ("chs", "尺寸");
 };
 
-string_utf8 albl_Weld_Header_Type {
-    entry = ("enu", "Type");
-    entry = ("chs", "类型");
+string_utf8 albl_Weld_Header_AdditionalSize {
+    entry = ("enu", "Add.size");
+    entry = ("chs", "附加尺寸");
 };
 
 string_utf8 albl_Weld_Header_Angle {
@@ -338,24 +398,29 @@ string_utf8 albl_Bolt_Header_Oversized {
 	entry = ("chs", "扩大孔");
 };
 
+string_utf8 albl_Bolt_Header_CoreHoleSize {
+	entry = ("enu", "Core hole size");
+	entry = ("chs", "钻孔尺寸");
+};
+
 string_utf8 albl_Bolt_Header_SlottedHoleX {
 	entry = ("enu", "Slotted hole X");
-	entry = ("chs", "长孔 X");
+	entry = ("chs", "长孔X");
 };
 
 string_utf8 albl_Bolt_Header_SlottedHoleY {
 	entry = ("enu", "Slotted hole Y");
-	entry = ("chs", "长孔 Y");
+	entry = ("chs", "长孔Y");
 };
 
 string_utf8 albl_Bolt_Header_SlotOffsetX {
 	entry = ("enu", "Slot offset X");
-	entry = ("chs", "槽位偏移 X");
+	entry = ("chs", "槽位偏移X");
 };
 
 string_utf8 albl_Bolt_Header_SlotOffsetY {
 	entry = ("enu", "Slot offset Y");
-	entry = ("chs", "槽位偏移 Y");
+	entry = ("chs", "槽位偏移Y");
 };
 
 string_utf8 albl_Bolt_Header_RotateSlots {
@@ -364,13 +429,23 @@ string_utf8 albl_Bolt_Header_RotateSlots {
 };
 
 string_utf8 albl_Bolt_Header_DistX {
-	entry = ("enu", "Distance X");
+	entry = ("enu", "Distance list X");
 	entry = ("chs", "X向间距");
 };
 
 string_utf8 albl_Bolt_Header_DistY {
-	entry = ("enu", "Distance Y");
+	entry = ("enu", "Distance list Y");
 	entry = ("chs", "Y向间距");
+};
+
+string_utf8 albl_Bolt_Header_NumberOfBolts {
+	entry = ("enu", "Number of bolts");
+	entry = ("chs", "螺栓数量");
+};
+
+string_utf8 albl_Bolt_Header_Diameter {
+	entry = ("enu", "Diameter");
+	entry = ("chs", "直径");
 };
 
 string_utf8 albl_Bolt_PlainHoleType_Blind {
@@ -491,6 +566,11 @@ string_utf8 albl_Bolt_SpecialHole5 {
 string_utf8 albl_Bolt_Type_Workshop {
     entry = ("enu", "Workshop");
     entry = ("chs", "车间");
+};
+
+string_utf8 albl_Chamfer_Header_Id {
+    entry = ("enu", "Id");
+    entry = ("chs", "标识");
 };
 
 string_utf8 albl_Chamfer_Header_Type {
@@ -680,7 +760,7 @@ string_utf8 albl_Weld_Preparation_None {
 
 string_utf8 albl_Weld_Preparation_SecondaryPart {
     entry = ("enu", "Secondary part");
-    entry = ("chs", "交零件");
+    entry = ("chs", "次零件");
 };
 
 string_utf8 albl_Weld_ShopWeld_Site {
