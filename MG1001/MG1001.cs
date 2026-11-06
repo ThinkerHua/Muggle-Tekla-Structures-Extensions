@@ -9,7 +9,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program. If not, see <http://www.gnu.org/licenses/>.
  *==============================================================================
- *  MG1001.cs: "MG1001" connection
+ *  MG1001.cs: vertically connection between side column and beam
  *  written by Huang YongXing - thinkerhua@hotmail.com
  *==============================================================================*/
 
@@ -17,50 +17,43 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
+using System.IO;
 using Muggle.TsExtensions.CodingHelper.Generators;
 using Muggle.TsExtensions.Common.Geometry3d;
 using Muggle.TsExtensions.Common.Model;
 using Muggle.TsExtensions.Common.Profile;
+using Muggle.TsExtensions.Common.Resources;
 using Tekla.Structures;
+using Tekla.Structures.Dialog;
 using Tekla.Structures.Geometry3d;
 using Tekla.Structures.Model;
+using Tekla.Structures.Model.Operations;
 using Tekla.Structures.Plugins;
 using static Tekla.Structures.Geometry3d.GeometryConstants;
-using MessageBox = System.Windows.MessageBox;
-using MessageBoxButton = System.Windows.MessageBoxButton;
-using MessageBoxImage = System.Windows.MessageBoxImage;
 using TSDatatype = Tekla.Structures.Datatype;
 
 namespace Muggle.TsExtensions.MG1001;
 
-[PlateFields("top", "diagonal", "horizontal", "thickened", "eave", "end1", "end2", "flangeStif", "webStif")]
-[ChamferFields("diagonal", "horizontal", "stifInside", "stifOutside")]
-[BoltFields(1)]
-[WeldFields(1, 2, 3, 4, 5, 6, 7, 8, 9)]
-[GeneralFields(typeof(int), "isTopHorizontal", "flangeStifKind", "webStifKind")]
-[GeneralFields(typeof(double), "diagPosition1", "diagPosition2", "thickenedPosition", "endPosition",
-    "difference", "grooveSlope", "boltOffset")]
-[GeneralFields(typeof(string), "webStifDistList")]
-public partial class MG1001Data;
-
 [Plugin("MG1001")]
-[PluginUserInterface("Muggle.TsExtensions.MG1001.Views.MainWindow")]
+[PluginUserInterface("Muggle.TsExtensions.MG1001.View")]
 [SecondaryType(SecondaryType.SECONDARYTYPE_ONE)]
 [AutoDirectionType(AutoDirectionTypeEnum.AUTODIR_BASIC)]
-[FieldsFrom(typeof(MG1001Data))]
+[FieldsFrom(typeof(PluginData))]
 public partial class MG1001 : ConnectionBase {
 
-    private Model Model { get; set; }
+    private Localization Localization { get; }
 
-    [PlateFieldDefaultValues("top", name: "Top")]
-    [PlateFieldDefaultValues("diagonal", name: "Diagonal")]
-    [PlateFieldDefaultValues("horizontal", name: "Horizontal")]
-    [PlateFieldDefaultValues("thickened", name: "Thickened", @class: 4)]
-    [PlateFieldDefaultValues("eave", name: "Eave")]
-    [PlateFieldDefaultValues("end1", name: "End1", thickness: 28, breadth: 350, height: 1355)]
-    [PlateFieldDefaultValues("end2", name: "End2", thickness: 28, breadth: 350, height: 1255)]
-    [PlateFieldDefaultValues("flangeStif", name: "FlangeStif", thickness: 10, breadth: 150, height: 150)]
-    [PlateFieldDefaultValues("webStif", name: "WebStif", thickness: 10, breadth: 150, height: 150)]
+    private Model Model { get; }
+
+    [PlateFieldDefaultValues("top", name: "Top", material: "Q235B")]
+    [PlateFieldDefaultValues("diagonal", name: "Diagonal", material: "Q235B")]
+    [PlateFieldDefaultValues("horizontal", name: "Horizontal", material: "Q235B")]
+    [PlateFieldDefaultValues("thickened", name: "Thickened", material: "Q235B", @class: 4)]
+    [PlateFieldDefaultValues("eave", name: "Eave", material: "Q235B")]
+    [PlateFieldDefaultValues("end1", name: "End1", thickness: 28, breadth: 350, height: 1355, material: "Q235B")]
+    [PlateFieldDefaultValues("end2", name: "End2", thickness: 28, breadth: 350, height: 1255, material: "Q235B")]
+    [PlateFieldDefaultValues("flangeStif", name: "FlangeStif", thickness: 10, breadth: 150, height: 150, material: "Q235B")]
+    [PlateFieldDefaultValues("webStif", name: "WebStif", thickness: 10, breadth: 150, height: 150, material: "Q235B")]
     [ChamferFieldDefaultValues("diagonal", type: 1, x: 25, y: 25)]
     [ChamferFieldDefaultValues("horizontal", type: 1, x: 25, y: 25)]
     [ChamferFieldDefaultValues("stifInside", type: 1, x: 25, y: 25)]
@@ -80,27 +73,35 @@ public partial class MG1001 : ConnectionBase {
     [GeneralFieldDefaultValues("isTopHorizontal", 0, "flangeStifKind", 0, "webStifKind", 0,
         "diagPosition1", 80, "diagPosition2", 80, "thickenedPosition", 100, "endPosition", 160,
         "difference", 4, "grooveSlope", 2.5, "boltOffset", 70, "webStifDistList", "190 4*150")]
-    private MG1001Data Data { get; set; }
+    private PluginData Data { get; }
 
-    #region Constructor
-
-    public MG1001(MG1001Data data) {
+    public MG1001(PluginData data) {
         Model = new Model();
         Data = data;
+
+        try {
+            var language = string.Empty;
+            TeklaStructuresSettings.GetAdvancedOption("XS_LANGUAGE", ref language);
+            language = LanguageExtension.GetTsLocalizationLanguage(language);
+
+            var xsDataDir = string.Empty;
+            TeklaStructuresSettings.GetAdvancedOption("XSDATADIR", ref xsDataDir);
+
+            var ailPath = Path.Combine(xsDataDir,
+                $"environments\\common\\extensions\\messages\\Muggle.TsExtensions\\{nameof(MG1001)}.ail");
+
+            Localization = new Localization(ailPath, language);
+        } catch {
+            Localization = new Localization();
+        }
     }
 
-    #endregion
-
-    #region Overrides
-
     public override bool Run() {
-        var result = false;
-
         try {
             var primPart = Model.SelectModelObject(Primary) as Beam;
             var secPart = Model.SelectModelObject(Secondaries[0]) as Beam;
 
-            CheckIfAcceptableProfile(primPart, secPart, out var prfPrim, out var prfSec);
+            VerifyProfile(primPart, secPart, out var prfPrim, out var prfSec);
 
             SetDataToDefaultIfUnset();
 
@@ -124,17 +125,15 @@ public partial class MG1001 : ConnectionBase {
             var workTp = GetWorkTransformationPlane(prfPrim, prfSec, out var roofSlope);
             Model.GetWorkPlaneHandler().SetCurrentTransformationPlane(workTp);
 
-            result = CreatConnection(roofSlope);
+            CreateConnection(roofSlope);
+
+            return true;
         } catch (Exception e) {
-            MessageBox.Show(e.ToString(), "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            Operation.DisplayPrompt(e.Message);
+            return false;
         }
 
-        return result;
     }
-
-    #endregion
-
-    #region Private methods
 
     /// <summary>
     /// 仅支持等截面和楔形变截面，不支持对称变截面
@@ -143,18 +142,25 @@ public partial class MG1001 : ConnectionBase {
     /// <param name="secPart"></param>
     /// <param name="prfPrim"></param>
     /// <param name="prfSec"></param>
-    private static void CheckIfAcceptableProfile(Beam primPart, Beam secPart,
-        out ProfileH prfPrim, out ProfileH prfSec) {
+    private void VerifyProfile(Beam primPart, Beam secPart, out ProfileH prfPrim, out ProfileH prfSec) {
 
-        prfPrim = new ProfileH(primPart.Profile.ProfileString);
-        prfSec = new ProfileH(secPart.Profile.ProfileString);
+        try {
+            prfPrim = new ProfileH(primPart.Profile.ProfileString);
+            if (prfPrim.ProfileText.Contains("I_VAR_A") && Math.Abs(prfPrim.h2 - prfPrim.h1) > DISTANCE_EPSILON ||
+                Math.Abs(prfPrim.b2 - prfPrim.b1) > DISTANCE_EPSILON)
+                throw new UnAcceptableProfileException();
+        } catch (UnAcceptableProfileException) {
+            throw new Exception(Localization.GetText("exception_primary_profile_not_supported"));
+        }
 
-        if (prfPrim.ProfileText.Contains("I_VAR_A") && Math.Abs(prfPrim.h2 - prfPrim.h1) > DISTANCE_EPSILON ||
-            Math.Abs(prfPrim.b2 - prfPrim.b1) > DISTANCE_EPSILON)
-            throw new UnAcceptableProfileException(prfPrim.ProfileText);
-        if (prfSec.ProfileText.Contains("I_VAR_A") && Math.Abs(prfSec.h2 - prfSec.h1) > DISTANCE_EPSILON ||
-            Math.Abs(prfSec.b2 - prfSec.b1) > DISTANCE_EPSILON)
-            throw new UnAcceptableProfileException(prfSec.ProfileText);
+        try {
+            prfSec = new ProfileH(secPart.Profile.ProfileString);
+            if (prfSec.ProfileText.Contains("I_VAR_A") && Math.Abs(prfSec.h2 - prfSec.h1) > DISTANCE_EPSILON ||
+                Math.Abs(prfSec.b2 - prfSec.b1) > DISTANCE_EPSILON)
+                throw new UnAcceptableProfileException();
+        } catch (UnAcceptableProfileException) {
+            throw new Exception(Localization.GetText("exception_secondary_profile_not_supported"));
+        }
     }
 
     private TransformationPlane GetWorkTransformationPlane(ProfileH prfPrim, ProfileH prfSec, out double slope) {
@@ -246,7 +252,7 @@ public partial class MG1001 : ConnectionBase {
         primPart.Modify();
     }
 
-    private bool CreatConnection(double slope) {
+    private void CreateConnection(double slope) {
 
         #region 初始信息、工作平面
 
@@ -323,7 +329,7 @@ public partial class MG1001 : ConnectionBase {
         p1.Y = (p1.X + _plateEnd2Thickness) * slope + _endPosition;
         p2 = p1 - axisY * _plateEnd1Height;
 
-        var endPlate1 = CreatPlateEnd1<Beam>();
+        var endPlate1 = CreatePlateEnd1<Beam>();
         endPlate1.StartPoint = p1;
         endPlate1.EndPoint = p2;
         endPlate1.Position.Rotation = Position.RotationEnum.TOP;
@@ -332,7 +338,7 @@ public partial class MG1001 : ConnectionBase {
         endPlate1.Insert();
 
         p2 = p1 - axisY * _plateEnd2Height;
-        var endPlate2 = CreatPlateEnd2<Beam>();
+        var endPlate2 = CreatePlateEnd2<Beam>();
         endPlate2.StartPoint = p1;
         endPlate2.EndPoint = p2;
         endPlate2.Position.Rotation = Position.RotationEnum.TOP;
@@ -361,7 +367,7 @@ public partial class MG1001 : ConnectionBase {
             p1.Y = p1.X * slope;
         }
 
-        var topPlate = CreatPlateTop<Beam>();
+        var topPlate = CreatePlateTop<Beam>();
         topPlate.Profile.ProfileString = $"PL{_plateTopThickness}*{_plateTopBreadth}";
         topPlate.StartPoint = p1;
         topPlate.EndPoint = p2;
@@ -373,14 +379,12 @@ public partial class MG1001 : ConnectionBase {
         Fitting fit;
         if (_isTopHorizontal != 0) {
             fit = new Fitting {
-                Father = topPlate,
-                Plane = new Plane { Origin = p1, AxisX = -1 * axisY, AxisY = axisZ }
+                Father = topPlate, Plane = new Plane { Origin = p1, AxisX = -1 * axisY, AxisY = axisZ }
             };
             fit.Insert();
 
             fit = new Fitting {
-                Father = topPlate,
-                Plane = new Plane { Origin = p2, AxisX = -1 * axisY, AxisY = axisZ }
+                Father = topPlate, Plane = new Plane { Origin = p2, AxisX = -1 * axisY, AxisY = axisZ }
             };
             fit.Insert();
         }
@@ -397,11 +401,11 @@ public partial class MG1001 : ConnectionBase {
         if (_plateEaveThickness <= 0 || _plateEaveBreadth <= 0 || _plateEaveHeight <= 0) goto SkipEavePlate;
 
         p1 = Intersection.LineToLine(primLeftLine,
-                topPlateLine.Offset(_plateTopThickness, LineExtension.OffsetDirectionEnum.RIGHT))
+                topPlateLine.Offset(_plateTopThickness, LineExtension.OffsetDirection.Right))
             .StartPoint;
         p2 = Intersection.LineToLine(
-                primLeftLine.Offset(_plateEaveBreadth, LineExtension.OffsetDirectionEnum.LEFT),
-                topPlateLine.Offset(_plateTopThickness, LineExtension.OffsetDirectionEnum.RIGHT))
+                primLeftLine.Offset(_plateEaveBreadth, LineExtension.OffsetDirection.Left),
+                topPlateLine.Offset(_plateTopThickness, LineExtension.OffsetDirection.Right))
             .StartPoint;
         var p3 = p2 - axisY * _plateEaveHeight;
         var p4 = p3 + axisX * _plateEaveBreadth;
@@ -410,18 +414,18 @@ public partial class MG1001 : ConnectionBase {
         var cp3 = new ContourPoint(p3, chamferNone);
         var cp4 = new ContourPoint(p4, chamferNone);
 
-        eavePlate = CreatPlateEave<ContourPlate>();
+        eavePlate = CreatePlateEave<ContourPlate>();
         eavePlate.Contour.ContourPoints = new ArrayList { cp1, cp2, cp3, cp4 };
         eavePlate.Insert();
 
-    SkipEavePlate:;
+        SkipEavePlate: ;
 
         #endregion
 
         #region 创建水平板
 
         p2 = Intersection.LineToLine(
-                endPlateLine.Offset(_plateEnd2Thickness, LineExtension.OffsetDirectionEnum.LEFT),
+                endPlateLine.Offset(_plateEnd2Thickness, LineExtension.OffsetDirection.Left),
                 secBotLine)
             .StartPoint;
         p2.X -= _plateEnd1Thickness + _plateEnd2Thickness;
@@ -430,12 +434,14 @@ public partial class MG1001 : ConnectionBase {
         p3 = p2 + axisZ * _plateHorizontalBreadth;
         p4 = p1 + axisZ * _plateHorizontalBreadth;
 
-        cp1 = new ContourPoint(p1, CreatChamferHorizontal());
-        cp2 = new ContourPoint(p2, CreatChamferHorizontal());
+        var chamfer = CreateChamferHorizontal();
+        cp1 = new ContourPoint(p1, chamfer);
+        chamfer = chamfer.GetReversed();
+        cp2 = new ContourPoint(p2, chamfer);
         cp3 = new ContourPoint(p3, chamferNone);
         cp4 = new ContourPoint(p4, chamferNone);
 
-        var horPlateFront = CreatPlateHorizontal<ContourPlate>();
+        var horPlateFront = CreatePlateHorizontal<ContourPlate>();
         horPlateFront.Contour.ContourPoints = new ArrayList { cp1, cp2, cp3, cp4 };
         horPlateFront.Position.Depth = Position.DepthEnum.BEHIND;
         horPlateFront.Insert();
@@ -445,7 +451,7 @@ public partial class MG1001 : ConnectionBase {
         cp3.Z *= -1;
         cp4.Z *= -1;
 
-        var horPlateBehind = CreatPlateHorizontal<ContourPlate>();
+        var horPlateBehind = CreatePlateHorizontal<ContourPlate>();
         horPlateBehind.Contour.ContourPoints = new ArrayList { cp1, cp2, cp3, cp4 };
         horPlateBehind.Position.Depth = Position.DepthEnum.FRONT;
         horPlateBehind.Insert();
@@ -460,16 +466,16 @@ public partial class MG1001 : ConnectionBase {
         if (_plateThickenedThickness <= prfPrim.s) goto SkipThickened;
 
         p1 = Intersection.LineToLine(
-                primLeftLine.Offset(prfPrim.t1, LineExtension.OffsetDirectionEnum.RIGHT),
-                topPlateLine.Offset(_plateTopThickness, LineExtension.OffsetDirectionEnum.RIGHT))
+                primLeftLine.Offset(prfPrim.t1, LineExtension.OffsetDirection.Right),
+                topPlateLine.Offset(_plateTopThickness, LineExtension.OffsetDirection.Right))
             .StartPoint;
         p2 = Intersection.LineToLine(
-                primLeftLine.Offset(prfPrim.t1, LineExtension.OffsetDirectionEnum.RIGHT),
-                horPlateLine.Offset(_thickenedPosition, LineExtension.OffsetDirectionEnum.RIGHT))
+                primLeftLine.Offset(prfPrim.t1, LineExtension.OffsetDirection.Right),
+                horPlateLine.Offset(_thickenedPosition, LineExtension.OffsetDirection.Right))
             .StartPoint;
         var p5 = Intersection.LineToLine(
-                endPlateLine.Offset(_plateEnd1Thickness, LineExtension.OffsetDirectionEnum.RIGHT),
-                topPlateLine.Offset(_plateTopThickness, LineExtension.OffsetDirectionEnum.RIGHT))
+                endPlateLine.Offset(_plateEnd1Thickness, LineExtension.OffsetDirection.Right),
+                topPlateLine.Offset(_plateTopThickness, LineExtension.OffsetDirection.Right))
             .StartPoint;
 
         cp1 = new ContourPoint(p1, chamferNone);
@@ -479,8 +485,8 @@ public partial class MG1001 : ConnectionBase {
         ArrayList contourPoints;
         if (p2.Y < endPlate1.EndPoint.Y) {
             p3 = Intersection.LineToLine(
-                    primRightLine.Offset(prfPrim.t1, LineExtension.OffsetDirectionEnum.LEFT),
-                    horPlateLine.Offset(_thickenedPosition, LineExtension.OffsetDirectionEnum.RIGHT))
+                    primRightLine.Offset(prfPrim.t1, LineExtension.OffsetDirection.Left),
+                    horPlateLine.Offset(_thickenedPosition, LineExtension.OffsetDirection.Right))
                 .StartPoint;
             p4 = new Point(endPlate1.EndPoint);
             p4.X -= _plateEnd1Thickness;
@@ -497,8 +503,8 @@ public partial class MG1001 : ConnectionBase {
             };
         } else {
             p4 = Intersection.LineToLine(
-                    endPlateLine.Offset(_plateEnd1Thickness, LineExtension.OffsetDirectionEnum.RIGHT),
-                    horPlateLine.Offset(_thickenedPosition, LineExtension.OffsetDirectionEnum.RIGHT))
+                    endPlateLine.Offset(_plateEnd1Thickness, LineExtension.OffsetDirection.Right),
+                    horPlateLine.Offset(_thickenedPosition, LineExtension.OffsetDirection.Right))
                 .StartPoint;
 
             cp4 = new ContourPoint(p4, chamferNone);
@@ -506,11 +512,11 @@ public partial class MG1001 : ConnectionBase {
             contourPoints = new ArrayList { cp1, cp2, cp4, cp5 };
         }
 
-        thkedPlate = CreatPlateThickened<ContourPlate>();
+        thkedPlate = CreatePlateThickened<ContourPlate>();
         thkedPlate.Contour.ContourPoints = contourPoints;
         thkedPlate.Insert();
 
-    SkipThickened:;
+        SkipThickened: ;
 
         #endregion
 
@@ -520,24 +526,24 @@ public partial class MG1001 : ConnectionBase {
         if (_plateDiagonalThickness <= 0) goto SkipDiag;
 
         p1 = Intersection.LineToLine(
-                topPlateLine.Offset(_plateTopThickness, LineExtension.OffsetDirectionEnum.RIGHT),
-                primLeftLine.Offset(prfPrim.t1 + _diagPosition1, LineExtension.OffsetDirectionEnum.RIGHT))
+                topPlateLine.Offset(_plateTopThickness, LineExtension.OffsetDirection.Right),
+                primLeftLine.Offset(prfPrim.t1 + _diagPosition1, LineExtension.OffsetDirection.Right))
             .StartPoint;
         p2 = Intersection.LineToLine(
-                horPlateLine.Offset(_plateHorizontalThickness, LineExtension.OffsetDirectionEnum.LEFT),
-                endPlateLine.Offset(_plateEnd1Thickness + _diagPosition2, LineExtension.OffsetDirectionEnum.RIGHT))
+                horPlateLine.Offset(_plateHorizontalThickness, LineExtension.OffsetDirection.Left),
+                endPlateLine.Offset(_plateEnd1Thickness + _diagPosition2, LineExtension.OffsetDirection.Right))
             .StartPoint;
 
         var diagPlateLine = new Line(p1, p2);
 
         p1 = Intersection.LineToLine(
-                topPlateLine.Offset(_plateTopThickness, LineExtension.OffsetDirectionEnum.RIGHT),
-                diagPlateLine.Offset(_plateDiagonalThickness * 0.5, LineExtension.OffsetDirectionEnum.LEFT))
+                topPlateLine.Offset(_plateTopThickness, LineExtension.OffsetDirection.Right),
+                diagPlateLine.Offset(_plateDiagonalThickness * 0.5, LineExtension.OffsetDirection.Left))
             .StartPoint;
         p1 = Projection.PointToLine(p1, diagPlateLine);
         p2 = Intersection.LineToLine(
-                horPlateLine.Offset(_plateHorizontalThickness, LineExtension.OffsetDirectionEnum.LEFT),
-                diagPlateLine.Offset(_plateDiagonalThickness * 0.5, LineExtension.OffsetDirectionEnum.RIGHT))
+                horPlateLine.Offset(_plateHorizontalThickness, LineExtension.OffsetDirection.Left),
+                diagPlateLine.Offset(_plateDiagonalThickness * 0.5, LineExtension.OffsetDirection.Right))
             .StartPoint;
         p2 = Projection.PointToLine(p2, diagPlateLine);
         p1.Z = Math.Max(prfPrim.s, _plateThickenedThickness) * 0.5;
@@ -546,12 +552,14 @@ public partial class MG1001 : ConnectionBase {
         p3 = p2 + axisZ * _plateDiagonalBreadth;
         p4 = p1 + axisZ * _plateDiagonalBreadth;
 
-        cp1 = new ContourPoint(p1, CreatChamferDiagonal());
-        cp2 = new ContourPoint(p2, CreatChamferDiagonal());
+        chamfer = CreateChamferDiagonal();
+        cp1 = new ContourPoint(p1, chamfer);
+        chamfer = chamfer.GetReversed();
+        cp2 = new ContourPoint(p2, chamfer);
         cp3 = new ContourPoint(p3, chamferNone);
         cp4 = new ContourPoint(p4, chamferNone);
 
-        diagPlateFront = CreatPlateDiagonal<ContourPlate>();
+        diagPlateFront = CreatePlateDiagonal<ContourPlate>();
         diagPlateFront.Contour.ContourPoints = new ArrayList { cp1, cp2, cp3, cp4 };
         diagPlateFront.Insert();
 
@@ -560,88 +568,92 @@ public partial class MG1001 : ConnectionBase {
         cp3.Z *= -1;
         cp4.Z *= -1;
 
-        diagPlateBehind = CreatPlateDiagonal<ContourPlate>();
+        diagPlateBehind = CreatePlateDiagonal<ContourPlate>();
         diagPlateBehind.Contour.ContourPoints = new ArrayList { cp1, cp2, cp3, cp4 };
         diagPlateBehind.Insert();
 
-    SkipDiag:
+        SkipDiag:
 
         #endregion
 
         #region 创建翼缘加劲板
 
         p1 = Intersection.LineToLine(topPlateLine,
-                endPlateLine.Offset(_plateEnd1Thickness, LineExtension.OffsetDirectionEnum.RIGHT))
+                endPlateLine.Offset(_plateEnd1Thickness, LineExtension.OffsetDirection.Right))
             .StartPoint;
         p2 = p1 + axisY * _plateFlangeStifHeight;
         p4 = Intersection.LineToLine(topPlateLine,
                 endPlateLine.Offset(_plateEnd1Thickness + _plateFlangeStifBreadth,
-                    LineExtension.OffsetDirectionEnum.RIGHT))
+                    LineExtension.OffsetDirection.Right))
             .StartPoint;
 
-        cp1 = new ContourPoint(p1, CreatChamferStifInside());
+        cp1 = new ContourPoint(p1, CreateChamferStifInside());
         cp2 = new ContourPoint(p2, chamferNone);
         cp4 = new ContourPoint(p4, chamferNone);
-        contourPoints = new ArrayList { cp1, cp2, cp4 };
 
-        if (_flangeStifKind == 1) {
+        if (_flangeStifKind != 0) {
             p3 = p2 - axisX * _plateFlangeStifBreadth;
-            cp3 = new ContourPoint(p3, CreatChamferStifOutside());
+            cp3 = new ContourPoint(p3, CreateChamferStifOutside());
 
             contourPoints = new ArrayList { cp1, cp2, cp3, cp4 };
+        } else {
+            contourPoints = new ArrayList { cp1, cp2, cp4 };
         }
 
-        var primTopFlangeStif = CreatPlateFlangeStif<ContourPlate>();
+        var primTopFlangeStif = CreatePlateFlangeStif<ContourPlate>();
         primTopFlangeStif.Contour.ContourPoints = contourPoints;
         primTopFlangeStif.Insert();
 
         p1 = Intersection.LineToLine(secTopLine,
-                endPlateLine.Offset(_plateEnd2Thickness, LineExtension.OffsetDirectionEnum.LEFT))
+                endPlateLine.Offset(_plateEnd2Thickness, LineExtension.OffsetDirection.Left))
             .StartPoint;
         p2 = p1 + axisY * _plateFlangeStifHeight;
         p4 = Intersection.LineToLine(secTopLine,
                 endPlateLine.Offset(_plateEnd2Thickness + _plateFlangeStifBreadth,
-                    LineExtension.OffsetDirectionEnum.LEFT))
+                    LineExtension.OffsetDirection.Left))
             .StartPoint;
 
-        cp1 = new ContourPoint(p1, CreatChamferStifInside());
+        chamfer = CreateChamferStifInside().GetReversed();
+        cp1 = new ContourPoint(p1, chamfer);
         cp2 = new ContourPoint(p2, chamferNone);
         cp4 = new ContourPoint(p4, chamferNone);
-        contourPoints = new ArrayList { cp1, cp2, cp4 };
 
-        if (_flangeStifKind == 1) {
+        if (_flangeStifKind != 0) {
             p3 = p2 + axisX * _plateFlangeStifBreadth;
-            cp3 = new ContourPoint(p3, CreatChamferStifOutside());
+            cp3 = new ContourPoint(p3, CreateChamferStifOutside());
 
-            contourPoints = new ArrayList { cp1, cp2, cp3, cp4 };
+            contourPoints = new ArrayList { cp1, cp4, cp3, cp2 };
+        } else {
+            contourPoints = new ArrayList { cp1, cp4, cp2 };
         }
 
-        var secTopFlangeStif = CreatPlateFlangeStif<ContourPlate>();
+        var secTopFlangeStif = CreatePlateFlangeStif<ContourPlate>();
         secTopFlangeStif.Contour.ContourPoints = contourPoints;
         secTopFlangeStif.Insert();
 
         p1 = Intersection.LineToLine(secBotLine,
-                endPlateLine.Offset(_plateEnd2Thickness, LineExtension.OffsetDirectionEnum.LEFT))
+                endPlateLine.Offset(_plateEnd2Thickness, LineExtension.OffsetDirection.Left))
             .StartPoint;
         p2 = p1 - axisY * _plateFlangeStifHeight;
         p4 = Intersection.LineToLine(secBotLine,
                 endPlateLine.Offset(_plateEnd2Thickness + _plateFlangeStifBreadth,
-                    LineExtension.OffsetDirectionEnum.LEFT))
+                    LineExtension.OffsetDirection.Left))
             .StartPoint;
 
-        cp1 = new ContourPoint(p1, CreatChamferStifInside());
+        cp1 = new ContourPoint(p1, CreateChamferStifInside());
         cp2 = new ContourPoint(p2, chamferNone);
         cp4 = new ContourPoint(p4, chamferNone);
-        contourPoints = new ArrayList { cp1, cp2, cp4 };
 
-        if (_flangeStifKind == 1) {
+        if (_flangeStifKind != 0) {
             p3 = p2 + axisX * _plateFlangeStifBreadth;
-            cp3 = new ContourPoint(p3, CreatChamferStifOutside());
+            cp3 = new ContourPoint(p3, CreateChamferStifOutside());
 
             contourPoints = new ArrayList { cp1, cp2, cp3, cp4 };
+        } else {
+            contourPoints = new ArrayList { cp1, cp2, cp4 };
         }
 
-        var secBotFlangeStif = CreatPlateFlangeStif<ContourPlate>();
+        var secBotFlangeStif = CreatePlateFlangeStif<ContourPlate>();
         secBotFlangeStif.Contour.ContourPoints = contourPoints;
         secBotFlangeStif.Insert();
 
@@ -652,20 +664,21 @@ public partial class MG1001 : ConnectionBase {
         var primWebStifs = new List<ContourPlate>();
 
         p1 = Intersection.LineToLine(secTopLine,
-                endPlateLine.Offset(_plateEnd2Thickness, LineExtension.OffsetDirectionEnum.LEFT))
+                endPlateLine.Offset(_plateEnd2Thickness, LineExtension.OffsetDirection.Left))
             .StartPoint;
         p1 = p1 - axisX * (_plateEnd1Thickness + _plateEnd2Thickness) +
              axisZ * Math.Max(prfPrim.s, _plateThickenedThickness) * 0.5;
         p2 = p1 - axisX * _plateWebStifBreadth;
         p4 = p1 + axisZ * _plateWebStifHeight;
-        cp1 = new ContourPoint(p1, CreatChamferStifInside());
+
+        cp1 = new ContourPoint(p1, CreateChamferStifInside());
         cp2 = new ContourPoint(p2, chamferNone);
         cp4 = new ContourPoint(p4, chamferNone);
 
         ContourPoint[] cps;
-        if (_webStifKind == 1) {
+        if (_webStifKind != 0) {
             p3 = p2 + axisZ * _plateWebStifHeight;
-            cp3 = new ContourPoint(p3, CreatChamferStifOutside());
+            cp3 = new ContourPoint(p3, CreateChamferStifOutside());
 
             cps = [cp1, cp2, cp3, cp4];
         } else {
@@ -680,7 +693,7 @@ public partial class MG1001 : ConnectionBase {
                 cp.Y -= distance.Value;
             }
 
-            var webStif = CreatPlateWebStif<ContourPlate>();
+            var webStif = CreatePlateWebStif<ContourPlate>();
             webStif.Contour.ContourPoints = new ArrayList(cps);
             webStif.Insert();
 
@@ -690,7 +703,7 @@ public partial class MG1001 : ConnectionBase {
                 cp.Z *= -1;
             }
 
-            webStif = CreatPlateWebStif<ContourPlate>();
+            webStif = CreatePlateWebStif<ContourPlate>();
             webStif.Contour.ContourPoints = new ArrayList(cps);
             webStif.Insert();
 
@@ -704,18 +717,19 @@ public partial class MG1001 : ConnectionBase {
         var secWebStifs = new List<ContourPlate>();
 
         p1 = Intersection.LineToLine(secTopLine,
-                endPlateLine.Offset(_plateEnd2Thickness, LineExtension.OffsetDirectionEnum.LEFT))
+                endPlateLine.Offset(_plateEnd2Thickness, LineExtension.OffsetDirection.Left))
             .StartPoint;
         p1.Z = prfSec.s * 0.5;
         p2 = p1 + axisX * _plateWebStifBreadth;
         p4 = p1 + axisZ * _plateWebStifHeight;
-        cp1 = new ContourPoint(p1, CreatChamferStifInside());
+
+        cp1 = new ContourPoint(p1, CreateChamferStifInside());
         cp2 = new ContourPoint(p2, chamferNone);
         cp4 = new ContourPoint(p4, chamferNone);
 
-        if (_webStifKind == 1) {
+        if (_webStifKind != 0) {
             p3 = p2 + axisZ * _plateWebStifHeight;
-            cp3 = new ContourPoint(p3, CreatChamferStifOutside());
+            cp3 = new ContourPoint(p3, CreateChamferStifOutside());
 
             cps = [cp1, cp2, cp3, cp4];
         } else {
@@ -727,7 +741,7 @@ public partial class MG1001 : ConnectionBase {
                 cp.Y -= distance.Value;
             }
 
-            var webStif = CreatPlateWebStif<ContourPlate>();
+            var webStif = CreatePlateWebStif<ContourPlate>();
             webStif.Contour.ContourPoints = new ArrayList(cps);
             webStif.Insert();
 
@@ -737,7 +751,7 @@ public partial class MG1001 : ConnectionBase {
                 cp.Z *= -1;
             }
 
-            webStif = CreatPlateWebStif<ContourPlate>();
+            webStif = CreatePlateWebStif<ContourPlate>();
             webStif.Contour.ContourPoints = new ArrayList(cps);
             webStif.Insert();
 
@@ -780,11 +794,12 @@ public partial class MG1001 : ConnectionBase {
         p4 = Intersection.LineToLine(grooveLine, endPlateLine).StartPoint;
         p5 = new Point(endPlate1.EndPoint);
 
-        cutpart = ModelOperation.CreatBooleanOperationPolygon([p1, p2, p3, p4, p5], _plateEnd1Breadth);
-        ModelOperation.ApplyBooleanOperation(endPlate1, cutpart);
+        cutpart = ModelOperation.CreateBooleanOperationPolygon([p1, p2, p3, p4, p5], _plateEnd1Breadth);
+        cutpart.Insert();
+        _ = ModelOperation.ApplyBooleanOperation(endPlate1, cutpart);
         cutpart.Delete();
 
-    SkipGroove:;
+        SkipGroove: ;
 
         #endregion
 
@@ -801,23 +816,23 @@ public partial class MG1001 : ConnectionBase {
         fit.Insert();
 
         if (_plateThickenedThickness > prfPrim.s) {
-            ModelOperation.ApplyBooleanOperation(primPart, thkedPlate);
+            _ = ModelOperation.ApplyBooleanOperation(primPart, thkedPlate);
         }
 
         p1 = Intersection.LineToLine(
-                topPlateLine.Offset(_plateTopThickness, LineExtension.OffsetDirectionEnum.RIGHT),
-                endPlateLine.Offset(_plateEnd1Thickness, LineExtension.OffsetDirectionEnum.RIGHT))
+                topPlateLine.Offset(_plateTopThickness, LineExtension.OffsetDirection.Right),
+                endPlateLine.Offset(_plateEnd1Thickness, LineExtension.OffsetDirection.Right))
             .StartPoint;
         p2 = endPlate1.EndPoint - axisX * _plateEnd1Thickness;
         p3 = Intersection.LineToLine(new Line(p2, axisX), primRightLine).StartPoint;
         p4 = Intersection.LineToLine(
-                topPlateLine.Offset(_plateTopThickness, LineExtension.OffsetDirectionEnum.RIGHT),
+                topPlateLine.Offset(_plateTopThickness, LineExtension.OffsetDirection.Right),
                 primRightLine)
             .StartPoint;
 
-        cutpart = ModelOperation.CreatBooleanOperationPolygon([p1, p2, p3, p4], prfPrim.b1);
-
-        ModelOperation.ApplyBooleanOperation(primPart, cutpart);
+        cutpart = ModelOperation.CreateBooleanOperationPolygon([p1, p2, p3, p4], prfPrim.b1);
+        cutpart.Insert();
+        _ = ModelOperation.ApplyBooleanOperation(primPart, cutpart);
         cutpart.Delete();
 
         #endregion
@@ -827,9 +842,7 @@ public partial class MG1001 : ConnectionBase {
         fit = new Fitting {
             Father = secPart,
             Plane = new Plane {
-                Origin = endPlate1.StartPoint + axisX * _plateEnd2Thickness,
-                AxisX = axisY,
-                AxisY = axisZ
+                Origin = endPlate1.StartPoint + axisX * _plateEnd2Thickness, AxisX = axisY, AxisY = axisZ
             }
         };
         fit.Insert();
@@ -838,7 +851,7 @@ public partial class MG1001 : ConnectionBase {
 
         #region 焊接
 
-        var weld = CreatWeld1<Weld>();
+        var weld = CreateWeld1<Weld>();
         weld.MainObject = topPlate;
         weld.SecondaryObject = endPlate1;
         weld.Position = Weld.WeldPositionEnum.WELD_POSITION_MINUS_X;
@@ -878,21 +891,21 @@ public partial class MG1001 : ConnectionBase {
             weld.Insert();
         }
 
-        weld = CreatWeld2<Weld>();
+        weld = CreateWeld2<Weld>();
         weld.MainObject = primPart;
         weld.SecondaryObject = endPlate1;
         weld.Position = Weld.WeldPositionEnum.WELD_POSITION_PLUS_X;
         weld.Insert();
 
         if (_plateThickenedThickness > prfPrim.s) {
-            weld = CreatWeld3<Weld>();
+            weld = CreateWeld3<Weld>();
             weld.MainObject = primPart;
             weld.SecondaryObject = thkedPlate;
             weld.Position = Weld.WeldPositionEnum.WELD_POSITION_MINUS_Y;
             weld.Insert();
         }
 
-        weld = CreatWeld4<Weld>();
+        weld = CreateWeld4<Weld>();
         if (_plateThickenedThickness > prfPrim.s) {
             weld.MainObject = thkedPlate;
         } else {
@@ -908,7 +921,7 @@ public partial class MG1001 : ConnectionBase {
         weld.Insert();
 
         if (_plateDiagonalThickness > 0) {
-            weld = CreatWeld5<Weld>();
+            weld = CreateWeld5<Weld>();
 
             if (_plateThickenedThickness > prfPrim.s) {
                 weld.MainObject = thkedPlate;
@@ -939,7 +952,7 @@ public partial class MG1001 : ConnectionBase {
             weld.Insert();
         }
 
-        weld = CreatWeld6<Weld>();
+        weld = CreateWeld6<Weld>();
         if (_plateThickenedThickness > prfPrim.s) {
             weld.MainObject = thkedPlate;
         } else {
@@ -967,7 +980,7 @@ public partial class MG1001 : ConnectionBase {
         weld.Insert();
 
         if (_plateEaveThickness > 0 && _plateEaveBreadth > 0 && _plateEaveHeight > 0) {
-            weld = CreatWeld7<Weld>();
+            weld = CreateWeld7<Weld>();
             weld.MainObject = primPart;
             weld.SecondaryObject = eavePlate;
             weld.Position = Weld.WeldPositionEnum.WELD_POSITION_MINUS_X;
@@ -978,7 +991,7 @@ public partial class MG1001 : ConnectionBase {
             weld.Insert();
         }
 
-        weld = CreatWeld8<Weld>();
+        weld = CreateWeld8<Weld>();
         weld.MainObject = topPlate;
         weld.SecondaryObject = primTopFlangeStif;
         weld.Position = Weld.WeldPositionEnum.WELD_POSITION_PLUS_Y;
@@ -1006,7 +1019,7 @@ public partial class MG1001 : ConnectionBase {
         weld.Position = Weld.WeldPositionEnum.WELD_POSITION_PLUS_X;
         weld.Insert();
 
-        weld = CreatWeld9<Weld>();
+        weld = CreateWeld9<Weld>();
         for (int i = 0; i < primWebStifs.Count; i++) {
             if (_plateThickenedThickness > prfPrim.s) {
                 weld.MainObject = thkedPlate;
@@ -1042,7 +1055,7 @@ public partial class MG1001 : ConnectionBase {
 
         #region 创建螺栓
 
-        var bolt = CreatBolt1<BoltArray>();
+        var bolt = CreateBolt1<BoltArray>();
         bolt.FirstPosition = endPlate1.StartPoint;
         bolt.SecondPosition = endPlate1.EndPoint;
         bolt.StartPointOffset.Dx = _boltOffset;
@@ -1058,10 +1071,6 @@ public partial class MG1001 : ConnectionBase {
         FixPrim(prfPrim, endPlate1.EndPoint.Y);
 
         #endregion
-
-        return true;
     }
-
-    #endregion
 
 }

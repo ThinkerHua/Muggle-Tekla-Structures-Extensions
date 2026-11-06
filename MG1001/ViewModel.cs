@@ -9,23 +9,24 @@
  *  You should have received a copy of the GNU General Public License 
  *  along with this program. If not, see <http://www.gnu.org/licenses/>. 
  *==============================================================================
- *  MainWindowViewModel.cs: view model for main window of MG1001
+ *  ViewModel.cs: view model for view of MG1001
  *  written by Huang YongXing - thinkerhua@hotmail.com
  *==============================================================================*/
+
 using Muggle.TsExtensions.CodingHelper.Generators;
 using Tekla.Structures.Datatype;
 
-namespace Muggle.TsExtensions.MG1001.ViewModels;
+namespace Muggle.TsExtensions.MG1001;
 
-[PlateProperties("top", name: "Top")]
-[PlateProperties("diagonal", name: "Diagonal")]
-[PlateProperties("horizontal", name: "Horizontal")]
-[PlateProperties("thickened", name: "Thickened", @class: 4)]
-[PlateProperties("eave", name: "Eave")]
-[PlateProperties("end1", name: "End1", thickness: 28, breadth: 350, height: 1355)]
-[PlateProperties("end2", name: "End2", thickness: 28, breadth: 350, height: 1255)]
-[PlateProperties("flangeStif", name: "FlangeStif", thickness: 10, breadth: 150, height: 150)]
-[PlateProperties("webStif", name: "WebStif", thickness: 10, breadth: 150, height: 150)]
+[PlateProperties("top", name: "Top", material: "Q235B")]
+[PlateProperties("diagonal", name: "Diagonal", material: "Q235B")]
+[PlateProperties("horizontal", name: "Horizontal", material: "Q235B")]
+[PlateProperties("thickened", name: "Thickened", material: "Q235B", @class: 4)]
+[PlateProperties("eave", name: "Eave", material: "Q235B")]
+[PlateProperties("end1", name: "End1", thickness: 28, breadth: 350, height: 1355, material: "Q235B")]
+[PlateProperties("end2", name: "End2", thickness: 28, breadth: 350, height: 1255, material: "Q235B")]
+[PlateProperties("flangeStif", name: "FlangeStif", thickness: 10, breadth: 150, height: 150, material: "Q235B")]
+[PlateProperties("webStif", name: "WebStif", thickness: 10, breadth: 150, height: 150, material: "Q235B")]
 [ChamferProperties("diagonal", type: 1, x: 25, y: 25)]
 [ChamferProperties("horizontal", type: 1, x: 25, y: 25)]
 [ChamferProperties("stifInside", type: 1, x: 25, y: 25)]
@@ -46,4 +47,4 @@ namespace Muggle.TsExtensions.MG1001.ViewModels;
 [GeneralProperties(typeof(Double), "diagPosition1", 80, "diagPosition2", 80, "thickenedPosition", 100,
     "endPosition", 160, "difference", 4, "grooveSlope", 2.5, "boltOffset", 70)]
 [GeneralProperties(typeof(String), "webStifDistList", "190 4*150")]
-public partial class MainWindowViewModel : ConnectionViewModel;
+public partial class ViewModel : ConnectionViewModel;

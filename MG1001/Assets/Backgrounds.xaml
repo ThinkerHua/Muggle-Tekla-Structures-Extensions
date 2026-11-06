@@ -973,38 +973,4 @@
         </GeometryDrawing>
     </DrawingGroup>
 
-    <DrawingGroup x:Key="StiffenerKind1WithDimension">
-        <GeometryDrawing>
-            <GeometryDrawing.Brush>
-                <DrawingBrush Drawing="{StaticResource StiffenerKind1}" />
-            </GeometryDrawing.Brush>
-            <GeometryDrawing.Geometry>
-                <RectangleGeometry Rect="-0.5,-0.5,24.5,24.5" />
-            </GeometryDrawing.Geometry>
-        </GeometryDrawing>
-
-        <GeometryDrawing Pen="{StaticResource Pen_Leader}">
-            <GeometryDrawing.Geometry>
-                <PathGeometry Figures="M0,24 L-10,34 H-20" />
-            </GeometryDrawing.Geometry>
-        </GeometryDrawing>
-    </DrawingGroup>
-
-    <DrawingGroup x:Key="StiffenerKind2WithDimension">
-        <GeometryDrawing>
-            <GeometryDrawing.Brush>
-                <DrawingBrush Drawing="{StaticResource StiffenerKind2}" />
-            </GeometryDrawing.Brush>
-            <GeometryDrawing.Geometry>
-                <RectangleGeometry Rect="-0.5,-0.5,24.5,24.5" />
-            </GeometryDrawing.Geometry>
-        </GeometryDrawing>
-
-        <GeometryDrawing Pen="{StaticResource Pen_Leader}">
-            <GeometryDrawing.Geometry>
-                <PathGeometry Figures="M0,24 L-10,34 H-20 M24,0 L34,-10 H44" />
-            </GeometryDrawing.Geometry>
-        </GeometryDrawing>
-    </DrawingGroup>
-
 </ResourceDictionary>

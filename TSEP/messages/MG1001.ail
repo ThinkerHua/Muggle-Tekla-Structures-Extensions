@@ -138,3 +138,13 @@ string_utf8 albl_start_offset {
 	entry = ("enu", "Start offset");
 	entry = ("chs", "起始偏移");
 };
+
+string_utf8 exception_primary_profile_not_supported {
+    entry = ("enu", "Only H-type primary be supported");
+    entry = ("chs", "仅支持H型截面主零件");
+};
+
+string_utf8 exception_secondary_profile_not_supported {
+    entry = ("enu", "Only H-type secondary be supported");
+    entry = ("chs", "仅支持H型截面次零件");
+};

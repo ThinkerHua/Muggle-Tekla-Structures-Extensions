@@ -9,25 +9,25 @@
  *  You should have received a copy of the GNU General Public License 
  *  along with this program. If not, see <http://www.gnu.org/licenses/>. 
  *==============================================================================
- *  MainWindow.xaml.cs: code behind for main window of MG1001
+ *  View.xaml.cs: code behind for view of MG1001
  *  written by Huang YongXing - thinkerhua@hotmail.com
  *==============================================================================*/
+
 using System;
 using System.Windows;
 using Muggle.TsExtensions.Common.WPF.Localization;
-using Muggle.TsExtensions.MG1001.ViewModels;
 using Tekla.Structures.Dialog;
 using Tekla.Structures.Dialog.UIControls;
 using TsData = Tekla.Structures.Datatype;
 
-namespace Muggle.TsExtensions.MG1001.Views {
+namespace Muggle.TsExtensions.MG1001 {
     /// <summary>
-    /// MainWindow.xaml 的交互逻辑
+    /// View.xaml 的交互逻辑
     /// </summary>
-    public partial class MainWindow : PluginWindowBase {
-        private MainWindowViewModel ViewModel { get; }
+    public partial class View : PluginWindowBase {
+        private ViewModel ViewModel { get; }
 
-        public MainWindow(MainWindowViewModel viewModel) {
+        public View(ViewModel viewModel) {
             TranslationService.Instance.ChangeLanguage(Localization.Language);
 
             InitializeComponent();
