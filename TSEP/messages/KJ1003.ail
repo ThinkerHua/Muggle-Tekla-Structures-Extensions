@@ -1,0 +1,79 @@
+﻿string_utf8 albl_KJ1003_title {
+	entry = ("enu", "KJ1003 - Connection between H or box column and H beam");
+	entry = ("chs", "KJ1003 - H型或箱型柱与H型梁连接");
+};
+
+string_utf8 albl_gap {
+	entry = ("enu", "Gap");
+	entry = ("chs", "间隙");
+};
+
+string_utf8 albl_short_beam_length {
+	entry = ("enu", "Short beam length");
+	entry = ("chs", "短梁长度");
+};
+
+string_utf8 albl_extra_length {
+	entry = ("enu", "Extra length");
+	entry = ("chs", "扩展长度");
+};
+
+string_utf8 albl_more_stiffeners_distance_list {
+	entry = ("enu", "Mor stiffeners distance list");
+	entry = ("chs", "更多加劲板距离列");
+};
+
+string_utf8 albl_short_beam {
+	entry = ("enu", "Short beam");
+	entry = ("chs", "短梁");
+};
+
+string_utf8 albl_beam {
+	entry = ("enu", "Beam");
+	entry = ("chs", "梁");
+};
+
+string_utf8 albl_column_stiffener {
+	entry = ("enu", "Column stiffener");
+	entry = ("chs", "柱加劲板");
+};
+
+string_utf8 albl_thickened {
+	entry = ("enu", "Thickened");
+	entry = ("chs", "加厚板");
+};
+
+string_utf8 albl_web_splice {
+	entry = ("enu", "Web splice");
+	entry = ("chs", "腹板连接板");
+};
+
+string_utf8 albl_outside_flange_splice {
+	entry = ("enu", "Outside flange splice");
+	entry = ("chs", "外侧翼缘连接板");
+};
+
+string_utf8 albl_inside_flange_splice {
+	entry = ("enu", "Inside flange splice");
+	entry = ("chs", "内侧翼缘连接板");
+};
+
+string_utf8 albl_web_bolt {
+	entry = ("enu", "Web bolt");
+	entry = ("chs", "腹板螺栓");
+};
+
+string_utf8 albl_flange_bolt {
+	entry = ("enu", "Flange bolt");
+	entry = ("chs", "翼缘螺栓");
+};
+
+string_utf8 exception_primary_profile_not_supported {
+    entry = ("enu", "Only invariant H or rectangular type primary profile be supported");
+    entry = ("chs", "仅支持H或矩形非变截面主零件");
+};
+
+string_utf8 exception_secondary_profile_not_supported {
+    entry = ("enu", "Only invariant H type secondary profile be supported");
+    entry = ("chs", "仅支持H型非变截面次零件");
+};

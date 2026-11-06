@@ -23,6 +23,14 @@
 			<DisplayName>KJ1002</DisplayName>
 			<ComponentId>KJ1002</ComponentId>
 		</CatalogPluginConnectionItem>
+		<CatalogPluginConnectionItem>
+			<DisplayName>KJ1003</DisplayName>
+			<ComponentId>KJ1003</ComponentId>
+		</CatalogPluginConnectionItem>
+		<CatalogPluginConnectionItem>
+			<DisplayName>KJ1004</DisplayName>
+			<ComponentId>KJ1004</ComponentId>
+		</CatalogPluginConnectionItem>
 		<CatalogPluginDetailItem>
 			<DisplayName>KJ2001</DisplayName>
 			<ComponentId>KJ2001</ComponentId>
@@ -79,6 +87,12 @@
 				</ComponentCatalogItemPlaceholder>
 				<ComponentCatalogItemPlaceholder>
 					<ItemIdString>CatalogPluginConnectionItem?KJ1002</ItemIdString>
+				</ComponentCatalogItemPlaceholder>
+				<ComponentCatalogItemPlaceholder>
+					<ItemIdString>CatalogPluginConnectionItem?KJ1003</ItemIdString>
+				</ComponentCatalogItemPlaceholder>
+				<ComponentCatalogItemPlaceholder>
+					<ItemIdString>CatalogPluginConnectionItem?KJ1004</ItemIdString>
 				</ComponentCatalogItemPlaceholder>
 				<ComponentCatalogItemPlaceholder>
 					<ItemIdString>CatalogPluginDetailItem?KJ2001</ItemIdString>

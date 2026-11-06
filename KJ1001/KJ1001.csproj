@@ -14,7 +14,6 @@
 	</PropertyGroup>
 	
 	<ItemGroup>
-		<PackageReference Include="CalcBinding" />
 		<PackageReference Include="Muggle.TsExtensions.CodingHelper" />
 		<PackageReference Include="Tekla.Structures" ExcludeAssets="runtime" />
 		<PackageReference Include="Tekla.Structures.Catalogs" ExcludeAssets="runtime" />
@@ -22,6 +21,7 @@
 		<PackageReference Include="Tekla.Structures.Dialog" ExcludeAssets="runtime;contentFiles" />
 		<PackageReference Include="Tekla.Structures.Model" ExcludeAssets="runtime" />
 		<PackageReference Include="Tekla.Structures.Plugins" ExcludeAssets="runtime" />
+        <PackageReference Include="TeklaStructuresAttributes" />
 	</ItemGroup>
 	
 	<ItemGroup>

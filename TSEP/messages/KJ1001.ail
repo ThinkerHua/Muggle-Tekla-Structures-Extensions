@@ -1,288 +1,99 @@
-﻿string_utf8 albl_KJ1001_title
-{
-	entry = ("enu", "KJ1001 - Connection between box column and H-beam");
-	entry = ("chs", "KJ1001 - 箱型柱与H型梁连接");
+﻿string_utf8 albl_KJ1001_title {
+	entry = ("enu", "KJ1001 - Connection between H or box column and H beam");
+	entry = ("chs", "KJ1001 - H型或箱型柱与H型梁连接");
 };
 
-string_utf8 albl_parameters
-{
-	entry = ("enu", "Parameters");
-	entry = ("chs", "参数");
-};
-
-
-string_utf8 albl_gap
-{
+string_utf8 albl_gap {
 	entry = ("enu", "Gap");
 	entry = ("chs", "间隙");
 };
 
-string_utf8 albl_connection_type
-{
-	entry = ("enu", "Connection type");
-	entry = ("chs", "连接类型");
+string_utf8 albl_top_cover_chamfer_X {
+	entry = ("enu", "Top cover chamfer X");
+	entry = ("chs", "上盖板切角X");
 };
 
-string_utf8 albl_type1
-{
-	entry = ("enu", "Type 1");
-	entry = ("chs", "类型1");
+string_utf8 albl_top_cover_chamfer_Y {
+	entry = ("enu", "Top cover chamfer Y");
+	entry = ("chs", "上盖板切角Y");
 };
 
-string_utf8 albl_type2
-{
-	entry = ("enu", "Type 2");
-	entry = ("chs", "类型2");
+string_utf8 albl_bottom_cover_chamfer_X {
+	entry = ("enu", "Bottom cover chamfer X");
+	entry = ("chs", "下盖板切角X");
 };
 
-string_utf8 albl_type3
-{
-	entry = ("enu", "Type 3");
-	entry = ("chs", "类型3");
+string_utf8 albl_bottom_cover_chamfer_Y {
+	entry = ("enu", "Bottom cover chamfer Y");
+	entry = ("chs", "下盖板切角Y");
 };
 
-string_utf8 albl_type1_description
-{
-	entry = ("enu", "1 - Flange welding, web bolting");
-	entry = ("chs", "1 - 翼缘焊接，腹板栓接");
+string_utf8 albl_extra_length {
+	entry = ("enu", "Extra length");
+	entry = ("chs", "扩展长度");
 };
 
-string_utf8 albl_type2_description
-{
-	entry = ("enu", "2 - Weld short beam, all bolting");
-	entry = ("chs", "2 - 焊短梁，全栓接");
+string_utf8 albl_more_stiffeners_distance_list {
+	entry = ("enu", "More stiffeners distance list");
+	entry = ("chs", "更多加劲板距离列");
 };
 
-string_utf8 albl_type3_description
-{
-	entry = ("enu", "3 - Weld short beam, flange welding, web bolting");
-	entry = ("chs", "3 - 焊短梁，翼缘焊接，腹板栓接");
+string_utf8 albl_splice_creation {
+	entry = ("enu", "Splice creation");
+	entry = ("chs", "连接板创建");
 };
 
-string_utf8 albl_inner_stiffener_thickness
-{
-	entry = ("enu", "Thickness of inner stiffener");
-	entry = ("chs", "内部加劲板厚度");
+string_utf8 albl_front {
+	entry = ("enu", "Front");
+	entry = ("chs", "前面");
 };
 
-string_utf8 albl_inner_stiffener_thickness_tooltip
-{
-	entry = ("enu", "Keep the default value or enter a negative value to determine based on the flange thickness of the secondary part; If 0 is entered, the inner stiffener plate will not be created; If a positive value is entered, it is created as the input value.");
-	entry = ("chs", "保持默认值或输入负值，以根据次零件翼缘厚度确定；输入0，则不创建内部加劲板；输入正值，则按输入值创建。");
+string_utf8 albl_behind {
+	entry = ("enu", "Behind");
+	entry = ("chs", "后面");
 };
 
-string_utf8 albl_inner_stiffener_chamfer_size
-{
-	entry = ("enu", "Size of inner stiffener's chamfer");
-	entry = ("chs", "内部加劲板倒角尺寸");
+string_utf8 albl_both {
+	entry = ("enu", "Both");
+	entry = ("chs", "两侧");
 };
 
-string_utf8 albl_more_inner_stiffeners_distance_list
-{
-	entry = ("enu", "Distance list of more inner stiffeners");
-	entry = ("chs", "更多内部加劲板的距离列");
+string_utf8 albl_column_stiffener {
+	entry = ("enu", "Column stiffener");
+	entry = ("chs", "柱加劲板");
 };
 
-string_utf8 albl_thickened_stiffener_thickness
-{
-	entry = ("enu", "Thickness of thickened stiffener");
-	entry = ("chs", "局部加厚补强板厚度");
+string_utf8 albl_thickened {
+	entry = ("enu", "Thickened");
+	entry = ("chs", "加厚板");
 };
 
-string_utf8 albl_thickened_stiffener_extension_length
-{
-	entry = ("enu", "Extension lenght of thickened stiffener");
-	entry = ("chs", "局部加厚补强板延伸长度");
+string_utf8 albl_top_cover {
+	entry = ("enu", "Top cover");
+	entry = ("chs", "上盖板");
 };
 
-string_utf8 albl_stiffener_material
-{
-	entry = ("enu", "Material of stiffener");
-	entry = ("chs", "加劲板/补强板的材质");
+string_utf8 albl_bottom_cover {
+	entry = ("enu", "Bottom cover");
+	entry = ("chs", "下盖板");
 };
 
-string_utf8 albl_rathole_radius
-{
-	entry = ("enu", "Radius of rat hole");
-	entry = ("chs", "鼠洞半径");
+string_utf8 albl_splice {
+	entry = ("enu", "Splice");
+	entry = ("chs", "连接板");
 };
 
-string_utf8 albl_weld_angle
-{
-	entry = ("enu", "Angle of weld");
-	entry = ("chs", "焊缝角度");
+string_utf8 albl_beam {
+	entry = ("enu", "Beam");
+	entry = ("chs", "梁");
 };
 
-string_utf8 albl_root_face
-{
-	entry = ("enu", "Root face size of weld");
-	entry = ("chs", "焊缝根部尺寸");
+string_utf8 exception_primary_profile_not_supported {
+    entry = ("enu", "Only invariant H or rectangular type primary profile be supported");
+    entry = ("chs", "仅支持H或矩形非变截面主零件");
 };
 
-string_utf8 albl_root_opening
-{
-	entry = ("enu", "Root opening size of weld");
-	entry = ("chs", "焊缝根部间隙");
-};
-
-string_utf8 albl_cover_thickness
-{
-	entry = ("enu", "Cover's thickness");
-	entry = ("chs", "加强盖板厚度");
-};
-
-string_utf8 albl_cover_length1
-{
-	entry = ("enu", "Cover's length 1");
-	entry = ("chs", "加强盖板长度1");
-};
-
-string_utf8 albl_cover_length2
-{
-	entry = ("enu", "Cover's length 2");
-	entry = ("chs", "加强盖板长度2");
-};
-
-string_utf8 albl_top_cover_width1
-{
-	entry = ("enu", "Top cover's width 1");
-	entry = ("chs", "上加强盖板宽度1");
-};
-
-string_utf8 albl_top_cover_width2
-{
-	entry = ("enu", "Top cover's width 2");
-	entry = ("chs", "上加强盖板宽度2");
-};
-
-string_utf8 albl_bottom_cover_width1
-{
-	entry = ("enu", "Bottom cover's width 1");
-	entry = ("chs", "下加强盖板宽度1");
-};
-
-string_utf8 albl_bottom_cover_width2
-{
-	entry = ("enu", "Bottom cover's width 2");
-	entry = ("chs", "下加强盖板宽度2");
-};
-
-string_utf8 albl_cover_material
-{
-	entry = ("enu", "Cover's material");
-	entry = ("chs", "加强盖板材质");
-};
-
-string_utf8 albl_web_connection_plate_creation_enum
-{
-	entry = ("enu", "Web connection plate creation enumeration");
-	entry = ("chs", "腹板连接板创建枚举");
-};
-
-string_utf8 albl_only_front
-{
-	entry = ("enu", "Only front");
-	entry = ("chs", "仅前面");
-};
-
-string_utf8 albl_only_behind
-{
-	entry = ("enu", "Only behind");
-	entry = ("chs", "仅背面");
-};
-
-string_utf8 albl_front_and_behind
-{
-	entry = ("enu", "Both front and behind");
-	entry = ("chs", "前后");
-};
-
-string_utf8 albl_web_connection_plate_thickness
-{
-	entry = ("enu", "Thickness of web connection plate");
-	entry = ("chs", "腹板连接板厚度");
-};
-
-string_utf8 albl_connection_plate_material
-{
-	entry = ("enu", "Material of connection plate");
-	entry = ("chs", "连接板材质");
-};
-
-string_utf8 albl_web_bolt_standard
-{
-	entry = ("enu", "Web bolt's standard");
-	entry = ("chs", "腹板螺栓等级");
-};
-
-string_utf8 albl_web_bolt_size
-{
-	entry = ("enu", "Web bolt's size");
-	entry = ("chs", "腹板螺栓尺寸");
-};
-
-string_utf8 albl_web_position_distance_list_X
-{
-	entry = ("enu", "Distance list in X direction of web position");
-	entry = ("chs", "腹板定位X向距离列");
-};
-
-string_utf8 albl_web_position_distance_list_Y
-{
-	entry = ("enu", "Distance list in Y direction of web position");
-	entry = ("chs", "腹板定位Y向距离列");
-};
-
-string_utf8 albl_short_beam_length
-{
-	entry = ("enu", "Short beam's length");
-	entry = ("chs", "短梁长度");
-};
-
-string_utf8 albl_short_beam_profile
-{
-	entry = ("enu", "Short beam's profile");
-	entry = ("chs", "短梁型材/截面/型号");
-};
-
-string_utf8 albl_short_beam_material
-{
-	entry = ("enu", "Short beam's material");
-	entry = ("chs", "短梁材质");
-};
-
-string_utf8 albl_outer_flange_connection_plate_thickness
-{
-	entry = ("enu", "Thickness of outer flange connection plate");
-	entry = ("chs", "翼缘外连接板厚度");
-};
-
-string_utf8 albl_inner_flange_connection_plate_thickness
-{
-	entry = ("enu", "Thickness of inner flange connection plate");
-	entry = ("chs", "翼缘内连接板厚度");
-};
-
-string_utf8 albl_flange_bolt_standard
-{
-	entry = ("enu", "Flange bolt's standard");
-	entry = ("chs", "翼缘螺栓等级");
-};
-
-string_utf8 albl_flange_bolt_size
-{
-	entry = ("enu", "Flange bolt's size");
-	entry = ("chs", "翼缘螺栓尺寸");
-};
-
-string_utf8 albl_flange_position_distance_list_X
-{
-	entry = ("enu", "Distance list in X direction of flange position");
-	entry = ("chs", "翼缘定位X向距离列");
-};
-
-string_utf8 albl_flange_position_distance_list_Y
-{
-	entry = ("enu", "Distance list in Y direction of flange position");
-	entry = ("chs", "翼缘定位Y向距离列");
+string_utf8 exception_secondary_profile_not_supported {
+    entry = ("enu", "Only invariant H type secondary profile be supported");
+    entry = ("chs", "仅支持H型非变截面次零件");
 };

@@ -25,6 +25,8 @@
         <File Path="TSEP/bitmaps/et_element_HJ1001.bmp" />
         <File Path="TSEP/bitmaps/et_element_KJ1001.bmp" />
         <File Path="TSEP/bitmaps/et_element_KJ1002.bmp" />
+        <File Path="TSEP/bitmaps/et_element_KJ1003.bmp" />
+        <File Path="TSEP/bitmaps/et_element_KJ1004.bmp" />
         <File Path="TSEP/bitmaps/et_element_KJ2001.bmp" />
         <File Path="TSEP/bitmaps/et_element_MG1001.bmp" />
         <File Path="TSEP/bitmaps/et_element_MG1002.bmp" />
@@ -46,6 +48,8 @@
         <File Path="TSEP/messages/HJ1001.ail" />
         <File Path="TSEP/messages/KJ1001.ail" />
         <File Path="TSEP/messages/KJ1002.ail" />
+        <File Path="TSEP/messages/KJ1003.ail" />
+        <File Path="TSEP/messages/KJ1004.ail" />
         <File Path="TSEP/messages/KJ2001.ail" />
         <File Path="TSEP/messages/MG1001.ail" />
         <File Path="TSEP/messages/MG1002.ail" />
@@ -66,6 +70,8 @@
     <Project Path="HJ1001/HJ1001.csproj" />
     <Project Path="KJ1001/KJ1001.csproj" />
     <Project Path="KJ1002/KJ1002.csproj" />
+    <Project Path="KJ1003/KJ1003.csproj" />
+    <Project Path="KJ1004/KJ1004.csproj" />
     <Project Path="KJ2001/KJ2001.csproj" />
     <Project Path="MainWindow/MainWindow.csproj" />
     <Project Path="MG1001/MG1001.csproj" />
