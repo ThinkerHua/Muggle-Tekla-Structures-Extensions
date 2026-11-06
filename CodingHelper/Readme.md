@@ -547,7 +547,7 @@ public partial class MainWindowViewModel {
 
 ## Generator for user interface
 
-Apply "UserInterfaceAttribute" to plugin data class to generate a simple UI for plugin.
+Apply "UserInterfaceAttribute" to plugin class to generate a simple UI for plugin.
 On one hand it makes debugging easier during the core logic development stage, and on the other hand 
 it reduces workload during the UI development stage because you can edit based on the generated files.
 
@@ -562,29 +562,52 @@ Currently, it only supports WPF, but INP and WinForm will be supported later.
 ### Example
 
 ~~~CSharp
-// in PluginData.cs
+// ====================
+//     PluginData.cs
+// ====================
 
 using Muggle.TsExtensions.CodingHelper.Generators;
+
+namespace Demo;
 
 [GeneralFields(typeof(int), "num")]
 [PlateFields("Stiffener")]
-// [UserInterface(UserInterfaceType.INP, "")]
-// [UserInterface(UserInterfaceType.WinForm, "")]
-[UserInterface(UserInterfaceType.WPF, "Plugin.MainWindowViewModel")]
 public partial class PluginData { }
 
 
-// in Plugin.cs
+// ====================
+//     Plugin.cs
+// ====================
 
 using Muggle.TsExtensions.CodingHelper.Generators;
 
-[Plugin("Plugin")]
-// [PluginUserInterface(InpUi.Definition)]
-// [PluginUserInterface("Plugin.WinFormUi")]
-[PluginUserInterface("Plugin.WpfUi")]
-public partial class Plugin : PluginBase {
+namespace Demo;
+
+[Plugin("Demo")]
+/*
+ * Since the "UserInterfaceAttribute" has already been applied, 
+ * "PluginUserInterfaceAttribute" will be automatically applied in the generated code, 
+ * so the manually applied "PluginUserInterfaceAttribute" should be removed 
+ */
+// [PluginUserInterface("Demo.WpfUi")]
+[UserInterface(UserInterfaceType.WPF, "Demo.ViewModel")]
+public partial class Plugin : ConnectionBase {
     /* ... */
 }
+
+
+// ====================
+//     ViewModel.cs
+// ====================
+
+using Muggle.TsExtensions.CodingHelper.Generators;
+
+namespace Demo;
+
+[PlateProperties("Stiffener")]
+[GeneralProperties(typeof(Integer), "num", 6)]
+public partial class ViewModel : ConnectionViewModel;
+
 ~~~
 
 ---
