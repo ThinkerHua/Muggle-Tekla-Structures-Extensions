@@ -1,19 +1,18 @@
 using System;
 using System.Windows;
 using Muggle.TsExtensions.Common.WPF.Localization;
-using Muggle.TsExtensions.Demo1.ViewModels;
 using Tekla.Structures.Dialog;
 using Tekla.Structures.Dialog.UIControls;
 using TsData = Tekla.Structures.Datatype;
 
-namespace Muggle.TsExtensions.Demo1.Views {
+namespace Muggle.TsExtensions.Demo1 {
     /// <summary>
-    /// MainWindow.xaml 的交互逻辑
+    /// View.xaml 的交互逻辑
     /// </summary>
-    public partial class MainWindow : PluginWindowBase {
-        private MainWindowViewModel ViewModel { get; }
+    public partial class View : PluginWindowBase {
+        private ViewModel ViewModel { get; }
 
-        public MainWindow(MainWindowViewModel dataContext) {
+        public View(ViewModel dataContext) {
             TranslationService.Instance.ChangeLanguage(Localization.Language);
 
             InitializeComponent();

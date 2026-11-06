@@ -9,10 +9,11 @@
         <Optimize Condition="$(Configuration.StartsWith('R'))">True</Optimize>
         <DefineConstants Condition="$(Configuration.StartsWith('D'))">TRACE;DEBUG</DefineConstants>
         <DefineConstants Condition="$(Configuration.StartsWith('R'))">TRACE;RELEASE</DefineConstants>
+        <!--<EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+        <CompilerGeneratedFilesOutputPath>Generated\$(TargetFramework)</CompilerGeneratedFilesOutputPath>-->
 	</PropertyGroup>
     
 	<ItemGroup>
-		<PackageReference Include="CalcBinding" />
 		<PackageReference Include="Muggle.TsExtensions.CodingHelper" Condition="$(Configuration.StartsWith('R'))" />
 		<PackageReference Include="Tekla.Structures" ExcludeAssets="runtime" />
 		<PackageReference Include="Tekla.Structures.Datatype" ExcludeAssets="runtime" />
@@ -27,6 +28,12 @@
 		<ProjectReference Include="..\Common\Common.csproj" />
 		<ProjectReference Include="..\Common.WPF\Common.WPF.csproj" />
 	</ItemGroup>
+
+    <!--<ItemGroup>
+        <Compile Remove="$(CompilerGeneratedFilesOutputPath)/**/*.cs" />
+        <Folder Include="Generated\**" />
+        <Folder Include="ViewModels\" />
+    </ItemGroup>-->
 
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
 		<Exec Command="xcopy &quot;$(TargetDir)$(TargetName).dll&quot; &quot;$(XSDATADIR)Environments\common\extensions\Muggle.TsExtensions\&quot; /Y /C /Q /R" />

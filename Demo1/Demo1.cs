@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Muggle.TsExtensions.CodingHelper.Generators;
@@ -8,13 +9,14 @@ using Tekla.Structures.Geometry3d;
 using Tekla.Structures.Model;
 using Tekla.Structures.Model.UI;
 using Tekla.Structures.Plugins;
-using static Muggle.TsExtensions.Common.Operation;
 using Win = System.Windows;
 
 namespace Muggle.TsExtensions.Demo1;
 
 [Plugin("Demo1")]
-[PluginUserInterface("Muggle.TsExtensions.Demo1.Views.MainWindow")]
+//[UserInterface(UserInterfaceType.WPF, "Muggle.TsExtensions.Demo1.ViewModel")]
+// if using generated UI, uncomment above line and comment below line; otherwise, do the opposite
+[PluginUserInterface("Muggle.TsExtensions.Demo1.View")]
 [InputObjectDependency(InputObjectDependency.DEPENDENT)]
 [PluginCoordinateSystem(CoordinateSystemType.FROM_FIRST_POINT_AND_GLOBAL)]
 [FieldsFrom(typeof(PluginData))]
@@ -30,7 +32,7 @@ public partial class Demo1 : PluginBase {
     [WeldFieldDefaultValues(1, 10, 10, 6.0, 6.0)]
     [WeldFieldDefaultValues(2, 10, sizeAbove: 6.0)]
     [ChamferFieldDefaultValues("Stif", 1, 15.0, 15.0)]
-    [GeneralFieldDefaultValues("CreatStud", 1, "gap", 15.0, "BoltOffsetX", 50, "StudOffsetX", 50)]
+    [GeneralFieldDefaultValues("CreateStud", 1, "Gap", 0.0, "BoltOffsetX", 50, "StudOffsetX", 50)]
     private PluginData Data { get; }
 
     public Demo1(PluginData data) {
@@ -59,12 +61,11 @@ public partial class Demo1 : PluginBase {
         const double SecondaryTotalLength = 1200;
 
         try {
-
             #region Primary
 
             var p1 = basePoint + new Vector(0, 0, 20);
             var p2 = basePoint - new Vector(0, 0, 1000);
-            var primary = CreatPartPrimary<Beam>();
+            var primary = CreatePartPrimary<Beam>();
             primary.StartPoint = p1;
             primary.EndPoint = p2;
             primary.Position.Depth = Position.DepthEnum.MIDDLE;
@@ -82,7 +83,7 @@ public partial class Demo1 : PluginBase {
 
             p1 = basePoint + new Vector(primHeight * 0.5, 0, 0);
             p2 = p1 + new Vector(Secondary1Length - _gap * 0.5, 0, 0);
-            var secondary1 = CreatPartSecondary<Beam>();
+            var secondary1 = CreatePartSecondary<Beam>();
             secondary1.StartPoint = p1;
             secondary1.EndPoint = p2;
             secondary1.Position.Depth = Position.DepthEnum.BEHIND;
@@ -90,7 +91,7 @@ public partial class Demo1 : PluginBase {
             secondary1.Position.Rotation = Position.RotationEnum.TOP;
             secondary1.Insert();
 
-            var weld = CreatWeld1<Weld>();
+            var weld = CreateWeld1<Weld>();
             weld.MainObject = primary;
             weld.SecondaryObject = secondary1;
             weld.AroundWeld = true;
@@ -98,7 +99,7 @@ public partial class Demo1 : PluginBase {
 
             p1 = p2 + new Vector(_gap, 0, 0);
             p2 = basePoint + new Vector(SecondaryTotalLength, 0, 0);
-            var secondary2 = CreatPartSecondary<Beam>();
+            var secondary2 = CreatePartSecondary<Beam>();
             secondary2.StartPoint = p1;
             secondary2.EndPoint = p2;
             secondary2.Position.Depth = Position.DepthEnum.BEHIND;
@@ -119,18 +120,22 @@ public partial class Demo1 : PluginBase {
 
             if (_plateStiffenerThickness <= 0.0) _plateStiffenerThickness = secFlangeThickness;
 
-            var stiffeners = ModelOperation.CreatStiffeners(primary,
-                new Point(0, 0, -_plateStiffenerThickness * 0.5),
-                _plateStiffenerThickness, _plateStiffenerMaterial, _plateStiffenerClass.ToString(),
-                chamferType: EnumParse<Chamfer.ChamferTypeEnum>(_chamferStifType),
-                chamferSizeX: _chamferStifX, chamferSizeY: _chamferStifY,
-                chamferDz1: _chamferStifDz1, chamferDz2: _chamferStifDz2);
-            stiffeners = stiffeners.Concat(ModelOperation.CreatStiffeners(primary,
-                new Point(0, 0, -secHeight + _plateStiffenerThickness * 0.5),
-                _plateStiffenerThickness, _plateStiffenerMaterial, _plateStiffenerClass.ToString(),
-                chamferType: EnumParse<Chamfer.ChamferTypeEnum>(_chamferStifType),
-                chamferSizeX: _chamferStifX, chamferSizeY: _chamferStifY,
-                chamferDz1: _chamferStifDz1, chamferDz2: _chamferStifDz2));
+            ContourPlate InsertStiffener(ArrayList contourPoints) {
+                var stif = CreatePlateStiffener<ContourPlate>();
+                stif.Contour.ContourPoints = contourPoints;
+                stif.Position.Depth = Position.DepthEnum.MIDDLE;
+                stif.Insert();
+                return stif;
+            }
+
+            p1 = new Point(0, 0, -_plateStiffenerThickness * 0.5);
+            var chamfer = CreateChamferStif();
+            var contours = ModelOperation.CalculateStiffeners(primary, p1, _plateStiffenerThickness, chamfer: chamfer);
+            var stiffeners = contours.Select(InsertStiffener);
+
+            p1 = new Point(0, 0, -secHeight + _plateStiffenerThickness * 0.5);
+            contours = ModelOperation.CalculateStiffeners(primary, p1, _plateStiffenerThickness, chamfer: chamfer);
+            stiffeners = stiffeners.Concat(contours.Select(InsertStiffener));
 
             var primProfileType = string.Empty;
             try {
@@ -146,7 +151,7 @@ public partial class Demo1 : PluginBase {
             }
 
             foreach (var stiffener in stiffeners) {
-                weld = CreatWeld1<Weld>();
+                weld = CreateWeld1<Weld>();
                 weld.MainObject = primary;
                 weld.SecondaryObject = stiffener;
                 weld.Position = Weld.WeldPositionEnum.WELD_POSITION_PLUS_X;
@@ -197,7 +202,7 @@ public partial class Demo1 : PluginBase {
             p1 = new Point(-_plateSpliceHeight * 0.5, 0, 0);
             p2 = p1 + new Vector(_plateSpliceHeight, 0, 0);
 
-            var splice1 = CreatPlateSplice<Beam>();
+            var splice1 = CreatePlateSplice<Beam>();
             splice1.StartPoint = p1;
             splice1.EndPoint = p2;
             splice1.Position.Rotation = Position.RotationEnum.TOP;
@@ -206,7 +211,7 @@ public partial class Demo1 : PluginBase {
             splice1.Position.PlaneOffset = secIsHProfileType ? secWebThickness * 0.5 : secWidth * 0.5;
             splice1.Insert();
 
-            var splice2 = CreatPlateSplice<Beam>();
+            var splice2 = CreatePlateSplice<Beam>();
             splice2.StartPoint = p1;
             splice2.EndPoint = p2;
             splice2.Position.Rotation = Position.RotationEnum.TOP;
@@ -219,7 +224,7 @@ public partial class Demo1 : PluginBase {
 
             #region Bolt
 
-            var bolt = CreatBoltConnect<BoltArray>();
+            var bolt = CreateBoltConnect<BoltArray>();
             bolt.PartToBoltTo = secondary1;
             bolt.PartToBeBolted = splice1;
             bolt.AddOtherPartToBolt(splice2);
@@ -240,9 +245,9 @@ public partial class Demo1 : PluginBase {
 
             #region Stud
 
-            if (_creatStud == 0) goto DontCreatStud;
+            if (_createStud == 0) goto DontCreateStud;
 
-            var stud = CreatBoltStud<BoltArray>();
+            var stud = CreateBoltStud<BoltArray>();
             stud.PartToBoltTo = secondary1;
             stud.PartToBeBolted = secondary1;
             stud.FirstPosition = secondary1.StartPoint;
@@ -257,7 +262,7 @@ public partial class Demo1 : PluginBase {
             stud.SecondPosition = secondary2.EndPoint;
             stud.Insert();
 
-        DontCreatStud:;
+        DontCreateStud:;
 
             #endregion
 

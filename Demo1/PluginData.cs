@@ -8,8 +8,10 @@ namespace Muggle.TsExtensions.Demo1;
 [BoltFields("Connect", "Stud")]
 [WeldFields(1, 2)]
 [ChamferFields("Stif")]
-[GeneralFields(typeof(int), "CreatStud")]
-[GeneralFields(typeof(double), "gap", "BoltOffsetX", "StudOffsetX")]
+[GeneralFields(typeof(int), "CreateStud")]
+[GeneralFields(typeof(double), "Gap", "BoltOffsetX", "StudOffsetX")]
 public partial class PluginData {
     [StructuresField("UselessAttribute")] public int UselessAttribute;
+    [StructuresField("UselessAttribute2")] public int UselessAttribute2;
+    [StructuresField("UselessAttribute3")] public double UselessAttribute3;
 }
