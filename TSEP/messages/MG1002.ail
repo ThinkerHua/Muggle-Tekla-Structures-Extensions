@@ -1,125 +1,99 @@
-﻿string_utf8 albl_MG1002_title
-{
+﻿string_utf8 albl_MG1002_title {
 	entry = ("enu", "MG1002 - Horizontal connection between middle column and two beams");
 	entry = ("chs", "MG1002 - 中柱与梁横向连接");
 };
 
-string_utf8 albl_parameters_1
-{
-	entry = ("enu", "Parameters 1");
-	entry = ("chs", "参数1");
-};
-
-string_utf8 albl_parameters_2
-{
-	entry = ("enu", "Parameters 2");
-	entry = ("chs", "参数2");
-};
-
-string_utf8 albl_vertical_plate_profile
-{
-	entry = ("enu", "Vertical plate's profile");
-	entry = ("chs", "竖板规格");
-};
-
-string_utf8 albl_diagonal_plate_profile
-{
-	entry = ("enu", "Diagonal plate's profile");
-	entry = ("chs", "对角板规格");
-};
-
-string_utf8 albl_diagonal_plate_position_1
-{
-	entry = ("enu", "Diagonal plate's position 1");
-	entry = ("chs", "对角板定位1");
-};
-
-string_utf8 albl_diagonal_plate_position_2
-{
-	entry = ("enu", "Diagonal plate's position 2");
-	entry = ("chs", "对角板定位2");
-};
-
-string_utf8 albl_web_splicing_plate_thickness
-{
-	entry = ("enu", "Web splicing plate's thickness");
-	entry = ("chs", "腹板拼接板厚度");
-};
-
-string_utf8 albl_distance_between_web_seam_and_flange_seam
-{
+string_utf8 albl_distance_between_web_seam_and_flange_seam {
 	entry = ("enu", "Distance between web seam and flange seam");
 	entry = ("chs", "腹板拼缝与翼缘拼缝距离");
 };
 
-string_utf8 albl_end_plate_profile
-{
-	entry = ("enu", "End plate's profile");
-	entry = ("chs", "端板规格");
+string_utf8 albl_diagonal_plate_position_1 {
+	entry = ("enu", "Diagonal plate's position 1");
+	entry = ("chs", "对角板定位1");
 };
 
-string_utf8 albl_flange_stiffener_profile
-{
-	entry = ("enu", "Flange stiffener's profile");
-	entry = ("chs", "翼缘加劲肋规格");
+string_utf8 albl_diagonal_plate_position_2 {
+	entry = ("enu", "Diagonal plate's position 2");
+	entry = ("chs", "对角板定位2");
 };
 
-string_utf8 albl_web_stiffener_type
-{
-	entry = ("enu", "Web stiffener's type");
-	entry = ("chs", "腹板加劲肋类型");
+string_utf8 albl_flange_stiffener_kind {
+	entry = ("enu", "Flange stiffener kind");
+	entry = ("chs", "翼缘加劲肋形式");
 };
 
-string_utf8 albl_web_stiffener_profile
-{
-	entry = ("enu", "Web stiffener's profile");
-	entry = ("chs", "腹板加劲肋规格");
+string_utf8 albl_web_stiffener_kind {
+	entry = ("enu", "Web stiffener kind");
+	entry = ("chs", "腹板加劲肋形式");
 };
 
-string_utf8 albl_web_stiffeners_distance_list
-{
-	entry = ("enu", "Distance list of web stiffeners");
+string_utf8 albl_web_stiffener_distance_list {
+	entry = ("enu", "Web stiffener distance list");
 	entry = ("chs", "腹板加劲肋距离列");
 };
 
-string_utf8 albl_inside_chamfer_size
-{
-	entry = ("enu", "Inside chamfer size");
-	entry = ("chs", "内倒角尺寸");
+string_utf8 albl_end_plate {
+	entry = ("enu", "End plate");
+	entry = ("chs", "端板");
 };
 
-string_utf8 albl_outside_chamfer_size
-{
-	entry = ("enu", "Outside chamfer size");
-	entry = ("chs", "外倒角尺寸");
+string_utf8 albl_splicing_web {
+	entry = ("enu", "Splicing web");
+	entry = ("chs", "腹板拼接板");
 };
 
-string_utf8 albl_bolt_standard
-{
-	entry = ("enu", "Bolt standard");
-	entry = ("chs", "螺栓等级");
+string_utf8 albl_vertical_plate {
+	entry = ("enu", "Vertical plate");
+	entry = ("chs", "竖板");
 };
 
-string_utf8 albl_bolt_size
-{
-	entry = ("enu", "Bolt size");
-	entry = ("chs", "螺栓尺寸");
+string_utf8 albl_diagonal_plate {
+	entry = ("enu", "Diagonal plate");
+	entry = ("chs", "对角板");
 };
 
-string_utf8 albl_bolt_distance_list_x
-{
-	entry = ("enu", "Bolt distance list X");
-	entry = ("chs", "螺栓X向距离列");
+string_utf8 albl_flange_stiffener {
+	entry = ("enu", "Flange stiffener");
+	entry = ("chs", "翼板加劲肋");
 };
 
-string_utf8 albl_bolt_distance_list_y
-{
-	entry = ("enu", "Bolt distance list Y");
-	entry = ("chs", "螺栓Y向距离列");
+string_utf8 albl_web_stiffener {
+	entry = ("enu", "Web stiffener");
+	entry = ("chs", "腹板加劲肋");
 };
 
-string_utf8 albl_material
-{
-	entry = ("enu", "Material");
-	entry = ("chs", "材质");
+string_utf8 albl_stiffener_inside {
+	entry = ("enu", "Stiffener inside");
+	entry = ("chs", "加劲肋内侧");
+};
+
+string_utf8 albl_stiffener_outside {
+	entry = ("enu", "Stiffener outside");
+	entry = ("chs", "加劲肋外侧");
+};
+
+string_utf8 albl_start_offset_X {
+	entry = ("enu", "Start offset X");
+	entry = ("chs", "起始偏移X");
+};
+
+string_utf8 exception_need_one_primary_two_secondaries {
+    entry = ("enu", "Need one primary and two secondaries");
+    entry = ("chs", "需要一个主零件，两个次零件");
+};
+
+string_utf8 exception_primary_profile_not_supported {
+    entry = ("enu", "Only invariant or symmetric variant H-type primary is supported");
+    entry = ("chs", "仅支持等截面或对称变截面的H型主零件");
+};
+
+string_utf8 exception_secondary_profile_not_supported {
+    entry = ("enu", "Only invariant or wedge-shaped H-type secondary is supported");
+    entry = ("chs", "仅支持等截面或楔形变截面的H型次零件");
+};
+
+string_utf8 exception_cannot_place_end_plate {
+    entry = ("enu", "Cannot place end plate");
+    entry = ("chs", "无法放置端板");
 };

@@ -1,7 +1,7 @@
 ﻿/*==============================================================================
  *  Muggle TsExtensions - extensions for Tekla Structures
  *
- *  Copyright © 2025 Huang YongXing.                 
+ *  Copyright © 2025-2026 Huang YongXing.                 
  *
  *  This library is free software, licensed under the terms of the GNU 
  *  General Public License as published by the Free Software Foundation, 
@@ -9,24 +9,27 @@
  *  You should have received a copy of the GNU General Public License 
  *  along with this program. If not, see <http://www.gnu.org/licenses/>. 
  *==============================================================================
- *  MainWindow.xaml.cs: code behind for main window of MG1002
+ *  View.xaml.cs: code behind for view of MG1002
  *  written by Huang YongXing - thinkerhua@hotmail.com
  *==============================================================================*/
+
 using System;
 using System.Windows;
 using Muggle.TsExtensions.Common.WPF.Localization;
-using Muggle.TsExtensions.MG1002.ViewModels;
 using Tekla.Structures.Dialog;
 using Tekla.Structures.Dialog.UIControls;
+using TsData = Tekla.Structures.Datatype;
 
-namespace Muggle.TsExtensions.MG1002.Views {
-    public partial class MainWindow : PluginWindowBase {
-        private readonly MainWindowViewModel _viewModel;
-        public MainWindow(MainWindowViewModel viewModel) {
+namespace Muggle.TsExtensions.MG1002 {
+    public partial class View : PluginWindowBase {
+        
+        private ViewModel ViewModel { get; }
+        
+        public View(ViewModel viewModel) {
             TranslationService.Instance.ChangeLanguage(Localization.Language);
 
             InitializeComponent();
-            _viewModel = viewModel;
+            ViewModel = viewModel;
         }
 
         private void WPFOkApplyModifyGetOnOffCancel_ApplyClicked(object sender, EventArgs e) {
@@ -55,19 +58,39 @@ namespace Muggle.TsExtensions.MG1002.Views {
         }
 
         private void WpfMaterialCatalog_SelectClicked(object sender, EventArgs e) {
-            while (!(sender is WpfMaterialCatalog)) {
+            while (sender is not WpfMaterialCatalog) {
                 sender = LogicalTreeHelper.GetParent(sender as DependencyObject);
             }
+
             var catalog = sender as WpfMaterialCatalog;
-            catalog.SelectedMaterial = _viewModel.Material;
+            catalog?.SelectedMaterial = ((TsData.String)ViewModel.GetType().GetProperty(catalog.Tag as string).GetValue(ViewModel)).Value;
         }
 
         private void WpfMaterialCatalog_SelectionDone(object sender, EventArgs e) {
-            while (!(sender is WpfMaterialCatalog)) {
+            while (sender is not WpfMaterialCatalog) {
                 sender = LogicalTreeHelper.GetParent(sender as DependencyObject);
             }
+
             var catalog = sender as WpfMaterialCatalog;
-            _viewModel.Material = catalog.SelectedMaterial;
+            ViewModel.GetType().GetProperty(catalog.Tag as string).SetValue(ViewModel, new TsData.String(catalog?.SelectedMaterial));
+        }
+
+        private void WpfProfileCatalog_SelectClicked(object sender, EventArgs e) {
+            while (sender is not WpfProfileCatalog) {
+                sender = LogicalTreeHelper.GetParent(sender as DependencyObject);
+            }
+
+            var catalog = sender as WpfProfileCatalog;
+            catalog?.SelectedProfile = ((TsData.String)ViewModel.GetType().GetProperty(catalog.Tag as string).GetValue(ViewModel)).Value;
+        }
+
+        private void WpfProfileCatalog_SelectionDone(object sender, EventArgs e) {
+            while (sender is not WpfProfileCatalog) {
+                sender = LogicalTreeHelper.GetParent(sender as DependencyObject);
+            }
+
+            var catalog = sender as WpfProfileCatalog;
+            ViewModel.GetType().GetProperty(catalog.Tag as string).SetValue(ViewModel, new TsData.String(catalog?.SelectedProfile));
         }
     }
 }

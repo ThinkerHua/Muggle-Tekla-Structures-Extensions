@@ -27,16 +27,6 @@
 		<ProjectReference Include="..\Common\Common.csproj" />
 	</ItemGroup>
 	
-	<ItemGroup>
-		<None Remove="Resources\3.png" />
-		<None Remove="Resources\4.png" />
-	</ItemGroup>
-	
-	<ItemGroup>
-		<Resource Include="Assets\3.png" />
-		<Resource Include="Assets\4.png" />
-	</ItemGroup>
-	
 	<Target Name="PostBuild" AfterTargets="PostBuildEvent">
 		<Exec Command="xcopy &quot;$(TargetDir)$(TargetName).dll&quot; &quot;$(XSDATADIR)Environments\common\extensions\Muggle.TsExtensions\&quot; /Y /C /Q /R" />
 	</Target>
