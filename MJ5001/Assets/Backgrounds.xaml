@@ -1,0 +1,621 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <SolidColorBrush x:Key="Brush_Transparent" Color="Transparent" />
+    <SolidColorBrush x:Key="Brush_InstanceBorder" Color="Black" />
+    <SolidColorBrush x:Key="Brush_Concrete" Color="LightSlateGray" />
+    <SolidColorBrush x:Key="Brush_PrimPartFill" Color="#FF316BB5" />
+    <SolidColorBrush x:Key="Brush_SecdPartFill" Color="#FF2F94C4" />
+    <SolidColorBrush x:Key="Brush_JointPlateFill" Color="#FF898989" />
+    <SolidColorBrush x:Key="Brush_JointPlateFill_Dark" Color="#FF5B5B5B" />
+    <SolidColorBrush x:Key="Brush_JointPlateFill_Light" Color="#FFBDBDA5" />
+    <SolidColorBrush x:Key="Brush_JointPlateFill2" Color="#FF44BEA4" />
+    <SolidColorBrush x:Key="Brush_BoltFill" Color="#FFA8751F" />
+    <SolidColorBrush x:Key="Brush_BoltFill_Light" Color="#FFDBAE20" />
+    <SolidColorBrush x:Key="Brush_Weld" Color="#FFAAFFFF" />
+    <SolidColorBrush x:Key="Brush_Anchor" Color="#FF898989" />
+    <SolidColorBrush x:Key="Brush_Dimension" Color="MediumSeaGreen" />
+    <SolidColorBrush x:Key="Brush_Leader" Color="Black" />
+    <SolidColorBrush x:Key="Brush_Section" Color="Black" />
+    <SolidColorBrush x:Key="Brush_Break" Color="Black" />
+    <SolidColorBrush x:Key="Brush_Axis" Color="Red" />
+    <Pen x:Key="Pen_Transparent" Brush="{StaticResource Brush_Transparent}" />
+    <Pen x:Key="Pen_InstanceBorder" Thickness="0.5" Brush="{StaticResource Brush_InstanceBorder}" />
+    <Pen x:Key="Pen_InstanceBorder_Hide" Thickness="0.5" Brush="{StaticResource Brush_InstanceBorder}">
+        <Pen.DashStyle>
+            <DashStyle Dashes="20,10" />
+        </Pen.DashStyle>
+    </Pen>
+    <Pen x:Key="Pen_InstanceBorder_Hide05" Thickness="0.5" Brush="{StaticResource Brush_InstanceBorder}">
+        <Pen.DashStyle>
+            <DashStyle Dashes="10,5" />
+        </Pen.DashStyle>
+    </Pen>
+    <Pen x:Key="Pen_InstanceBorder_Hide025" Thickness="0.5" Brush="{StaticResource Brush_InstanceBorder}">
+        <Pen.DashStyle>
+            <DashStyle Dashes="5,2.5" />
+        </Pen.DashStyle>
+    </Pen>
+    <Pen x:Key="Pen_InstanceBorder_Hide0125" Thickness="0.5" Brush="{StaticResource Brush_InstanceBorder}">
+        <Pen.DashStyle>
+            <DashStyle Dashes="2.5,2.5" />
+        </Pen.DashStyle>
+    </Pen>
+    <Pen x:Key="Pen_Dimension" Thickness="0.5" Brush="{StaticResource Brush_Dimension}" />
+    <Pen x:Key="Pen_Dimension_Arrow" Thickness="1" Brush="{StaticResource Brush_Dimension}" />
+    <Pen x:Key="Pen_Axis" Thickness="0.5" Brush="{StaticResource Brush_Axis}">
+        <Pen.DashStyle>
+            <DashStyle Dashes="25,10,5,10" />
+        </Pen.DashStyle>
+    </Pen>
+    <Pen x:Key="Pen_Axis05" Thickness="0.5" Brush="{StaticResource Brush_Axis}">
+        <Pen.DashStyle>
+            <DashStyle Dashes="12.5,5,2.5,5" />
+        </Pen.DashStyle>
+    </Pen>
+    <Pen x:Key="Pen_Axis025" Thickness="0.5" Brush="{StaticResource Brush_Axis}">
+        <Pen.DashStyle>
+            <DashStyle Dashes="6.25,2.5,1.25,2.5" />
+        </Pen.DashStyle>
+    </Pen>
+    <Pen x:Key="Pen_Leader" Thickness="0.5" Brush="{StaticResource Brush_Leader}" />
+    <Pen x:Key="Pen_Break" Thickness="0.5" Brush="{StaticResource Brush_Section}" />
+    <Pen x:Key="Pen_Section" Thickness="2" Brush="{StaticResource Brush_Section}" />
+
+    <DrawingGroup x:Key="BoltTopView">
+        <GeometryDrawing Brush="{StaticResource Brush_BoltFill}" Pen="{StaticResource Pen_InstanceBorder}">
+            <GeometryDrawing.Geometry>
+                <EllipseGeometry RadiusX="3" RadiusY="3" />
+            </GeometryDrawing.Geometry>
+        </GeometryDrawing>
+        <GeometryDrawing Brush="{StaticResource Brush_BoltFill}" Pen="{StaticResource Pen_InstanceBorder}">
+            <GeometryDrawing.Geometry>
+                <PathGeometry Figures="M-2.5,0 L-1.25,2.1651 H1.25 L2.5,0 L1.25,-2.1651 H-1.25 Z" />
+            </GeometryDrawing.Geometry>
+        </GeometryDrawing>
+    </DrawingGroup>
+
+    <DrawingGroup x:Key="BoltFrontView">
+        <GeometryDrawing Brush="{StaticResource Brush_BoltFill}" Pen="{StaticResource Pen_InstanceBorder}">
+            <GeometryDrawing.Geometry>
+                <PathGeometry Figures="M-3,-1 H3 V0 H-3 Z M-2.5,-1 H2.5 V-3.5 H-2.5 Z M-1.25,-1 V-3.5 M1.25,-1 V-3.5" />
+            </GeometryDrawing.Geometry>
+        </GeometryDrawing>
+    </DrawingGroup>
+
+    <DrawingGroup x:Key="NutFrontView">
+        <GeometryDrawing Brush="{StaticResource Brush_BoltFill}" Pen="{StaticResource Pen_InstanceBorder}">
+            <GeometryDrawing.Geometry>
+                <PathGeometry
+                    Figures="M-2.5,0 H2.5 V2.5 H-2.5 Z M0,0 V2.5 M-2.5,2.5 H2.5 V5 H-2.5 Z M-1.25,2.5 V5 M1.25,2.5 V5 M-1.5,5 H1.5 V7 H-1.5 Z" />
+            </GeometryDrawing.Geometry>
+        </GeometryDrawing>
+    </DrawingGroup>
+
+    <DrawingGroup x:Key="FrontView">
+        <!-- Beam -->
+        <GeometryDrawing Brush="{StaticResource Brush_PrimPartFill}" Pen="{StaticResource Pen_InstanceBorder}">
+            <GeometryDrawing.Geometry>
+                <PathGeometry Figures="M0,46.185 L100,-11.55 V -103.925 L0,-46.185 V-40.414 
+                L20,-51.965 A18,18 0 0 1 10,-36.65 V25.12 A7,7 0 0 1 20,28.865 L0,40.414 Z
+                M0,40.414 L100,-17.322 M0,-40.414 L100,-98.15" />
+            </GeometryDrawing.Geometry>
+        </GeometryDrawing>
+        <!-- Concrete -->
+        <GeometryDrawing Brush="{StaticResource Brush_Concrete}" Pen="{StaticResource Pen_InstanceBorder}">
+            <GeometryDrawing.Geometry>
+                <RectangleGeometry Rect="-50,-75,50,150" />
+            </GeometryDrawing.Geometry>
+        </GeometryDrawing>
+        <!-- Embedment -->
+        <GeometryDrawing Brush="{StaticResource Brush_JointPlateFill_Dark}" Pen="{StaticResource Pen_InstanceBorder}">
+            <GeometryDrawing.Geometry>
+                <RectangleGeometry Rect="-6,-60,6,120" />
+            </GeometryDrawing.Geometry>
+        </GeometryDrawing>
+        <!-- Anchor rods -->
+        <GeometryDrawing Brush="{StaticResource Brush_BoltFill}" Pen="{StaticResource Pen_InstanceBorder}">
+            <GeometryDrawing.Geometry>
+                <GeometryGroup>
+                    <RectangleGeometry Rect="-40,-47,34,4" />
+                    <RectangleGeometry Rect="-40,-17,34,4" />
+                    <RectangleGeometry Rect="-40,13,34,4" />
+                    <RectangleGeometry Rect="-40,43,34,4" />
+                </GeometryGroup>
+            </GeometryDrawing.Geometry>
+        </GeometryDrawing>
+        <!-- Cleat -->
+        <GeometryDrawing Brush="{StaticResource Brush_JointPlateFill}" Pen="{StaticResource Pen_InstanceBorder}">
+            <GeometryDrawing.Geometry>
+                <PathGeometry Figures="M0,28.866 L40,5.773 V-51.965 L0,-28.866 Z" />
+            </GeometryDrawing.Geometry>
+        </GeometryDrawing>
+        <!-- Bolts -->
+        <DrawingGroup>
+            <DrawingGroup.Transform>
+                <TranslateTransform X="20" Y="-28.7" />
+            </DrawingGroup.Transform>
+            <GeometryDrawing>
+                <GeometryDrawing.Brush>
+                    <DrawingBrush Drawing="{StaticResource BoltTopView}" />
+                </GeometryDrawing.Brush>
+                <GeometryDrawing.Geometry>
+                    <RectangleGeometry Rect="-3.25,-3.25,6.5,6.5" />
+                </GeometryDrawing.Geometry>
+            </GeometryDrawing>
+        </DrawingGroup>
+        <DrawingGroup>
+            <DrawingGroup.Transform>
+                <TranslateTransform X="20" Y="-11.5" />
+            </DrawingGroup.Transform>
+            <GeometryDrawing>
+                <GeometryDrawing.Brush>
+                    <DrawingBrush Drawing="{StaticResource BoltTopView}" />
+                </GeometryDrawing.Brush>
+                <GeometryDrawing.Geometry>
+                    <RectangleGeometry Rect="-3.25,-3.25,6.5,6.5" />
+                </GeometryDrawing.Geometry>
+            </GeometryDrawing>
+        </DrawingGroup>
+        <DrawingGroup>
+            <DrawingGroup.Transform>
+                <TranslateTransform X="20" Y="5.7" />
+            </DrawingGroup.Transform>
+            <GeometryDrawing>
+                <GeometryDrawing.Brush>
+                    <DrawingBrush Drawing="{StaticResource BoltTopView}" />
+                </GeometryDrawing.Brush>
+                <GeometryDrawing.Geometry>
+                    <RectangleGeometry Rect="-3.25,-3.25,6.5,6.5" />
+                </GeometryDrawing.Geometry>
+            </GeometryDrawing>
+        </DrawingGroup>
+        <DrawingGroup>
+            <DrawingGroup.Transform>
+                <TranslateTransform X="30" Y="-34.5" />
+            </DrawingGroup.Transform>
+            <GeometryDrawing>
+                <GeometryDrawing.Brush>
+                    <DrawingBrush Drawing="{StaticResource BoltTopView}" />
+                </GeometryDrawing.Brush>
+                <GeometryDrawing.Geometry>
+                    <RectangleGeometry Rect="-3.25,-3.25,6.5,6.5" />
+                </GeometryDrawing.Geometry>
+            </GeometryDrawing>
+        </DrawingGroup>
+        <DrawingGroup>
+            <DrawingGroup.Transform>
+                <TranslateTransform X="30" Y="-17.3" />
+            </DrawingGroup.Transform>
+            <GeometryDrawing>
+                <GeometryDrawing.Brush>
+                    <DrawingBrush Drawing="{StaticResource BoltTopView}" />
+                </GeometryDrawing.Brush>
+                <GeometryDrawing.Geometry>
+                    <RectangleGeometry Rect="-3.25,-3.25,6.5,6.5" />
+                </GeometryDrawing.Geometry>
+            </GeometryDrawing>
+        </DrawingGroup>
+        <DrawingGroup>
+            <DrawingGroup.Transform>
+                <TranslateTransform X="30" Y="-0.1" />
+            </DrawingGroup.Transform>
+            <GeometryDrawing>
+                <GeometryDrawing.Brush>
+                    <DrawingBrush Drawing="{StaticResource BoltTopView}" />
+                </GeometryDrawing.Brush>
+                <GeometryDrawing.Geometry>
+                    <RectangleGeometry Rect="-3.25,-3.25,6.5,6.5" />
+                </GeometryDrawing.Geometry>
+            </GeometryDrawing>
+        </DrawingGroup>
+        <!-- Reference -->
+        <!--<DrawingGroup>
+            <DrawingGroup.Transform>
+                <RotateTransform Angle="-30" />
+            </DrawingGroup.Transform>
+            <GeometryDrawing Pen="{StaticResource Pen_Axis025}">
+                <GeometryDrawing.Geometry>
+                    <PathGeometry Figures="M-50,-40 H150 M-50,-35 H150 M-50,-25 H150 M-50,-15 H150 M-50,0 H150 M-50,15 H150 M-50,35 H150 M-50,40 H150 M-50,25 H150" />
+                </GeometryDrawing.Geometry>
+            </GeometryDrawing>
+        </DrawingGroup>
+        <GeometryDrawing Pen="{StaticResource Pen_Axis025}">
+            <GeometryDrawing.Geometry>
+                <PathGeometry Figures="M10,-75 V75 M20,-75 V75 M30,-75 V75 M40,-75 V75" />
+            </GeometryDrawing.Geometry>
+        </GeometryDrawing>-->
+    </DrawingGroup>
+    
+    <DrawingGroup x:Key="FrontViewWithDimension">
+        <GeometryDrawing>
+            <GeometryDrawing.Brush>
+                <DrawingBrush Drawing="{StaticResource FrontView}" />
+            </GeometryDrawing.Brush>
+            <GeometryDrawing.Geometry>
+                <RectangleGeometry Rect="-50.25,-104.3580322265625,150.5,179.6080322265625" />
+            </GeometryDrawing.Geometry>
+        </GeometryDrawing>
+        
+        <GeometryDrawing Pen="{StaticResource Pen_Dimension}">
+            <GeometryDrawing.Geometry>
+                <PathGeometry Figures="M-6,48 V62 M-40,48 V62 M-6,58 H-40" />
+            </GeometryDrawing.Geometry>
+        </GeometryDrawing>
+        <DrawingGroup>
+            <DrawingGroup.Transform>
+                <TranslateTransform X="-6" Y="58" />
+            </DrawingGroup.Transform>
+            <GeometryDrawing Pen="{StaticResource Pen_Dimension_Arrow}">
+                <GeometryDrawing.Geometry>
+                    <PathGeometry Figures="M-2,2 L2,-2" />
+                </GeometryDrawing.Geometry>
+            </GeometryDrawing>
+        </DrawingGroup>
+        <DrawingGroup>
+            <DrawingGroup.Transform>
+                <TranslateTransform X="-40" Y="58" />
+            </DrawingGroup.Transform>
+            <GeometryDrawing Pen="{StaticResource Pen_Dimension_Arrow}">
+                <GeometryDrawing.Geometry>
+                    <PathGeometry Figures="M-2,2 L2,-2" />
+                </GeometryDrawing.Geometry>
+            </GeometryDrawing>
+        </DrawingGroup>
+        
+        <GeometryDrawing Pen="{StaticResource Pen_Dimension}">
+            <GeometryDrawing.Geometry>
+                <PathGeometry Figures="M0,48 V62 M10,48 V62 M0,58 H10" />
+            </GeometryDrawing.Geometry>
+        </GeometryDrawing>
+        <DrawingGroup>
+            <DrawingGroup.Transform>
+                <TranslateTransform X="0" Y="58" />
+            </DrawingGroup.Transform>
+            <GeometryDrawing Pen="{StaticResource Pen_Dimension_Arrow}">
+                <GeometryDrawing.Geometry>
+                    <PathGeometry Figures="M-2,2 L2,-2" />
+                </GeometryDrawing.Geometry>
+            </GeometryDrawing>
+        </DrawingGroup>
+        <DrawingGroup>
+            <DrawingGroup.Transform>
+                <TranslateTransform X="10" Y="58" />
+            </DrawingGroup.Transform>
+            <GeometryDrawing Pen="{StaticResource Pen_Dimension_Arrow}">
+                <GeometryDrawing.Geometry>
+                    <PathGeometry Figures="M-2,2 L2,-2" />
+                </GeometryDrawing.Geometry>
+            </GeometryDrawing>
+        </DrawingGroup>
+        
+        <GeometryDrawing Pen="{StaticResource Pen_Dimension}">
+            <GeometryDrawing.Geometry>
+                <PathGeometry Figures="M20,12 V26 M30,12 V26 M20,22 H30" />
+            </GeometryDrawing.Geometry>
+        </GeometryDrawing>
+        <DrawingGroup>
+            <DrawingGroup.Transform>
+                <TranslateTransform X="20" Y="22" />
+            </DrawingGroup.Transform>
+            <GeometryDrawing Pen="{StaticResource Pen_Dimension_Arrow}">
+                <GeometryDrawing.Geometry>
+                    <PathGeometry Figures="M-2,2 L2,-2" />
+                </GeometryDrawing.Geometry>
+            </GeometryDrawing>
+        </DrawingGroup>
+        <DrawingGroup>
+            <DrawingGroup.Transform>
+                <TranslateTransform X="30" Y="22" />
+            </DrawingGroup.Transform>
+            <GeometryDrawing Pen="{StaticResource Pen_Dimension_Arrow}">
+                <GeometryDrawing.Geometry>
+                    <PathGeometry Figures="M-2,2 L2,-2" />
+                </GeometryDrawing.Geometry>
+            </GeometryDrawing>
+        </DrawingGroup>
+        
+        <GeometryDrawing Pen="{StaticResource Pen_Dimension}">
+            <GeometryDrawing.Geometry>
+                <PathGeometry Figures="M36,-34.5 H50 M36,-17.3 H50 M36,-0.1 H50 M46,-34.5 V-0.1 M48,-8.7 H58 M48,-25.9 H58 V1.3" />
+            </GeometryDrawing.Geometry>
+        </GeometryDrawing>
+        <DrawingGroup>
+            <DrawingGroup.Transform>
+                <TranslateTransform X="46" Y="-34.5" />
+            </DrawingGroup.Transform>
+            <GeometryDrawing Pen="{StaticResource Pen_Dimension_Arrow}">
+                <GeometryDrawing.Geometry>
+                    <PathGeometry Figures="M-2,2 L2,-2" />
+                </GeometryDrawing.Geometry>
+            </GeometryDrawing>
+        </DrawingGroup>
+        <DrawingGroup>
+            <DrawingGroup.Transform>
+                <TranslateTransform X="46" Y="-17.3" />
+            </DrawingGroup.Transform>
+            <GeometryDrawing Pen="{StaticResource Pen_Dimension_Arrow}">
+                <GeometryDrawing.Geometry>
+                    <PathGeometry Figures="M-2,2 L2,-2" />
+                </GeometryDrawing.Geometry>
+            </GeometryDrawing>
+        </DrawingGroup>
+        <DrawingGroup>
+            <DrawingGroup.Transform>
+                <TranslateTransform X="46" Y="-0.1" />
+            </DrawingGroup.Transform>
+            <GeometryDrawing Pen="{StaticResource Pen_Dimension_Arrow}">
+                <GeometryDrawing.Geometry>
+                    <PathGeometry Figures="M-2,2 L2,-2" />
+                </GeometryDrawing.Geometry>
+            </GeometryDrawing>
+        </DrawingGroup>
+        
+    </DrawingGroup>
+    
+    <DrawingGroup x:Key="FrontViewWithWeldDimension">
+        <GeometryDrawing>
+            <GeometryDrawing.Brush>
+                <DrawingBrush Drawing="{StaticResource FrontView}" />
+            </GeometryDrawing.Brush>
+            <GeometryDrawing.Geometry>
+                <RectangleGeometry Rect="-50.25,-104.3580322265625,150.5,179.6080322265625" />
+            </GeometryDrawing.Geometry>
+        </GeometryDrawing>
+        
+        <GeometryDrawing Pen="{StaticResource Pen_Leader}">
+            <GeometryDrawing.Geometry>
+                <PathGeometry Figures="M-6,-43 L-26,0 M-6,-13 L-26,0 M-6,13 L-26,0 M-6,43 L-26,0 H-40
+                M0,-46 L10,-70 H24 M0,46 L10,56 H24 M0,-10 L10,0 H24" />
+            </GeometryDrawing.Geometry>
+        </GeometryDrawing>
+    </DrawingGroup>
+    
+    <DrawingGroup x:Key="EmbedmentView">
+        <!-- Embedment -->
+        <GeometryDrawing Brush="{StaticResource Brush_JointPlateFill_Dark}" Pen="{StaticResource Pen_InstanceBorder}">
+            <GeometryDrawing.Geometry>
+                <RectangleGeometry Rect="-30,-60,60,120" />
+            </GeometryDrawing.Geometry>
+        </GeometryDrawing>
+        <!-- Beam -->
+        <GeometryDrawing Brush="{StaticResource Brush_PrimPartFill}" Pen="{StaticResource Pen_InstanceBorder}">
+            <GeometryDrawing.Geometry>
+                <PathGeometry Figures="M-20,-50 H20 V-45 H2 V45 H20 V50 H-20 V45 H-2 V-45 H-20 Z" />
+            </GeometryDrawing.Geometry>
+        </GeometryDrawing>
+        <!-- Cleats -->
+        <GeometryDrawing Brush="{StaticResource Brush_JointPlateFill}" Pen="{StaticResource Pen_InstanceBorder}">
+            <GeometryDrawing.Geometry>
+                <PathGeometry Figures="M-2,-30 H-6 V30 H-2 Z M2,-30 H6 V30 H2 Z" />
+            </GeometryDrawing.Geometry>
+        </GeometryDrawing>
+        <!-- Bolts -->
+        <DrawingGroup>
+            <DrawingGroup.Transform>
+                <TransformGroup>
+                    <RotateTransform Angle="-90" />
+                    <TranslateTransform X="-6" Y="-18" />
+                </TransformGroup>
+            </DrawingGroup.Transform>
+            <GeometryDrawing>
+                <GeometryDrawing.Brush>
+                    <DrawingBrush Drawing="{StaticResource BoltFrontView}" />
+                </GeometryDrawing.Brush>
+                <GeometryDrawing.Geometry>
+                    <RectangleGeometry Rect="-3.25,-3.75,6.5,4" />
+                </GeometryDrawing.Geometry>
+            </GeometryDrawing>
+        </DrawingGroup>
+        <DrawingGroup>
+            <DrawingGroup.Transform>
+                <TransformGroup>
+                    <RotateTransform Angle="-90" />
+                    <TranslateTransform X="-6" Y="0" />
+                </TransformGroup>
+            </DrawingGroup.Transform>
+            <GeometryDrawing>
+                <GeometryDrawing.Brush>
+                    <DrawingBrush Drawing="{StaticResource BoltFrontView}" />
+                </GeometryDrawing.Brush>
+                <GeometryDrawing.Geometry>
+                    <RectangleGeometry Rect="-3.25,-3.75,6.5,4" />
+                </GeometryDrawing.Geometry>
+            </GeometryDrawing>
+        </DrawingGroup>
+        <DrawingGroup>
+            <DrawingGroup.Transform>
+                <TransformGroup>
+                    <RotateTransform Angle="-90" />
+                    <TranslateTransform X="-6" Y="18" />
+                </TransformGroup>
+            </DrawingGroup.Transform>
+            <GeometryDrawing>
+                <GeometryDrawing.Brush>
+                    <DrawingBrush Drawing="{StaticResource BoltFrontView}" />
+                </GeometryDrawing.Brush>
+                <GeometryDrawing.Geometry>
+                    <RectangleGeometry Rect="-3.25,-3.75,6.5,4" />
+                </GeometryDrawing.Geometry>
+            </GeometryDrawing>
+        </DrawingGroup>
+        <DrawingGroup>
+            <DrawingGroup.Transform>
+                <TransformGroup>
+                    <RotateTransform Angle="-90" />
+                    <TranslateTransform X="6" Y="-18" />
+                </TransformGroup>
+            </DrawingGroup.Transform>
+            <GeometryDrawing>
+                <GeometryDrawing.Brush>
+                    <DrawingBrush Drawing="{StaticResource NutFrontView}" />
+                </GeometryDrawing.Brush>
+                <GeometryDrawing.Geometry>
+                    <RectangleGeometry Rect="-2.75,-0.25,5.5,7.5" />
+                </GeometryDrawing.Geometry>
+            </GeometryDrawing>
+        </DrawingGroup>
+        <DrawingGroup>
+            <DrawingGroup.Transform>
+                <TransformGroup>
+                    <RotateTransform Angle="-90" />
+                    <TranslateTransform X="6" Y="0" />
+                </TransformGroup>
+            </DrawingGroup.Transform>
+            <GeometryDrawing>
+                <GeometryDrawing.Brush>
+                    <DrawingBrush Drawing="{StaticResource NutFrontView}" />
+                </GeometryDrawing.Brush>
+                <GeometryDrawing.Geometry>
+                    <RectangleGeometry Rect="-2.75,-0.25,5.5,7.5" />
+                </GeometryDrawing.Geometry>
+            </GeometryDrawing>
+        </DrawingGroup>
+        <DrawingGroup>
+            <DrawingGroup.Transform>
+                <TransformGroup>
+                    <RotateTransform Angle="-90" />
+                    <TranslateTransform X="6" Y="18" />
+                </TransformGroup>
+            </DrawingGroup.Transform>
+            <GeometryDrawing>
+                <GeometryDrawing.Brush>
+                    <DrawingBrush Drawing="{StaticResource NutFrontView}" />
+                </GeometryDrawing.Brush>
+                <GeometryDrawing.Geometry>
+                    <RectangleGeometry Rect="-2.75,-0.25,5.5,7.5" />
+                </GeometryDrawing.Geometry>
+            </GeometryDrawing>
+        </DrawingGroup>
+    </DrawingGroup>
+    
+    <DrawingGroup x:Key="EmbedmentViewWithWeldDimension">
+        <GeometryDrawing>
+            <GeometryDrawing.Brush>
+                <DrawingBrush Drawing="{StaticResource EmbedmentView}" />
+            </GeometryDrawing.Brush>
+            <GeometryDrawing.Geometry>
+                <RectangleGeometry Rect="-30.25,-60.25,60.5,120.5" />
+            </GeometryDrawing.Geometry>
+        </GeometryDrawing>
+        
+        <GeometryDrawing Pen="{StaticResource Pen_Leader}">
+            <GeometryDrawing.Geometry>
+                <PathGeometry Figures="M-10,-50 L0,-65 H14 M-10,50 L0,65 H14 M-6,12 L-14,2 H-28 M6,12 L14,2 H28" />
+            </GeometryDrawing.Geometry>
+        </GeometryDrawing>
+    </DrawingGroup>
+    
+    <DrawingGroup x:Key="EmbedmentBehindView">
+        <!-- Embedment -->
+        <GeometryDrawing Brush="{StaticResource Brush_JointPlateFill_Dark}" Pen="{StaticResource Pen_InstanceBorder}">
+            <GeometryDrawing.Geometry>
+                <RectangleGeometry Rect="-30,-60,60,120" />
+            </GeometryDrawing.Geometry>
+        </GeometryDrawing>
+        <!-- Beam -->
+        <GeometryDrawing Brush="{StaticResource Brush_PrimPartFill}" Pen="{StaticResource Pen_InstanceBorder_Hide05}">
+            <GeometryDrawing.Geometry>
+                <PathGeometry Figures="M-20,-50 H20 V-45 H2 V45 H20 V50 H-20 V45 H-2 V-45 H-20 Z" />
+            </GeometryDrawing.Geometry>
+        </GeometryDrawing>
+        <!-- Anchor rods -->
+        <GeometryDrawing Brush="{StaticResource Brush_BoltFill}" Pen="{StaticResource Pen_InstanceBorder}">
+            <GeometryDrawing.Geometry>
+                <GeometryGroup>
+                    <EllipseGeometry RadiusX="2" RadiusY="2" Center="-15,-50" />
+                    <EllipseGeometry RadiusX="2" RadiusY="2" Center="-15,-17" />
+                    <EllipseGeometry RadiusX="2" RadiusY="2" Center="-15,17" />
+                    <EllipseGeometry RadiusX="2" RadiusY="2" Center="-15,50" />
+                    <EllipseGeometry RadiusX="2" RadiusY="2" Center="15,-50" />
+                    <EllipseGeometry RadiusX="2" RadiusY="2" Center="15,-17" />
+                    <EllipseGeometry RadiusX="2" RadiusY="2" Center="15,17" />
+                    <EllipseGeometry RadiusX="2" RadiusY="2" Center="15,50" />
+                </GeometryGroup>
+            </GeometryDrawing.Geometry>
+        </GeometryDrawing>
+    </DrawingGroup>
+    
+    <DrawingGroup x:Key="EmbedmentBehindViewWithDimension">
+        <GeometryDrawing>
+            <GeometryDrawing.Brush>
+                <DrawingBrush Drawing="{StaticResource EmbedmentBehindView}" />
+            </GeometryDrawing.Brush>
+            <GeometryDrawing.Geometry>
+                <RectangleGeometry Rect="-30.25,-60.25,60.5,120.5" />
+            </GeometryDrawing.Geometry>
+        </GeometryDrawing>
+        
+        <GeometryDrawing Pen="{StaticResource Pen_Dimension}">
+            <GeometryDrawing.Geometry>
+                <PathGeometry Figures="M-15,62 V76 M15,62 V76 M-15,72 H15" />
+            </GeometryDrawing.Geometry>
+        </GeometryDrawing>
+        <DrawingGroup>
+            <DrawingGroup.Transform>
+                <TranslateTransform X="-15" Y="72" />
+            </DrawingGroup.Transform>
+            <GeometryDrawing Pen="{StaticResource Pen_Dimension_Arrow}">
+                <GeometryDrawing.Geometry>
+                    <PathGeometry Figures="M-2,2 L2,-2" />
+                </GeometryDrawing.Geometry>
+            </GeometryDrawing>
+        </DrawingGroup>
+        <DrawingGroup>
+            <DrawingGroup.Transform>
+                <TranslateTransform X="15" Y="72" />
+            </DrawingGroup.Transform>
+            <GeometryDrawing Pen="{StaticResource Pen_Dimension_Arrow}">
+                <GeometryDrawing.Geometry>
+                    <PathGeometry Figures="M-2,2 L2,-2" />
+                </GeometryDrawing.Geometry>
+            </GeometryDrawing>
+        </DrawingGroup>
+        
+        <GeometryDrawing Pen="{StaticResource Pen_Dimension}">
+            <GeometryDrawing.Geometry>
+                <PathGeometry Figures="M32,-50 H46 M32,-17 H46 M32,17 H46 M32,50 H46 M42,-50 V50 M44,33.5 H54 M44,0 H54 M44,-33.5 H54 V53.5" />
+            </GeometryDrawing.Geometry>
+        </GeometryDrawing>
+        <DrawingGroup>
+            <DrawingGroup.Transform>
+                <TranslateTransform X="42" Y="-50" />
+            </DrawingGroup.Transform>
+            <GeometryDrawing Pen="{StaticResource Pen_Dimension_Arrow}">
+                <GeometryDrawing.Geometry>
+                    <PathGeometry Figures="M-2,2 L2,-2" />
+                </GeometryDrawing.Geometry>
+            </GeometryDrawing>
+        </DrawingGroup>
+        <DrawingGroup>
+            <DrawingGroup.Transform>
+                <TranslateTransform X="42" Y="-17" />
+            </DrawingGroup.Transform>
+            <GeometryDrawing Pen="{StaticResource Pen_Dimension_Arrow}">
+                <GeometryDrawing.Geometry>
+                    <PathGeometry Figures="M-2,2 L2,-2" />
+                </GeometryDrawing.Geometry>
+            </GeometryDrawing>
+        </DrawingGroup>
+        <DrawingGroup>
+            <DrawingGroup.Transform>
+                <TranslateTransform X="42" Y="17" />
+            </DrawingGroup.Transform>
+            <GeometryDrawing Pen="{StaticResource Pen_Dimension_Arrow}">
+                <GeometryDrawing.Geometry>
+                    <PathGeometry Figures="M-2,2 L2,-2" />
+                </GeometryDrawing.Geometry>
+            </GeometryDrawing>
+        </DrawingGroup>
+        <DrawingGroup>
+            <DrawingGroup.Transform>
+                <TranslateTransform X="42" Y="50" />
+            </DrawingGroup.Transform>
+            <GeometryDrawing Pen="{StaticResource Pen_Dimension_Arrow}">
+                <GeometryDrawing.Geometry>
+                    <PathGeometry Figures="M-2,2 L2,-2" />
+                </GeometryDrawing.Geometry>
+            </GeometryDrawing>
+        </DrawingGroup>
+    </DrawingGroup>
+</ResourceDictionary>

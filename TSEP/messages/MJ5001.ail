@@ -1,104 +1,39 @@
 ﻿string_utf8 albl_MJ5001_title {
-    entry = ("enu", "MJ5001 - H-beam connect to concrete");
-    entry = ("chs", "MJ5001 - H型钢梁与混凝土连接");
+	entry = ("enu", "MJ5001 - Beam connect to concrete");
+	entry = ("chs", "MJ5001 - 钢梁与混凝土连接");
 };
 
 string_utf8 albl_gap {
-    entry = ("enu", "Gap");
-    entry = ("chs", "间隙");
+	entry = ("enu", "Gap");
+	entry = ("chs", "间隙");
 };
 
-string_utf8 albl_ratHole_radius {
-    entry = ("enu", "Rat hole's radius");
-    entry = ("chs", "鼠洞半径");
+string_utf8 albl_anchor_rod {
+	entry = ("enu", "Anchor rod");
+	entry = ("chs", "锚杆");
 };
 
-string_utf8 albl_embedment_THK {
-    entry = ("enu", "Embedment's thickness");
-    entry = ("chs", "埋件厚度");
+string_utf8 albl_beam_chamfer {
+	entry = ("enu", "Beam chamfer");
+	entry = ("chs", "梁切角");
 };
 
-string_utf8 albl_embedment_WDTH {
-    entry = ("enu", "Embedment's width");
-    entry = ("chs", "埋件宽度");
+string_utf8 albl_cleat {
+	entry = ("enu", "Cleat");
+	entry = ("chs", "夹板");
 };
 
-string_utf8 albl_embedment_EXTN {
-    entry = ("enu", "Embedment's extend length");
-    entry = ("chs", "埋件延伸长度");
+string_utf8 albl_embedment {
+	entry = ("enu", "Embedment");
+	entry = ("chs", "埋板");
 };
 
-string_utf8 albl_embedment_MATL {
-    entry = ("enu", "Embedment's material");
-    entry = ("chs", "埋件材质");
+string_utf8 exception_not_supported_part_type {
+	entry = ("enu", "Only support Beam or PolyBeam part");
+	entry = ("chs", "仅支持梁或折梁类型零件");
 };
 
-string_utf8 albl_anchorRod_LEN {
-    entry = ("enu", "Anchor rod's length");
-    entry = ("chs", "锚杆长度");
-};
-
-string_utf8 albl_anchorRod_size {
-    entry = ("enu", "Anchor rod's size");
-    entry = ("chs", "锚杆规格");
-};
-
-string_utf8 albl_anchorRod_MATL {
-    entry = ("enu", "Anchor rod's material");
-    entry = ("chs", "锚杆材质");
-};
-
-string_utf8 albl_anchorRod_disList_X {
-    entry = ("enu", "Anchor rod's distance list in X direction");
-    entry = ("chs", "锚杆X向距离列");
-};
-
-string_utf8 albl_anchorRod_disList_Y{
-    entry = ("enu", "Anchor rod's distance list in Y direction");
-    entry = ("chs", "锚杆Y向距离列");
-};
-
-string_utf8 albl_cleat_THK {
-    entry = ("enu", "Cleat's thickness");
-    entry = ("chs", "夹板厚度");
-};
-
-string_utf8 albl_cleat_WDTH {
-    entry = ("enu", "Cleat's width");
-    entry = ("chs", "夹板宽度");
-};
-
-string_utf8 albl_cleat_dis_innerEdge {
-    entry = ("enu", "Cleat's distance with inner edge");
-    entry = ("chs", "夹板与内边缘的距离");
-};
-
-string_utf8 albl_cleat_MATL {
-    entry = ("enu", "Cleat's material");
-    entry = ("chs", "夹板材质");
-};
-
-string_utf8 albl_bolt_STD {
-    entry = ("enu", "Bolt standard");
-    entry = ("chs", "螺栓标准");
-};
-
-string_utf8 albl_bolt_size {
-    entry = ("enu", "Bolt size");
-    entry = ("chs", "螺栓尺寸");
-};
-
-string_utf8 albl_bolt_disList_X {
-    entry = ("enu", "Bolt distance list in X direction");
-    entry = ("chs", "螺栓X向距离列");
-};
-
-string_utf8 albl_bolt_disList_Y {
-    entry = ("enu", "Bolt distance list in Y direction");
-    entry = ("chs", "螺栓Y向距离列");
-};
-
-string_utf8 albl_group_no {
-    entry = ("enu", "Class");
-    entry = ("chs", "等级");
+string_utf8 exception_not_supported_section_profile {
+	entry = ("enu", "Only support invariant H or invariant rectangular section profile");
+	entry = ("chs", "仅支持H型非变截面或矩形非变截面");
 };

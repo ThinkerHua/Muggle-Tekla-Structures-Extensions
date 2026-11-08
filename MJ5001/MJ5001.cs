@@ -1,535 +1,538 @@
 ﻿/*==============================================================================
  *  Muggle TsExtensions - extensions for Tekla Structures
  *
- *  Copyright © 2025 Huang YongXing.                 
+ *  Copyright © 2025-2026 Huang YongXing.
  *
- *  This library is free software, licensed under the terms of the GNU 
- *  General Public License as published by the Free Software Foundation, 
- *  either version 3 of the License, or (at your option) any later version. 
- *  You should have received a copy of the GNU General Public License 
- *  along with this program. If not, see <http://www.gnu.org/licenses/>. 
+ *  This library is free software, licensed under the terms of the GNU
+ *  General Public License as published by the Free Software Foundation,
+ *  either version 3 of the License, or (at your option) any later version.
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program. If not, see <http://www.gnu.org/licenses/>.
  *==============================================================================
  *  MJ5001.cs: H-beam connect to concrete
  *  written by Huang YongXing - thinkerhua@hotmail.com
  *==============================================================================*/
+
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
+using System.IO;
 using System.Linq;
-using System.Windows;
+using Muggle.TsExtensions.CodingHelper.Generators;
 using Muggle.TsExtensions.Common.Geometry3d;
 using Muggle.TsExtensions.Common.Model;
 using Muggle.TsExtensions.Common.Profile;
+using Muggle.TsExtensions.Common.Resources;
 using Tekla.Structures;
 using Tekla.Structures.Datatype;
 using Tekla.Structures.Geometry3d;
 using Tekla.Structures.Model;
+using Tekla.Structures.Model.Operations;
 using Tekla.Structures.Model.UI;
 using Tekla.Structures.Plugins;
-using TSD = Tekla.Structures.Datatype;
-using TSG = Tekla.Structures.Geometry3d;
+using Localization = Tekla.Structures.Dialog.Localization;
+using TsData = Tekla.Structures.Datatype;
+using TsG3d = Tekla.Structures.Geometry3d;
 
-namespace Muggle.TsExtensions.MJ5001 {
-    public class PluginData {
-        #region Fields
-        [StructuresField("gap")]
-        public double gap;
+namespace Muggle.TsExtensions.MJ5001;
 
-        [StructuresField("ratHole_radius")]
-        public double ratHole_radius;
+[Plugin("MJ5001")]
+[PluginUserInterface("Muggle.TsExtensions.MJ5001.View")]
+[InputObjectDependency(InputObjectDependency.DEPENDENT)]
+[FieldsFrom(typeof(PluginData))]
+public partial class MJ5001 : PluginBase {
 
-        [StructuresField("embedment_THK")]
-        public double embedment_thickness;
-
-        [StructuresField("embedment_WDTH")]
-        public double embedment_width;
-
-        [StructuresField("embedment_EXTN")]
-        public double embedment_exten;
-
-        [StructuresField("embedment_MATL")]
-        public string embedment_material;
-
-        [StructuresField("anchorRod_LEN")]
-        public double anchorRod_length;
-
-        [StructuresField("anchorRod_size")]
-        public double anchorRod_size;
-
-        [StructuresField("anchorRod_MATL")]
-        public string anchorRod_material;
-
-        [StructuresField("anchorRod_disList_X")]
-        public string anchorRod_disListStr_X;
-
-        [StructuresField("anchorRod_disList_Y")]
-        public string anchorRod_disListStr_Y;
-
-        [StructuresField("cleat_THK")]
-        public double cleat_thickness;
-
-        [StructuresField("cleat_WDTH")]
-        public double cleat_width;
-
-        [StructuresField("cleat_dis_innerEdge")]
-        public double cleat_dis_with_innerEdge;
-
-        [StructuresField("cleat_MATL")]
-        public string cleat_material;
-
-        [StructuresField("bolt_STD")]
-        public string bolt_standard;
-
-        [StructuresField("bolt_size")]
-        public double bolt_size;
-
-        [StructuresField("bolt_disList_X")]
-        public string bolt_disListStr_X;
-
-        [StructuresField("bolt_disList_Y")]
-        public string bolt_distListStr_Y;
-        #endregion
+    private readonly record struct Profile(char Type, double H, double B, double S, double T) {
+        public readonly char Type = Type;
+        public readonly double H = H;
+        public readonly double B = B;
+        public readonly double S = S;
+        public readonly double T = T;
     }
 
-    [Plugin("MJ5001")]
-    [PluginUserInterface("Muggle.TsExtensions.MJ5001.Views.MainWindow")]
-    [InputObjectDependency(InputObjectDependency.DEPENDENT)]
-    public class MJ5001 : PluginBase {
-        #region Fields
-        private Model _Model;
-        private PluginData _Data;
+    private Model Model { get; }
 
-        private double gap;
-        private double ratHole_radius;
-        private double embedment_thickness;
-        private double embedment_width;
-        private double embedment_exten;
-        private string embedment_material;
-        private double anchorRod_length;
-        private double anchorRod_size;
-        private string anchorRod_material;
-        private string anchorRod_disListStr_X;
-        private string anchorRod_disListStr_Y;
-        private double cleat_thickness;
-        private double cleat_width;
-        private double cleat_dis_with_innerEdge;
-        private string cleat_material;
-        private string bolt_standard;
-        private double bolt_size;
-        private string bolt_disListStr_X;
-        private string bolt_distListStr_Y;
+    [PartFieldDefaultValues("AnchorRod", material: "Q345B", @class: 0)]
+    [PlateFieldDefaultValues("Embedment", thickness: 20, breadth: 300, height: 800, material: "Q345B")]
+    [PlateFieldDefaultValues("Cleat", thickness: 12, breadth: 300, height: 300, material: "Q345B")]
+    [BoltFieldDefaultValues("AnchorRod", size: 20, length: 150, distXText: "4*125", distYText: "160")]
+    [BoltFieldDefaultValues("1", standard: "HS10.9", size: 20, distXText: "3*70", distYText: "2*70")]
+    [WeldFieldDefaultValues(1, typeAbove: 10, sizeAbove: 6, around: 1, shop: 1)]
+    [WeldFieldDefaultValues(2, typeAbove: 10, sizeAbove: 8, around: 1, shop: 1)]
+    [WeldFieldDefaultValues(3, sizeAbove: 10, angleAbove: 45, rootOpeningAbove: 2, rootFaceAbove: 2)]
+    [ChamferFieldDefaultValues(1, type: 3, x: 30)]
+    [GeneralFieldDefaultValues("Gap", 15)]
+    private PluginData Data { get; }
 
-        private DistanceList anchorRod_disList_X;
-        private DistanceList anchorRod_disList_Y;
-        private DistanceList bolt_disList_X;
-        private DistanceList bolt_disList_Y;
-        private Offset bolt_startOffset;
+    private Localization Localization { get; }
 
-        private TransformationPlane originTP;
-        private TransformationPlane workTP;
+    public MJ5001(PluginData data) {
+        Model = new Model();
+        Data = data;
 
-        private Identifier beamID;
-        private Identifier concreteID;
-        private TSG.Point[] points;
-        #endregion
+        try {
+            var language = string.Empty;
+            TeklaStructuresSettings.GetAdvancedOption("XS_LANGUAGE", ref language);
+            language = LanguageExtension.GetTsLocalizationLanguage(language);
 
-        #region Properties
-        private Model Model {
-            get { return this._Model; }
-            set { this._Model = value; }
+            var xsDataDir = string.Empty;
+            TeklaStructuresSettings.GetAdvancedOption("XSDATADIR", ref xsDataDir);
+
+            var ailPath = Path.Combine(xsDataDir,
+                $"environments\\common\\extensions\\messages\\Muggle.TsExtensions\\{nameof(MJ5001)}.ail");
+
+            Localization = new Localization(ailPath, language);
+        } catch {
+            Localization = new Localization();
         }
+    }
 
-        private PluginData Data {
-            get { return this._Data; }
-            set { this._Data = value; }
-        }
-        #endregion
+    /// <summary>
+    /// 定义输入。
+    /// </summary>
+    /// <returns>集合第一个元素为梁ID，第二个元素为安放预埋件的混凝土构件ID，
+    /// 第三个元素是面（点集合，ArrayList类型）。</returns>
+    public override List<InputDefinition> DefineInput() {
+        var picker = new Picker();
+        var beam = picker.PickObject(Picker.PickObjectEnum.PICK_ONE_PART);
+        var face = picker.PickFace();
 
-        #region Constructor
-        public MJ5001(PluginData data) {
-            Model = new Model();
-            Data = data;
-        }
-        #endregion
+        var beamInput = new InputDefinition(beam.Identifier);
+        InputDefinition concreteInput = null, faceInput = null;
 
-        #region Overrides
-
-        public override bool Run(List<InputDefinition> Input) {
-            try {
-                GetValuesFromDialog();
-
-                beamID = Input[0].GetInput() as Identifier;
-                concreteID = Input[1].GetInput() as Identifier;
-                points = (Input[2].GetInput() as ArrayList).Cast<TSG.Point>().ToArray();
-
-                originTP ??= Model.GetWorkPlaneHandler().GetCurrentTransformationPlane();
-                workTP ??= GetWorkPlane();
-
-                Model.GetWorkPlaneHandler().SetCurrentTransformationPlane(workTP);
-                points = points.Select(p => p.Transform(originTP, workTP)).ToArray();//转换到工作平面
-                CreatConnection();
-
-                return true;
-            } catch (UnAcceptableProfileException) {
-                MessageBox.Show("Only H-Beam is supported.", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-            } catch (Exception e) {
-                MessageBox.Show(e.ToString(), "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+        var enumerator = face.GetEnumerator();
+        while (enumerator.MoveNext()) {
+            var item = (InputItem)enumerator.Current;
+            if (item!.GetInputType() == InputItem.InputTypeEnum.INPUT_POLYGON) {
+                var points = (ArrayList)item.GetData();
+                faceInput = new InputDefinition(points);
+            } else if (item.GetInputType() == InputItem.InputTypeEnum.INPUT_1_OBJECT) {
+                var obj = (ModelObject)item.GetData();
+                concreteInput = new InputDefinition(obj.Identifier);
             }
+        }
+
+        (enumerator as IDisposable)?.Dispose();
+
+        return [beamInput, concreteInput, faceInput];
+    }
+
+    public override bool Run(List<InputDefinition> input) {
+        try {
+            var beamId = (Identifier)input[0].GetInput();
+            Verify(beamId, out var beamProfile);
+
+            var concreteId = (Identifier)input[1].GetInput();
+            var points = ((ArrayList)input[2].GetInput()).Cast<Point>().ToArray();
+
+            SetDataToDefaultIfUnset();
+            Data.PartAnchorRodProfile = $"D{Data.BoltAnchorRodSize}";
+            GetFieldValuesFrom(Data);
+
+            var workTp = GetWorkPlane(beamId, points, out var embedmentTp);
+            Model.GetWorkPlaneHandler().SetCurrentTransformationPlane(workTp);
+
+            CreateConnection(beamId, beamProfile, concreteId, embedmentTp);
+
+            return true;
+        } catch (Exception e) {
+            Operation.DisplayPrompt(e.Message);
             return false;
         }
+    }
 
-        /// <summary>
-        /// 定义输入。
-        /// </summary>
-        /// <returns>集合第一个元素为梁ID，第二个元素为安放预埋件的混凝土构件ID，
-        /// 第三个元素是面（点集合，ArraryList类型）。</returns>
-        public override List<InputDefinition> DefineInput() {
-            InputDefinition beamInput = null, concreteInput = null, faceInput = null;
-            try {
-                var picker = new Picker();
-                var beam = picker.PickObject(Picker.PickObjectEnum.PICK_ONE_PART);
-                var face = picker.PickFace();
+    private void Verify(Identifier beamId, out Profile beamProfile) {
+        var beam = (Part)Model.SelectModelObject(beamId);
+        if (beam is not Beam && beam is not PolyBeam) {
+            throw new NotSupportedException(Localization.GetText("exception_not_supported_part_type"));
+        }
 
-                beamInput = new InputDefinition(beam.Identifier);
+        beamProfile = new Profile();
 
-                var enumerator = face.GetEnumerator();
-                while (enumerator.MoveNext()) {
-                    var item = enumerator.Current as InputItem;
-                    if (item.GetInputType() == InputItem.InputTypeEnum.INPUT_POLYGON) {
-                        var points = item.GetData() as ArrayList;
-                        faceInput = new InputDefinition(points);
-                    }
-                    if (item.GetInputType() == InputItem.InputTypeEnum.INPUT_1_OBJECT) {
-                        var obj = item.GetData() as ModelObject;
-                        concreteInput = new InputDefinition(obj.Identifier);
-                    }
-                }
-            } catch (Exception e) when (e.Message != "User interrupt") {
-                MessageBox.Show(e.ToString(), "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-
-                return new List<InputDefinition>();
+        try {
+            var prfH = new ProfileH_Symmetrical(beam.Profile.ProfileString);
+            if (Math.Abs(prfH.h2 - prfH.h1) > GeometryConstants.DISTANCE_EPSILON ||
+                Math.Abs(prfH.b2 - prfH.b1) > GeometryConstants.DISTANCE_EPSILON) {
+                throw new NotSupportedException(
+                    Localization.GetText("exception_not_supported_section_profile"));
             }
 
-            return new List<InputDefinition> { beamInput, concreteInput, faceInput };
+            beamProfile = new Profile('H', prfH.h1, prfH.b1, prfH.s, prfH.t1);
+        } catch (UnAcceptableProfileException) {
+            // ignore
         }
+
+        try {
+            var prfR = new ProfileRect_Invariant(beam.Profile.ProfileString);
+
+            beamProfile = new Profile('R', prfR.h1, prfR.b1, prfR.s, prfR.t);
+        } catch {
+            // ignore
+        }
+
+        if (beamProfile.Type is '\0') {
+            throw new NotSupportedException(Localization.GetText("exception_not_supported_section_profile"));
+        }
+    }
+
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <remarks>（梁）工作平面 Origin 是梁中心线与混凝土表面的交点，
+    /// AxisX 是梁中心线的方向且指向远处，
+    /// AxisY 是梁零件坐标系的 Y 轴且大致指向全局向上方向；
+    /// 预埋件工作平面 Origin 与 梁工作平面相同，
+    /// AxisX 是梁零件坐标系 XY 平面与埋件表面的交线的方向表大致指向全局向上方向，
+    /// AxisZ 是埋件表面法向，
+    /// AxisY 是 AxisZ.Cross(AxisX)。 
+    /// </remarks>
+    /// <param name="beamId"></param>
+    /// <param name="points"></param>
+    /// <param name="embedmentTp"></param>
+    /// <returns></returns>
+    private TransformationPlane GetWorkPlane(Identifier beamId, Point[] points,
+        out TransformationPlane embedmentTp) {
+        var part = (Part)Model.SelectModelObject(beamId);
+        var plane = GeometricPlaneFactory.ByPoints(points[0], points[1], points[2]);
+
+        var centerLine = part.GetCenterLine(false).Cast<Point>().ToArray();
+        var firstPoint = centerLine.First();
+        var lastPoint = centerLine.Last();
+
+        var disFirst = TsG3d.Distance.PointToPlane(firstPoint, plane);
+        var disLast = TsG3d.Distance.PointToPlane(lastPoint, plane);
+        var index = disFirst <= disLast ? 0 : centerLine.Length - 1;
+        var step = disFirst <= disLast ? 1 : -1;
+
+        var origin = Intersection.LineToPlane(new Line(centerLine[index], centerLine[index + step]), plane);
+
+        CoordinateSystem cs = null;
+        switch (part) {
+        case Beam beam:
+            cs = beam.GetCoordinateSystem();
+            break;
+        case PolyBeam polyBeam:
+            var css = polyBeam.GetPolybeamCoordinateSystemsEx();
+            cs = disFirst <= disLast ? css.First() : css.Last();
+            break;
+        // no need default, already checked in Run method
+        }
+
+        var axisX = cs!.AxisX;
+        if (disFirst > disLast) axisX *= -1;
+        var axisY = cs.AxisY;
+
+        var globalZ = new Vector(0, 0, 100).TransformFrom(new TransformationPlane());
+        if (globalZ.Dot(axisY) < 0) axisY *= -1;
+
+        var partXyPlane = new GeometricPlane(origin, axisX.Cross(axisY));
+        var crossLine = Intersection.PlaneToPlane(partXyPlane, plane);
+
+        var embedmentAxisX = crossLine.Direction;
+        if (embedmentAxisX.Dot(axisY) < 0) embedmentAxisX *= -1;
+
+        var embedmentAxisZ = plane.Normal;
+        if (embedmentAxisZ.Dot(axisX) < 0) embedmentAxisZ *= -1;
+        var embedmentAxisY = embedmentAxisZ.Cross(embedmentAxisX);
+
+        embedmentTp = new TransformationPlane(origin, embedmentAxisX, embedmentAxisY);
+
+        return new TransformationPlane(origin, axisX, axisY);
+    }
+
+    private void CreateConnection(Identifier beamId, Profile beamProfile, Identifier concreteId,
+        TransformationPlane embedmentTp) {
+        var beam = (Part)Model.SelectModelObject(beamId);
+        var concrete = (Part)Model.SelectModelObject(concreteId);
+
+        var origin = new Point();
+        var axisX = new Vector(1, 0, 0);
+        var axisY = new Vector(0, 1, 0);
+        var axisZ = new Vector(0, 0, 1);
+
+        var beamTopLine = new Line(origin + axisY * (beamProfile.H * 0.5), axisX);
+        var beamTopInsideLine = beamTopLine.Offset(beamProfile.T, LineExtension.OffsetDirection.Right);
+        var beamBottomLine = new Line(origin - axisY * (beamProfile.H * 0.5), axisX);
+        var beamBottomInsideLine = beamBottomLine.Offset(beamProfile.T, LineExtension.OffsetDirection.Left);
+
+        var beamTp = Model.GetWorkPlaneHandler().GetCurrentTransformationPlane();
+
+        var embedmentAxisX = axisX.Transform(embedmentTp, beamTp);
+        var embedmentAxisY = axisY.Transform(embedmentTp, beamTp);
+        var embedmentAxisZ = axisZ.Transform(embedmentTp, beamTp);
+
+        Model.GetWorkPlaneHandler().SetCurrentTransformationPlane(embedmentTp);
+
+        #region 创建预埋板
+
+        var p1 = new Point(_plateEmbedmentHeight * -0.5, 0);
+        var p2 = new Point(_plateEmbedmentHeight * 0.5, 0);
+
+        var embedment = CreatePlateEmbedment<Beam>();
+        embedment.StartPoint = p1;
+        embedment.EndPoint = p2;
+        embedment.Position.Rotation = Position.RotationEnum.FRONT;
+        embedment.Position.Plane = Position.PlaneEnum.MIDDLE;
+        embedment.Position.Depth = Position.DepthEnum.BEHIND;
+        embedment.Insert();
+
+        _ = ModelOperation.ApplyBooleanOperation(concrete, embedment);
+
         #endregion
 
-        #region Private methods
-        /// <summary>
-        /// Gets the values from the dialog and sets the default values if needed
-        /// </summary>
-        private void GetValuesFromDialog() {
-            gap = Data.gap;
-            ratHole_radius = Data.ratHole_radius;
-            embedment_thickness = Data.embedment_thickness;
-            embedment_width = Data.embedment_width;
-            embedment_exten = Data.embedment_exten;
-            embedment_material = Data.embedment_material;
-            anchorRod_length = Data.anchorRod_length;
-            anchorRod_size = Data.anchorRod_size;
-            anchorRod_material = Data.anchorRod_material;
-            anchorRod_disListStr_X = Data.anchorRod_disListStr_X;
-            anchorRod_disListStr_Y = Data.anchorRod_disListStr_Y;
-            cleat_thickness = Data.cleat_thickness;
-            cleat_width = Data.cleat_width;
-            cleat_dis_with_innerEdge = Data.cleat_dis_with_innerEdge;
-            cleat_material = Data.cleat_material;
-            bolt_standard = Data.bolt_standard;
-            bolt_size = Data.bolt_size;
-            bolt_disListStr_X = Data.bolt_disListStr_X;
-            bolt_distListStr_Y = Data.bolt_distListStr_Y;
+        #region 布置锚杆
 
-            if (IsDefaultValue(gap))
-                gap = 15.0;
-            if (IsDefaultValue(ratHole_radius))
-                ratHole_radius = 30.0;
-            if (IsDefaultValue(embedment_thickness))
-                embedment_thickness = 20.0;
-            if (IsDefaultValue(embedment_width))
-                embedment_width = 300.0;
-            if (IsDefaultValue(embedment_exten))
-                embedment_exten = 90.0;
-            if (IsDefaultValue(embedment_material))
-                embedment_material = "Q345B";
-            if (IsDefaultValue(anchorRod_length))
-                anchorRod_length = 150.0;
-            if (IsDefaultValue(anchorRod_size))
-                anchorRod_size = 20.0;
-            if (IsDefaultValue(anchorRod_material))
-                anchorRod_material = "Q345B";
-            if (IsDefaultValue(anchorRod_disListStr_X))
-                anchorRod_disListStr_X = "250 4*125";
-            if (IsDefaultValue(anchorRod_disListStr_Y))
-                anchorRod_disListStr_Y = "160";
-            if (IsDefaultValue(cleat_thickness))
-                cleat_thickness = 12.0;
-            if (IsDefaultValue(cleat_width))
-                cleat_width = 95.0;
-            if (IsDefaultValue(cleat_dis_with_innerEdge))
-                cleat_dis_with_innerEdge = 40.0;
-            if (IsDefaultValue(cleat_material))
-                cleat_material = "Q345B";
-            if (IsDefaultValue(bolt_standard))
-                bolt_standard = "HS10.9";
-            if (IsDefaultValue(bolt_size))
-                bolt_size = 20.0;
-            if (IsDefaultValue(bolt_disListStr_X))
-                bolt_disListStr_X = "40 7*70";
-            if (IsDefaultValue(bolt_distListStr_Y))
-                bolt_distListStr_Y = "0";
+        var anchorRodDisListX = DistanceList.Parse(_boltAnchorRodDistXText, CultureInfo.CurrentCulture,
+            TsData.Distance.CurrentUnitType);
+        var anchorRodDisListY = DistanceList.Parse(_boltAnchorRodDistYText, CultureInfo.CurrentCulture,
+            TsData.Distance.CurrentUnitType);
 
-            anchorRod_disList_X = DistanceList.Parse(
-                anchorRod_disListStr_X,
-                System.Globalization.CultureInfo.InvariantCulture,
-                TSD.Distance.CurrentUnitType);
-            anchorRod_disList_Y = DistanceList.Parse(
-                anchorRod_disListStr_Y,
-                System.Globalization.CultureInfo.InvariantCulture,
-                TSD.Distance.CurrentUnitType);
-            //  增加此操作是为了模仿系统螺栓组的行为
-            //  否则实际使用时，距离列第一个值要手动填写为0
-            if (anchorRod_disList_Y.First().Value != 0.0)
-                anchorRod_disList_Y.Insert(0, new TSD.Distance(0.0, TSD.Distance.CurrentUnitType));
-            bolt_disList_X = DistanceList.Parse(
-                bolt_disListStr_X,
-                System.Globalization.CultureInfo.InvariantCulture,
-                TSD.Distance.CurrentUnitType);
-            bolt_startOffset = new Offset { Dx = bolt_disList_X.First().Value, Dy = 0.0, Dz = 0.0 };
-            bolt_disList_X.RemoveAt(0);
-            bolt_disList_Y = DistanceList.Parse(
-                bolt_distListStr_Y,
-                System.Globalization.CultureInfo.InvariantCulture,
-                TSD.Distance.CurrentUnitType);
-            //  增加此操作是为了模仿系统螺栓组的行为
-            //  否则实际使用时，距离列第一个值要手动填写为0
-            if (bolt_disList_Y.First().Value != 0.0)
-                bolt_disList_Y.Insert(0, new TSD.Distance(0.0, TSD.Distance.CurrentUnitType));
+        var anchorRodPosX = new double[anchorRodDisListX.Count + 1];
+        anchorRodPosX[0] = 0.0;
+        var aggregate = 0.0;
+        for (int i = 0; i < anchorRodDisListX.Count; i++) {
+            aggregate += anchorRodDisListX[i].Value;
+            anchorRodPosX[i + 1] = aggregate;
         }
 
-        private TransformationPlane GetWorkPlane() {
-            var part = Model.SelectModelObject(beamID) as Part;
-            var plane = GeometricPlaneFactory.ByPoints(points[0], points[1], points[2]);
-
-            var centerLine = part.GetCenterLine(false).Cast<TSG.Point>().ToArray();
-            var firstPoint = centerLine.First();
-            var lastPoint = centerLine.Last();
-            var sameDirection = true;
-
-            TSG.Point origin;
-            TSG.Vector axisX, axisY;
-            if (TSG.Distance.PointToPlane(firstPoint, plane) < TSG.Distance.PointToPlane(lastPoint, plane)) {
-                origin = Intersection.LineToPlane(
-                    new Line(firstPoint, centerLine[1]),
-                    plane);
-            } else {
-                origin = Intersection.LineToPlane(
-                    new Line(lastPoint, centerLine[centerLine.Length - 2]),
-                    plane);
-                sameDirection = false;
-            }
-
-            if (part is Beam beam) {
-                axisX = sameDirection ? beam.GetCoordinateSystem().AxisX : beam.GetCoordinateSystem().AxisX * -1;
-                axisY = beam.GetCoordinateSystem().AxisY;
-            } else if (part is PolyBeam polyBeam) {
-                var css = polyBeam.GetPolybeamCoordinateSystems().Cast<CoordinateSystem>();
-                var cs = sameDirection ? css.First() : css.Last();
-                axisX = sameDirection ? cs.AxisX : cs.AxisX * -1;
-                axisY = cs.AxisY;
-            } else {
-                throw new NotSupportedException($"Unsupported part type: {part.GetType()}.");
-            }
-
-            return new TransformationPlane(origin, axisX, axisY);
+        var anchorRodPosY = new double[anchorRodDisListY.Count + 1];
+        anchorRodPosY[0] = 0.0;
+        aggregate = 0.0;
+        for (int i = 0; i < anchorRodDisListY.Count; i++) {
+            aggregate += anchorRodDisListY[i].Value;
+            anchorRodPosY[i + 1] = aggregate;
         }
 
-        private void CreatConnection() {
-#if DEBUG
-            var msg = string.Empty;
-#endif
-            double height = 0.0, width = 0.0, webThickness = 0.0, flangeThickness = 0.0;
-            var beam = Model.SelectModelObject(beamID) as Part;
-            if (!beam.GetReportProperty("HEIGHT", ref height) || !beam.GetReportProperty("WIDTH", ref width)) {
-                throw new Exception("Failed to get the height and width of the beam.");
+        foreach (var x in anchorRodPosX) {
+            foreach (var y in anchorRodPosY) {
+                var pos = new Point(anchorRodPosX.Last() * -0.5 + x, anchorRodPosY.Last() * -0.5 + y);
+                p1 = pos - axisZ * _plateEmbedmentThickness;
+                p2 = p1 - axisZ * _boltAnchorRodLength;
+                CreateAnchorRodAndWeld(p1, p2);
             }
-            /*  这段代码对于某些截面类型不适用，获取不到数值
-             *  beam.GetReportProperty("WEB_THICKNESS", ref webThickness);
-             *  if (!beam.GetReportProperty("FLANGE_THICKNESS", ref flangeThickness)) {
-             *      beam.GetReportProperty("FlANGE_THICKNESS_U", ref flangeThickness);
-             *  }
-            */
+        }
 
-            var profile = new ProfileH_Symmetrical(beam.Profile.ProfileString);
-            if (profile.h1 != profile.h2 || profile.t1 != profile.t2)  //仅处理等截面H型钢
-                throw new UnAcceptableProfileException(beam.Profile.ProfileString);
-            webThickness = profile.s;
-            flangeThickness = profile.t1;
+        void CreateAnchorRodAndWeld(Point startPoint, Point endPoint) {
+            var anchorRod = CreatePartAnchorRod<Beam>();
+            anchorRod.Position.Plane = Position.PlaneEnum.MIDDLE;
+            anchorRod.Position.Depth = Position.DepthEnum.MIDDLE;
+            anchorRod.StartPoint = startPoint;
+            anchorRod.EndPoint = endPoint;
+            anchorRod.Insert();
 
-            var concrete = Model.SelectModelObject(concreteID) as Part;
-
-            var axisX = new TSG.Vector(1, 0, 0);
-            var axisY = new TSG.Vector(0, 1, 0);
-            var axisZ = new TSG.Vector(0, 0, 1);
-
-            var beamTopLine = new Line(new TSG.Point(0, height / 2, 0), axisX);
-            var beamBottomLine = new Line(new TSG.Point(0, -height / 2, 0), axisX);
-            var embedmentPlane = GeometricPlaneFactory.ByPoints(points[0], points[1], points[2]);
-
-            #region 创建预埋板
-            var topIntersection = Intersection.LineToPlane(beamTopLine, embedmentPlane);
-            var bottomIntersection = Intersection.LineToPlane(beamBottomLine, embedmentPlane);
-
-            var embedmentWorkTP_AxisX = new TSG.Vector(topIntersection).GetNormal(1.0);
-            var point1 = topIntersection + embedmentWorkTP_AxisX * embedment_exten;
-            var point2 = bottomIntersection - embedmentWorkTP_AxisX * embedment_exten;
-
-            var embedmentWorkTP_AxisY = embedmentPlane.Normal.Cross(embedmentWorkTP_AxisX).GetNormal(1.0);
-            var embedmentWorkTP = new TransformationPlane(
-                embedmentPlane.Origin,
-                embedmentWorkTP_AxisY,
-                embedmentWorkTP_AxisX);
-            Model.GetWorkPlaneHandler().SetCurrentTransformationPlane(embedmentWorkTP);
-
-            var embedment = ModelOperation.CreatBeam(
-                point1.Transform(workTP, embedmentWorkTP),
-                point2.Transform(workTP, embedmentWorkTP),
-                name: "EMBEDMENT",
-                profileStr: $"PL{embedment_thickness}*{embedment_width}",
-                materialStr: embedment_material,
-                assemblyPrefix: "MJ-",
-                planeEnum: Position.PlaneEnum.MIDDLE,
-                depthEnum: Position.DepthEnum.FRONT,
-                rotationEnum: Position.RotationEnum.FRONT);
-            Model.GetWorkPlaneHandler().SetCurrentTransformationPlane(workTP);
-
-            ModelOperation.ApplyBooleanOperation(concrete, embedment);
-            #endregion
-
-            #region 布置锚杆
-            var anchorRod_StartOffset = embedmentPlane.Normal.GetNormal(embedment_thickness);
-            var anchorRod_EndOffset = embedmentPlane.Normal.GetNormal(-anchorRod_length);
-            var x = 0.0; var y = 0.0;
-            var yTotal = anchorRod_disList_Y.Sum(y => y.Value);
-            for (int i = 0; i < anchorRod_disList_X.Count; i++) {
-                x += anchorRod_disList_X[i].Value;
-                for (int j = 0; j < anchorRod_disList_Y.Count; j++) {
-                    y += anchorRod_disList_Y[j].Value;
-                    point2 = point1 - embedmentWorkTP_AxisX * x + embedmentWorkTP_AxisY * (yTotal * 0.5 - y) - anchorRod_StartOffset;
-                    var rod = ModelOperation.CreatBeam(
-                        point2, point2 + anchorRod_EndOffset,
-                        name: "ANCHOR ROD",
-                        profileStr: "D" + anchorRod_size,
-                        materialStr: anchorRod_material,
-                        partPrefix: "D");
-                    ModelOperation.CreatWeld(embedment, rod);
-                }
-                y = 0.0;
-            }
-            #endregion
-
-            #region 梁末端对齐
-            var fittingGeometryPlane = new GeometricPlane(
-                (topIntersection + bottomIntersection).Multiply(0.5) + embedmentPlane.Normal.GetNormal(gap),
-                embedmentWorkTP_AxisX,
-                axisZ);
-            var fitting = new Fitting {
-                Father = beam,
-                Plane = new Plane {
-                    Origin = fittingGeometryPlane.Origin,
-                    AxisX = embedmentWorkTP_AxisX,
-                    AxisY = axisZ
-                }
-            };
-            fitting.Insert();
-            #endregion
-
-            #region 开鼠洞
-            var chamferNone = new Chamfer();
-            var chamferArcPoint = new Chamfer { Type = Chamfer.ChamferTypeEnum.CHAMFER_ARC_POINT };
-            point1 = Intersection.LineToPlane(
-                beamTopLine.Offset(flangeThickness, LineExtension.OffsetDirectionEnum.RIGHT),
-                fittingGeometryPlane);
-            point2 = point1 + axisX * ratHole_radius;
-            var point3 = point1 - axisY * ratHole_radius;
-            var point4 = point1 - axisX * ratHole_radius;
-
-            var contour = new ArrayList{
-                new ContourPoint(point2, chamferNone),
-                new ContourPoint(point3, chamferArcPoint),
-                new ContourPoint(point4, chamferNone),
-            };
-            var cutPart = ModelOperation.CreatBooleanOperationPolygon(contour, width);
-            ModelOperation.ApplyBooleanOperation(beam, cutPart);
-            cutPart.Delete();
-
-            point1 = Intersection.LineToPlane(
-                beamBottomLine.Offset(flangeThickness, LineExtension.OffsetDirectionEnum.LEFT),
-                fittingGeometryPlane);
-            point2 = point1 + axisX * ratHole_radius;
-            point3 = point1 + axisY * ratHole_radius;
-            point4 = point1 - axisX * ratHole_radius;
-
-            contour = new ArrayList{
-                new ContourPoint(point2, chamferNone),
-                new ContourPoint(point3, chamferArcPoint),
-                new ContourPoint(point4, chamferNone),
-            };
-            cutPart = ModelOperation.CreatBooleanOperationPolygon(contour, width);
-            ModelOperation.ApplyBooleanOperation(beam, cutPart);
-            cutPart.Delete();
-            #endregion
-
-            #region 创建连接板
-            point1 = Intersection.LineToPlane(
-                beamTopLine.Offset(flangeThickness + cleat_dis_with_innerEdge, LineExtension.OffsetDirectionEnum.RIGHT),
-                embedmentPlane);
-            point4 = Intersection.LineToPlane(
-                beamBottomLine.Offset(flangeThickness + cleat_dis_with_innerEdge, LineExtension.OffsetDirectionEnum.LEFT),
-                embedmentPlane);
-
-            var angle = axisX.GetAngleBetween_WithDirection(embedmentWorkTP_AxisX, axisZ);
-            var vector = axisX.GetNormal(cleat_width / Math.Sin(angle));
-            point2 = point1 + vector;
-            point3 = point4 + vector;
-
-            var cleat1 = ModelOperation.CreatContourPlate(
-                new TSG.Point[] { point1, point2, point3, point4 },
-                name: "CLEAT",
-                profileStr: $"PL{cleat_thickness}",
-                materialStr: cleat_material,
-                depthEnum: Position.DepthEnum.FRONT,
-                depthOffset: webThickness * 0.5);
-            var cleat2 = ModelOperation.CreatContourPlate(
-                new TSG.Point[] { point1, point2, point3, point4 },
-                name: "CLEAT",
-                profileStr: $"PL{cleat_thickness}",
-                materialStr: cleat_material,
-                depthEnum: Position.DepthEnum.BEHIND,
-                depthOffset: webThickness * 0.5);
-
-            ModelOperation.CreatWeld(embedment, cleat1);
-            ModelOperation.CreatWeld(embedment, cleat2);
-            #endregion
-
-            #region 布置螺栓
-            point1 += axisX.GetNormal((cleat_width + gap) * 0.5 / Math.Sin(angle));
-            y = 0.0;
-            yTotal = bolt_disList_Y.Sum(y => y.Value);
-            var zeroDisList = new DistanceList { new TSD.Distance(0.0, TSD.Distance.CurrentUnitType) };
-            for (int j = 0; j < bolt_disList_Y.Count; j++) {
-                y += bolt_disList_Y[j].Value;
-                point2 = point1 + axisX * (y / Math.Sin(angle));
-                ModelOperation.CreatBoltArray(
-                    beam, cleat1, new[] { cleat2 },
-                    point2, point2 - embedmentWorkTP_AxisX * 100,
-                    bolt_disList_X, zeroDisList,
-                    position: new Position { Rotation = Position.RotationEnum.FRONT },
-                    startOffset: bolt_startOffset,
-                    boltStandard: bolt_standard, boltSize: bolt_size);
-            }
-            #endregion
+            var weld = CreateWeld1<Weld>();
+            weld.MainObject = embedment;
+            weld.SecondaryObject = anchorRod;
+            weld.Insert();
         }
 
         #endregion
+
+        Model.GetWorkPlaneHandler().SetCurrentTransformationPlane(beamTp);
+
+        #region 梁末端对齐
+
+        var plane = new Plane {
+            Origin = origin + embedmentAxisZ * (_weld3TypeAbove == 0 ? _gap : 0),
+            AxisX = embedmentAxisX,
+            AxisY = embedmentAxisY
+        };
+        var fitting = new Fitting { Father = beam, Plane = plane };
+        fitting.Insert();
+
+        #endregion
+
+        #region 开焊孔
+
+        var chamferNone = new Chamfer();
+        
+        if (_chamfer1Type == 0) goto SkipChamfer;
+
+        var fittingPlane = GeometricPlaneFactory.ByPlane(plane);
+        if (_weld3TypeAbove != 0) fittingPlane.Origin += embedmentAxisZ * _gap;
+        
+        p1 = Intersection.LineToPlane(beamBottomInsideLine, fittingPlane);
+        p2 = p1 + axisX * 1000;
+        var p3 = Intersection.LineToPlane(beamTopInsideLine, fittingPlane);
+        var p4 = p3 + axisX * 1000;
+
+        var chamfer = CreateChamfer1();
+        var cp1 = new ContourPoint(p1, chamfer);
+        var simulated = cp1.GetSimulatedContourPoints(p2, p3);
+
+        var cps = new ArrayList();
+        cps.Add(new ContourPoint(p1 - axisX * 50, chamferNone));
+        cps.AddRange(simulated);
+
+        var cp3 = new ContourPoint(p3, chamfer.GetReversed());
+        simulated = cp3.GetSimulatedContourPoints(p1, p4);
+
+        cps.AddRange(simulated);
+        cps.Add(new ContourPoint(p3 - axisX * 50, chamferNone));
+        
+        var boolean = ModelOperation.CreateBooleanOperationPolygon(cps, beamProfile.B + 10);
+        boolean.Insert();
+        _ = ModelOperation.ApplyBooleanOperation(beam, boolean);
+        boolean.Delete();
+
+        SkipChamfer: ;
+
+        #endregion
+
+        #region 焊梁
+
+        var embedmentXyPlane = new GeometricPlane(origin, embedmentAxisX, embedmentAxisY);
+
+        if (_weld3TypeAbove == 0) goto SkipWeldBeam;
+
+        p1 = Intersection.LineToPlane(beamTopLine.Offset(axisZ.GetNormal(beamProfile.B * 0.5)), embedmentXyPlane);
+        p2 = Intersection.LineToPlane(beamTopLine.Offset(axisZ.GetNormal(beamProfile.B * -0.5)), embedmentXyPlane);
+
+        var polyWeld = CreateWeld3<PolygonWeld>();
+        polyWeld.Polygon = new Polygon { Points = new ArrayList { p1, p2 } };
+        polyWeld.MainObject = embedment;
+        polyWeld.SecondaryObject = beam;
+        polyWeld.Insert();
+
+        p1 = Intersection.LineToPlane(beamBottomInsideLine.Offset(axisZ.GetNormal(beamProfile.B * 0.5)),
+            embedmentXyPlane);
+        p2 = Intersection.LineToPlane(beamBottomInsideLine.Offset(axisZ.GetNormal(beamProfile.B * -0.5)),
+            embedmentXyPlane);
+
+        polyWeld = CreateWeld3<PolygonWeld>();
+        polyWeld.Polygon = new Polygon { Points = new ArrayList { p1, p2 } };
+        polyWeld.MainObject = embedment;
+        polyWeld.SecondaryObject = beam;
+        polyWeld.Insert();
+
+        SkipWeldBeam: ;
+
+        #endregion
+
+        #region 创建夹板
+
+        var embedmentXzPlane = new GeometricPlane(origin, embedmentAxisX, embedmentAxisZ);
+        var axisXProjOnEmbedXz = ProjectionExtension.VectorToPlane(axisX, embedmentXzPlane);
+        var isSloping = axisXProjOnEmbedXz.GetAngleBetweenPrecisely(embedmentAxisZ) >
+                        GeometryConstants.ANGULAR_EPSILON;
+
+        var embedmentYzPlane = new GeometricPlane(origin, embedmentAxisY, embedmentAxisZ);
+        var axisXProjOnEmbedYz = ProjectionExtension.VectorToPlane(axisX, embedmentYzPlane);
+        var isSkew = axisXProjOnEmbedYz.GetAngleBetweenPrecisely(embedmentAxisZ) >
+                     GeometryConstants.ANGULAR_EPSILON;
+
+        var cleatAxisX = axisX.GetNormal(1 / axisXProjOnEmbedYz.GetLength());
+
+        p1 = origin + embedmentAxisX * (_plateCleatHeight * 0.5);
+        p2 = p1 + cleatAxisX * _plateCleatBreadth;
+        p4 = origin - embedmentAxisX * (_plateCleatHeight * 0.5);
+        p3 = p4 + cleatAxisX * _plateCleatBreadth;
+
+        if (isSkew) {
+            p1 -= axisX * 100;
+            p4 -= axisX * 100;
+        }
+
+        var contours = new ArrayList {
+            new ContourPoint(p1, chamferNone),
+            new ContourPoint(p2, chamferNone),
+            new ContourPoint(p3, chamferNone),
+            new ContourPoint(p4, chamferNone)
+        };
+
+        var depthOffset = beamProfile.Type is 'H'
+            ? beamProfile.S * 0.5
+            : beamProfile.B * 0.5 - beamProfile.S - _plateCleatThickness;
+
+        var cleatFront = CreatePlateCleat<ContourPlate>();
+        cleatFront.Contour.ContourPoints = contours;
+        cleatFront.Position.Depth = Position.DepthEnum.FRONT;
+        cleatFront.Position.DepthOffset = depthOffset;
+        cleatFront.Insert();
+
+        var cleatBehind = CreatePlateCleat<ContourPlate>();
+        cleatBehind.Contour.ContourPoints = contours;
+        cleatBehind.Position.Depth = Position.DepthEnum.BEHIND;
+        cleatBehind.Position.DepthOffset = depthOffset;
+        cleatBehind.Insert();
+
+        if (isSkew) {
+            p1 = Intersection.LineToPlane(beamTopLine, embedmentXyPlane) + embedmentAxisX * 100;
+            p2 = Intersection.LineToPlane(beamBottomLine, embedmentXyPlane) - embedmentAxisX * 100;
+            boolean = ModelOperation.CreateBooleanOperationPolygon(
+                [
+                    p1 + embedmentAxisY * (beamProfile.B * 0.5 + 10) - embedmentAxisZ * 75,
+                    p1 - embedmentAxisY * (beamProfile.B * 0.5 + 10) - embedmentAxisZ * 75,
+                    p2 - embedmentAxisY * (beamProfile.B * 0.5 + 10) - embedmentAxisZ * 75,
+                    p2 + embedmentAxisY * (beamProfile.B * 0.5 + 10) - embedmentAxisZ * 75,
+                ],
+                150);
+            boolean.Insert();
+            _ = ModelOperation.ApplyBooleanOperation(cleatFront, boolean);
+            _ = ModelOperation.ApplyBooleanOperation(cleatBehind, boolean);
+            boolean.Delete();
+        }
+
+        var weld = CreateWeld2<Weld>();
+        weld.MainObject = embedment;
+        weld.SecondaryObject = cleatFront;
+        weld.Insert();
+
+        weld.SecondaryObject = cleatBehind;
+        weld.Insert();
+
+        #endregion
+
+        #region 布置螺栓
+
+        var boltDisListX =
+            DistanceList.Parse(_bolt1DistXText, CultureInfo.CurrentCulture, TsData.Distance.CurrentUnitType);
+        var boltDisListY =
+            DistanceList.Parse(_bolt1DistYText, CultureInfo.CurrentCulture, TsData.Distance.CurrentUnitType);
+        var boltTotalDisX = boltDisListX.Sum(dis => dis.Value);
+        var boltTotalDisY = boltDisListY.Sum(dis => dis.Value);
+
+        var bolt = CreateBolt1<BoltArray>();
+        bolt.PartToBoltTo = beam;
+        bolt.PartToBeBolted = cleatFront;
+        bolt.AddOtherPartToBolt(cleatBehind);
+        bolt.Position.Rotation = Position.RotationEnum.FRONT;
+
+        if (isSloping && boltDisListY.Count > 1) {
+            for (int i = boltDisListY.Count - 1; i >= 0; i--) {
+                bolt.RemoveBoltDistY(i);
+            }
+
+            bolt.AddBoltDistY(0.0);
+
+            p1 = origin + embedmentAxisX * (boltTotalDisX * 0.5) +
+                 cleatAxisX * (_gap + (_plateCleatBreadth - boltTotalDisY) * 0.5);
+            p2 = p1 - embedmentAxisX * boltTotalDisX;
+
+            bolt.FirstPosition = p1;
+            bolt.SecondPosition = p2;
+            bolt.Insert();
+
+            foreach (var y in boltDisListY) {
+                p1 += cleatAxisX * y.Value;
+                p2 += cleatAxisX * y.Value;
+
+                bolt.FirstPosition = p1;
+                bolt.SecondPosition = p2;
+                bolt.Insert();
+            }
+        } else {
+            p1 = origin + embedmentAxisX * (boltTotalDisX * 0.5) +
+                 cleatAxisX * (_gap + (_plateCleatBreadth - _gap) * 0.5);
+            p2 = p1 - embedmentAxisX * boltTotalDisX;
+
+            bolt.FirstPosition = p1;
+            bolt.SecondPosition = p2;
+            bolt.Insert();
+        }
+
+        #endregion
+
     }
 }
