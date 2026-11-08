@@ -11,8 +11,9 @@ namespace Muggle.TsExtensions.Macros
         [Tekla.Macros.Runtime.MacroEntryPoint]
         public static void Run(Tekla.Macros.Runtime.IMacroRuntime runtime)
         {
-            var xsDir = System.Environment.GetEnvironmentVariable("XS_DIR");
-            var aplicationsPath = System.IO.Path.Combine(xsDir, "environments\\common\\extensions\\Muggle.TsExtensions", "Muggle.TsExtensions.exe");
+            var xsDataDir = string.Empty;
+            Tekla.Structures.TeklaStructuresSettings.GetAdvancedOption("XSDATADIR", ref xsDataDir);
+            var aplicationsPath = System.IO.Path.Combine(xsDataDir, "environments\\common\\extensions\\Muggle.TsExtensions", "Muggle.TsExtensions.exe");
 
             if (System.IO.File.Exists(aplicationsPath))
             {
