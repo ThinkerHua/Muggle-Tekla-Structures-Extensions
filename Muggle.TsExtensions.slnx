@@ -15,8 +15,8 @@
         <File Path="README.md" />
     </Folder>
     <Folder Name="/TSEP/">
-        <File Path="TSEP/manifest for 2021~2023.xml" />
-        <File Path="TSEP/manifest for 2024 and later.xml" />
+        <File Path="TSEP/manifest for 2018~2022.xml" />
+        <File Path="TSEP/manifest for 2023 and later.xml" />
     </Folder>
     <Folder Name="/TSEP/Assets/">
         <File Path="TSEP/assets/logo.png" />

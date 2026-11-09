@@ -4,7 +4,8 @@
 	<Product
 		Id="Muggle.TsExtensions"
 		UpgradeCode="547B1AA5-0F0D-4276-8D0C-BD54561E1D56"
-		Version="0.10" Language="1033"
+		Version="0.11" 
+        Language="1033"
 		Name="Muggle Tekla Structures Extensions"
 		Manufacturer="Huang YongXing (thinkerhua@hotmail.com)"
 		Description= "Extensions for Tekla Structures."
@@ -12,7 +13,7 @@
 		Type="Extension">
 		<TeklaVersions>
 			<TeklaVersion Name="2099.1"/>
-			<MinTeklaVersion Name="2021.0"/>
+			<MinTeklaVersion Name="2023.0"/>
 			<MaxTeklaVersion Name="2099.1"/>
 		</TeklaVersions>
 	</Product>
@@ -23,10 +24,10 @@
 		<SourcePathVariable Id="StandardFileFolder" Value="%TEPDEFINITIONFILEFOLDER%\standard file"/>
 		<SourcePathVariable Id="MessagesFolder" Value="%TEPDEFINITIONFILEFOLDER%\messages"/>
 		<SourcePathVariable Id="BitmapsFolder" Value="%TEPDEFINITIONFILEFOLDER%\bitmaps"/>
-		<SourcePathVariable Id="MacrosFolder" Value="%TEPDEFINITIONFILEFOLDER%\macros"/>
+        <SourcePathVariable Id="MacrosFolder" Value="%TEPDEFINITIONFILEFOLDER%\macros"/>
 		<SourcePathVariable Id="ComponentCatalogFolder" Value="%TEPDEFINITIONFILEFOLDER%\componentCatalog" />
 		<SourcePathVariable Id="SolutionFolder" Value="%TEPDEFINITIONFILEFOLDER%\.." />
-		<SourcePathVariable Id="MSBuildOutputPath" Value="bin\R2021\net48"/>
+		<SourcePathVariable Id="MSBuildOutputPath" Value="bin\R2024\net48"/>
 	</SourcePathVariables>
 
 	<TargetPathVariables>
@@ -46,7 +47,7 @@
 
 	<Component Id="Common.WPF" Guid="E64B36A7-2004-4943-A8EC-3A97B5BF701A">
 		<File Id="Common.WPF" Source="%SolutionFolder%\Common.WPF\%MSBuildOutputPath%\Common.WPF.dll" Target="%BinariesDirectory%"/>
-		<File Id="Common.WPF.Ail" Source="%MessagesFolder%\Common.WPF.ail" Target="%MessagesDirectory%"/>
+        <File Id="Common.WPF.Ail" Source="%MessagesFolder%\Common.WPF.ail" Target="%MessagesDirectory%"/>
 	</Component>
 
 	<Component Id="DC2001" Guid="9A1FDE7E-D7B0-48DA-AF1E-6A22AB4E0B3C">
@@ -55,11 +56,11 @@
 		<File Id="DC2001.Ail" Source="%MessagesFolder%\DC2001.ail" Target="%MessagesDirectory%"/>
 	</Component>
 
-	<Component Id="DC4001" Guid="58D17EDC-1347-4D64-BC20-C25DAD635B43">
-		<File Id="DC4001" Source="%SolutionFolder%\DC4001\%MSBuildOutputPath%\DC4001.dll" Target="%BinariesDirectory%"/>
-		<File Id="DC4001.Icon" Source="%BitmapsFolder%\et_element_DC4001.bmp" Target="%BitmapsDirectory%"/>
-		<File Id="DC4001.Ail" Source="%MessagesFolder%\DC4001.ail" Target="%MessagesDirectory%"/>
-	</Component>
+    <Component Id="DC4001" Guid="58D17EDC-1347-4D64-BC20-C25DAD635B43">
+        <File Id="DC4001" Source="%SolutionFolder%\DC4001\%MSBuildOutputPath%\DC4001.dll" Target="%BinariesDirectory%"/>
+        <File Id="DC4001.Icon" Source="%BitmapsFolder%\et_element_DC4001.bmp" Target="%BitmapsDirectory%"/>
+        <File Id="DC4001.Ail" Source="%MessagesFolder%\DC4001.ail" Target="%MessagesDirectory%"/>
+    </Component>
 
 	<Component Id="HJ1001" Guid="13696F27-FEFD-4603-82BE-7DE7221CBCF5">
 		<File Id="HJ1001" Source="%SolutionFolder%\HJ1001\%MSBuildOutputPath%\HJ1001.dll" Target="%BinariesDirectory%"/>
@@ -78,6 +79,18 @@
 		<File Id="KJ1002.Icon" Source="%BitmapsFolder%\et_element_KJ1002.bmp" Target="%BitmapsDirectory%"/>
 		<File Id="KJ1002.Ail" Source="%MessagesFolder%\KJ1002.ail" Target="%MessagesDirectory%"/>
 	</Component>
+
+    <Component Id="KJ1003" Guid="4AD55F65-A41A-4576-B6A3-161013C2AA6D">
+        <File Id="KJ1003" Source="%SolutionFolder%\KJ1003\%MSBuildOutputPath%\KJ1003.dll" Target="%BinariesDirectory%"/>
+        <File Id="KJ1003.Icon" Source="%BitmapsFolder%\et_element_KJ1003.bmp" Target="%BitmapsDirectory%"/>
+        <File Id="KJ1003.Ail" Source="%MessagesFolder%\KJ1003.ail" Target="%MessagesDirectory%"/>
+    </Component>
+
+    <Component Id="KJ1004" Guid="1A499D18-3D6E-4AAC-9FC1-BF8198149124">
+        <File Id="KJ1004" Source="%SolutionFolder%\KJ1004\%MSBuildOutputPath%\KJ1004.dll" Target="%BinariesDirectory%"/>
+        <File Id="KJ1004.Icon" Source="%BitmapsFolder%\et_element_KJ1004.bmp" Target="%BitmapsDirectory%"/>
+        <File Id="KJ1004.Ail" Source="%MessagesFolder%\KJ1004.ail" Target="%MessagesDirectory%"/>
+    </Component>
 
 	<Component Id="KJ2001" Guid="717671A2-058E-4114-AEBF-463DF46C4D52">
 		<File Id="KJ2001" Source="%SolutionFolder%\KJ2001\%MSBuildOutputPath%\KJ2001.dll" Target="%BinariesDirectory%"/>
@@ -111,9 +124,9 @@
 
 	<Component Id="MainWindow" Guid="121610DD-75AB-479A-AEB8-D6CD4C806CB5">
 		<File Id="Muggle.TsExtensions" Source="%SolutionFolder%\MainWindow\%MSBuildOutputPath%\Muggle.TsExtensions.exe" Target="%BinariesDirectory%"/>
-		<File Id="Muggle.TsExtensions.config" Source="%SolutionFolder%\MainWindow\%MSBuildOutputPath%\Muggle.TsExtensions.exe.config" Target="%BinariesDirectory%"/>
-		<File Id="Muggle.TsExtensions.Ail" Source="%MessagesFolder%\Muggle.TsExtensions.ail" Target="%MessagesDirectory%"/>
-		<File Id="CommunityToolkit.Mvvm" Source="%SolutionFolder%\MainWindow\%MSBuildOutputPath%\CommunityToolkit.Mvvm.dll" Target="%BinariesDirectory%"/>
+        <File Id="Muggle.TsExtensions.config" Source="%SolutionFolder%\MainWindow\%MSBuildOutputPath%\Muggle.TsExtensions.exe.config" Target="%BinariesDirectory%"/>
+        <File Id="Muggle.TsExtensions.Ail" Source="%MessagesFolder%\Muggle.TsExtensions.ail" Target="%MessagesDirectory%"/>
+        <File Id="CommunityToolkit.Mvvm" Source="%SolutionFolder%\MainWindow\%MSBuildOutputPath%\CommunityToolkit.Mvvm.dll" Target="%BinariesDirectory%"/>
 		<File Id="CalcBinding" Source="%SolutionFolder%\MainWindow\%MSBuildOutputPath%\CalcBinding.dll" Target="%BinariesDirectory%"/>
 		<File Id="DynamicExpresso.Core" Source="%SolutionFolder%\MainWindow\%MSBuildOutputPath%\DynamicExpresso.Core.dll" Target="%BinariesDirectory%"/>
 		<File Id="Microsoft.Bcl.AsyncInterfaces" Source="%SolutionFolder%\MainWindow\%MSBuildOutputPath%\Microsoft.Bcl.AsyncInterfaces.dll" Target="%BinariesDirectory%"/>
@@ -126,7 +139,7 @@
 		<File Id="System.Runtime.CompilerServices.Unsafe" Source="%SolutionFolder%\MainWindow\%MSBuildOutputPath%\System.Runtime.CompilerServices.Unsafe.dll" Target="%BinariesDirectory%"/>
 		<File Id="System.Threading.Tasks.Extensions" Source="%SolutionFolder%\MainWindow\%MSBuildOutputPath%\System.Threading.Tasks.Extensions.dll" Target="%BinariesDirectory%"/>
 	</Component>
-    
+
     <Component Id="MainWindowRunnerMacro" Guid="F0E3F77F-099A-46B6-91AA-7A5D40A32208">
         <File Id="Muggle.TsExtensions.cs" Source="%MacrosFolder%\Muggle.TsExtensions.cs" Target="%CommonMacroDirectory%"/>
         <File Id="Muggle.TsExtensions.bmp" Source="%BitmapsFolder%\Muggle.TsExtensions.bmp" Target="%CommonMacroDirectory%"/>
@@ -144,6 +157,8 @@
 		<ComponentRef ReferenceId="HJ1001" />
 		<ComponentRef ReferenceId="KJ1001" />
 		<ComponentRef ReferenceId="KJ1002" />
+		<ComponentRef ReferenceId="KJ1003" />
+		<ComponentRef ReferenceId="KJ1004" />
 		<ComponentRef ReferenceId="KJ2001" />
 		<ComponentRef ReferenceId="MG1001" />
 		<ComponentRef ReferenceId="MG1002" />
