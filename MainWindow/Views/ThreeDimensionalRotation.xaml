@@ -1,4 +1,4 @@
-﻿<!--==============================================================================
+<!--==============================================================================
  *  Muggle TsExtensions - extensions for Tekla Structures
  *
  *  Copyright © 2025 Huang YongXing.
@@ -19,8 +19,8 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:local="clr-namespace:Muggle.TsExtensions.MainWindow.Views"
       xmlns:vm="clr-namespace:Muggle.TsExtensions.MainWindow.ViewModels"
-      xmlns:dialog="clr-namespace:Tekla.Structures.Dialog;assembly=Tekla.Structures.Dialog"
-      Title="{dialog:Loc albl_3d_rotation}"
+      xmlns:tsdlg="clr-namespace:Tekla.Structures.Dialog;assembly=Tekla.Structures.Dialog"
+      Title="{tsdlg:Loc albl_3d_rotation}"
       mc:Ignorable="d"
       d:DesignHeight="300"
       d:DesignWidth="300"
@@ -47,19 +47,19 @@
     </Page.Resources>
 
     <StackPanel Margin="5">
-        <GroupBox Header="{dialog:Loc albl_rotation_axis}">
+        <GroupBox Header="{tsdlg:Loc albl_rotation_axis}">
             <StackPanel>
-                <RadioButton Content="{dialog:Loc albl_X_axis_of_part_coordinate_system}" IsChecked="{Binding AxisType, Converter={StaticResource EnumToBool}, ConverterParameter={x:Static vm:ThreeDimensionalRotationViewModel+Axis.PartCsAxisX}}" />
-                <RadioButton Content="{dialog:Loc albl_Y_axis_of_part_coordinate_system}" IsChecked="{Binding AxisType, Converter={StaticResource EnumToBool}, ConverterParameter={x:Static vm:ThreeDimensionalRotationViewModel+Axis.PartCsAxisY}}" />
-                <RadioButton Content="{dialog:Loc albl_Z_axis_of_part_coordinate_system}" IsChecked="{Binding AxisType, Converter={StaticResource EnumToBool}, ConverterParameter={x:Static vm:ThreeDimensionalRotationViewModel+Axis.PartCsAxisZ}}" />
-                <RadioButton Content="{dialog:Loc albl_manually_specify}" IsChecked="{Binding AxisType, Converter={StaticResource EnumToBool}, ConverterParameter={x:Static vm:ThreeDimensionalRotationViewModel+Axis.ManualSelect}}" />
+                <RadioButton Content="{tsdlg:Loc albl_X_axis_of_part_coordinate_system}" IsChecked="{Binding AxisType, Converter={StaticResource Equality}, ConverterParameter={x:Static vm:ThreeDimensionalRotationViewModel+Axis.PartCsAxisX}}" />
+                <RadioButton Content="{tsdlg:Loc albl_Y_axis_of_part_coordinate_system}" IsChecked="{Binding AxisType, Converter={StaticResource Equality}, ConverterParameter={x:Static vm:ThreeDimensionalRotationViewModel+Axis.PartCsAxisY}}" />
+                <RadioButton Content="{tsdlg:Loc albl_Z_axis_of_part_coordinate_system}" IsChecked="{Binding AxisType, Converter={StaticResource Equality}, ConverterParameter={x:Static vm:ThreeDimensionalRotationViewModel+Axis.PartCsAxisZ}}" />
+                <RadioButton Content="{tsdlg:Loc albl_manually_specify}" IsChecked="{Binding AxisType, Converter={StaticResource Equality}, ConverterParameter={x:Static vm:ThreeDimensionalRotationViewModel+Axis.ManualSelect}}" />
             </StackPanel>
         </GroupBox>
 
-        <GroupBox Header="{dialog:Loc albl_rotation_angle}">
+        <GroupBox Header="{tsdlg:Loc albl_rotation_angle}">
             <Grid>
                 <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="auto" />
+                    <ColumnDefinition Width="Auto" />
                     <ColumnDefinition />
                 </Grid.ColumnDefinitions>
                 <Grid.RowDefinitions>
@@ -68,7 +68,7 @@
                     <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
 
-                <RadioButton Grid.Row="0" Grid.Column="0" Content="{dialog:Loc albl_angle_value}" IsChecked="{Binding AngleType, Converter={StaticResource EnumToBool}, ConverterParameter={x:Static vm:ThreeDimensionalRotationViewModel+Angle.AngleValue}}" />
+                <RadioButton Grid.Row="0" Grid.Column="0" Content="{tsdlg:Loc albl_angle_value}" IsChecked="{Binding AngleType, Converter={StaticResource Equality}, ConverterParameter={x:Static vm:ThreeDimensionalRotationViewModel+Angle.AngleValue}}" />
                 <TextBox Grid.Row="0"
                          Grid.Column="1"
                          HorizontalContentAlignment="Center"
@@ -77,18 +77,18 @@
                 <RadioButton Grid.Row="1"
                              Grid.Column="0"
                              Grid.ColumnSpan="2"
-                             Content="{dialog:Loc albl_manually_specify_start_and_end_direction}"
-                             IsChecked="{Binding AngleType, Converter={StaticResource EnumToBool}, ConverterParameter={x:Static vm:ThreeDimensionalRotationViewModel+Angle.ManualSelect}}" />
+                             Content="{tsdlg:Loc albl_manually_specify_start_and_end_direction}"
+                             IsChecked="{Binding AngleType, Converter={StaticResource Equality}, ConverterParameter={x:Static vm:ThreeDimensionalRotationViewModel+Angle.ManualSelect}}" />
                 <CheckBox Grid.Row="2"
                           Grid.Column="0"
                           Grid.ColumnSpan="2"
                           Margin="16,5,5,5"
-                          Content="{dialog:Loc albl_end_direction_is_normal_of_plane}"
+                          Content="{tsdlg:Loc albl_end_direction_is_normal_of_plane}"
                           IsChecked="{Binding TargetDirectionIsNormalOfPlane, Mode=TwoWay}"
-                          IsEnabled="{Binding AngleType, Converter={StaticResource EnumToBool}, ConverterParameter={x:Static vm:ThreeDimensionalRotationViewModel+Angle.ManualSelect}}" />
+                          IsEnabled="{Binding AngleType, Converter={StaticResource Equality}, ConverterParameter={x:Static vm:ThreeDimensionalRotationViewModel+Angle.ManualSelect}}" />
             </Grid>
         </GroupBox>
 
-        <Button Width="100" Height="30" Content="{dialog:Loc albl_action}" Command="{Binding ThreeDimensionalRotationCommand}" />
+        <Button Width="100" Height="30" Content="{tsdlg:Loc albl_action}" Command="{Binding ThreeDimensionalRotationCommand}" />
     </StackPanel>
 </Page>

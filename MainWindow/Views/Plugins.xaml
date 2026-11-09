@@ -19,8 +19,8 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
       xmlns:sys="clr-namespace:System;assembly=mscorlib"
       xmlns:vm="clr-namespace:Muggle.TsExtensions.MainWindow.ViewModels"
-      xmlns:dialog="clr-namespace:Tekla.Structures.Dialog;assembly=Tekla.Structures.Dialog"
-      Title="{dialog:Loc albl_plugins}"
+      xmlns:tsdlg="clr-namespace:Tekla.Structures.Dialog;assembly=Tekla.Structures.Dialog"
+      Title="{tsdlg:Loc albl_plugins}"
       mc:Ignorable="d"
       d:Background="AliceBlue"
       d:DataContext="{d:DesignInstance Type=vm:PluginsViewModel}"
@@ -38,7 +38,7 @@
                 <Grid Margin="2">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="*" />
-                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="Auto" />
                     </Grid.RowDefinitions>
 
                     <Image Grid.Row="0"

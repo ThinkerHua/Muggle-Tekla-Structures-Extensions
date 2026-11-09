@@ -1,4 +1,4 @@
-﻿<!--==============================================================================
+<!--==============================================================================
  *  Muggle TsExtensions - extensions for Tekla Structures
  *
  *  Copyright © 2025 Huang YongXing.
@@ -19,8 +19,8 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:local="clr-namespace:Muggle.TsExtensions.MainWindow.Views"
       xmlns:vm="clr-namespace:Muggle.TsExtensions.MainWindow.ViewModels"
-      xmlns:dialog="clr-namespace:Tekla.Structures.Dialog;assembly=Tekla.Structures.Dialog"
-      Title="{dialog:Loc albl_move_to_elevation}"
+      xmlns:tsdlg="clr-namespace:Tekla.Structures.Dialog;assembly=Tekla.Structures.Dialog"
+      Title="{tsdlg:Loc albl_move_to_elevation}"
       mc:Ignorable="d"
       d:DesignHeight="450"
       d:DesignWidth="800"
@@ -51,31 +51,31 @@
 
     <Grid Margin="5">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="auto" />
-            <ColumnDefinition Width="auto" MinWidth="100" />
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="Auto" MinWidth="100" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="auto" />
-            <RowDefinition Height="auto" />
-            <RowDefinition Height="auto" />
-            <RowDefinition Height="auto" />
-            <RowDefinition Height="auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <TextBlock Grid.Row="0" Grid.Column="0" Text="{dialog:Loc albl_target_elevation}" />
+        <TextBlock Grid.Row="0" Grid.Column="0" Text="{tsdlg:Loc albl_target_elevation}" />
         <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding TargetElevation, Mode=TwoWay, UpdateSourceTrigger=LostFocus, StringFormat={}{0:F3}}" />
         <RadioButton Grid.Row="1"
                      Grid.Column="0"
                      HorizontalAlignment="Left"
                      GroupName="absolutely"
-                     Content="{dialog:Loc albl_absolutely}"
+                     Content="{tsdlg:Loc albl_absolutely}"
                      IsChecked="{Binding IsAbsolutely, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
         <RadioButton Grid.Row="1"
                      Grid.Column="0"
                      Grid.ColumnSpan="2"
                      HorizontalAlignment="Right"
                      GroupName="absolutely"
-                     Content="{dialog:Loc albl_relative}"
+                     Content="{tsdlg:Loc albl_relative}"
                      IsChecked="{Binding IsAbsolutely, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource BoolInverter}}" />
 
         <Separator Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="2" />
@@ -84,27 +84,27 @@
                      Grid.Column="0"
                      Grid.ColumnSpan="2"
                      HorizontalAlignment="Left"
-                     Content="{dialog:Loc albl_top}"
-                     IsChecked="{Binding ElevationType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource EnumToBool}, ConverterParameter={x:Static vm:MoveToElevationViewModel+Elevation.Top}}" />
+                     Content="{tsdlg:Loc albl_top}"
+                     IsChecked="{Binding ElevationType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource Equality}, ConverterParameter={x:Static vm:MoveToElevationViewModel+Elevation.Top}}" />
         <RadioButton Grid.Row="3"
                      Grid.Column="0"
                      Grid.ColumnSpan="2"
                      HorizontalAlignment="Center"
-                     Content="{dialog:Loc albl_middle}"
-                     IsChecked="{Binding ElevationType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource EnumToBool}, ConverterParameter={x:Static vm:MoveToElevationViewModel+Elevation.Middle}}" />
+                     Content="{tsdlg:Loc albl_middle}"
+                     IsChecked="{Binding ElevationType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource Equality}, ConverterParameter={x:Static vm:MoveToElevationViewModel+Elevation.Middle}}" />
         <RadioButton Grid.Row="3"
                      Grid.Column="0"
                      Grid.ColumnSpan="2"
                      HorizontalAlignment="Right"
-                     Content="{dialog:Loc albl_bottom}"
-                     IsChecked="{Binding ElevationType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource EnumToBool}, ConverterParameter={x:Static vm:MoveToElevationViewModel+Elevation.Bottom}}" />
+                     Content="{tsdlg:Loc albl_bottom}"
+                     IsChecked="{Binding ElevationType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged, Converter={StaticResource Equality}, ConverterParameter={x:Static vm:MoveToElevationViewModel+Elevation.Bottom}}" />
 
         <Button Grid.Row="4"
                 Grid.Column="0"
                 Grid.ColumnSpan="2"
                 Padding="5,2,5,2"
                 HorizontalAlignment="Center"
-                Content="{dialog:Loc albl_move_to_elevation}"
+                Content="{tsdlg:Loc albl_move_to_elevation}"
                 Command="{Binding MoveToElevationCommand}" />
     </Grid>
 </Page>

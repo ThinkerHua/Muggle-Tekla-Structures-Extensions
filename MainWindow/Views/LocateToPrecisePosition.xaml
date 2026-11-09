@@ -1,4 +1,4 @@
-﻿<!--==============================================================================
+<!--==============================================================================
  *  Muggle TsExtensions - extensions for Tekla Structures
  *
  *  Copyright © 2026 Huang YongXing.
@@ -19,8 +19,8 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
       xmlns:local="clr-namespace:Muggle.TsExtensions.MainWindow.Views"
       xmlns:vm="clr-namespace:Muggle.TsExtensions.MainWindow.ViewModels"
-      xmlns:dialog="clr-namespace:Tekla.Structures.Dialog;assembly=Tekla.Structures.Dialog"
-      Title="{dialog:Loc albl_move_to_elevation}"
+      xmlns:tsdlg="clr-namespace:Tekla.Structures.Dialog;assembly=Tekla.Structures.Dialog"
+      Title="{tsdlg:Loc albl_move_to_elevation}"
       mc:Ignorable="d"
       d:DesignHeight="100"
       d:DesignWidth="300"
@@ -51,15 +51,15 @@
 
     <Grid Margin="5">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="auto" />
+            <ColumnDefinition Width="Auto" />
             <ColumnDefinition Width="100" />
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="auto" />
-            <RowDefinition Height="auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <TextBlock Grid.Row="0" Grid.Column="0" Text="{dialog:Loc albl_significance}" />
+        <TextBlock Grid.Row="0" Grid.Column="0" Text="{tsdlg:Loc albl_significance}" />
         <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Significance, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
         <Button Grid.Row="1"
@@ -68,7 +68,7 @@
                 MinWidth="100"
                 Padding="5,2,5,2"
                 HorizontalAlignment="Center"
-                Content="{dialog:Loc albl_relocate}"
+                Content="{tsdlg:Loc albl_relocate}"
                 Command="{Binding LocateToPrecisePositionCommand}" />
     </Grid>
 </Page>
