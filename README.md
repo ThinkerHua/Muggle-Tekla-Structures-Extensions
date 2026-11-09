@@ -30,6 +30,8 @@ Tools and plugins for Tekla Structures. Please use in accordance with the [Open 
 - [ExtendBeam](#extendbeam)
 - [AlignColumnControlPointsWithCentroid](#aligncolumncontrolpointswithcentroid)
 - [ProjectBeamOntoPlane](#projectbeamontoplane)
+- [FitEndToPlane](#fitendtoplane)
+- [CreateEvenlyDistributedBeams](#createevenlydistributedbeams)
 
 >Components
 >组件
@@ -41,6 +43,8 @@ Tools and plugins for Tekla Structures. Please use in accordance with the [Open 
 - [MJ5001](#mj5001)
 - [KJ1001](#kj1001)
 - [KJ1002](#kj1002)
+- [KJ1003](#kj1003)
+- [KJ1004](#kj1004)
 - [KJ2001](#kj2001)
 - [DC2001](#dc2001)
 - [DC4001](#dc4001)
@@ -49,65 +53,15 @@ Tools and plugins for Tekla Structures. Please use in accordance with the [Open 
 
 ## Common
 
-Defines some practical types, methods, and rewrites of some officially implemented methods, e.g.,
+Defines some practical types, methods, and rewrites of some officially implemented methods,
 
-定义了一些实用的类型、方法，以及对一些官方实现的方法进行了重写，例如：
-
-- **Geometry3dOperation.PositionOfTriangleOnLines** method
-
-  Find the position of a triangle in the 2D plane when its three vertices fall on three lines.
-
-  求二维平面中三角形三个顶点分别落在三条直线上时的位置。
-
-- **IntersectionExtension.LineToLine** method
-
-  It is a rewrite of the official implementation of Intersection.LineToLine method, to solve the problem that in the case of two lines intersecting, the length of the line segment obtained by the official implementation is not equal to 0.0 (although the official document says that it is equal to 0.0, but it is actually a very small value).
-
-  对官方实现 Intersection.LineToLine 方法的重写，解决在两直线相交的情况下，官方实现求得的线段长度不等于 0.0的问题（虽然官方文档说是等于 0.0，但实际是一个很小的值）。
-
-- **IntersectionExtension.ArcToLine** method
-
-  Which realizes to find the shortest line segment between a circular arc and a straight line in 3D space, and derives IntersectionExtension.CircleToLine method, which realizes to find the shortest line segment between a circle and a straight line in 3D space.
-
-  实现求三维空间中圆弧与直线间最短线段，并引申出 IntersectionExtension.CircleToLine 方法，实现求三维空间中圆与直线间最短线段。
-
-- **PointsInterval** class
-
-  Provides a solution to solve the problems related to points interval.
-
-  提供了一种求解点区间相关问题的解决方案。
-
-- **VectorExtension.GetAngleBetween_Precisely** method
-
-  It is a rewrite of the official implementation of Vector.GetAngleBetween method. The official method returns 0.0 for small angles, this method returns more accurate angles.
-
-  是对官方实现 Vector.GetAngleBetween 的重写。官方实现对于一些比较小的角度，会按 0.0 返回，本方法可以返回更精确一些的角度。
-
-- A series of **Transform** methods contained in **PointExtension** and **VectorExtension**
-
-  Can be more convenient to transform in various transformation planes or coordinate systems.
-
-  为 Point 和 Vector 扩展的一系列变换方法，可以更便捷地在各种变换平面或坐标系中进行转换。
-
-- **ModelOperation.CreatStiffeners** method
-
-  To easily create stiffeners for beams without nesting system component in your custom component (that will cause multiple symbols to appear).
-
-  可方便地为梁创建加劲板，无须在节点中嵌套使用系统节点（会导致出现多个节点符号）。
-
-- ...
-
-See  [API Reference of Common\.chm](Common/Documents/API%20Reference%20of%20Common.chm) for more.
-
-更多内容参见 [API Reference of Common\.chm](Common/Documents/API%20Reference%20of%20Common.chm)。
+定义了一些实用的类型、方法，以及对一些官方实现的方法进行了重写。
 
 ## Common.WPF
 
-Contains some common **assets** (vector graphics), **user controls** and **value converters**.
-For example, the SelectedIndex of the UpDirection ComboBox in the general tab of the system component is opposite to its corresponding attribute value "zsuunta", and **UpDirectionToSelectedIndexValueConverter** provides this conversion.
+Contains some common **assets** (vector graphics), **user controls**, **data templates**, **value converters** and **localization tool**.
 
-包含一些通用的**资产**（矢量图形）、**自定义控件**和**值转换器**。
-例如，系统组件常规选项卡中的 UpDirection 组合框的 SelectedIndex 与其对应的组件参数值 "zsuunta" 是相反的，**UpDirectionToSelectedIndexValueConverter** 提供了这种转换。
+包含一些通用的**资产**（矢量图形）、**自定义控件**、**数据模板**、**值转换器**和**本地化工具**。
 
 <div align="center">
   <img src="Resources/Introduction_Gallery.gif" alt="Gallery">
@@ -120,13 +74,17 @@ When creating custom components, it is usually necessary to manually write a lar
 
 This analyzer is designed to solve this problem, containing source generators and corresponding diagnostics. It helps quickly generate code for component parameters, avoiding mismatches that may occur from manual coding, saving time, and allowing more focus on the core logic of the component.
 
+Starting from version 2.1.0-beta.1, it also supports generating a simple user interface.
+
 通常在制作自定义组件时，总要手动为组件参数编写大量的代码（在 PluginData 类、Plugin 类和 ViewModel 类中）并添加上相关的特性，很繁重很浪费时间。
 
 此分析器用于解决此问题，包含源生成器和与之配套的诊断器，有助于快速生成组件参数相关的代码，避免手动编写可能的失误导致不匹配，节约时间，有更多的精力关注于组件的核心逻辑。
 
-How to use  [see here](CodingHelper/Readme.md).
+从 2.1.0-beta.1 版本起，还支持生成简易的用户界面。
 
-如何使用 [参见这里](CodingHelper/Readme.md)。
+Usage [see here](CodingHelper/Readme.md).
+
+用法 [参见这里](CodingHelper/Readme.md)。
 
 ## ShowModelObjectCoordinateSystem
 
@@ -260,6 +218,22 @@ Draw beams on the plan, then use this tool to batch project them onto the slope.
 
 ![ProjectBeamOntoPlane](Resources/Introduction_ProjectBeamOntoPlane.png)
 
+## FitEndToPlane
+
+## 末端对齐到平面
+
+Select beam and pick a face to fix the end of beam to this face.
+
+选中梁再选择一个表面，使梁末端对齐到此表面。
+
+## CreateEvenlyDistributedBeams
+
+## 创建均布梁
+
+Create evenly distributed beams between two beams.
+
+在两根梁之间均匀布置梁。
+
 ## MG1001
 
 ### Portal frame structure series connection - vertical connection between portal frame side column and beam
@@ -330,11 +304,9 @@ Applicable to the connection between the end of H-beam steel and concrete.
 
 ### 框架系列节点 - 箱型柱与H型钢连接
 
-Includes three types of connections: 1. Flange welding, web bolting; 2. Welded short beam, fully bolted; 3. Welded short beam, flange welding, web bolting.
-**Known issue: Welding preparation cannot be applied to non-orthogonal beams (referring to left-right skew, up-down tilt does not affect), otherwise it will cause the model to disappear**
+Flange welding, web bolting.
 
-包含三种连接形式：1. 翼缘焊接，腹板栓接; 2. 焊短梁，全栓接; 3. 焊短梁，翼缘焊接，腹板栓接。
-**已知问题：焊接准备不能作用于非正交梁(指左右歪斜，上下倾斜不影响)，否则会造成模型消失**
+翼缘焊接，腹板栓接。
 
 ![KJ1001](Resources/Introduction_KJ1001.gif)
 
@@ -349,6 +321,38 @@ Applicable to lateral restraint of H-beam steel girders.
 适用于H型钢梁侧向约束。
 
 ![KJ1002](Resources/Introduction_KJ1002.gif)
+
+## KJ1003
+
+### Frame structure series connection - connection between box column and H-beam
+
+### 框架系列节点 - 箱型柱与H型钢连接
+
+Welded short beam, fully bolted.
+
+焊短梁，全栓接。
+
+## KJ1004
+
+### Frame structure series connection - connection between box column and H-beam
+
+### 框架系列节点 - 箱型柱与H型钢连接
+
+Welded short beam, flange welding, web bolting.
+
+焊短梁，翼缘焊接，腹板栓接。
+
+## KJ1001
+
+### Frame structure series connection - connection between box column and H-beam
+
+### 框架系列节点 - 箱型柱与H型钢连接
+
+Includes three types of connections: 1. Flange welding, web bolting; 2. Welded short beam, fully bolted; 3. Welded short beam, flange welding, web bolting.
+**Known issue: Welding preparation cannot be applied to non-orthogonal beams (referring to left-right skew, up-down tilt does not affect), otherwise it will cause the model to disappear**
+
+包含三种连接形式：1. 翼缘焊接，腹板栓接; 2. 焊短梁，全栓接; 3. 焊短梁，翼缘焊接，腹板栓接。
+**已知问题：焊接准备不能作用于非正交梁(指左右歪斜，上下倾斜不影响)，否则会造成模型消失**
 
 ## KJ2001
 
