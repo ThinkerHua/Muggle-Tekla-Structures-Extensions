@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.Windows;
 using Microsoft.Extensions.DependencyInjection;
+using Muggle.TsExtensions.Common.Resources;
 using Muggle.TsExtensions.MainWindow.Services;
 using Muggle.TsExtensions.MainWindow.ViewModels;
 using Muggle.TsExtensions.MainWindow.Views;
@@ -15,6 +16,7 @@ namespace Muggle.TsExtensions.MainWindow {
         internal const string UserInterrupt = "User interrupt";
         internal const string NotConnected = "Not connected to a model.";
 
+        private string _xsBin;
         private string _xsDataDir;
         private string _tsLanguage;
         private Model _model;
@@ -96,17 +98,20 @@ namespace Muggle.TsExtensions.MainWindow {
 
             try {
                 TeklaStructuresSettings.GetAdvancedOption("XS_LANGUAGE", ref _tsLanguage);
-                _tsLanguage = GetShortLanguage(_tsLanguage);
+                _tsLanguage = LanguageExtension.GetTsLocalizationLanguage(_tsLanguage);
 
+                TeklaStructuresSettings.GetAdvancedOption("XSBIN", ref _xsBin);
                 TeklaStructuresSettings.GetAdvancedOption("XSDATADIR", ref _xsDataDir);
 #if D2021 || R2021
-                var promptsAilFilePath = Path.Combine(_xsDataDir, @"messages\prompts.ail");
+                var promptsAilFilePath = Path.Combine(_xsBin, @"..\..\messages\prompts.ail");
 #elif D2024 || R2024
-                var promptsAilFilePath = Path.Combine(_xsDataDir, @"bin\messages\prompts.ail");
+                var promptsAilFilePath = Path.Combine(_xsBin, @"..\messages\prompts.ail");
 #endif
-
                 Localization = new TsDialog.Localization(promptsAilFilePath, _tsLanguage);
-                Localization.LoadAilFile(promptsAilFilePath);
+
+                var exceptionsAilFilePath = Path.Combine(_xsDataDir,
+                    @"Environments\common\extensions\messages\Muggle.TsExtensions\Muggle.TsExtensions.ail");
+                Localization.LoadFile(exceptionsAilFilePath);
             } catch {
                 Localization = new TsDialog.Localization();
             }
@@ -128,26 +133,6 @@ namespace Muggle.TsExtensions.MainWindow {
             /*new Thread(() => {
                 Environment.Exit(0);
             }).Start();*/
-        }
-
-        private static string GetShortLanguage(string language) {
-            return language switch {
-                "ENGLISH" => "enu",
-                "DUTCH" => "nld",
-                "FRENCH" => "fra",
-                "GERMAN" => "deu",
-                "ITALIAN" => "ita",
-                "SPANISH" => "esp",
-                "JAPANESE" => "jpn",
-                "CHINESE SIMPLIFIED" => "chs",
-                "CHINESE TRADITIONAL" => "cht",
-                "CZECH" => "csy",
-                "PORTUGUESE BRAZILIAN" => "ptb",
-                "HUNGARIAN" => "hun",
-                "POLISH" => "plk",
-                "RUSSIAN" => "rus",
-                _ => "enu",
-            };
         }
     }
 }
