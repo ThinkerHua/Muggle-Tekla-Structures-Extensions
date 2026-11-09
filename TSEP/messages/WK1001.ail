@@ -1,78 +1,59 @@
-﻿string_utf8 albl_WK1001_title
-{
+﻿string_utf8 albl_WK1001_title {
 	entry = ("enu", "WK1001 - Connections of tubes");
 	entry = ("chs", "WK1001 - 方管杆件连接");
 };
 
-string_utf8 albl_parameters
-{
-	entry = ("enu", "Parameters");
-	entry = ("chs", "参数");
+string_utf8 albl_section_A_kind_1 {
+	entry = ("enu", "A-A (Kind 1)");
+	entry = ("chs", "A-A (类型1)");
 };
 
-
-string_utf8 albl_pipe_profile
-{
-	entry = ("enu", "Pipe's profile");
-	entry = ("chs", "圆筒规格");
+string_utf8 albl_section_A_kind_2 {
+	entry = ("enu", "A-A (Kind 2)");
+	entry = ("chs", "A-A (类型2)");
 };
 
-string_utf8 albl_pipe_profile_tooltip
-{
-	entry = ("enu", "Keep it blank to automatically determine the profile based on the minimum distance between tubes.");
-	entry = ("chs", "留空以根据杆件间最小净间距自动确定规格。");
+string_utf8 albl_minimum_distance {
+	entry = ("enu", "Minimum distance");
+	entry = ("chs", "最小间距");
 };
 
-string_utf8 albl_top_end_plate_thickness
-{
-	entry = ("enu", "Top end plate's thickness");
-	entry = ("chs", "上端板厚度");
+string_utf8 albl_top_extend_length {
+	entry = ("enu", "Top extend length");
+	entry = ("chs", "顶部延伸长度");
 };
 
-string_utf8 albl_bottom_end_plate_thickness
-{
-	entry = ("enu", "Bottom end plate's thickness");
-	entry = ("chs", "下端板厚度");
+string_utf8 albl_bottom_extend_length {
+	entry = ("enu", "Bottom extend length");
+	entry = ("chs", "底部延伸长度");
 };
 
-string_utf8 albl_bottom_end_plate_diameter
-{
-	entry = ("enu", "Bottom end plate's diameter");
-	entry = ("chs", "下端板直径");
+string_utf8 albl_pipe {
+	entry = ("enu", "Pipe");
+	entry = ("chs", "圆管");
 };
 
-string_utf8 albl_bottom_end_plate_diameter_tooltip
-{
-    entry = ("enu", "Enter 0 for type A, otherwise for type B.");
-	entry = ("chs", "输入0表示类型A，否则为类型B。");
+string_utf8 albl_top_end {
+	entry = ("enu", "Top end plate");
+	entry = ("chs", "顶端板");
 };
 
-string_utf8 albl_stiffener_thickness
-{
-	entry = ("enu", "Stiffener's thickness");
-	entry = ("chs", "加劲板厚度");
+string_utf8 albl_bottom_end {
+	entry = ("enu", "Bottom end plate");
+	entry = ("chs", "底端板");
 };
 
-string_utf8 albl_minimum_distance_between_tubes
-{
-	entry = ("enu", "Minimum distance between tubes");
-	entry = ("chs", "杆件间最小净间距");
+string_utf8 albl_stiffener {
+	entry = ("enu", "Stiffener");
+	entry = ("chs", "加劲肋");
 };
 
-string_utf8 albl_top_extended_length
-{
-	entry = ("enu", "Top extended length");
-	entry = ("chs", "上延伸长度");
+string_utf8 exception_multiple_parallel_rods {
+	entry = ("enu", "Cannot creat connection because of there are multiple parallel rods");
+	entry = ("chs", "无法创建节点，因为存在多个平行杆件");
 };
 
-string_utf8 albl_bottom_extended_length
-{
-	entry = ("enu", "Bottom extended length");
-	entry = ("chs", "下延伸长度");
-};
-
-string_utf8 albl_material
-{
-	entry = ("enu", "Material");
-	entry = ("chs", "材质");
+string_utf8 exception_no_supported_pipe_profile {
+	entry = ("enu", "Only hollow circular tube profile is supported");
+	entry = ("chs", "仅支持空心圆管截面");
 };
