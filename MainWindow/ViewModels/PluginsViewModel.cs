@@ -131,18 +131,18 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
                         attribute = pluginType.GetCustomAttribute<DetailTypeAttribute>();
                         if (attribute != null) detailType = ((DetailTypeAttribute)attribute).Type;
 
-                        baseComponent = CreatDetail(pluginName, autoDirectionType, detailType);
+                        baseComponent = CreateDetail(pluginName, autoDirectionType, detailType);
                     } else {
                         attribute = pluginType.GetCustomAttribute<SeamInputTypeAttribute>();
                         if (attribute != null) {
                             //  Seam
                             seamInputType = ((SeamInputTypeAttribute)attribute).Type;
 
-                            baseComponent = CreatSeam(pluginName, secondaryType, autoDirectionType, seamInputType);
+                            baseComponent = CreateSeam(pluginName, secondaryType, autoDirectionType, seamInputType);
                         } else {
                             //  Connection
 
-                            baseComponent = CreatConnection(pluginName, secondaryType, autoDirectionType, positionType);
+                            baseComponent = CreateConnection(pluginName, secondaryType, autoDirectionType, positionType);
                         }
                     }
                 } else if (baseType.Equals(typeof(CustomPartBase))) {
@@ -153,16 +153,16 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
                     //attribute = pluginType.GetCustomAttribute<CustomPartPositioningTypeAttribute>();
                     //if (attribute != null) customPartPositioningType = ((CustomPartPositioningTypeAttribute) attribute).Type;
 
-                    baseComponent = CreatCustomPart(pluginName, customPartInputType);
+                    baseComponent = CreateCustomPart(pluginName, customPartInputType);
                 } else if (baseType.Equals(typeof(PluginBase))) {
                     //  Component
 
-                    //Assembly.CreatInstance 不适用于没有无参数构造函数的类
+                    //Assembly.CreateInstance 不适用于没有无参数构造函数的类
                     //var instance = pluginType.Assembly.CreateInstance(pluginType.FullName) as PluginBase;
                     var instance = FormatterServices.GetUninitializedObject(pluginType) as PluginBase;
                     var inputDefinitions = instance.DefineInput();
 
-                    baseComponent = CreatComponent(pluginName, inputDefinitions);
+                    baseComponent = CreateComponent(pluginName, inputDefinitions);
                 } else {
                     throw new Exception(string.Format("Unsupported type: \"{0}\"", baseType));
                 }
@@ -177,7 +177,7 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
             }
         }
 
-        private Detail CreatDetail(string pluginName, AutoDirectionTypeEnum autoDirectionType, DetailTypeEnum detailType) {
+        private Detail CreateDetail(string pluginName, AutoDirectionTypeEnum autoDirectionType, DetailTypeEnum detailType) {
             var mo = picker.PickObject(Picker.PickObjectEnum.PICK_ONE_PART, localization.GetText("prompt_Pick_main_part"));
             var p = picker.PickPoint(localization.GetText("prompt_Pick_position"));
             var detail = new Detail {
@@ -199,7 +199,7 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
             }
         }
 
-        private Seam CreatSeam(string pluginName, ConnectionBase.SecondaryType secondaryType, AutoDirectionTypeEnum autoDirectionType, ConnectionBase.SeamInputType seamInputType) {
+        private Seam CreateSeam(string pluginName, ConnectionBase.SecondaryType secondaryType, AutoDirectionTypeEnum autoDirectionType, ConnectionBase.SeamInputType seamInputType) {
 
             var primPart = picker.PickObject(Picker.PickObjectEnum.PICK_ONE_PART, localization.GetText("prompt_Pick_main_part"));
 
@@ -275,7 +275,7 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
             }
         }
 
-        private Connection CreatConnection(string pluginName, ConnectionBase.SecondaryType secondaryType, AutoDirectionTypeEnum autoDirectionType, PositionTypeEnum positionType) {
+        private Connection CreateConnection(string pluginName, ConnectionBase.SecondaryType secondaryType, AutoDirectionTypeEnum autoDirectionType, PositionTypeEnum positionType) {
 
             var primPart = picker.PickObject(Picker.PickObjectEnum.PICK_ONE_PART, localization.GetText("prompt_Pick_main_part"));
 
@@ -327,7 +327,7 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
             }
         }
 
-        private CustomPart CreatCustomPart(string pluginName, CustomPartBase.CustomPartInputType customPartInputType) {
+        private CustomPart CreateCustomPart(string pluginName, CustomPartBase.CustomPartInputType customPartInputType) {
             Point p1 = null, p2 = null;
             switch (customPartInputType) {
             case CustomPartBase.CustomPartInputType.INPUT_2_POINTS:
@@ -374,7 +374,7 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
         /// <param name="inputDefinitions">A list of input definitions that specify the inputs required for the component. Each input definition
         /// determines the type and structure of the input data.</param>
         /// <returns>The newly created <see cref="Component"/> instance.</returns>
-        private Component CreatComponent(string name, List<PluginBase.InputDefinition> inputDefinitions) {
+        private Component CreateComponent(string name, List<PluginBase.InputDefinition> inputDefinitions) {
             var input = new ComponentInput();
             foreach (var inputDefinition in inputDefinitions) {
                 switch (inputDefinition.GetInputType()) {
