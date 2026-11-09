@@ -20,8 +20,8 @@
       xmlns:local="clr-namespace:Muggle.TsExtensions.MainWindow.Views"
       xmlns:vm="clr-namespace:Muggle.TsExtensions.MainWindow.ViewModels"
       xmlns:vc="clr-namespace:Muggle.TsExtensions.Common.WPF.ValueConverters;assembly=Common.WPF"
-      xmlns:dialog="clr-namespace:Tekla.Structures.Dialog;assembly=Tekla.Structures.Dialog"
-      Title="{dialog:Loc albl_extend_beam}"
+      xmlns:tsdlg="clr-namespace:Tekla.Structures.Dialog;assembly=Tekla.Structures.Dialog"
+      Title="{tsdlg:Loc albl_extend_beam}"
       mc:Ignorable="d"
       d:Background="AliceBlue"
       d:DataContext="{d:DesignInstance Type=vm:ExtendBeamViewModel}">
@@ -49,28 +49,113 @@
     <StackPanel Margin="5" HorizontalAlignment="Left" VerticalAlignment="Top">
         <Grid>
             <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="1*" />
             </Grid.ColumnDefinitions>
 
-            <TextBlock Grid.Column="0" Text="{dialog:Loc albl_tolerance}" />
+            <TextBlock Grid.Column="0" Text="{tsdlg:Loc albl_tolerance}" />
             <TextBox Grid.Column="1" Text="{Binding Tolerance, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
         </Grid>
 
         <Separator />
 
-        <TextBlock Text="{dialog:Loc albl_position_in_relation_to_beam}" />
-        <RadioButton Content="{dialog:Loc albl_middle_plane}" GroupName="Beam" IsChecked="{Binding ExtendToBeamPosition, Converter={StaticResource EnumToBool}, ConverterParameter={x:Static vm:ExtendBeamViewModel+ExtendPosition.MiddlePlane}}" />
-        <RadioButton Content="{dialog:Loc albl_bounding_box_plane}" GroupName="Beam" IsChecked="{Binding ExtendToBeamPosition, Converter={StaticResource EnumToBool}, ConverterParameter={x:Static vm:ExtendBeamViewModel+ExtendPosition.BoundingBoxPlane}}" />
-        <RadioButton Content="{dialog:Loc albl_surface}" GroupName="Beam" IsChecked="{Binding ExtendToBeamPosition, Converter={StaticResource EnumToBool}, ConverterParameter={x:Static vm:ExtendBeamViewModel+ExtendPosition.Surface}}" />
+        <TextBlock Text="{tsdlg:Loc albl_position_in_relation_to_beam}" />
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
 
+            <TextBlock Grid.Row="0" Grid.Column="0" Text="{tsdlg:Loc albl_steel_beam}" />
+            <RadioButton Grid.Row="1"
+                         Grid.Column="0"
+                         Content="{tsdlg:Loc albl_middle_plane}"
+                         GroupName="SteelBeam"
+                         IsChecked="{Binding ExtendToSteelBeamPosition, Converter={StaticResource Equality}, ConverterParameter={x:Static vm:ExtendBeamViewModel+ExtendPosition.MiddlePlane}}" />
+            <RadioButton Grid.Row="2"
+                         Grid.Column="0"
+                         Content="{tsdlg:Loc albl_bounding_box_plane}"
+                         GroupName="SteelBeam"
+                         IsChecked="{Binding ExtendToSteelBeamPosition, Converter={StaticResource Equality}, ConverterParameter={x:Static vm:ExtendBeamViewModel+ExtendPosition.BoundingBoxPlane}}" />
+            <RadioButton Grid.Row="3"
+                         Grid.Column="0"
+                         Content="{tsdlg:Loc albl_surface}"
+                         GroupName="SteelBeam"
+                         IsChecked="{Binding ExtendToSteelBeamPosition, Converter={StaticResource Equality}, ConverterParameter={x:Static vm:ExtendBeamViewModel+ExtendPosition.Surface}}" />
+
+            <TextBlock Grid.Row="0" Grid.Column="1" Text="{tsdlg:Loc albl_concrete_beam}" />
+            <RadioButton Grid.Row="1"
+                         Grid.Column="1"
+                         Content="{tsdlg:Loc albl_middle_plane}"
+                         GroupName="ConcreteBeam"
+                         IsChecked="{Binding ExtendToConcreteBeamPosition, Converter={StaticResource Equality}, ConverterParameter={x:Static vm:ExtendBeamViewModel+ExtendPosition.MiddlePlane}}" />
+            <RadioButton Grid.Row="2"
+                         Grid.Column="1"
+                         Content="{tsdlg:Loc albl_bounding_box_plane}"
+                         GroupName="ConcreteBeam"
+                         IsChecked="{Binding ExtendToConcreteBeamPosition, Converter={StaticResource Equality}, ConverterParameter={x:Static vm:ExtendBeamViewModel+ExtendPosition.BoundingBoxPlane}}" />
+            <RadioButton Grid.Row="3"
+                         Grid.Column="1"
+                         Content="{tsdlg:Loc albl_surface}"
+                         GroupName="ConcreteBeam"
+                         IsChecked="{Binding ExtendToConcreteBeamPosition, Converter={StaticResource Equality}, ConverterParameter={x:Static vm:ExtendBeamViewModel+ExtendPosition.Surface}}" />
+
+        </Grid>
         <Separator />
 
-        <TextBlock Text="{dialog:Loc albl_position_in_relation_to_column}" />
-        <RadioButton Content="{dialog:Loc albl_middle_plane}" GroupName="Column" IsChecked="{Binding ExtendToColumnPosition, Converter={StaticResource EnumToBool}, ConverterParameter={x:Static vm:ExtendBeamViewModel+ExtendPosition.MiddlePlane}}" />
-        <RadioButton Content="{dialog:Loc albl_bounding_box_plane}" GroupName="Column" IsChecked="{Binding ExtendToColumnPosition, Converter={StaticResource EnumToBool}, ConverterParameter={x:Static vm:ExtendBeamViewModel+ExtendPosition.BoundingBoxPlane}}" />
-        <RadioButton Content="{dialog:Loc albl_surface}" GroupName="Column" IsChecked="{Binding ExtendToColumnPosition, Converter={StaticResource EnumToBool}, ConverterParameter={x:Static vm:ExtendBeamViewModel+ExtendPosition.Surface}}" />
+        <TextBlock Text="{tsdlg:Loc albl_position_in_relation_to_column}" />
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="1*" />
+                <ColumnDefinition Width="1*" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
 
-        <Button Content="{dialog:Loc albl_extend_beam}" Command="{Binding ExtendCommand}" />
+            <TextBlock Grid.Row="0" Grid.Column="0" Text="{tsdlg:Loc albl_steel_column}" />
+            <RadioButton Grid.Row="1"
+                         Grid.Column="0"
+                         Content="{tsdlg:Loc albl_middle_plane}"
+                         GroupName="SteelColumn"
+                         IsChecked="{Binding ExtendToSteelColumnPosition, Converter={StaticResource Equality}, ConverterParameter={x:Static vm:ExtendBeamViewModel+ExtendPosition.MiddlePlane}}" />
+            <RadioButton Grid.Row="2"
+                         Grid.Column="0"
+                         Content="{tsdlg:Loc albl_bounding_box_plane}"
+                         GroupName="SteelColumn"
+                         IsChecked="{Binding ExtendToSteelColumnPosition, Converter={StaticResource Equality}, ConverterParameter={x:Static vm:ExtendBeamViewModel+ExtendPosition.BoundingBoxPlane}}" />
+            <RadioButton Grid.Row="3"
+                         Grid.Column="0"
+                         Content="{tsdlg:Loc albl_surface}"
+                         GroupName="SteelColumn"
+                         IsChecked="{Binding ExtendToSteelColumnPosition, Converter={StaticResource Equality}, ConverterParameter={x:Static vm:ExtendBeamViewModel+ExtendPosition.Surface}}" />
+
+            <TextBlock Grid.Row="0" Grid.Column="1" Text="{tsdlg:Loc albl_concrete_column}" />
+            <RadioButton Grid.Row="1"
+                         Grid.Column="1"
+                         Content="{tsdlg:Loc albl_middle_plane}"
+                         GroupName="ConcreteColumn"
+                         IsChecked="{Binding ExtendToConcreteColumnPosition, Converter={StaticResource Equality}, ConverterParameter={x:Static vm:ExtendBeamViewModel+ExtendPosition.MiddlePlane}}" />
+            <RadioButton Grid.Row="2"
+                         Grid.Column="1"
+                         Content="{tsdlg:Loc albl_bounding_box_plane}"
+                         GroupName="ConcreteColumn"
+                         IsChecked="{Binding ExtendToConcreteColumnPosition, Converter={StaticResource Equality}, ConverterParameter={x:Static vm:ExtendBeamViewModel+ExtendPosition.BoundingBoxPlane}}" />
+            <RadioButton Grid.Row="3"
+                         Grid.Column="1"
+                         Content="{tsdlg:Loc albl_surface}"
+                         GroupName="ConcreteColumn"
+                         IsChecked="{Binding ExtendToConcreteColumnPosition, Converter={StaticResource Equality}, ConverterParameter={x:Static vm:ExtendBeamViewModel+ExtendPosition.Surface}}" />
+        </Grid>
+        <Button Content="{tsdlg:Loc albl_extend_beam}" Command="{Binding ExtendCommand}" />
     </StackPanel>
 </Page>

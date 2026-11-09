@@ -16,6 +16,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Muggle.TsExtensions.Common.Geometry3d;
@@ -36,8 +37,21 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
             Surface,
         }
 
-        private static readonly string[] BeamNames = ["beam", "梁"];
-        private static readonly string[] ColumnNames = ["column", "柱"];
+        private static readonly string[] BeamNames = ["beam", "cg", "梁"];
+        private static readonly string[] ColumnNames = ["column", "cc", "柱"];
+
+        private static readonly string[] SteelMaterialPatterns = [
+            @"09CuP(CrNi-[AB])?",
+            @"(12Mn|16)CuCr",
+            @"15MnCuCr(-QT)?",
+            @"Q\d\d\d[ABCD]?",
+            @"Steel_Undefined"
+        ];
+
+        private static readonly string[] ConcreteMaterialPatterns = [
+            @"C\d\d",
+            @"(Concrete|Formwork)_Undefined"
+        ];
 
         private readonly Model _model;
         private readonly Picker _picker;
@@ -47,9 +61,13 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
 
         [ObservableProperty] private double _tolerance;
 
-        [ObservableProperty] private ExtendPosition _extendToBeamPosition;
+        [ObservableProperty] private ExtendPosition _extendToSteelBeamPosition;
 
-        [ObservableProperty] private ExtendPosition _extendToColumnPosition;
+        [ObservableProperty] private ExtendPosition _extendToSteelColumnPosition;
+
+        [ObservableProperty] private ExtendPosition _extendToConcreteBeamPosition;
+
+        [ObservableProperty] private ExtendPosition _extendToConcreteColumnPosition;
 
         public ExtendBeamViewModel(IMessageBoxService messageBoxService) {
             this._messageBoxService = messageBoxService;
@@ -58,8 +76,10 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
             _picker = new Picker();
             _uiSelector = new UiSelector();
             Tolerance = 100;
-            ExtendToBeamPosition = ExtendPosition.MiddlePlane;
-            ExtendToColumnPosition = ExtendPosition.BoundingBoxPlane;
+            ExtendToSteelBeamPosition = ExtendPosition.MiddlePlane;
+            ExtendToSteelColumnPosition = ExtendPosition.MiddlePlane;
+            ExtendToConcreteBeamPosition = ExtendPosition.BoundingBoxPlane;
+            ExtendToConcreteColumnPosition = ExtendPosition.BoundingBoxPlane;
         }
 
         [RelayCommand]
@@ -148,7 +168,8 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
 
                 if (column != null) {
                     return DestinationPoint(sourcePoint, anotherPoint, column, column.GetCoordinateSystem(),
-                        Distance.PointToPoint(column.StartPoint, column.EndPoint), ExtendToColumnPosition);
+                        Distance.PointToPoint(column.StartPoint, column.EndPoint),
+                        IsSteel(column) ? ExtendToSteelColumnPosition : ExtendToConcreteColumnPosition);
                 }
             }
 
@@ -193,7 +214,8 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
             var pair = notParallel.Any() ? notParallel.First() : partCsAndLength.First();
 
             return DestinationPoint(sourcePoint, anotherPoint,
-                pair.part, pair.partCs, pair.partLength, ExtendToBeamPosition);
+                pair.part, pair.partCs, pair.partLength,
+                IsSteel(pair.part) ? ExtendToSteelBeamPosition : ExtendToConcreteBeamPosition);
         }
 
         private Point DestinationPoint(Point sourcePoint, Point anotherPoint, Part nearbyPart,
@@ -256,6 +278,14 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
             return part == null
                 ? throw new ArgumentNullException(nameof(part))
                 : BeamNames.Any(n => part.Name.Contains(n, StringComparison.OrdinalIgnoreCase));
+        }
+
+        private static bool IsSteel(Part part) {
+            return SteelMaterialPatterns.Any(p => Regex.IsMatch(part.Material.MaterialString, p));
+        }
+
+        private static bool IsConcrete(Part part) {
+            return ConcreteMaterialPatterns.Any(p => Regex.IsMatch(part.Material.MaterialString, p));
         }
     }
 }
