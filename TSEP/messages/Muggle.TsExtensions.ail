@@ -43,9 +43,9 @@ string_utf8 albl_extend_beam {
     entry = ("chs", "延伸梁");
 };
 
-string_utf8 albl_project_beam_onto_plane {
-    entry = ("enu", "Project beam onto plane");
-    entry = ("chs", "梁投影到平面");
+string_utf8 albl_project_onto_plane {
+    entry = ("enu", "Project onto plane");
+    entry = ("chs", "投影到平面");
 };
 
 string_utf8 albl_green_symbol {
@@ -96,6 +96,26 @@ string_utf8 albl_position_in_relation_to_beam {
 string_utf8 albl_position_in_relation_to_column {
     entry = ("enu", "Position in relation to column");
     entry = ("chs", "相对于柱的位置");
+};
+
+string_utf8 albl_steel_beam {
+    entry = ("enu", "Steel beam");
+    entry = ("chs", "钢梁");
+};
+
+string_utf8 albl_concrete_beam {
+    entry = ("enu", "Concrete beam");
+    entry = ("chs", "混凝土梁");
+};
+
+string_utf8 albl_steel_column {
+    entry = ("enu", "Steel column");
+    entry = ("chs", "钢柱");
+};
+
+string_utf8 albl_concrete_column {
+    entry = ("enu", "Concrete column");
+    entry = ("chs", "混凝土柱");
 };
 
 string_utf8 albl_middle_plane {
@@ -223,6 +243,16 @@ string_utf8 albl_pick_3_points {
     entry = ("chs", "选择3个点");
 };
 
+string_utf8 albl_pick_origin_point {
+    entry = ("enu", "Pick origin point");
+    entry = ("chs", "选择原点");
+};
+
+string_utf8 albl_pick_end_point_to_define_the_direction {
+    entry = ("enu", "Pick end point to define the direction");
+    entry = ("chs", "选择终点定义方向");
+};
+
 string_utf8 albl_boolean_add {
     entry = ("enu", "Boolean add");
     entry = ("chs", "布尔增");
@@ -311,4 +341,69 @@ string_utf8 albl_action {
 string_utf8 albl_fit_end_to_plane {
     entry = ("enu", "Fit end to plane");
     entry = ("chs", "末端对齐到平面");
+};
+
+string_utf8 albl_create_evenly_distributed_beams {
+    entry = ("enu", "Create evenly distributed beams");
+    entry = ("chs", "创建均布梁");
+};
+
+string_utf8 albl_name {
+    entry = ("enu", "Name");
+    entry = ("chs", "名称");
+};
+
+string_utf8 albl_profile {
+    entry = ("enu", "Profile");
+    entry = ("chs", "截面规格");
+};
+
+string_utf8 albl_material {
+    entry = ("enu", "Material");
+    entry = ("chs", "材质");
+};
+
+string_utf8 albl_class {
+    entry = ("enu", "Class");
+    entry = ("chs", "等级");
+};
+
+string_utf8 albl_finish {
+    entry = ("enu", "Finish");
+    entry = ("chs", "抛光");
+};
+
+string_utf8 albl_part_numbering {
+    entry = ("enu", "Part numbering");
+    entry = ("chs", "零件编号");
+};
+
+string_utf8 albl_assembly_numbering {
+    entry = ("enu", "Assembly numbering");
+    entry = ("chs", "构件编号");
+};
+
+string_utf8 albl_spacing {
+    entry = ("enu", "Spacing");
+    entry = ("chs", "间距");
+};
+
+string_utf8 albl_elevation {
+    entry = ("enu", "Elevation");
+    entry = ("chs", "标高");
+};
+
+string_utf8 albl_same_as_lower {
+    entry = ("enu", "Same as lower");
+    entry = ("chs", "随较低的");
+};
+
+string_utf8 albl_same_as_higher {
+    entry = ("enu", "Same as higher");
+    entry = ("chs", "随较高的");
+};
+
+string_utf8 albl_follow_slop {
+    entry = ("enu", "Follow slop");
+    entry = ("chs", "随坡");
 };

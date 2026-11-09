@@ -75,9 +75,9 @@
                   IsChecked="{Binding MakeSolidUnderPlane}"
                   IsEnabled="{Binding DirectionType, Converter={StaticResource Equality}, ConverterParameter={x:Static vm:ProjectOntoPlaneViewModel+ProjectionDirection.GlobalZ}}" />
 
-        <RadioButton GroupName="ProjectionDirection" Content="{tsdlg:Loc albl_manually}" IsChecked="{Binding DirectionType, Converter={StaticResource Equality}, ConverterParameter={x:Static vm:ProjectOntoPlaneViewModel+ProjectionDirection.Manually}, Mode=TwoWay}" />
+        <RadioButton GroupName="ProjectionDirection" Content="{tsdlg:Loc albl_manually_specify}" IsChecked="{Binding DirectionType, Converter={StaticResource Equality}, ConverterParameter={x:Static vm:ProjectOntoPlaneViewModel+ProjectionDirection.Manually}, Mode=TwoWay}" />
 
-        <Button Content="{tsdlg:Loc albl_project_beam_onto_plane}" Command="{Binding ProjectBeamOntoPlaneCommand}" />
+        <Button Content="{tsdlg:Loc albl_project_onto_plane}" Command="{Binding ProjectBeamOntoPlaneCommand}" />
 
     </StackPanel>
 </Page>

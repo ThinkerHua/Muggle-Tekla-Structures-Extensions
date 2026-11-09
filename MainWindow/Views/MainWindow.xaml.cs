@@ -25,7 +25,7 @@ namespace Muggle.TsExtensions.MainWindow.Views {
         public MainWindow(MainWindowViewModel mainWindowViewModel, INavigationService navigationService) {
             InitializeComponent();
 
-            navigationService.SetFrame(frame);
+            navigationService.SetFrame(Frame);
             DataContext = mainWindowViewModel;
         }
     }

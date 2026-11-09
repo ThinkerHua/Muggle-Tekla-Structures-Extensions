@@ -23,7 +23,7 @@
                              xmlns:svs="clr-namespace:Muggle.TsExtensions.MainWindow.Services"
                              Title="{tsdlg:Loc albl_window_title}"
                              Width="520"
-                             Height="420"
+                             Height="460"
                              MinWidth="340"
                              MinHeight="300"
                              ShowInTaskbar="True"
@@ -54,7 +54,7 @@
 
         <ScrollViewer Grid.Column="0" HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Hidden">
             <StackPanel>
-                <Expander Header="{tsdlg:Loc albl_modeling_tools}" IsExpanded="False" d:IsExpanded="True">
+                <Expander Header="{tsdlg:Loc albl_modeling_tools}" IsExpanded="True">
                     <StackPanel>
                         <RadioButton IsChecked="True" Content="{tsdlg:Loc albl_normal_tools}" GroupName="menuBtn" Command="{Binding NavigateCommand}">
                             <RadioButton.CommandParameter>
@@ -91,7 +91,7 @@
                                 <local:ExtendBeam />
                             </RadioButton.CommandParameter>
                         </RadioButton>
-                        <RadioButton Content="{tsdlg:Loc albl_project_beam_onto_plane}" GroupName="menuBtn" Command="{Binding NavigateCommand}">
+                        <RadioButton Content="{tsdlg:Loc albl_project_onto_plane}" GroupName="menuBtn" Command="{Binding NavigateCommand}">
                             <RadioButton.CommandParameter>
                                 <local:ProjectOntoPlane />
                             </RadioButton.CommandParameter>
@@ -118,7 +118,7 @@
                 <RowDefinition Height="1*" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
-            <Frame x:Name="frame" Grid.Row="0" NavigationUIVisibility="Hidden" Source="NormalTools.xaml" />
+            <Frame x:Name="Frame" Grid.Row="0" NavigationUIVisibility="Hidden" Source="NormalTools.xaml" />
             <TextBlock Grid.Row="1" DockPanel.Dock="Bottom" Margin="{StaticResource UniformMargin}" TextWrapping="Wrap">
                 <Run>Author: Huang YongXing -</Run>
                 <Hyperlink NavigateUri="mailto:thinkerhua@hotmail.com">thinkerhua@hotmail.com</Hyperlink>

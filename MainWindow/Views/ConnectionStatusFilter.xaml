@@ -73,7 +73,7 @@
             <RadioButton Grid.Column="0" IsChecked="{Binding ManualSelection, Mode=TwoWay}" Content="{tsdlg:Loc albl_manual_selection}" />
             <RadioButton Grid.Column="1" IsChecked="{Binding ManualSelection, Mode=TwoWay, Converter={StaticResource BoolInverter}}" Content="{tsdlg:Loc albl_all_model_objects}" />
         </Grid>
-        <Button Grid.Row="6" Content="Apply filter" Command="{Binding ApplyFilterCommand}" />
+        <Button Grid.Row="6" Content="{tsdlg:Loc albl_apply_filter}" Command="{Binding ApplyFilterCommand}" />
 
     </Grid>
 </Page>
