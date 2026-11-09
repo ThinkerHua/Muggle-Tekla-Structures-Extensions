@@ -5,7 +5,7 @@ using System.Windows.Data;
 using System.Windows.Media.Imaging;
 
 namespace Muggle.TsExtensions.MainWindow.Converters {
-    public class PluginNameToIconValueConverter : IValueConverter {
+    public class PluginNameToIconConverter : IValueConverter {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture) {
             var currentDirectory = AppDomain.CurrentDomain.BaseDirectory;
 
@@ -36,7 +36,7 @@ namespace Muggle.TsExtensions.MainWindow.Converters {
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) {
-            throw new NotImplementedException();
+            return Binding.DoNothing;
         }
     }
 }

@@ -15,11 +15,12 @@
                 <ResourceDictionary Source="/Styles/ToggleButtonStyle1.xaml" />
             </ResourceDictionary.MergedDictionaries>
 
-            <cvc:EnumToBoolValueConverter x:Key="EnumToBool" />
-            <cvc:BoolInverterValueConverter x:Key="BoolInverter" />
-            <cvt:MultiplesValueConverter x:Key="Multiples" />
-            <cvt:PluginNameToIconValueConverter x:Key="PluginNameToIcon" />
-            <cvt:RoundDownValueConverter x:Key="RoundDown" />
+            <cvc:EqualityConverter x:Key="Equality" />
+            <cvc:BoolInverterConverter x:Key="BoolInverter" />
+            <cvt:MultiplesConverter x:Key="Multiples" />
+            <cvt:PluginNameToIconConverter x:Key="PluginNameToIcon" />
+            <cvt:RoundDownConverter x:Key="RoundDown" />
+            <cvc:EnumToIntConverter x:Key="EnumToInt" />
 
         </ResourceDictionary>
     </Application.Resources>
