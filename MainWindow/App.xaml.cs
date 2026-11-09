@@ -71,8 +71,8 @@ namespace Muggle.TsExtensions.MainWindow {
             _servicesBuilder.AddTransient<ProjectOntoPlaneViewModel>();
             _servicesBuilder.AddTransient<ProjectOntoPlane>();
 
-            _servicesBuilder.AddTransient<CreateGradientBeamsViewModel>();
-            _servicesBuilder.AddTransient<CreateGradientBeams>();
+            _servicesBuilder.AddTransient<CreateEvenlyDistributedBeamsViewModel>();
+            _servicesBuilder.AddTransient<CreateEvenlyDistributedBeams>();
 
             return _servicesBuilder.BuildServiceProvider();
         }

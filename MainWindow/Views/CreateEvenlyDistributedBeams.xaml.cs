@@ -9,7 +9,7 @@
  *  You should have received a copy of the GNU General Public License 
  *  along with this program. If not, see <http://www.gnu.org/licenses/>. 
  *==============================================================================
- *  CreateGradientBeams.xaml.cs: code behind for the view of CreateGradientBeams.
+ *  CreateEvenlyDistributedBeams.xaml.cs: code behind for the view of CreateEvenlyDistributedBeams.
  *  written by Huang YongXing - thinkerhua@hotmail.com
  *==============================================================================*/
 
@@ -21,10 +21,10 @@ namespace Muggle.TsExtensions.MainWindow.Views {
     /// <summary>
     /// CreateGradientBeams.xaml 的交互逻辑
     /// </summary>
-    public partial class CreateGradientBeams : Page {
-        public CreateGradientBeams() {
+    public partial class CreateEvenlyDistributedBeams : Page {
+        public CreateEvenlyDistributedBeams() {
             InitializeComponent();
-            DataContext = App.Current.Services.GetRequiredService<CreateGradientBeamsViewModel>();
+            DataContext = App.Current.Services.GetRequiredService<CreateEvenlyDistributedBeamsViewModel>();
         }
     }
 }

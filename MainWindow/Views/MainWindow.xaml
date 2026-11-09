@@ -96,9 +96,9 @@
                                 <local:ProjectOntoPlane />
                             </RadioButton.CommandParameter>
                         </RadioButton>
-                        <RadioButton Content="{tsdlg:Loc albl_create_gradient_beams}" GroupName="menuBtn" Command="{Binding NavigateCommand}">
+                        <RadioButton Content="{tsdlg:Loc albl_create_evenly_distributed_beams}" GroupName="menuBtn" Command="{Binding NavigateCommand}">
                             <RadioButton.CommandParameter>
-                                <local:CreateGradientBeams />
+                                <local:CreateEvenlyDistributedBeams />
                             </RadioButton.CommandParameter>
                         </RadioButton>
                     </StackPanel>

@@ -1,0 +1,121 @@
+<!--==============================================================================
+ *  Muggle TsExtensions - extensions for Tekla Structures
+ *
+ *  Copyright © 2026 Huang YongXing.
+ *
+ *  This library is free software, licensed under the terms of the GNU
+ *  General Public License as published by the Free Software Foundation,
+ *  either version 3 of the License, or (at your option) any later version.
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program. If not, see<http://www.gnu.org/licenses/> .
+ *==============================================================================
+ *  CreateEvenlyDistributedBeams.xaml: view for the creation of evenly distributed beams.
+ *  written by Huang YongXing - thinkerhua@hotmail.com
+ *==============================================================================-->
+<Page x:Class="Muggle.TsExtensions.MainWindow.Views.CreateEvenlyDistributedBeams"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+      xmlns:local="clr-namespace:Muggle.TsExtensions.MainWindow.Views"
+      xmlns:vm="clr-namespace:Muggle.TsExtensions.MainWindow.ViewModels"
+      xmlns:vc="clr-namespace:Muggle.TsExtensions.Common.WPF.ValueConverters;assembly=Common.WPF"
+      xmlns:tsdlg="clr-namespace:Tekla.Structures.Dialog;assembly=Tekla.Structures.Dialog"
+      Title="{tsdlg:Loc albl_Create_gradient_beams}"
+      mc:Ignorable="d"
+      d:Background="AliceBlue"
+      d:DataContext="{d:DesignInstance Type=vm:CreateEvenlyDistributedBeamsViewModel}">
+
+    <Page.Resources>
+        <ResourceDictionary>
+            <Style x:Key="Element" TargetType="FrameworkElement">
+                <Setter Property="Margin" Value="{StaticResource UniformMargin}" />
+            </Style>
+            <Style TargetType="Button" BasedOn="{StaticResource Element}">
+                <Setter Property="Template" Value="{StaticResource ButtonStyle1}" />
+                <Setter Property="Height" Value="30" />
+                <Setter Property="Width" Value="150" />
+            </Style>
+            <Style TargetType="TextBlock" BasedOn="{StaticResource Element}" />
+            <Style TargetType="TextBox" BasedOn="{StaticResource Element}">
+                <Setter Property="HorizontalContentAlignment" Value="Center" />
+                <Setter Property="VerticalContentAlignment" Value="Center" />
+            </Style>
+            <Style TargetType="RadioButton" BasedOn="{StaticResource Element}" />
+            <Style TargetType="Separator" BasedOn="{StaticResource Element}" />
+            <Style TargetType="ComboBox" BasedOn="{StaticResource Element}" />
+        </ResourceDictionary>
+    </Page.Resources>
+
+    <Grid Margin="5" HorizontalAlignment="Left" VerticalAlignment="Top">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto" />
+            <ColumnDefinition Width="1*" MinWidth="100" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <TextBlock Grid.Row="0" Grid.Column="0" Text="{tsdlg:Loc albl_name}" />
+        <TextBox Grid.Row="0" Grid.Column="1" Text="{Binding Name, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+        <TextBlock Grid.Row="1" Grid.Column="0" Text="{tsdlg:Loc albl_profile}" />
+        <TextBox Grid.Row="1" Grid.Column="1" Text="{Binding Profile, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+        <TextBlock Grid.Row="2" Grid.Column="0" Text="{tsdlg:Loc albl_material}" />
+        <TextBox Grid.Row="2" Grid.Column="1" Text="{Binding Material, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+        <TextBlock Grid.Row="3" Grid.Column="0" Text="{tsdlg:Loc albl_class}" />
+        <TextBox Grid.Row="3" Grid.Column="1" Text="{Binding Class, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+        <TextBlock Grid.Row="4" Grid.Column="0" Text="{tsdlg:Loc albl_finish}" />
+        <TextBox Grid.Row="4" Grid.Column="1" Text="{Binding Finish, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+        <TextBlock Grid.Row="5" Grid.Column="0" Text="{tsdlg:Loc albl_part_numbering}" />
+        <Grid Grid.Row="5" Grid.Column="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="65*" />
+                <ColumnDefinition Width="35*" />
+            </Grid.ColumnDefinitions>
+            <TextBox Grid.Column="0" Text="{Binding PartPrefix, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            <TextBox Grid.Column="1" Text="{Binding PartStartNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+        </Grid>
+
+        <TextBlock Grid.Row="6" Grid.Column="0" Text="{tsdlg:Loc albl_assembly_numbering}" />
+        <Grid Grid.Row="6" Grid.Column="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="65*" />
+                <ColumnDefinition Width="35*" />
+            </Grid.ColumnDefinitions>
+            <TextBox Grid.Column="0" Text="{Binding AssemblyPrefix, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+            <TextBox Grid.Column="1" Text="{Binding AssemblyStartNumber, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+        </Grid>
+
+        <TextBlock Grid.Row="7" Grid.Column="0" Text="{tsdlg:Loc albl_spacing}" />
+        <TextBox Grid.Row="7" Grid.Column="1" Text="{Binding Spacing, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+
+        <TextBlock Grid.Row="8" Grid.Column="0" Text="{tsdlg:Loc albl_elevation}" />
+        <ComboBox Grid.Row="8" Grid.Column="1" SelectedIndex="{Binding ElevationOption, Mode=TwoWay, Converter={StaticResource EnumToInt}, ConverterParameter={x:Type vm:CreateEvenlyDistributedBeamsViewModel+ElevationOptions}}">
+            <ComboBoxItem Content="{tsdlg:Loc albl_same_as_lower}" />
+            <ComboBoxItem Content="{tsdlg:Loc albl_same_as_higher}" />
+            <ComboBoxItem Content="{tsdlg:Loc albl_follow_slop}" />
+        </ComboBox>
+
+        <Button Grid.Row="9"
+                Grid.Column="0"
+                Grid.ColumnSpan="2"
+                Content="{tsdlg:Loc albl_action}"
+                Command="{Binding ActionCommand}" />
+    </Grid>
+</Page>
