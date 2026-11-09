@@ -1,4 +1,4 @@
-﻿<!--==============================================================================
+<!--==============================================================================
  *  Muggle TsExtensions - extensions for Tekla Structures
  *
  *  Copyright © 2025 Huang YongXing.
@@ -75,6 +75,12 @@
             </Button>
             <Button Command="{Binding RepeatRunPluginCommand}" CommandParameter="KJ1002" ContentTemplate="{StaticResource pluginCardView}">
                 <vm:PluginCard PluginName="KJ1002" />
+            </Button>
+            <Button Command="{Binding RepeatRunPluginCommand}" CommandParameter="KJ1003" ContentTemplate="{StaticResource pluginCardView}">
+                <vm:PluginCard PluginName="KJ1003" />
+            </Button>
+            <Button Command="{Binding RepeatRunPluginCommand}" CommandParameter="KJ1004" ContentTemplate="{StaticResource pluginCardView}">
+                <vm:PluginCard PluginName="KJ1004" />
             </Button>
             <Button Command="{Binding RepeatRunPluginCommand}" CommandParameter="KJ2001" ContentTemplate="{StaticResource pluginCardView}">
                 <vm:PluginCard PluginName="KJ2001" />
