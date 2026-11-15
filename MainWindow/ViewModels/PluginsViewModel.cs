@@ -1,13 +1,13 @@
 ﻿/*==============================================================================
  *  Muggle TsExtensions - extensions for Tekla Structures
  *
- *  Copyright © 2025 Huang YongXing.                 
+ *  Copyright © 2025 Huang YongXing.
  *
- *  This library is free software, licensed under the terms of the GNU 
- *  General Public License as published by the Free Software Foundation, 
- *  either version 3 of the License, or (at your option) any later version. 
- *  You should have received a copy of the GNU General Public License 
- *  along with this program. If not, see <http://www.gnu.org/licenses/>. 
+ *  This library is free software, licensed under the terms of the GNU
+ *  General Public License as published by the Free Software Foundation,
+ *  either version 3 of the License, or (at your option) any later version.
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program. If not, see <http://www.gnu.org/licenses/>.
  *==============================================================================
  *  PluginsViewModel.cs: view model for the plugins.
  *  written by Huang YongXing - thinkerhua@hotmail.com
@@ -42,6 +42,7 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
         private readonly Model model = new Model();
         private readonly Picker picker = new Picker();
         private readonly TSMUI.ModelObjectSelector uiSelector = new TSMUI.ModelObjectSelector();
+
         /// <summary>
         /// key - plugin name, value - plugin assembly
         /// </summary>
@@ -57,7 +58,14 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
 
         private void ReloadPlugins() {
             plugins.Clear();
+#if DEBUG
+            var xsDataDir = string.Empty;
+            TeklaStructuresSettings.GetAdvancedOption("XSDATADIR", ref xsDataDir);
+            var extensionsPath = Path.Combine(xsDataDir,
+                "Environments\\common\\extensions\\Muggle.TsExtensions\\");
+#else
             var extensionsPath = AppDomain.CurrentDomain.BaseDirectory;
+#endif
             var dlls = Directory.GetFiles(extensionsPath, "*.dll", SearchOption.TopDirectoryOnly);
             foreach (var dll in dlls) {
                 var assembly = Assembly.LoadFile(dll);
@@ -76,7 +84,8 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
             try {
                 if (!plugins.ContainsKey(pluginName)) ReloadPlugins();
                 if (!plugins.ContainsKey(pluginName))
-                    throw new Exception(string.Format("Failed to run plugin \"{0}\", which may not exist.", pluginName));
+                    throw new Exception(string.Format("Failed to run plugin \"{0}\", which may not exist.",
+                        pluginName));
 
                 while (true) {
                     RunPlugin(pluginName);
@@ -142,7 +151,8 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
                         } else {
                             //  Connection
 
-                            baseComponent = CreateConnection(pluginName, secondaryType, autoDirectionType, positionType);
+                            baseComponent = CreateConnection(pluginName, secondaryType, autoDirectionType,
+                                positionType);
                         }
                     }
                 } else if (baseType.Equals(typeof(CustomPartBase))) {
@@ -167,8 +177,6 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
                     throw new Exception(string.Format("Unsupported type: \"{0}\"", baseType));
                 }
 
-            } catch {
-                throw;
             } finally {
                 if (baseComponent != null) {
                     uiSelector.Select(new ArrayList { baseComponent });
@@ -177,8 +185,10 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
             }
         }
 
-        private Detail CreateDetail(string pluginName, AutoDirectionTypeEnum autoDirectionType, DetailTypeEnum detailType) {
-            var mo = picker.PickObject(Picker.PickObjectEnum.PICK_ONE_PART, localization.GetText("prompt_Pick_main_part"));
+        private Detail CreateDetail(string pluginName, AutoDirectionTypeEnum autoDirectionType,
+            DetailTypeEnum detailType) {
+            var mo = picker.PickObject(Picker.PickObjectEnum.PICK_ONE_PART,
+                localization.GetText("prompt_Pick_main_part"));
             var p = picker.PickPoint(localization.GetText("prompt_Pick_position"));
             var detail = new Detail {
                 Name = pluginName,
@@ -191,17 +201,14 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
             detail.SetPrimaryObject(mo);
             detail.SetReferencePoint(p);
 
-            try {
-                if (detail.Insert()) return detail;
-                return null;
-            } catch {
-                throw;
-            }
+            return detail.Insert() ? detail : null;
         }
 
-        private Seam CreateSeam(string pluginName, ConnectionBase.SecondaryType secondaryType, AutoDirectionTypeEnum autoDirectionType, ConnectionBase.SeamInputType seamInputType) {
+        private Seam CreateSeam(string pluginName, ConnectionBase.SecondaryType secondaryType,
+            AutoDirectionTypeEnum autoDirectionType, ConnectionBase.SeamInputType seamInputType) {
 
-            var primPart = picker.PickObject(Picker.PickObjectEnum.PICK_ONE_PART, localization.GetText("prompt_Pick_main_part"));
+            var primPart = picker.PickObject(Picker.PickObjectEnum.PICK_ONE_PART,
+                localization.GetText("prompt_Pick_main_part"));
 
             ModelObject secondaryPart = null;
             ArrayList secondaryParts = new ArrayList();
@@ -209,21 +216,24 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
             ArrayList points = null;
             switch (secondaryType) {
             case ConnectionBase.SecondaryType.SECONDARYTYPE_ONE:
-                secondaryPart = picker.PickObject(Picker.PickObjectEnum.PICK_ONE_PART, localization.GetText("prompt_Pick_secondary_part"));
+                secondaryPart = picker.PickObject(Picker.PickObjectEnum.PICK_ONE_PART,
+                    localization.GetText("prompt_Pick_secondary_part"));
                 break;
             case ConnectionBase.SecondaryType.SECONDARYTYPE_TWO:
                 for (int i = 0; i < 2; i++) {
-                    secondaryPart = picker.PickObject(Picker.PickObjectEnum.PICK_ONE_PART, localization.GetText("prompt_Pick_secondary_parts"));
+                    secondaryPart = picker.PickObject(Picker.PickObjectEnum.PICK_ONE_PART,
+                        localization.GetText("prompt_Pick_secondary_parts"));
                     secondaryParts.Add(secondaryPart);
                 }
+
                 break;
             case ConnectionBase.SecondaryType.SECONDARYTYPE_MULTIPLE:
-                var enumerator = picker.PickObjects(Picker.PickObjectsEnum.PICK_N_PARTS, localization.GetText("prompt_Pick_secondary_parts"));
+                var enumerator = picker.PickObjects(Picker.PickObjectsEnum.PICK_N_PARTS,
+                    localization.GetText("prompt_Pick_secondary_parts"));
                 foreach (ModelObject obj in enumerator) {
                     secondaryParts.Add(obj);
                 }
-                break;
-            default:
+
                 break;
             }
 
@@ -233,9 +243,8 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
                 p2 = picker.PickPoint(localization.GetText("prompt_Pick_second_position"), p1);
                 break;
             case ConnectionBase.SeamInputType.INPUT_POLYGON:
-                points = picker.PickPoints(Picker.PickPointEnum.PICK_POLYGON, localization.GetText("prompt_Pick_polygon"));
-                break;
-            default:
+                points = picker.PickPoints(Picker.PickPointEnum.PICK_POLYGON,
+                    localization.GetText("prompt_Pick_polygon"));
                 break;
             }
 
@@ -267,36 +276,38 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
                 break;
             }
 
-            try {
-                if (seam.Insert()) return seam;
-                return null;
-            } catch {
-                throw;
-            }
+            return seam.Insert() ? seam : null;
         }
 
-        private Connection CreateConnection(string pluginName, ConnectionBase.SecondaryType secondaryType, AutoDirectionTypeEnum autoDirectionType, PositionTypeEnum positionType) {
+        private Connection CreateConnection(string pluginName, ConnectionBase.SecondaryType secondaryType,
+            AutoDirectionTypeEnum autoDirectionType, PositionTypeEnum positionType) {
 
-            var primPart = picker.PickObject(Picker.PickObjectEnum.PICK_ONE_PART, localization.GetText("prompt_Pick_main_part"));
+            var primPart = picker.PickObject(Picker.PickObjectEnum.PICK_ONE_PART,
+                localization.GetText("prompt_Pick_main_part"));
 
             ModelObject secondaryPart = null;
             var secondaryParts = new ArrayList();
             switch (secondaryType) {
             case ConnectionBase.SecondaryType.SECONDARYTYPE_ONE:
-                secondaryPart = picker.PickObject(Picker.PickObjectEnum.PICK_ONE_PART, localization.GetText("prompt_Pick_secondary_part"));
+                secondaryPart = picker.PickObject(Picker.PickObjectEnum.PICK_ONE_PART,
+                    localization.GetText("prompt_Pick_secondary_part"));
                 break;
             case ConnectionBase.SecondaryType.SECONDARYTYPE_TWO:
                 for (int i = 0; i < 2; i++) {
-                    secondaryPart = picker.PickObject(Picker.PickObjectEnum.PICK_ONE_PART, localization.GetText("prompt_Pick_secondary_parts"));
+                    secondaryPart = picker.PickObject(Picker.PickObjectEnum.PICK_ONE_PART,
+                        localization.GetText("prompt_Pick_secondary_parts"));
                     secondaryParts.Add(secondaryPart);
                 }
+
                 break;
             case ConnectionBase.SecondaryType.SECONDARYTYPE_MULTIPLE:
             default:
-                var enumerator = picker.PickObjects(Picker.PickObjectsEnum.PICK_N_PARTS, localization.GetText("prompt_Pick_secondary_parts"));
+                var enumerator = picker.PickObjects(Picker.PickObjectsEnum.PICK_N_PARTS,
+                    localization.GetText("prompt_Pick_secondary_parts"));
                 foreach (ModelObject obj in enumerator) {
                     secondaryParts.Add(obj);
                 }
+
                 break;
             }
 
@@ -319,12 +330,7 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
                 break;
             }
 
-            try {
-                if (connection.Insert()) return connection;
-                return null;
-            } catch {
-                throw;
-            }
+            return connection.Insert() ? connection : null;
         }
 
         private CustomPart CreateCustomPart(string pluginName, CustomPartBase.CustomPartInputType customPartInputType) {
@@ -337,14 +343,9 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
             case CustomPartBase.CustomPartInputType.INPUT_1_POINT:
                 p1 = picker.PickPoint(localization.GetText("prompt_Pick_position"));
                 break;
-            default:
-                break;
             }
 
-            var customPart = new CustomPart {
-                Name = pluginName,
-                Number = BaseComponent.PLUGIN_OBJECT_NUMBER
-            };
+            var customPart = new CustomPart { Name = pluginName, Number = BaseComponent.PLUGIN_OBJECT_NUMBER };
             customPart.LoadAttributesFromFile("standard");
 
             switch (customPartInputType) {
@@ -356,12 +357,7 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
                 break;
             }
 
-            try {
-                if (customPart.Insert()) return customPart;
-                return null;
-            } catch {
-                throw;
-            }
+            return customPart.Insert() ? customPart : null;
         }
 
         /// <summary>
@@ -399,25 +395,17 @@ namespace Muggle.TsExtensions.MainWindow.ViewModels {
                     foreach (Identifier id in identifers) {
                         objects.Add(model.SelectModelObject(id));
                     }
+
                     input.AddInputObjects(objects);
-                    break;
-                default:
                     break;
                 }
             }
-            var component = new Component {
-                Name = name,
-                Number = BaseComponent.PLUGIN_OBJECT_NUMBER
-            };
+
+            var component = new Component { Name = name, Number = BaseComponent.PLUGIN_OBJECT_NUMBER };
             component.LoadAttributesFromFile("standard");
             component.SetComponentInput(input);
 
-            try {
-                if (component.Insert()) return component;
-                return null;
-            } catch {
-                throw;
-            }
+            return component.Insert() ? component : null;
         }
     }
 }
