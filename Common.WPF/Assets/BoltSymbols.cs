@@ -13,9 +13,18 @@
  *  written by Huang YongXing - thinkerhua@hotmail.com
  *==============================================================================*/
 
+using System;
+using System.Windows;
+using System.Windows.Media;
+using Muggle.TsExtensions.Common.WPF.DataTemplates;
+
 namespace Muggle.TsExtensions.Common.WPF.Assets;
 
 public static class BoltSymbols {
+    private static readonly ResourceDictionary Dict = new() {
+        Source = new Uri("/Common.WPF;component/Assets/BoltSymbols.xaml", UriKind.Relative)
+    };
+    
     public static string[] BoltTypeSet => ItemsProvider.TranslationArray([
         "albl_Bolt_Type_Site",
         "albl_Bolt_Type_Workshop",
@@ -44,5 +53,11 @@ public static class BoltSymbols {
         "albl_Bolt_RotateSlots_Odd",
         "albl_Bolt_RotateSlots_Even",
         "albl_Bolt_RotateSlots_Parallel",
+    ]);
+
+    public static Symbol[] BoltShapeSet => ItemsProvider.SymbolArray([
+        ("albl_Bolt_Shape_Array", Dict["BoltShape_Array"] as DrawingGroup),
+        ("albl_Bolt_Shape_Circle", Dict["BoltShape_Circle"] as DrawingGroup),
+        ("albl_Bolt_Shape_List", Dict["BoltShape_List"] as DrawingGroup),
     ]);
 }

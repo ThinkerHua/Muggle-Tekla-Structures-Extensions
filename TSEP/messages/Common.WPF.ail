@@ -508,6 +508,11 @@ string_utf8 albl_Bolt_Type_Site {
     entry = ("chs", "工地");
 };
 
+string_utf8 albl_Bolt_Type_Workshop {
+    entry = ("enu", "Workshop");
+    entry = ("chs", "车间");
+};
+
 string_utf8 albl_Bolt_Bolt {
     entry = ("enu", "Bolt");
     entry = ("chs", "螺栓");
@@ -563,9 +568,19 @@ string_utf8 albl_Bolt_SpecialHole5 {
     entry = ("chs", "特殊孔5");
 };
 
-string_utf8 albl_Bolt_Type_Workshop {
-    entry = ("enu", "Workshop");
-    entry = ("chs", "车间");
+string_utf8 albl_Bolt_Shape_Array {
+    entry = ("enu", "Array");
+    entry = ("chs", "阵列");
+};
+
+string_utf8 albl_Bolt_Shape_Circle {
+    entry = ("enu", "Circle");
+    entry = ("chs", "圆形");
+};
+
+string_utf8 albl_Bolt_Shape_List {
+    entry = ("enu", "List");
+    entry = ("chs", "列表");
 };
 
 string_utf8 albl_Chamfer_Header_Id {
