@@ -36,8 +36,12 @@ public static class ChamferExtension {
 
         return new Chamfer {
             Type = chamfer.Type,
-            X = chamfer.Y,
-            Y = chamfer.X,
+            X = chamfer.Type is Chamfer.ChamferTypeEnum.CHAMFER_ROUNDING or Chamfer.ChamferTypeEnum.CHAMFER_ARC
+                ? chamfer.X
+                : chamfer.Y,
+            Y = chamfer.Type is Chamfer.ChamferTypeEnum.CHAMFER_ROUNDING or Chamfer.ChamferTypeEnum.CHAMFER_ARC
+                ? chamfer.Y
+                : chamfer.X,
             DZ1 = chamfer.DZ1,
             DZ2 = chamfer.DZ2,
         };

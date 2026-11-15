@@ -108,8 +108,7 @@ public static class ContourPointExtension {
     /// <returns>模拟的轮廓点集合。</returns>
     /// <exception cref="ArgumentNullException"></exception>
     /// <exception cref="ArgumentOutOfRangeException"></exception>
-    public static List<ContourPoint> GetSimulatedContourPoints(this ContourPoint current, 
-        Point previous, Point next) {
+    public static List<ContourPoint> GetSimulatedContourPoints(this ContourPoint current, Point previous, Point next) {
         
         if (current == null) {
             throw new ArgumentNullException(nameof(current));
