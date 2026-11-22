@@ -4,7 +4,6 @@
                         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
                         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                         xmlns:local="clr-namespace:Muggle.TsExtensions.Demo1"
-                        xmlns:sys="clr-namespace:System;assembly=mscorlib"
                         xmlns:tsdlg="clr-namespace:Tekla.Structures.Dialog;assembly=Tekla.Structures.Dialog"
                         xmlns:tsuic="clr-namespace:Tekla.Structures.Dialog.UIControls;assembly=Tekla.Structures.Dialog"
                         xmlns:assets="clr-namespace:Muggle.TsExtensions.Common.WPF.Assets;assembly=Common.WPF"
@@ -32,6 +31,8 @@
             <vc:BoltHoleTypeToSlottedHoleYIsEnabledConverter x:Key="BoltHoleTypeToSlottedHoleYIsEnabled" />
             <vc:BoltHoleTypeToRotateSlotsIsEnabledConverter x:Key="BoltHoleTypeToRotateSlotsIsEnabled" />
             <vc:BoltPlainHoleTypeToBlindHoleDepthIsEnabledConverter x:Key="BoltPlainHoleTypeToBlindHoleDepthIsEnabled" />
+            <vc:BoltShapeToDistXyVisibilityConverter x:Key="BoltShapeToDistXyVisibility" />
+            <vc:BoltShapeToNumDiamVisibilityConverter x:Key="BoltShapeToNumDiamVisibility" />
             <vc:ChamferTypeToXIsEnabledConverter x:Key="ChamferTypeToXIsEnabled" />
             <vc:ChamferTypeToYIsEnabledConverter x:Key="ChamferTypeToYIsEnabled" />
             <vc:BoolToExpectationConverter x:Key="BoolToExpectation" />
@@ -383,117 +384,133 @@
                     </Grid.RowDefinitions>
 
                     <TextBlock Grid.Row="0" Grid.Column="0" Text="Size" />
-                    <tsuic:WpfFilterCheckBox Grid.Row="0" Grid.Column="1" AttributeName="BConnectSIZE" />
-                    <tsuic:WpfBoltCatalogSize Grid.Row="0" Grid.Column="2" ItemsSource="{Binding Path=BoltSizes, ElementName=BoltConnectStdCatalog}" SelectedItem="{Binding BoltConnectSize, Mode=TwoWay}" />
+                    <tsuic:WpfFilterCheckBox Grid.Row="0" Grid.Column="1" AttributeName="B1SIZE" />
+                    <tsuic:WpfBoltCatalogSize Grid.Row="0" Grid.Column="2" ItemsSource="{Binding Path=BoltSizes, ElementName=Bolt1StdCatalog}" SelectedItem="{Binding Bolt1Size, Mode=TwoWay}" />
 
                     <TextBlock Grid.Row="1" Grid.Column="0" Text="Standard" />
-                    <tsuic:WpfFilterCheckBox Grid.Row="1" Grid.Column="1" AttributeName="BConnectSTD" />
-                    <tsuic:WpfBoltCatalogStandard x:Name="BoltConnectStdCatalog" Grid.Row="1" Grid.Column="2" SelectedItem="{Binding BoltConnectStandard, Mode=TwoWay}" />
+                    <tsuic:WpfFilterCheckBox Grid.Row="1" Grid.Column="1" AttributeName="B1STD" />
+                    <tsuic:WpfBoltCatalogStandard x:Name="Bolt1StdCatalog" Grid.Row="1" Grid.Column="2" SelectedItem="{Binding Bolt1Standard, Mode=TwoWay}" />
 
                     <TextBlock Grid.Row="2" Grid.Column="0" Text="Bolt type" />
-                    <tsuic:WpfFilterCheckBox Grid.Row="2" Grid.Column="1" AttributeName="BConnectTYPE" />
-                    <ComboBox Grid.Row="2" Grid.Column="2" ItemsSource="{x:Static assets:BoltSymbols.BoltTypeSet}" SelectedIndex="{Binding BoltConnectType, Mode=TwoWay}" />
+                    <tsuic:WpfFilterCheckBox Grid.Row="2" Grid.Column="1" AttributeName="B1TYPE" />
+                    <ComboBox Grid.Row="2" Grid.Column="2" ItemsSource="{x:Static assets:BoltSymbols.BoltTypeSet}" SelectedIndex="{Binding Bolt1Type, Mode=TwoWay}" />
 
                     <TextBlock Grid.Row="3" Grid.Column="0" Text="Thread in material" />
-                    <tsuic:WpfFilterCheckBox Grid.Row="3" Grid.Column="1" AttributeName="BConnectTHRD" />
-                    <ComboBox Grid.Row="3" Grid.Column="2" ItemsSource="{x:Static assets:BoltSymbols.BoltThreadInMaterialSet}" SelectedIndex="{Binding BoltConnectThreadInMaterial, Mode=TwoWay}" />
+                    <tsuic:WpfFilterCheckBox Grid.Row="3" Grid.Column="1" AttributeName="B1THRD" />
+                    <ComboBox Grid.Row="3" Grid.Column="2" ItemsSource="{x:Static assets:BoltSymbols.BoltThreadInMaterialSet}" SelectedIndex="{Binding Bolt1ThreadInMaterial, Mode=TwoWay}" />
 
                     <TextBlock Grid.Row="4" Grid.Column="0" Text="Cut length" />
-                    <tsuic:WpfFilterCheckBox Grid.Row="4" Grid.Column="1" AttributeName="BConnectCLEN" />
-                    <TextBox Grid.Row="4" Grid.Column="2" Text="{Binding BoltConnectCutLength, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <tsuic:WpfFilterCheckBox Grid.Row="4" Grid.Column="1" AttributeName="B1CLEN" />
+                    <TextBox Grid.Row="4" Grid.Column="2" Text="{Binding Bolt1CutLength, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                     <TextBlock Grid.Row="5" Grid.Column="0" Text="Extra length" />
-                    <tsuic:WpfFilterCheckBox Grid.Row="5" Grid.Column="1" AttributeName="BConnectXLEN" />
-                    <TextBox Grid.Row="5" Grid.Column="2" Text="{Binding BoltConnectExtraLength, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <tsuic:WpfFilterCheckBox Grid.Row="5" Grid.Column="1" AttributeName="B1XLEN" />
+                    <TextBox Grid.Row="5" Grid.Column="2" Text="{Binding Bolt1ExtraLength, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                     <TextBlock Grid.Row="6" Grid.Column="0" Text="Tolerance" />
-                    <tsuic:WpfFilterCheckBox Grid.Row="6" Grid.Column="1" AttributeName="BConnectTOL" />
-                    <TextBox Grid.Row="6" Grid.Column="2" Text="{Binding BoltConnectTolerance, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <tsuic:WpfFilterCheckBox Grid.Row="6" Grid.Column="1" AttributeName="B1TOL" />
+                    <TextBox Grid.Row="6" Grid.Column="2" Text="{Binding Bolt1Tolerance, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                     <TextBlock Grid.Row="7" Grid.Column="0" Text="Plain hole type" />
-                    <tsuic:WpfFilterCheckBox Grid.Row="7" Grid.Column="1" AttributeName="BConnectPLAIN" />
-                    <ComboBox Grid.Row="7" Grid.Column="2" ItemsSource="{x:Static assets:BoltSymbols.BoltPlainHoleTypeSet}" SelectedIndex="{Binding BoltConnectPlainType, Mode=TwoWay}" />
+                    <tsuic:WpfFilterCheckBox Grid.Row="7" Grid.Column="1" AttributeName="B1PLAIN" />
+                    <ComboBox Grid.Row="7" Grid.Column="2" ItemsSource="{x:Static assets:BoltSymbols.BoltPlainHoleTypeSet}" SelectedIndex="{Binding Bolt1PlainType, Mode=TwoWay}" />
 
                     <TextBlock Grid.Row="8" Grid.Column="0" Text="Hole depth" />
-                    <tsuic:WpfFilterCheckBox Grid.Row="8" Grid.Column="1" AttributeName="BConnectDEPTH" IsEnabled="{Binding BoltConnectPlainType, Converter={StaticResource BoltPlainHoleTypeToBlindHoleDepthIsEnabled}}" />
-                    <TextBox Grid.Row="8" Grid.Column="2" IsEnabled="{Binding BoltConnectPlainType, Converter={StaticResource BoltPlainHoleTypeToBlindHoleDepthIsEnabled}}" Text="{Binding BoltConnectBlindHoleDepth, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <tsuic:WpfFilterCheckBox Grid.Row="8" Grid.Column="1" AttributeName="B1DEPTH" IsEnabled="{Binding Bolt1PlainType, Converter={StaticResource BoltPlainHoleTypeToBlindHoleDepthIsEnabled}}" />
+                    <TextBox Grid.Row="8" Grid.Column="2" IsEnabled="{Binding Bolt1PlainType, Converter={StaticResource BoltPlainHoleTypeToBlindHoleDepthIsEnabled}}" Text="{Binding Bolt1BlindHoleDepth, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                     <TextBlock Grid.Row="9" Grid.Column="0" Text="Special hole type" />
-                    <tsuic:WpfFilterCheckBox Grid.Row="9" Grid.Column="1" AttributeName="BConnectHOLTY" />
-                    <ComboBox Grid.Row="9" Grid.Column="2" ItemsSource="{x:Static assets:BoltSymbols.BoltSpecialHoleTypeSet}" SelectedIndex="{Binding BoltConnectHoleType, Mode=TwoWay}" />
+                    <tsuic:WpfFilterCheckBox Grid.Row="9" Grid.Column="1" AttributeName="B1HOLTY" />
+                    <ComboBox Grid.Row="9" Grid.Column="2" ItemsSource="{x:Static assets:BoltSymbols.BoltSpecialHoleTypeSet}" SelectedIndex="{Binding Bolt1HoleType, Mode=TwoWay}" />
 
-                    <TextBlock Grid.Row="10" Grid.Column="0" Text="{Binding BoltConnectHoleType, Converter={StaticResource BoltHoleTypeToSlottedHoleXDisplayName}}" />
-                    <tsuic:WpfFilterCheckBox Grid.Row="10" Grid.Column="1" AttributeName="BConnectSLOTX" IsEnabled="{Binding BoltConnectHoleType, Converter={StaticResource BoltHoleTypeToSlottedHoleXIsEnabled}}" />
-                    <TextBox Grid.Row="10" Grid.Column="2" IsEnabled="{Binding BoltConnectHoleType, Converter={StaticResource BoltHoleTypeToSlottedHoleXIsEnabled}}" Text="{Binding BoltConnectSlottedHoleX, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <TextBlock Grid.Row="10" Grid.Column="0" Text="{Binding Bolt1HoleType, Converter={StaticResource BoltHoleTypeToSlottedHoleXDisplayName}}" />
+                    <tsuic:WpfFilterCheckBox Grid.Row="10" Grid.Column="1" AttributeName="B1SLOTX" IsEnabled="{Binding Bolt1HoleType, Converter={StaticResource BoltHoleTypeToSlottedHoleXIsEnabled}}" />
+                    <TextBox Grid.Row="10" Grid.Column="2" IsEnabled="{Binding Bolt1HoleType, Converter={StaticResource BoltHoleTypeToSlottedHoleXIsEnabled}}" Text="{Binding Bolt1SlottedHoleX, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                     <TextBlock Grid.Row="11" Grid.Column="0" Text="Slotted hole Y" />
-                    <tsuic:WpfFilterCheckBox Grid.Row="11" Grid.Column="1" AttributeName="BConnectSLOTY" IsEnabled="{Binding BoltConnectHoleType, Converter={StaticResource BoltHoleTypeToSlottedHoleYIsEnabled}}" />
-                    <TextBox Grid.Row="11" Grid.Column="2" IsEnabled="{Binding BoltConnectHoleType, Converter={StaticResource BoltHoleTypeToSlottedHoleYIsEnabled}}" Text="{Binding BoltConnectSlottedHoleY, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <tsuic:WpfFilterCheckBox Grid.Row="11" Grid.Column="1" AttributeName="B1SLOTY" IsEnabled="{Binding Bolt1HoleType, Converter={StaticResource BoltHoleTypeToSlottedHoleYIsEnabled}}" />
+                    <TextBox Grid.Row="11" Grid.Column="2" IsEnabled="{Binding Bolt1HoleType, Converter={StaticResource BoltHoleTypeToSlottedHoleYIsEnabled}}" Text="{Binding Bolt1SlottedHoleY, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                     <TextBlock Grid.Row="12" Grid.Column="0" Text="Rotate slots" />
-                    <tsuic:WpfFilterCheckBox Grid.Row="12" Grid.Column="1" AttributeName="BConnectRSLOT" IsEnabled="{Binding BoltConnectHoleType, Converter={StaticResource BoltHoleTypeToRotateSlotsIsEnabled}}" />
+                    <tsuic:WpfFilterCheckBox Grid.Row="12" Grid.Column="1" AttributeName="B1RSLOT" IsEnabled="{Binding Bolt1HoleType, Converter={StaticResource BoltHoleTypeToRotateSlotsIsEnabled}}" />
                     <ComboBox Grid.Row="12"
                               Grid.Column="2"
-                              IsEnabled="{Binding BoltConnectHoleType, Converter={StaticResource BoltHoleTypeToRotateSlotsIsEnabled}}"
+                              IsEnabled="{Binding Bolt1HoleType, Converter={StaticResource BoltHoleTypeToRotateSlotsIsEnabled}}"
                               ItemsSource="{x:Static assets:BoltSymbols.BoltRotateSlotsSet}"
-                              SelectedIndex="{Binding BoltConnectRotateSlots, Mode=TwoWay}" />
+                              SelectedIndex="{Binding Bolt1RotateSlots, Mode=TwoWay}" />
 
-                    <TextBlock Grid.Row="0" Grid.Column="4" Text="Start offset X" />
-                    <tsuic:WpfFilterCheckBox Grid.Row="0" Grid.Column="5" AttributeName="BoltOffsetX" />
-                    <TextBox Grid.Row="0" Grid.Column="6" Text="{Binding BoltOffsetX, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <TextBlock Grid.Row="0" Grid.Column="4" Text="Shape" />
+                    <tsuic:WpfFilterCheckBox Grid.Row="0" Grid.Column="5" AttributeName="B1SHAPE" />
+                    <ComboBox Grid.Row="0"
+                              Grid.Column="6"
+                              SelectedIndex="{Binding Bolt1Shape, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                              ItemsSource="{x:Static assets:BoltSymbols.BoltShapeSet}"
+                              ItemTemplate="{StaticResource SymbolDataTemplate}" />
 
-                    <TextBlock Grid.Row="1" Grid.Column="4" Text="Dist X" />
-                    <tsuic:WpfFilterCheckBox Grid.Row="1" Grid.Column="5" AttributeName="BConnectDISTX" />
-                    <TextBox Grid.Row="1" Grid.Column="6" Text="{Binding BoltConnectDistX, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <TextBlock Grid.Row="1" Grid.Column="4" Text="Start offset X" />
+                    <tsuic:WpfFilterCheckBox Grid.Row="1" Grid.Column="5" AttributeName="BoltOffsetX" />
+                    <TextBox Grid.Row="1" Grid.Column="6" Text="{Binding BoltOffsetX, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-                    <TextBlock Grid.Row="2" Grid.Column="4" Text="Dist Y" />
-                    <tsuic:WpfFilterCheckBox Grid.Row="2" Grid.Column="5" AttributeName="BConnectDISTY" />
-                    <TextBox Grid.Row="2" Grid.Column="6" Text="{Binding BoltConnectDistY, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <TextBlock Grid.Row="2" Grid.Column="4" Text="Dist X" Visibility="{Binding Bolt1Shape, Mode=OneWay, Converter={StaticResource BoltShapeToDistXyVisibility}}" />
+                    <tsuic:WpfFilterCheckBox Grid.Row="2" Grid.Column="5" AttributeName="B1DISTX" Visibility="{Binding Bolt1Shape, Mode=OneWay, Converter={StaticResource BoltShapeToDistXyVisibility}}" />
+                    <TextBox Grid.Row="2" Grid.Column="6" Text="{Binding Bolt1DistX, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding Bolt1Shape, Mode=OneWay, Converter={StaticResource BoltShapeToDistXyVisibility}}" />
 
-                    <uc:BoltAssembly Grid.Row="3"
+                    <TextBlock Grid.Row="2" Grid.Column="4" Text="Number of Bolts" Visibility="{Binding Bolt1Shape, Mode=OneWay, Converter={StaticResource BoltShapeToNumDiamVisibility}}" />
+                    <tsuic:WpfFilterCheckBox Grid.Row="2" Grid.Column="5" AttributeName="B1NUM" Visibility="{Binding Bolt1Shape, Mode=OneWay, Converter={StaticResource BoltShapeToNumDiamVisibility}}" />
+                    <TextBox Grid.Row="2" Grid.Column="6" Text="{Binding Bolt1NumberOfBolts, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding Bolt1Shape, Mode=OneWay, Converter={StaticResource BoltShapeToNumDiamVisibility}}" />
+
+                    <TextBlock Grid.Row="3" Grid.Column="4" Text="Dist Y" Visibility="{Binding Bolt1Shape, Mode=OneWay, Converter={StaticResource BoltShapeToDistXyVisibility}}" />
+                    <tsuic:WpfFilterCheckBox Grid.Row="3" Grid.Column="5" AttributeName="B1DISTY" Visibility="{Binding Bolt1Shape, Mode=OneWay, Converter={StaticResource BoltShapeToDistXyVisibility}}" />
+                    <TextBox Grid.Row="3" Grid.Column="6" Text="{Binding Bolt1DistY, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding Bolt1Shape, Mode=OneWay, Converter={StaticResource BoltShapeToDistXyVisibility}}" />
+
+                    <TextBlock Grid.Row="3" Grid.Column="4" Text="Diameter" Visibility="{Binding Bolt1Shape, Mode=OneWay, Converter={StaticResource BoltShapeToNumDiamVisibility}}" />
+                    <tsuic:WpfFilterCheckBox Grid.Row="3" Grid.Column="5" AttributeName="B1DIAM" Visibility="{Binding Bolt1Shape, Mode=OneWay, Converter={StaticResource BoltShapeToNumDiamVisibility}}" />
+                    <TextBox Grid.Row="3" Grid.Column="6" Text="{Binding Bolt1Diameter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding Bolt1Shape, Mode=OneWay, Converter={StaticResource BoltShapeToNumDiamVisibility}}" />
+
+                    <uc:BoltAssembly Grid.Row="4"
                                      Grid.RowSpan="3"
                                      Grid.Column="5"
                                      Grid.ColumnSpan="2"
-                                     Bolt="{Binding BoltConnectIsBolt}"
+                                     Bolt="{Binding Bolt1IsBolt}"
                                      Direction="Left"
-                                     Nut1="{Binding BoltConnectUseNut1}"
-                                     Nut2="{Binding BoltConnectUseNut2}"
-                                     Washer1="{Binding BoltConnectUseWasher1}"
-                                     Washer2="{Binding BoltConnectUseWasher2}"
-                                     Washer3="{Binding BoltConnectUseWasher3}" />
+                                     Nut1="{Binding Bolt1UseNut1}"
+                                     Nut2="{Binding Bolt1UseNut2}"
+                                     Washer1="{Binding Bolt1UseWasher1}"
+                                     Washer2="{Binding Bolt1UseWasher2}"
+                                     Washer3="{Binding Bolt1UseWasher3}" />
 
-                    <StackPanel Grid.Row="6" Grid.Column="5" Grid.ColumnSpan="2" Orientation="Horizontal">
+                    <StackPanel Grid.Row="7" Grid.Column="5" Grid.ColumnSpan="2" Orientation="Horizontal">
                         <StackPanel.Resources>
                             <Style TargetType="tsuic:WpfFilterCheckBox" BasedOn="{StaticResource Element}" />
                         </StackPanel.Resources>
-                        <tsuic:WpfFilterCheckBox AttributeName="BConnectISBOT" />
-                        <tsuic:WpfFilterCheckBox AttributeName="BConnectWSHR1" />
-                        <tsuic:WpfFilterCheckBox AttributeName="BConnectWSHR2" />
-                        <tsuic:WpfFilterCheckBox AttributeName="BConnectWSHR3" />
-                        <tsuic:WpfFilterCheckBox AttributeName="BConnectNUT1" />
-                        <tsuic:WpfFilterCheckBox AttributeName="BConnectNUT2" />
+                        <tsuic:WpfFilterCheckBox AttributeName="B1ISBOT" />
+                        <tsuic:WpfFilterCheckBox AttributeName="B1WSHR1" />
+                        <tsuic:WpfFilterCheckBox AttributeName="B1WSHR2" />
+                        <tsuic:WpfFilterCheckBox AttributeName="B1WSHR3" />
+                        <tsuic:WpfFilterCheckBox AttributeName="B1NUT1" />
+                        <tsuic:WpfFilterCheckBox AttributeName="B1NUT2" />
                     </StackPanel>
 
-                    <uc:BoltSpecialHole Grid.Row="7"
+                    <uc:BoltSpecialHole Grid.Row="8"
                                         Grid.RowSpan="3"
                                         Grid.Column="5"
                                         Grid.ColumnSpan="2"
                                         Direction="Left"
-                                        SpecialHole1="{Binding BoltConnectHole1}"
-                                        SpecialHole2="{Binding BoltConnectHole2}"
-                                        SpecialHole3="{Binding BoltConnectHole3}"
-                                        SpecialHole4="{Binding BoltConnectHole4}"
-                                        SpecialHole5="{Binding BoltConnectHole5}" />
+                                        SpecialHole1="{Binding Bolt1Hole1}"
+                                        SpecialHole2="{Binding Bolt1Hole2}"
+                                        SpecialHole3="{Binding Bolt1Hole3}"
+                                        SpecialHole4="{Binding Bolt1Hole4}"
+                                        SpecialHole5="{Binding Bolt1Hole5}" />
 
-                    <StackPanel Grid.Row="10" Grid.Column="5" Grid.ColumnSpan="2" Orientation="Horizontal">
+                    <StackPanel Grid.Row="11" Grid.Column="5" Grid.ColumnSpan="2" Orientation="Horizontal">
                         <StackPanel.Resources>
                             <Style TargetType="tsuic:WpfFilterCheckBox" BasedOn="{StaticResource Element}" />
                         </StackPanel.Resources>
-                        <tsuic:WpfFilterCheckBox AttributeName="BConnectHOLE1" />
-                        <tsuic:WpfFilterCheckBox AttributeName="BConnectHOLE2" />
-                        <tsuic:WpfFilterCheckBox AttributeName="BConnectHOLE3" />
-                        <tsuic:WpfFilterCheckBox AttributeName="BConnectHOLE4" />
-                        <tsuic:WpfFilterCheckBox AttributeName="BConnectHOLE5" />
+                        <tsuic:WpfFilterCheckBox AttributeName="B1HOLE1" />
+                        <tsuic:WpfFilterCheckBox AttributeName="B1HOLE2" />
+                        <tsuic:WpfFilterCheckBox AttributeName="B1HOLE3" />
+                        <tsuic:WpfFilterCheckBox AttributeName="B1HOLE4" />
+                        <tsuic:WpfFilterCheckBox AttributeName="B1HOLE5" />
                     </StackPanel>
                 </Grid>
             </TabItem>
@@ -503,9 +520,10 @@
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
                         <ColumnDefinition Width="16" />
-                        <ColumnDefinition Width="60" />
+                        <ColumnDefinition Width="80" />
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
                         <RowDefinition Height="Auto" />
@@ -517,36 +535,52 @@
                     </Grid.RowDefinitions>
 
                     <TextBlock Grid.Row="0" Grid.Column="0" Text="Size" />
-                    <tsuic:WpfFilterCheckBox Grid.Row="0" Grid.Column="1" AttributeName="BStudSIZE" />
-                    <tsuic:WpfBoltCatalogSize Grid.Row="0" Grid.Column="2" ItemsSource="{Binding BoltSizes, ElementName=BoltStudStdCatalog}" SelectedItem="{Binding BoltStudSize, Mode=TwoWay}" />
+                    <tsuic:WpfFilterCheckBox Grid.Row="0" Grid.Column="1" AttributeName="S1SIZE" />
+                    <tsuic:WpfBoltCatalogSize Grid.Row="0" Grid.Column="2" ItemsSource="{Binding BoltSizes, ElementName=Stud1StdCatalog}" SelectedItem="{Binding Stud1Size, Mode=TwoWay}" />
 
                     <TextBlock Grid.Row="1" Grid.Column="0" Text="Standard" />
-                    <tsuic:WpfFilterCheckBox Grid.Row="1" Grid.Column="1" AttributeName="BStudSTD" />
-                    <tsuic:WpfBoltCatalogStandard x:Name="BoltStudStdCatalog" Grid.Row="1" Grid.Column="2" SelectedItem="{Binding BoltStudStandard, Mode=TwoWay}" />
+                    <tsuic:WpfFilterCheckBox Grid.Row="1" Grid.Column="1" AttributeName="S1STD" />
+                    <tsuic:WpfBoltCatalogStandard x:Name="Stud1StdCatalog" Grid.Row="1" Grid.Column="2" SelectedItem="{Binding Stud1Standard, Mode=TwoWay}" />
 
                     <TextBlock Grid.Row="2" Grid.Column="0" Text="Length" />
-                    <tsuic:WpfFilterCheckBox Grid.Row="2" Grid.Column="1" AttributeName="BStudLEN" />
-                    <TextBox Grid.Row="2" Grid.Column="2" Text="{Binding BoltStudLength, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <tsuic:WpfFilterCheckBox Grid.Row="2" Grid.Column="1" AttributeName="S1LEN" />
+                    <TextBox Grid.Row="2" Grid.Column="2" Text="{Binding Stud1Length, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
                     <TextBlock Grid.Row="3" Grid.Column="0" Text="Bolt type" />
-                    <tsuic:WpfFilterCheckBox Grid.Row="3" Grid.Column="1" AttributeName="BStudTYPE" />
-                    <ComboBox Grid.Row="3" Grid.Column="2" ItemsSource="{x:Static assets:BoltSymbols.BoltTypeSet}" SelectedIndex="{Binding BoltStudType, Mode=TwoWay}" />
+                    <tsuic:WpfFilterCheckBox Grid.Row="3" Grid.Column="1" AttributeName="S1TYPE" />
+                    <ComboBox Grid.Row="3" Grid.Column="2" ItemsSource="{x:Static assets:BoltSymbols.BoltTypeSet}" SelectedIndex="{Binding Stud1Type, Mode=TwoWay}" />
 
                     <TextBlock Grid.Row="4" Grid.Column="0" Text="Cut length" />
-                    <tsuic:WpfFilterCheckBox Grid.Row="4" Grid.Column="1" AttributeName="BStudCLEN" />
-                    <TextBox Grid.Row="4" Grid.Column="2" Text="{Binding BoltStudCutLength, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <tsuic:WpfFilterCheckBox Grid.Row="4" Grid.Column="1" AttributeName="S1CLEN" />
+                    <TextBox Grid.Row="4" Grid.Column="2" Text="{Binding Stud1CutLength, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-                    <TextBlock Grid.Row="5" Grid.Column="0" Text="Start offset X" />
-                    <tsuic:WpfFilterCheckBox Grid.Row="5" Grid.Column="1" AttributeName="StudOffsetX" />
-                    <TextBox Grid.Row="5" Grid.Column="2" Text="{Binding StudOffsetX, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <TextBlock Grid.Row="5" Grid.Column="0" Text="Shape" />
+                    <tsuic:WpfFilterCheckBox Grid.Row="5" Grid.Column="1" AttributeName="S1SHAPE" />
+                    <ComboBox Grid.Row="5"
+                              Grid.Column="2"
+                              SelectedIndex="{Binding Stud1Shape, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                              ItemsSource="{x:Static assets:BoltSymbols.BoltShapeSet}"
+                              ItemTemplate="{StaticResource SymbolDataTemplate}" />
 
-                    <TextBlock Grid.Row="6" Grid.Column="0" Text="Distance list X" />
-                    <tsuic:WpfFilterCheckBox Grid.Row="6" Grid.Column="1" AttributeName="BStudDISTX" />
-                    <TextBox Grid.Row="6" Grid.Column="2" Text="{Binding BoltStudDistX, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <TextBlock Grid.Row="6" Grid.Column="0" Text="Start offset X" />
+                    <tsuic:WpfFilterCheckBox Grid.Row="6" Grid.Column="1" AttributeName="StudOffsetX" />
+                    <TextBox Grid.Row="6" Grid.Column="2" Text="{Binding StudOffsetX, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
 
-                    <TextBlock Grid.Row="7" Grid.Column="0" Text="Distance list Y" />
-                    <tsuic:WpfFilterCheckBox Grid.Row="7" Grid.Column="1" AttributeName="BStudDISTY" />
-                    <TextBox Grid.Row="7" Grid.Column="2" Text="{Binding BoltStudDistY, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" />
+                    <TextBlock Grid.Row="7" Grid.Column="0" Text="Distance list X" Visibility="{Binding Stud1Shape, Mode=OneWay, Converter={StaticResource BoltShapeToDistXyVisibility}}" />
+                    <tsuic:WpfFilterCheckBox Grid.Row="7" Grid.Column="1" AttributeName="S1DISTX" Visibility="{Binding Stud1Shape, Mode=OneWay, Converter={StaticResource BoltShapeToDistXyVisibility}}" />
+                    <TextBox Grid.Row="7" Grid.Column="2" Text="{Binding Stud1DistX, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding Stud1Shape, Mode=OneWay, Converter={StaticResource BoltShapeToDistXyVisibility}}" />
+
+                    <TextBlock Grid.Row="7" Grid.Column="0" Text="Number of bolts" Visibility="{Binding Stud1Shape, Mode=OneWay, Converter={StaticResource BoltShapeToNumDiamVisibility}}" />
+                    <tsuic:WpfFilterCheckBox Grid.Row="7" Grid.Column="1" AttributeName="S1NUM" Visibility="{Binding Stud1Shape, Mode=OneWay, Converter={StaticResource BoltShapeToNumDiamVisibility}}" />
+                    <TextBox Grid.Row="7" Grid.Column="2" Text="{Binding Stud1NumberOfBolts, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding Stud1Shape, Mode=OneWay, Converter={StaticResource BoltShapeToNumDiamVisibility}}" />
+
+                    <TextBlock Grid.Row="8" Grid.Column="0" Text="Distance list Y" Visibility="{Binding Stud1Shape, Mode=OneWay, Converter={StaticResource BoltShapeToDistXyVisibility}}" />
+                    <tsuic:WpfFilterCheckBox Grid.Row="8" Grid.Column="1" AttributeName="S1DISTY" Visibility="{Binding Stud1Shape, Mode=OneWay, Converter={StaticResource BoltShapeToDistXyVisibility}}" />
+                    <TextBox Grid.Row="8" Grid.Column="2" Text="{Binding Stud1DistY, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding Stud1Shape, Mode=OneWay, Converter={StaticResource BoltShapeToDistXyVisibility}}" />
+
+                    <TextBlock Grid.Row="8" Grid.Column="0" Text="Diameter" Visibility="{Binding Stud1Shape, Mode=OneWay, Converter={StaticResource BoltShapeToNumDiamVisibility}}" />
+                    <tsuic:WpfFilterCheckBox Grid.Row="8" Grid.Column="1" AttributeName="S1DIAM" Visibility="{Binding Stud1Shape, Mode=OneWay, Converter={StaticResource BoltShapeToNumDiamVisibility}}" />
+                    <TextBox Grid.Row="8" Grid.Column="2" Text="{Binding Stud1Diameter, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Visibility="{Binding Stud1Shape, Mode=OneWay, Converter={StaticResource BoltShapeToNumDiamVisibility}}" />
                 </Grid>
             </TabItem>
 

@@ -7,12 +7,13 @@ namespace Muggle.TsExtensions.CodingHelper.Generators.Information {
     /// <summary>
     /// A hash set of id, such as ["Part1", "Part2", "Part3"].
     /// </summary>
+    /// <remarks>Using the Enumerable.SequenceEqual method for equality comparison,
+    /// means that two instances are considered equal 
+    /// only if the elements at corresponding positions in both instances are all equal.</remarks>
     internal class IdSet : HashSet<string>, IEquatable<IdSet> {
 
         public bool Equals(IdSet other) {
-            if (other is null) return false;
-
-            return this.Count == other.Count && this.OrderBy(s => s).SequenceEqual(other.OrderBy(s => s));
+            return other is not null && this.SequenceEqual(other);
         }
 
         public override bool Equals(object obj) {

@@ -1,620 +1,267 @@
 # Muggle.TsExtensions.CodingHelper
 
+[中文版](Readme_zh-cn.md)
+
+This is a tool to assist in developing Tekla Structures components. Its features include:
+- Generate fields and utility methods for plugin data class, making it convenient to create or modify objects
+- Generate fields for plugin class (if needed)
+- Generate view model properties (if using a WPF interface)
+- Generate a simple user interface
+
 ---
+
 <!-- TOC -->
 * [Muggle.TsExtensions.CodingHelper](#muggletsextensionscodinghelper)
-  * [Generator for plugin data class](#generator-for-plugin-data-class)
+  * [Generate Fields and Utility Methods for Plugin Data Class](#generate-fields-and-utility-methods-for-plugin-data-class)
     * [Example](#example)
-  * [Generator for plugin class](#generator-for-plugin-class)
-    * [Fields and "GetFieldValuesFrom" method](#fields-and-getfieldvaluesfrom-method)
-      * [Example](#example-1)
-    * ["SetDataToDefaultIfUnset" method, "Create\*\*" methods and "ModifyTo\*\*" methods](#setdatatodefaultifunset-method-Create-methods-and-modifyto-methods)
-      * [Example](#example-2)
-  * [Generator for view model class](#generator-for-view-model-class)
-    * [System preset properties](#system-preset-properties)
-    * [Specific properties](#specific-properties)
-      * [Example](#example-3)
-  * [Generator for user interface](#generator-for-user-interface)
-    * [Example](#example-4)
+  * [Generate Fields for Plugin Class](#generate-fields-for-plugin-class)
+  * [Generate View Model Properties](#generate-view-model-properties)
+  * [Generate User Interface](#generate-user-interface)
   * [Demo](#demo)
 <!-- TOC -->
+
 ---
 
-## Generator for plugin data class
+## Generate Fields and Utility Methods for Plugin Data Class
 
-Apply these attributes to plugin data class to auto generate fields (with StructuresFieldAttribute):
+This generator provides the following set of attributes. Apply them to plugin data class as needed,
+and set the property default values to generate the corresponding fields:
 
-- GeneralFieldsAttribute
-- PartFieldsAttribute
-- PlateFieldsAttribute
-- WeldFieldsAttribute
-- BoltFieldsAttribute
-- BoltCircleFieldsAttribute
-- ChamferFieldsAttribute
+- PartAttribute
+- PlateAttribute
+- ChamferAttribute
+- BoltAttribute
+- StudAttribute
+- WeldAttribute
+- GeneralAttribute
 
-> ***Note***: Mapping relationship between model object properties and plugin attribute names [see here](https://github.com/ThinkerHua/Muggle-Tekla-Structures-Extensions/blob/master/CodingHelper/AttributeNameReference.md).
+> Object properties and their corresponding fields along with the plugin parameter name patterns follow [this document](AttributeNameReference.md).
+
+It also generates a "SetFieldsToDefaultIfUnset" method, a series of "Create\*\<T>" and "ModifyTo\*\<T>" methods.
+
+The SetFieldsToDefaultIfUnset method is used to set fields whose values have not been set in the user interface
+to their default values.
+
+The Create\*\<T> methods are used to create objects using the corresponding fields; 
+the generic parameter is the type of object you want to obtain.
+
+The ModifyTo\*\<T> methods are used to modify a given object using the corresponding fields.
 
 ### Example
 
-The source codes by hand:
+Use the attributes in the plugin data class like this:
 
-~~~CSharp
-// in PluginData.cs
+~~~csharp
+// ====================
+//    PluginData.cs
+// ====================
 
-using Muggle.TsExtensions.CodingHelper.Generators;
-
-[GeneralFields(typeof(int), "num")]
-[PlateFields("Stiffener")]
+[Part("main", Profile = "HM244*175*7*11")]
+[Bolt(1, Shape = Circle, NumberOfBolts = 12, Diameter = 200)]
 public partial class PluginData { }
 ~~~
 
-Then it will auto generate codes behind like this:
+Then, code similar to the following will be generated in the background:
 
-~~~CSharp
-//  in PluginData.g.cs
+~~~csharp
+// ====================
+//    PluginData.g.cs
+// ====================
 
-public partial class PluginData {
-        
-        [global::Tekla.Structures.Plugins.StructuresField("num")]
-        public int Num;
-        
-        [global::Tekla.Structures.Plugins.StructuresField("PLStiffenerNAME")]
-        public string PlateStiffenerName;
-        
-        [global::Tekla.Structures.Plugins.StructuresField("PLStiffenerT")]
-        public double PlateStiffenerThickness;
-        
-        [global::Tekla.Structures.Plugins.StructuresField("PLStiffenerB")]
-        public double PlateStiffenerBreadth;
-        
-        [global::Tekla.Structures.Plugins.StructuresField("PLStiffenerH")]
-        public double PlateStiffenerHeight;
-        
-        [global::Tekla.Structures.Plugins.StructuresField("PLStiffenerMATL")]
-        public string PlateStiffenerMaterial;
-        
-        [global::Tekla.Structures.Plugins.StructuresField("PLStiffenerFNSH")]
-        public string PlateStiffenerFinish;
-        
-        [global::Tekla.Structures.Plugins.StructuresField("PLStiffenerCLS")]
-        public int PlateStiffenerClass;
-        
-        [global::Tekla.Structures.Plugins.StructuresField("PLStiffenerASMP")]
-        public string PlateStiffenerAssemblyPrefix;
-        
-        [global::Tekla.Structures.Plugins.StructuresField("PLStiffenerASMN")]
-        public int PlateStiffenerAssemblyStartNumber;
-        
-        [global::Tekla.Structures.Plugins.StructuresField("PLStiffenerPTP")]
-        public string PlateStiffenerPartPrefix;
-        
-        [global::Tekla.Structures.Plugins.StructuresField("PLStiffenerPTN")]
-        public int PlateStiffenerPartStartNumber;
-}
-~~~
-
----
-
-## Generator for plugin class
-
-### Fields and "GetFieldValuesFrom" method
-
-Apply "**FieldsFromAttribute**" on the plugin class and input the plugin data type, then it will auto generate private fields one-to-one corresponds with each public fields (including manually written fields and generated fields) in data type. 
-And it will also generate a **"GetFieldValuesFrom"** method, you need to manually call this method at an appropriate location.
-
-#### Example
-
-The source codes by hand:
-
-~~~CSharp
-// in PluginData.cs
-
-using Muggle.TsExtensions.CodingHelper.Generators;
-
-[PlateFields("Stiffener")]
-public partial class PluginData { 
-
-    [StructuresField("UselessAttribute")]
-    public int UselessAttribute;
-}
-
-
-// in Plugin.cs
-
-using Muggle.TsExtensions.CodingHelper.Generators;
-
-[Plugin("Plugin")]
-[PluginUserInterface("Plugin.View")]
-[FieldsFrom(typeof(PluginData))]
-public partial class Plugin : PluginBase {
-
-    public Plugin(PluginData data) {
-        GetFieldValuesFrom(data);
-    }
-}
-~~~
-
-Then it will auto generate codes behind like this:
-
-~~~CSharp
-// in Plugin.g.cs
-
-public partial class Plugin {
+public partial class PluginData 
+{
+    [StructuresField("PTmainNAME")] public string PartMainName;
+    [StructuresField("PTmainPRF")] public string PartMainProfile;
+    [StructuresField("PTmainMATL")] public string PartMainMaterial;
+    [StructuresField("PTmainFNSH")] public string PartMainFinish;
+    [StructuresField("PTmainCLS")] public int PartMainClass;
+    [StructuresField("PTmainPTP")] public string PartMainPartPrefix;
+    [StructuresField("PTmainPTN")] public int PartMainPartStartNumber;
+    [StructuresField("PTmainASMP")] public string PartMainAssemblyPrefix;
+    [StructuresField("PTmainASMN")] public int PartMainAssemblyStartNumber;
+    [StructuresField("B1SHAPE")] public int Bolt1Shape;
+    [StructuresField("B1STD")] public string Bolt1Standard;
+    [StructuresField("B1SIZE")] public double Bolt1Size;
+    [StructuresField("B1DISTX")] public string Bolt1DistX;
+    [StructuresField("B1DISTY")] public string Bolt1DistY;
+    [StructuresField("B1NUM")] public int Bolt1NumberOfBolts;
+    [StructuresField("B1DIAM")] public double Bolt1Diameter;
+    [StructuresField("B1TYPE")] public int Bolt1Type;
+    [StructuresField("B1THRD")] public int Bolt1ThreadInMaterial;
+    [StructuresField("B1LEN")] public double Bolt1Length;
+    [StructuresField("B1CLEN")] public double Bolt1CutLength;
+    [StructuresField("B1XLEN")] public double Bolt1ExtraLength;
+    [StructuresField("B1TOL")] public double Bolt1Tolerance;
+    [StructuresField("B1PLAIN")] public int Bolt1PlainType;
+    [StructuresField("B1DEPTH")] public double Bolt1BlindHoleDepth;
+    [StructuresField("B1HOLTY")] public int Bolt1HoleType;
+    [StructuresField("B1SLOTX")] public double Bolt1SlottedHoleX;
+    [StructuresField("B1SLOTY")] public double Bolt1SlottedHoleY;
+    [StructuresField("B1SOFFX")] public double Bolt1SlotOffsetX; // Depends on OpenAPI version
+    [StructuresField("B1SOFFY")] public double Bolt1SlotOffsetY; // Depends on OpenAPI version
+    [StructuresField("B1RSLOT")] public int Bolt1RotateSlots;
+    [StructuresField("B1HOLE1")] public int Bolt1Hole1;
+    [StructuresField("B1HOLE2")] public int Bolt1Hole2;
+    [StructuresField("B1HOLE3")] public int Bolt1Hole3;
+    [StructuresField("B1HOLE4")] public int Bolt1Hole4;
+    [StructuresField("B1HOLE5")] public int Bolt1Hole5;
+    [StructuresField("B1ISBOT")] public int Bolt1IsBolt;
+    [StructuresField("B1NUT1")] public int Bolt1UseNut1;
+    [StructuresField("B1NUT2")] public int Bolt1UseNut1;
+    [StructuresField("B1WSHR1")] public int Bolt1UseWasher1;
+    [StructuresField("B1WSHR2")] public int Bolt1UseWasher2;
+    [StructuresField("B1WSHR3")] public int Bolt1UseWasher3;
     
-    private int _uselessAttribute;
-    
-    private string _plateStiffenerName;
-    private double _plateStiffenerThickness;
-    private double _plateStiffenerBreadth;
-    private double _plateStiffenerHeight;
-    private string _plateStiffenerMaterial;
-    private string _plateStiffenerFinish;
-    private int _plateStiffenerClass;
-    private string _plateStiffenerAssemblyPrefix;
-    private int _plateStiffenerAssemblyStartNumber;
-    private string _plateStiffenerPartPrefix;
-    private int _plateStiffenerPartStartNumber;
-
-    private void GetFieldValuesFrom(PluginData data) {
-        _uselessAttribute = data.UselessAttribute;
-
-        _plateStiffenerName = data.PlateStiffenerName;
-        _plateStiffenerThickness = data.PlateStiffenerThickness;
-        _plateStiffenerBreadth = data.PlateStiffenerBreadth;
-        _plateStiffenerHeight = data.PlateStiffenerHeight;
-        _plateStiffenerMaterial = data.PlateStiffenerMaterial;
-        _plateStiffenerFinish = data.PlateStiffenerFinish;
-        _plateStiffenerClass = data.PlateStiffenerClass;
-        _plateStiffenerAssemblyPrefix = data.PlateStiffenerAssemblyPrefix;
-        _plateStiffenerAssemblyStartNumber = data.PlateStiffenerAssemblyStartNumber;
-        _plateStiffenerPartPrefix = data.PlateStiffenerPartPrefix;
-        _plateStiffenerPartStartNumber = data.PlateStiffenerPartStartNumber;
-    }
-}
-~~~
-
-### "SetDataToDefaultIfUnset" method, "Create\*\*" methods and "ModifyTo\*\*" methods
-
-Apply these attributes on the plugin class or its data field or property, then it will auto generate a **"SetDataToDefaultIfUnset"** method, a series of **"Create\*\*"** methods and **"ModifyTo\*\*"** methods:
-
-- GeneralFieldDefaultValuesAttribute
-- PartFieldDefaultValuesAttribute
-- PlateFieldDefaultValuesAttribute
-- WeldFieldDefaultValuesAttribute
-- BoltFieldDefaultValuesAttribute
-- BoltCircleFieldDefaultValuesAttribute
-- ChamferFieldDefaultValuesAttribute
-
-The "SetDataToDefaultIfUnset" used to set fields of plugin or fields of plugin data member to default value, if they are not set form user interface.
-
-The "Create\*\*" method only need to pass in generic parameter to automatically use the associated fields to create model object.
-
-The "ModifyTo\*\*" method only need to pass in existing object to automatically use the associated fields to modify it.
-
-> ***Note***: When applied on class, you need to apply "FieldsFromAttribute" also.
-
-> ***Note***: You need to pay attention to the order of calling the "SetDataToDefaultIfUnset" method and the "GetFieldValuesFrom" method. Otherwise, you might not get the correct values.
->
-> | Applied "FieldsFromAttribute" | Place "***FieldDefaultValuesAttribute" applied on | Calling order                                                  | Way to access value         |
-> |-------------------------------|---------------------------------------------------|----------------------------------------------------------------|-----------------------------|
-> | Yes                           | Class                                             | GetFieldValuesFrom(data);<br/>SetDataToDefaultIfUnset();       | Only fields                 |
-> | Yes                           | Data member (field or property)                   | SetDataToDefaultIfUnset();<br/>GetFieldValuesFrom(data);       | Both fields and data member |
-> | No                            | Data member (field or property)                   | SetDataToDefaultIfUnset();<br/>~~//GetFieldValuesFrom(data);~~ | Only data member            |
-
-#### Example
-
-The source codes by hand:
-
-~~~CSharp
-// in Plugin.cs
-
-using Muggle.TsExtensions.CodingHelper.Generators;
-
-[Plugin("Plugin")]
-[PluginUserInterface("Plugin.View")]
-[FieldsFrom(typeof(PluginData))]
-public partial class Plugin : PluginBase {
-
-    [PlateFieldDefaultValues("Stiffener", breadth: 300, Thickness = 14, Material = "Q235")]
-    public PluginData Data { get; set; }
-
-    public Plugin(PluginData data) {
-        Data = data;
-        SetDataToDefaultIfUnset();
-        GetFieldValuesFrom(Data);
-    }
-    
-    public override List<InputDefinition> DefineInput() {
+    public void SetFieldsToDefaultIfUnset()
+    {
         /* ... */
     }
     
-    public override bool Run(List<InputDefinition> input) {
+    public T CreatePartMain<T>() where T : Part, new() 
+    {
         /* ... */
-        var stif = CreatePlateStiffener<ContourPlate>();
-        stif.Insert();
-        
-        var plate = new Beam();
-        ModifyToPlateStiffener(ref plate);
+    }
+    
+    public void ModifyToPartMain<T>(ref T part) where T : Part 
+    {
+        /* ... */
+    }
+    
+    public T CreateBolt1<T>() where T : BoltGroup, new() 
+    {
+        /* ... */
+    }
+    
+    public void ModifyToBolt1<T>(ref T bolt) where T : BoltGroup 
+    {
         /* ... */
     }
 }
 ~~~
 
-Then it will auto generate codes behind like this:
+Then, you can use it within the plugin class like this:
 
-~~~CSharp
-// in Plugin.g.cs
-
-public partial class Plugin {
-
-    private void SetDataToDefaultIfUnset() {
-        
-        if (Data.PlateStiffenerThickness <= 0)
-            Data.PlateStiffenerThickness = 14;
-        if (Data.PlateStiffenerBreadth <= 0)
-            Data.PlateStiffenerBreadth = 300;
-        if (Data.PlateStiffenerHeight <= 0)
-            Data.PlateStiffenerHeight = 0;
-        if (IsDefaultValue(Data.PlateStiffenerMaterial))
-            Data.PlateStiffenerMaterial = "Q235";
-        if (IsDefaultValue(Data.PlateStiffenerName))
-            Data.PlateStiffenerName = "";
-        if (IsDefaultValue(Data.PlateStiffenerFinish))
-            Data.PlateStiffenerFinish = "";
-        if (IsDefaultValue(Data.PlateStiffenerClass))
-            Data.PlateStiffenerClass = 99;
-        if (IsDefaultValue(Data.PlateStiffenerAssemblyPrefix))
-            Data.PlateStiffenerAssemblyPrefix = "A";
-        if (IsDefaultValue(Data.PlateStiffenerAssemblyStartNumber))
-            Data.PlateStiffenerAssemblyStartNumber = 1;
-        if (IsDefaultValue(Data.PlateStiffenerPartPrefix))
-            Data.PlateStiffenerPartPrefix = "P";
-        if (IsDefaultValue(Data.PlateStiffenerPartStartNumber))
-            Data.PlateStiffenerPartStartNumber = 1;
-    }
-    
-    private T CreatePlateStiffener<T>() where T : global::Tekla.Structures.Model.Part, new() {
-        if (typeof(T) == typeof(global::Tekla.Structures.Model.Brep))
-            throw new global::System.NotSupportedException($"Type \"{typeof(global::Tekla.Structures.Model.Brep)}\" not supported.");
-        
-        T plate = new T();
-        plate.Name = Data.PlateStiffenerName;
-        switch (typeof(T).ToString()) { 
-        case "Tekla.Structures.Model.Beam": 
-        case "Tekla.Structures.Model.PolyBeam": 
-        case "Tekla.Structures.Model.SpiralBeam": 
-            plate.Profile.ProfileString = $"PL{Data.PlateStiffenerThickness}*{Data.PlateStiffenerBreadth}"; 
-            break; 
-        case "Tekla.Structures.Model.BentPlate": 
-        case "Tekla.Structures.Model.ContourPlate": 
-        case "Tekla.Structures.Model.LoftedPlate": 
-            plate.Profile.ProfileString = $"PL{Data.PlateStiffenerThickness}"; 
-            break;
-        }
-        plate.Material.MaterialString = Data.PlateStiffenerMaterial;
-        plate.Finish = Data.PlateStiffenerFinish;
-        plate.Class = Data.PlateStiffenerClass.ToString();
-        plate.AssemblyNumber.Prefix = Data.PlateStiffenerAssemblyPrefix;
-        plate.AssemblyNumber.StartNumber = Data.PlateStiffenerAssemblyStartNumber;
-        plate.PartNumber.Prefix = Data.PlateStiffenerPartPrefix;
-        plate.PartNumber.StartNumber = Data.PlateStiffenerPartStartNumber;
-        return plate;
-    }
-    
-    private void ModifyToPlateStiffener<T>(ref T plate) where T : global::Tekla.Structures.Model.Part {
-        if (typeof(T) == typeof(global::Tekla.Structures.Model.Brep))
-            throw new global::System.NotSupportedException($"Type \"{typeof(global::Tekla.Structures.Model.Brep)}\" not supported.");
-        
-        plate.Name = Data.PlateStiffenerName;
-        switch (typeof(T).ToString()) { 
-        case "Tekla.Structures.Model.Beam": 
-        case "Tekla.Structures.Model.PolyBeam": 
-        case "Tekla.Structures.Model.SpiralBeam": 
-            plate.Profile.ProfileString = $"PL{Data.PlateStiffenerThickness}*{Data.PlateStiffenerBreadth}"; 
-            break; 
-        case "Tekla.Structures.Model.BentPlate": 
-        case "Tekla.Structures.Model.ContourPlate": 
-        case "Tekla.Structures.Model.LoftedPlate": 
-            plate.Profile.ProfileString = $"PL{Data.PlateStiffenerThickness}"; 
-            break;
-        }
-        plate.Material.MaterialString = Data.PlateStiffenerMaterial;
-        plate.Finish = Data.PlateStiffenerFinish;
-        plate.Class = Data.PlateStiffenerClass.ToString();
-        plate.AssemblyNumber.Prefix = Data.PlateStiffenerAssemblyPrefix;
-        plate.AssemblyNumber.StartNumber = Data.PlateStiffenerAssemblyStartNumber;
-        plate.PartNumber.Prefix = Data.PlateStiffenerPartPrefix;
-        plate.PartNumber.StartNumber = Data.PlateStiffenerPartStartNumber;
-    }
-}
-~~~
-
----
-
-## Generator for view model class
-
-### System preset properties
-
-Inherit view model from preset view model base to make it has ability to notify when its property changed and has some Tekla Structures preset properties.
-
-- NotificationObject
-
-  A simple abstract class which implement INotifyPropertyChanged, inherit from it so you can use OnPropertyChanged method directly.
-
-- ConnectionViewModel
-
-  An abstract class inherit from NotificationObject, and has a several Tekla Structures preset properties for connection type plugin.
-  The usage of properties is consistent with the options in Tekla Structures system *connection* component general tab.
-
-- DetailViewModel
-
-  An abstract class inherit from NotificationObject, and has a several Tekla Structures preset properties for detail type plugin.
-  The usage of properties is consistent with the options in Tekla Structures system *detail* component general tab.
-
-- CustomPartViewModel
-
-  An abstract class inherit from NotificationObject, and has a several Tekla Structures preset properties for custom part type plugin.
-  The usage of properties is consistent with the options in Tekla Structures system *part* component general tab.
-
-### Specific properties
-
-Apply these attributes to view model class to auto generate properties (with StructuresDialogAttribute) and set default values at the same time:
-
-- GeneralPropertiesAttribute
-- PartPropertiesAttribute
-- PlatePropertiesAttribute
-- WeldPropertiesAttribute
-- BoltPropertiesAttribute
-- BoltCirclePropertiesAttribute
-- ChamferPropertiesAttribute
-
-> ***Note***: Mapping relationship between model object properties and plugin attribute names [see here](https://github.com/ThinkerHua/Muggle-Tekla-Structures-Extensions/blob/master/CodingHelper/AttributeNameReference.md).
-
-#### Example
-
-The source codes by hand:
-
-~~~CSharp
-// in MainWindowViewModel.cs
-
-using Muggle.TsExtensions.CodingHelper.Generators;
-using Tekla.Structures.Datatype;
-
-[GeneralProperties(typeof(Integer), "num", 10)]
-[PlatePropertiesWithDefaultValues("Stiffener", 10, breadth: 200.0, Height = 300.00,)]
-public partial class MainWindowViewModel : ConnectionViewModel { 
-    // ...
-}
-~~~
-
-Then it will auto generate codes behind like this:
-
-~~~CSharp
-// in MainWindowViewModel.g.cs
-
-using System;
-
-public partial class MainWindowViewModel {
-    
-    private global::Tekla.Structures.Datatype.Integer _num;
-    private global::Tekla.Structures.Datatype.Double _plateStiffenerThickness;
-    private global::Tekla.Structures.Datatype.Double _plateStiffenerBreadth;
-    private global::Tekla.Structures.Datatype.Double _plateStiffenerHeight;
-    private global::Tekla.Structures.Datatype.String _plateStiffenerMaterial;
-    private global::Tekla.Structures.Datatype.String _plateStiffenerName;
-    private global::Tekla.Structures.Datatype.String _plateStiffenerFinish;
-    private global::Tekla.Structures.Datatype.Integer _plateStiffenerClass;
-    private global::Tekla.Structures.Datatype.String _plateStiffenerAssemblyPrefix;
-    private global::Tekla.Structures.Datatype.Integer _plateStiffenerAssemblyStartNumber;
-    private global::Tekla.Structures.Datatype.String _plateStiffenerPartPrefix;
-    private global::Tekla.Structures.Datatype.Integer _plateStiffenerPartStartNumber;
-    
-    [global::Tekla.Structures.Dialog.StructuresDialog("num", typeof(global::Tekla.Structures.Datatype.Integer))]
-    public global::Tekla.Structures.Datatype.Integer Num {
-        get {
-            return _num;
-        }
-        set {
-            _num = value == int.MinValue ? 10 : value;
-            OnPropertyChanged();
-        }
-    }
-    
-    [global::Tekla.Structures.Dialog.StructuresDialog("PLStiffenerT", typeof(global::Tekla.Structures.Datatype.Double))]
-    public global::Tekla.Structures.Datatype.Double PlateStiffenerThickness {
-        get {
-            return _plateStiffenerThickness;
-        }
-        set {
-            _plateStiffenerThickness = value == int.MinValue ? 10 : value;
-            OnPropertyChanged();
-        }
-    }
-    
-    [global::Tekla.Structures.Dialog.StructuresDialog("PLStiffenerB", typeof(global::Tekla.Structures.Datatype.Double))]
-    public global::Tekla.Structures.Datatype.Double PlateStiffenerBreadth {
-        get {
-            return _plateStiffenerBreadth;
-        }
-        set {
-            _plateStiffenerBreadth = value == int.MinValue ? 0 : value;
-            OnPropertyChanged();
-        }
-    }
-    
-    [global::Tekla.Structures.Dialog.StructuresDialog("PLStiffenerH", typeof(global::Tekla.Structures.Datatype.Double))]
-    public global::Tekla.Structures.Datatype.Double PlateStiffenerHeight {
-        get {
-            return _plateStiffenerHeight;
-        }
-        set {
-            _plateStiffenerHeight = value == int.MinValue ? 0 : value;
-            OnPropertyChanged();
-        }
-    }
-    
-    [global::Tekla.Structures.Dialog.StructuresDialog("PLStiffenerMATL", typeof(global::Tekla.Structures.Datatype.String))]
-    public global::Tekla.Structures.Datatype.String PlateStiffenerMaterial {
-        get {
-            return _plateStiffenerMaterial;
-        }
-        set {
-            _plateStiffenerMaterial = string.IsNullOrEmpty(value) ? "" : value;
-            OnPropertyChanged();
-        }
-    }
-    
-    [global::Tekla.Structures.Dialog.StructuresDialog("PLStiffenerNAME", typeof(global::Tekla.Structures.Datatype.String))]
-    public global::Tekla.Structures.Datatype.String PlateStiffenerName {
-        get {
-            return _plateStiffenerName;
-        }
-        set {
-            _plateStiffenerName = string.IsNullOrEmpty(value) ? "" : value;
-            OnPropertyChanged();
-        }
-    }
-    
-    [global::Tekla.Structures.Dialog.StructuresDialog("PLStiffenerFNSH", typeof(global::Tekla.Structures.Datatype.String))]
-    public global::Tekla.Structures.Datatype.String PlateStiffenerFinish {
-        get {
-            return _plateStiffenerFinish;
-        }
-        set {
-            _plateStiffenerFinish = string.IsNullOrEmpty(value) ? "" : value;
-            OnPropertyChanged();
-        }
-    }
-    
-    [global::Tekla.Structures.Dialog.StructuresDialog("PLStiffenerCLS", typeof(global::Tekla.Structures.Datatype.Integer))]
-    public global::Tekla.Structures.Datatype.Integer PlateStiffenerClass {
-        get {
-            return _plateStiffenerClass;
-        }
-        set {
-            _plateStiffenerClass = value == int.MinValue ? 99 : value;
-            OnPropertyChanged();
-        }
-    }
-    
-    [global::Tekla.Structures.Dialog.StructuresDialog("PLStiffenerASMP", typeof(global::Tekla.Structures.Datatype.String))]
-    public global::Tekla.Structures.Datatype.String PlateStiffenerAssemblyPrefix {
-        get {
-            return _plateStiffenerAssemblyPrefix;
-        }
-        set {
-            _plateStiffenerAssemblyPrefix = string.IsNullOrEmpty(value) ? "A-" : value;
-            OnPropertyChanged();
-        }
-    }
-    
-    [global::Tekla.Structures.Dialog.StructuresDialog("PLStiffenerASMN", typeof(global::Tekla.Structures.Datatype.Integer))]
-    public global::Tekla.Structures.Datatype.Integer PlateStiffenerAssemblyStartNumber {
-        get {
-            return _plateStiffenerAssemblyStartNumber;
-        }
-        set {
-            _plateStiffenerAssemblyStartNumber = value == int.MinValue ? 1 : value;
-            OnPropertyChanged();
-        }
-    }
-    
-    [global::Tekla.Structures.Dialog.StructuresDialog("PLStiffenerPTP", typeof(global::Tekla.Structures.Datatype.String))]
-    public global::Tekla.Structures.Datatype.String PlateStiffenerPartPrefix {
-        get {
-            return _plateStiffenerPartPrefix;
-        }
-        set {
-            _plateStiffenerPartPrefix = string.IsNullOrEmpty(value) ? "P" : value;
-            OnPropertyChanged();
-        }
-    }
-    
-    [global::Tekla.Structures.Dialog.StructuresDialog("PLStiffenerPTN", typeof(global::Tekla.Structures.Datatype.Integer))]
-    public global::Tekla.Structures.Datatype.Integer PlateStiffenerPartStartNumber {
-        get {
-            return _plateStiffenerPartStartNumber;
-        }
-        set {
-            _plateStiffenerPartStartNumber = value == int.MinValue ? 1 : value;
-            OnPropertyChanged();
-        }
-    }
-}
-~~~
-
----
-
-## Generator for user interface
-
-Apply "UserInterfaceAttribute" to plugin class to generate a simple UI for plugin.
-On one hand it makes debugging easier during the core logic development stage, and on the other hand 
-it reduces workload during the UI development stage because you can edit based on the generated files.
-
-Currently, it only supports WPF, but INP and WinForm will be supported later.
-
-> ***Note***: Since the official implementation of source generators can't output files with non-.cs extensions,
-> this generator bypasses the official method to output a "WpfUi.g.xaml" file in the project directory
-> (although it is possible write WPF UIs purely in C# code, but doing that would lose the convenience mentioned in the second point).
-> However, this approach also introduces a drawback – when you no longer need the generated WPF UI,
-> you'll have to manually delete the "WpfUi.g.xaml" file.
-
-### Example
-
-~~~CSharp
+~~~csharp
 // ====================
-//     PluginData.cs
+//    Plugin.cs
 // ====================
-
-using Muggle.TsExtensions.CodingHelper.Generators;
-
-namespace Demo;
-
-[GeneralFields(typeof(int), "num")]
-[PlateFields("Stiffener")]
-public partial class PluginData { }
-
-
-// ====================
-//     Plugin.cs
-// ====================
-
-using Muggle.TsExtensions.CodingHelper.Generators;
-
-namespace Demo;
 
 [Plugin("Demo")]
-/*
- * Since the "UserInterfaceAttribute" has already been applied, 
- * "PluginUserInterfaceAttribute" will be automatically applied in the generated code, 
- * so the manually applied "PluginUserInterfaceAttribute" should be removed 
- */
-// [PluginUserInterface("Demo.WpfUi")]
-[UserInterface(UserInterfaceType.WPF, "Demo.ViewModel")]
-public partial class Plugin : ConnectionBase {
+public partial class Plugin : PluginBase 
+{
+    private PluginData Data { get; }
+    
+    public Plugin(PluginData data)
+    {
+        Data = data;
+    }
+    
+    public override bool Run(List<InputDefinition> input) 
+    {
+        // Call this method first to set fields whose values have not been set to their default values
+        Data.SetFieldsToDefaultIfUnset();
+        
+        /* ... */
+        
+        var main = CreatePartMain<Beam>(); // Create an object of type Beam
+        main.StartPoint = p1;
+        main.EndPoint = p2;
+        main.Insert();
+        
+        /* ... */
+        
+        Beam beam = /* ... */ // Create an object of type Beam through other means
+        ModifyToPartMain(ref beam);
+        beam.Insert();
+        
+        /* ... */
+        
+        BoltGroup bolt = Data.Bolt1Shape switch 
+        {
+            1 => CreateBolt1<BoltCircle>(),
+            2 => CreateBolt1<BoltXYList>(),
+            _ => CreateBolt1<BoltArray>()
+        };
+        bolt.PartToBoltTo = main;
+        bolt.PartToBeBolted = somePart;
+        bolt.FirstPosition = p1;
+        bolt.SecondPosition = p2;
+        bolt.Insert();
+        
+        /* ... */
+        
+    }
+    
     /* ... */
 }
-
-
-// ====================
-//     ViewModel.cs
-// ====================
-
-using Muggle.TsExtensions.CodingHelper.Generators;
-
-namespace Demo;
-
-[PlateProperties("Stiffener")]
-[GeneralProperties(typeof(Integer), "num", 6)]
-public partial class ViewModel : ConnectionViewModel;
-
 ~~~
+
+---
+
+## Generate Fields for Plugin Class
+
+If you find accessing plugin parameters like Data.PartMainProfile redundant, 
+you can apply the "FieldsFromDataAttribute" attribute to the plugin class. 
+The generator will then generate fields for the plugin class that correspond one-to-one with the plugin data class fields. 
+Call the "GetFieldValuesFrom" method at the appropriate place, and you can then access plugin parameters like _partMainProfile.
+
+---
+
+## Generate View Model Properties
+
+If you use a WPF user interface, apply the attributes provided in the 
+[Generate Fields and Utility Methods for Plugin Data Class](#generate-fields-and-utility-methods-for-plugin-data-class) 
+section to the view model (which implements the INotifyPropertyChanged interface), 
+and the generator will automatically generate the related properties for the view model.
+
+> The generator determines whether a class which these attributes are applied is a plugin data class or 
+> a view model class based on whether this class implements the INotifyPropertyChanged interface.
+> So you can simply copy the attributes already applied to the plugin data class to the view model class.
+
+This generator also provides the following base classes to offer some common code:
+
+- NotificationObject
+- ConnectionViewModel
+- DetailViewModel
+- CustomPartViewModel
+
+Among them, NotificationObject implements the INotifyPropertyChanged interface, 
+while the other three classes inherit from NotificationObject and respectively provide common tab properties for 
+Connection, Detail, and CustomPart type plugin.
+
+Make view model inherit from one of them as needed to avoid reimplementing related code.
+
+---
+
+## Generate User Interface
+
+Apply the "UserInterfaceAttribute" attribute to the plugin class to generate a simple user interface. 
+On one hand, this makes debugging easer during the core logic development phase; 
+on the other hand, it reduces the workload during the user interface development phase, 
+because you can directly make slight edits based on the generated code.
+
+Currently, supports INP and WPF; support for WinForm is planned for future versions.
+
+> ***Note***: When using the INP user interface, the weld parameters need to be filled in the dialog first, click Apply,
+> and create the component, then the parameter values will take effect.
+> If you create the component first and then open the dialog to edit the weld parameters and click Modify,
+> the parameter values won’t take effect.  
+> It’s not clear yet whether this is a bug in Tekla Structures itself, or if something in the generated code doesn’t
+> comply with Tekla Structures standards. **If you know how to fix this issue, please contact with me**.
+
+> ***Note***: Because the official implementation of source generators does not allow outputting files with extensions 
+> other than .cs, when generating a WPF user interface, this generator bypasses the official approach and outputs 
+> a "WpfUi.g.xaml" file in the project directory. However, this also brings a drawback — when the generated WPF 
+> interface is no longer needed, this file must be deleted manually. (Although the WPF interface can be written in pure 
+> C# code, but doing so would lose the second convenience mentioned above.)
 
 ---
 
 ## Demo
 
-You can get a complete demo project from [here](https://github.com/ThinkerHua/Muggle-Tekla-Structures-Extensions/blob/master/Demo1).
+If there is anything you still do not understand, you can check out this 
+[demo project](https://github.com/ThinkerHua/Muggle-Tekla-Structures-Extensions/blob/master/Demo1), 
+or other plugin projects under that demo project's solution.
 
 ![Preview0](https://raw.githubusercontent.com/ThinkerHua/Muggle-Tekla-Structures-Extensions/master/Resources/Introduction_Demo1_00.png)
 

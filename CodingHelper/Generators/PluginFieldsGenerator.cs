@@ -9,7 +9,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program. If not, see <http://www.gnu.org/licenses/>.
  *==============================================================================
- *  PluginFieldsGenerator.cs: help to generate fields and get field values method for plugin.
+ *  PluginFieldsGenerator.cs: help to generate code for plugin class.
  *  written by Huang YongXing - thinkerhua@hotmail.com
  *==============================================================================*/
 
@@ -18,7 +18,6 @@ using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp;
@@ -32,9 +31,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators;
 
 [Generator]
 public class PluginFieldsGenerator : IIncrementalGenerator {
-    internal const string ConcernedAttribute = "Muggle.TsExtensions.CodingHelper.Generators.FieldsFromAttribute";
-
-    private Version TsmVersion { get; set; }
+    private const string ConcernedAttribute = "Muggle.TsExtensions.CodingHelper.Generators.FieldsFromDataAttribute";
 
     public void Initialize(IncrementalGeneratorInitializationContext context) {
         context.RegisterPostInitializationOutput(static ctx => {
@@ -57,19 +54,19 @@ public class PluginFieldsGenerator : IIncrementalGenerator {
             return null;
         });
 
-        context.RegisterSourceOutput(versionProvider, (_, version) => {
-            TsmVersion = version;
-        });
-
         var provider = context.SyntaxProvider.ForAttributeWithMetadataName(ConcernedAttribute, Predicate, Transform)
             .Where(x => x != default);
 
         var diagnostics = provider.SelectMany(static (x, _) => x.DiagnosticInfos);
-        context.RegisterSourceOutput(diagnostics, static (spc, info) => {
-            spc.ReportDiagnostic(Diagnostic.Create(info.Descriptor, info.Location, info.Arguments));
-        });
+        context.RegisterSourceOutput(diagnostics,
+            static (spc, info) => {
+                spc.ReportDiagnostic(Diagnostic.Create(info.Descriptor, info.Location, info.Arguments));
+            });
 
-        var pluginFieldsInfo = provider.Select(static (x, _) => x.Value).Where(x => x != default);
+        var pluginFieldsInfo = provider
+            .Select(static (x, _) => x.Value)
+            .Combine(versionProvider)
+            .Where(pair => pair.Left != default && pair.Right != null);
         context.RegisterSourceOutput(pluginFieldsInfo, Generate);
     }
 
@@ -93,69 +90,37 @@ public class PluginFieldsGenerator : IIncrementalGenerator {
         var builder = ImmutableArray.CreateBuilder<DiagnosticInfo>();
 
         if (!classDeclarationSyntax!.Modifiers.Any(m => m.IsKind(SyntaxKind.PartialKeyword))) {
-            builder.Add(
-                new DiagnosticInfo(NotPartial, classDeclarationSyntax.Identifier.GetLocation(),
-                    [classDeclarationSyntax.Identifier.ValueText])
-            );
+            builder.Add(new DiagnosticInfo(NotPartial, classDeclarationSyntax.Identifier.GetLocation(),
+                [classDeclarationSyntax.Identifier.ValueText]));
             result.DiagnosticInfos = builder.ToImmutableArray();
             return result;
         }
 
         var attSyntax = classDeclarationSyntax.AttributeLists.SelectMany(a => a.Attributes)
             .First(a => GetAttributeQualifiedName(a, semanticModel) == ConcernedAttribute);
-        if (attSyntax.ArgumentList is null) return result;
 
-        var dataTypeInfo = semanticModel.GetTypeInfo(attSyntax.ArgumentList.DescendantNodes()
-            .OfType<TypeOfExpressionSyntax>().First().Type);
-        if (dataTypeInfo.Type is null) return result;
-
-        var dataAttSyntaxes = dataTypeInfo.Type.GetAttributes().Where(a =>
-                PluginDataFieldsGenerator.ConcernedAttributes.Contains(a.AttributeClass?.ToDisplayString()))
-            .Select(a => a.ApplicationSyntaxReference?.GetSyntax() as AttributeSyntax);
-
-        //  Key - for 'GeneralFieldDefaultValuesAttribute' is 'int' or 'double' or 'string'
-        //        for other attributes is attribute name
-        //  Value - id hash set
-        var argDict = new ArgumentsDictionary<IdSet>();
-        var generalFieldSet = new IdSet();
-
-        foreach (var dataAttSyntax in dataAttSyntaxes) {
-            // when plugin data class not in the same file as plugin class, this method doesn't work
-            // var attName = GetAttributeName(dataAttSyntax, semanticModel);
-
-            var attName = dataAttSyntax!.Name.ToString();
-            if (!attName.EndsWith("Attribute")) attName += "Attribute";
-            var key = attName;
-
-            var generalFieldDataType = dataAttSyntax.ArgumentList!.Arguments
-                .SelectMany(attArgSyntax => attArgSyntax.DescendantNodes().OfType<TypeOfExpressionSyntax>())
-                .FirstOrDefault()?.Type.ToString();
-            if (!string.IsNullOrEmpty(generalFieldDataType)) key = generalFieldDataType;
-
-            if (!argDict.TryGetValue(key, out var idSet)) {
-                idSet = [];
-                argDict.Add(key, idSet);
-            }
-
-            var ids = dataAttSyntax.ArgumentList!.Arguments
-                .SelectMany(attArgSyntax => attArgSyntax.DescendantNodes().OfType<LiteralExpressionSyntax>())
-                .Select(exprSyntax => exprSyntax.Token.ValueText);
-
-            foreach (var id in ids) {
-                if (id.Length == 0 ||
-                    id.Length > MaxLengthOfArgument(attName) ||
-                    Regex.IsMatch(id, SpecialCharacterPattern))
-                    //  dont need to report diagnostic
-                    continue;
-                //  dont need to report diagnostic
-                if (key != attName && Regex.IsMatch(id, "^[0-9]")) continue;
-
-                if (key != attName && generalFieldSet.Add(id) ||
-                    key == attName)
-                    idSet.Add(id);
-            }
+        ConstructorDeclarationSyntax constructorSyntax;
+        try {
+            constructorSyntax = classDeclarationSyntax.ChildNodes().OfType<ConstructorDeclarationSyntax>().Single();
+        } catch (InvalidOperationException) {
+            builder.Add(new DiagnosticInfo(UniqueConstructorNotFound, attSyntax.GetLocation(), []));
+            result.DiagnosticInfos = builder.ToImmutableArray();
+            return result;
         }
 
+        ParameterSyntax parameterSyntax;
+        try {
+            parameterSyntax = constructorSyntax.ParameterList.Parameters.Single();
+        } catch (InvalidOperationException) {
+            builder.Add(new DiagnosticInfo(UniqueParameterNotFound, attSyntax.GetLocation(), []));
+            result.DiagnosticInfos = builder.ToImmutableArray();
+            return result;
+        }
+
+        var pluginDataType = semanticModel.GetTypeInfo(parameterSyntax.Type!).Type;
+        if (pluginDataType is null) return result;
+
+        var argDict = AnalyzePluginDataRegisteredIds(pluginDataType);
         if (argDict.Count == 0 || argDict.All(kvp => kvp.Value.Count == 0)) return result;
 
         token.ThrowIfCancellationRequested();
@@ -168,35 +133,111 @@ public class PluginFieldsGenerator : IIncrementalGenerator {
                 IsRecord = classSymbol.IsRecord,
                 Name = classDeclarationSyntax.Identifier.ValueText,
             },
-            DataType = dataTypeInfo.Type,
+            DataType = pluginDataType,
             Arguments = argDict
         };
 
         return result;
     }
 
-    private void Generate(SourceProductionContext context, PluginFieldsInfo fieldsInfo) {
-        var fields = GenerateFields(fieldsInfo, TsmVersion);
-        var method = GenerateGetFieldValuesFromMethod(fieldsInfo, TsmVersion);
+    internal static ArgumentsDictionary<IdSet> AnalyzePluginDataRegisteredIds(ITypeSymbol pluginDataType) {
+        //  Key - for 'GeneralAttribute' is 'int' or 'double' or 'string'
+        //        for other attributes is attribute name
+        //  Value - id hash set
+        var argDict = new ArgumentsDictionary<IdSet>();
+
+        // 直接使用 pluginDataType.GetAttributes() 获取不到在源生成阶段才有的特性（BoltAttribute）
+        var attSyntaxes = pluginDataType.DeclaringSyntaxReferences
+            .Select(dsr => dsr.GetSyntax() as TypeDeclarationSyntax)
+            .Where(tds => tds is not null)
+            .SelectMany(tds => tds.AttributeLists.SelectMany(a => a.Attributes));
+
+        foreach (var attSyntax in attSyntaxes) {
+            // 当 plugin data class 的定义与 plugin class 的定义不在同一个文件时, 此方法无效
+            // var attName = GetAttributeName(dataAttSyntax, semanticModel);
+            var attName = attSyntax!.Name.ToString();
+            if (!attName.EndsWith("Attribute")) attName += "Attribute";
+            if (!PluginDataFieldsGenerator.ConcernedAttributes.Any(a => GetUnqualifiedName(a).Equals(attName)))
+                continue;
+
+            if (attName is "GeneralAttribute") {
+                AnalyzeGeneralIds(attSyntax, ref argDict);
+            } else {
+                if (!argDict.TryGetValue(attName, out var idSet)) {
+                    idSet = [];
+                    argDict.Add(attName, idSet);
+                }
+
+                AnalyzeSeriesIds([.. attSyntax.ArgumentList!.Arguments], ref idSet);
+            }
+        }
+
+        return argDict;
+    }
+
+    private static void AnalyzeGeneralIds(AttributeSyntax attSyntax, ref ArgumentsDictionary<IdSet> argDict) {
+        if (attSyntax.ArgumentList is null) return;
+        var dataType = attSyntax.ArgumentList.DescendantNodes().OfType<TypeOfExpressionSyntax>()
+            .FirstOrDefault()?.Type.ToString();
+        if (string.IsNullOrEmpty(dataType)) return;
+        if (!argDict.TryGetValue(dataType, out var idSet)) {
+            idSet = [];
+            argDict.Add(dataType, idSet);
+        }
+
+        var exprSyntaxes = attSyntax.ArgumentList.DescendantNodes().OfType<LiteralExpressionSyntax>().ToArray();
+        if (exprSyntaxes.Length == 0) return;
+
+        //  take two at once
+        for (int i = 0; i < exprSyntaxes.Length / 2 * 2; i += 2) {
+            var nameSyntax = exprSyntaxes[i];
+            if (!nameSyntax.IsKind(SyntaxKind.StringLiteralExpression)) continue;
+            var name = nameSyntax.Token.ValueText;
+            idSet.Add(name);
+        }
+    }
+
+    private static void AnalyzeSeriesIds(ICollection<AttributeArgumentSyntax> argSyntaxes, ref IdSet idSet) {
+        var index = -1;
+        foreach (var argSyntax in argSyntaxes) {
+            index++;
+
+            //  style of (param: value)
+            var paramName = argSyntax.NameColon?.Name.Identifier.ValueText;
+            var paramValue = ((LiteralExpressionSyntax)argSyntax.Expression).Token.ValueText;
+
+            if (paramName is null && index == 0 || paramName is "id") {
+                idSet.Add(paramValue);
+            }
+        }
+    }
+
+    private static void Generate(SourceProductionContext context, (PluginFieldsInfo, Version) pair) {
+        var fieldsInfo = pair.Item1;
+        var tsmVersion = pair.Item2;
+
+        var fieldsBuilder = GenerateFields(fieldsInfo, tsmVersion);
+        var methodBuilder = GenerateGetFieldValuesFromMethod(fieldsInfo, tsmVersion);
 
         var classInfo = fieldsInfo.ClassInfo;
         var generatedSourceText =
-            $"//  <auto-generated/>" +
 #if DEBUG
-            $" at {DateTime.Now}" +
+            $"//  <auto-generated/> at {DateTime.Now}\r\n" +
+#else
+            $"//  <auto-generated/>\r\n" +
 #endif
-            $"\n\n" +
-            $"namespace {classInfo.NameSpace} {{\n" +
-            $"    {classInfo.Accessibility.ToString().ToLower()} partial {(classInfo.IsRecord ? "record " : "")}class {classInfo.Name} {{\n" +
-            $"{fields}\n" +
-            $"{method}\n" +
-            $"    }}\n" +
+            $"\r\n" +
+            $"namespace {classInfo.NameSpace} {{\r\n" +
+            $"    {classInfo.Accessibility.ToString().ToLower()} partial {(classInfo.IsRecord ? "record " : "")}class {classInfo.Name} {{\r\n" +
+            $"{fieldsBuilder}\r\n" +
+            $"{methodBuilder}\r\n" +
+            $"    }}\r\n" +
             $"}}";
 
         context.AddSource($"{fieldsInfo.ClassInfo.Name}.g.cs", SourceText.From(generatedSourceText, Encoding.UTF8));
     }
 
-    private static string GenerateFields(PluginFieldsInfo info, Version tsmVersion) {
+    private static StringBuilder GenerateFields(PluginFieldsInfo info, Version tsmVersion) {
         var builder = new StringBuilder();
         var singleFieldsBuilder = new StringBuilder();
         var seriesFieldsBuilder = new StringBuilder();
@@ -211,60 +252,59 @@ public class PluginFieldsGenerator : IIncrementalGenerator {
 
         foreach (var kvp in info.Arguments) {
             if (kvp.Key.EndsWith("Attribute")) {
-                seriesFieldsBuilder.Append(GenerateSeriesFields(kvp, tsmVersion));
+                GenerateSeriesFields(kvp, tsmVersion, ref seriesFieldsBuilder);
             } else {
-                singleFieldsBuilder.Append(GenerateSingleFields(kvp));
+                GenerateSingleFields(kvp, ref singleFieldsBuilder);
             }
         }
 
-        return builder.Append(singleFieldsBuilder).Append(seriesFieldsBuilder).ToString();
+        builder.Append(singleFieldsBuilder).Append(seriesFieldsBuilder);
+        return builder;
     }
 
-    private static string GenerateSeriesFields(KeyValuePair<string, IdSet> kvp, Version tsmVersion) {
+    private static void GenerateSeriesFields(KeyValuePair<string, IdSet> kvp, Version tsmVersion,
+        ref StringBuilder builder) {
+
         var attName = kvp.Key;
-
-        var fieldPrefix = ToPrivateFieldNameStyle(attName.Substring(0, attName.Length - 15));
-
+        var fieldPrefix = ToPrivateFieldNameStyle(attName.Substring(0, attName.Length - 9));
         var fieldInfos = attName switch {
-            "PartFieldsAttribute" => PluginDataFieldsGenerator.PartFieldInfos(tsmVersion),
-            "PlateFieldsAttribute" => PluginDataFieldsGenerator.PlateFieldInfos(tsmVersion),
-            "WeldFieldsAttribute" => PluginDataFieldsGenerator.WeldFieldInfos(tsmVersion),
-            "BoltFieldsAttribute" => PluginDataFieldsGenerator.BoltFieldInfos(tsmVersion),
-            "BoltCircleFieldsAttribute" => PluginDataFieldsGenerator.BoltCircleFieldInfos(tsmVersion),
-            "ChamferFieldsAttribute" => PluginDataFieldsGenerator.ChamferFieldInfos(tsmVersion),
+            "PartAttribute" => PluginDataFieldsGenerator.PartFieldInfos(tsmVersion),
+            "PlateAttribute" => PluginDataFieldsGenerator.PlateFieldInfos(tsmVersion),
+            "BoltAttribute" => PluginDataFieldsGenerator.BoltFieldInfos(tsmVersion),
+            "StudAttribute" => PluginDataFieldsGenerator.StudFieldInfos(tsmVersion),
+            "WeldAttribute" => PluginDataFieldsGenerator.WeldFieldInfos(tsmVersion),
+            "ChamferAttribute" => PluginDataFieldsGenerator.ChamferFieldInfos(tsmVersion),
             _ => []
         };
 
-        var fieldsBuilder = new StringBuilder();
         foreach (var id in kvp.Value) {
             foreach (var info in fieldInfos) {
-                fieldsBuilder.AppendLine(
-                    $"        private {info.Type} {fieldPrefix}{ToPropertyNameStyle(id)}{info.Name};");
+                builder.AppendLine(
+                    $"        private {info.DataType} {fieldPrefix}{ToPropertyNameStyle(id)}{info.PropertyName};");
             }
         }
-
-        return fieldsBuilder.ToString();
     }
 
-    private static string GenerateSingleFields(KeyValuePair<string, IdSet> kvp) {
+    private static void GenerateSingleFields(KeyValuePair<string, IdSet> kvp, ref StringBuilder builder) {
         var dataType = kvp.Key;
+        if (dataType != "int" && dataType != "double" && dataType != "string") return;
 
-        if (dataType != "int" && dataType != "double" && dataType != "string") { return string.Empty; }
-
-        var fieldsBuilder = new StringBuilder();
         foreach (var id in kvp.Value) {
-            fieldsBuilder.AppendLine($"        private {dataType} {ToPrivateFieldNameStyle(id)};");
+            builder.AppendLine($"        private {dataType} {ToPrivateFieldNameStyle(id)};");
         }
-
-        return fieldsBuilder.ToString();
     }
 
-    private static string GenerateGetFieldValuesFromMethod(PluginFieldsInfo fieldsInfo, Version tsmVersion) {
+    private static StringBuilder GenerateGetFieldValuesFromMethod(PluginFieldsInfo fieldsInfo, Version tsmVersion) {
         var builder = new StringBuilder();
+        builder.AppendLine(
+            $"        /// <summary>\r\n" +
+            $"        /// Copy the values of each field in <paramref name=\"data\" /> to the fields of this plugin.\r\n" +
+            $"        /// </summary>\r\n" +
+            $"        /// <param name=\"data\">The given data provider.</param>\r\n" +
+            $"        private void GetFieldValuesFrom({fieldsInfo.DataType} data) {{");
 
         var fieldSymbols = fieldsInfo.DataType.GetMembers().OfType<IFieldSymbol>()
             .Where(f => f.DeclaredAccessibility == Accessibility.Public);
-
         foreach (var fieldSymbol in fieldSymbols) {
             var privateFieldName = ToPrivateFieldNameStyle(fieldSymbol.Name);
             builder.AppendLine($"            {privateFieldName} = data.{fieldSymbol.Name};");
@@ -280,32 +320,28 @@ public class PluginFieldsGenerator : IIncrementalGenerator {
                 }
             } else {
                 var fieldInfos = key switch {
-                    "PartFieldsAttribute" => PluginDataFieldsGenerator.PartFieldInfos(tsmVersion),
-                    "PlateFieldsAttribute" => PluginDataFieldsGenerator.PlateFieldInfos(tsmVersion),
-                    "WeldFieldsAttribute" => PluginDataFieldsGenerator.WeldFieldInfos(tsmVersion),
-                    "BoltFieldsAttribute" => PluginDataFieldsGenerator.BoltFieldInfos(tsmVersion),
-                    "BoltCircleFieldsAttribute" => PluginDataFieldsGenerator.BoltCircleFieldInfos(tsmVersion),
-                    "ChamferFieldsAttribute" => PluginDataFieldsGenerator.ChamferFieldInfos(tsmVersion),
+                    "PartAttribute" => PluginDataFieldsGenerator.PartFieldInfos(tsmVersion),
+                    "PlateAttribute" => PluginDataFieldsGenerator.PlateFieldInfos(tsmVersion),
+                    "BoltAttribute" => PluginDataFieldsGenerator.BoltFieldInfos(tsmVersion),
+                    "StudAttribute" => PluginDataFieldsGenerator.StudFieldInfos(tsmVersion),
+                    "WeldAttribute" => PluginDataFieldsGenerator.WeldFieldInfos(tsmVersion),
+                    "ChamferAttribute" => PluginDataFieldsGenerator.ChamferFieldInfos(tsmVersion),
                     _ => []
                 };
 
-                var modelObjectType = key.Substring(0, key.Length - 15);
+                var modelObjectType = key.Substring(0, key.Length - 9);
 
                 foreach (var id in kvp.Value) {
                     foreach (var fieldInfo in fieldInfos) {
+                        var fieldName = $"{modelObjectType}{ToPropertyNameStyle(id)}{fieldInfo.PropertyName}";
                         builder.AppendLine(
-                            $"            {ToPrivateFieldNameStyle(modelObjectType)}{ToPropertyNameStyle(id)}{fieldInfo.Name} = data.{modelObjectType}{ToPropertyNameStyle(id)}{fieldInfo.Name};");
+                            $"            {ToPrivateFieldNameStyle(fieldName)} = data.{fieldName};");
                     }
                 }
             }
         }
 
-        return $"/// <summary>\n" +
-               $"/// Copy the values of each field in <paramref name=\"data\" /> to the fields of this plugin.\n" +
-               $"/// </summary>\n" +
-               $"/// <param name=\"data\">The given data provider.</param>\n" +
-               $"        private void GetFieldValuesFrom({fieldsInfo.DataType} data) {{\n" +
-               $"{builder}" +
-               $"        }}";
+        builder.AppendLine($"        }}");
+        return builder;
     }
 }

@@ -1,0 +1,121 @@
+﻿# 参数名参考
+
+[English version](AttributeNameReference.md)
+
+备注:
+
+- 生成的字段（数据类）或属性（视图模型类），其参数名遵循第三列中的命名模式。
+  
+  为与 INP 界面兼容，同时会生成额外的字段/属性，其参数名遵循第四列命名模式。
+
+- 模式文本中，"**\<Id>**"用来标识对象，由开发者定义，原样用于第三列，转换成大驼峰样式后用于第二列；
+
+  "**\<Number>**"是对应于"**\<Id>**"定义顺序的编号，从 1 开始，由生成器自动生成。
+
+- **加粗**的对象或属性不是 OpenAPI 中真实的对象或属性，如何创建它们由开发者决定。
+
+- ***加粗倾斜***的属性并不总是被使用，取决于具体情形。
+
+- 星号\*标记的属性取决于 OpenAPI 版本。
+
+| 对象.属性                            | 字段/属性名                   | 参数名模式  | INP 兼容参数名模式          |
+|--------------------------------------|-------------------------------|-------------|-----------------------------|
+| Part\.Name                           | Part\<Id>Name                 | PT\<Id>NAME |                             |
+| Part.Profile.ProfileString           | Part\<Id>Profile              | PT\<Id>PRF  |                             |
+| Part.Material.MaterialString         | Part\<Id>Material             | PT\<Id>MATL |                             |
+| Part.Finish                          | Part\<Id>Finish               | PT\<Id>FNSH |                             |
+| Part.Class                           | Part\<Id>Class                | PT\<Id>CLS  |                             |
+| Part.PartNumber.Prefix               | Part\<Id>PartPrefix           | PT\<Id>PTP  | prefix_pt\<Number>p         |
+| Part.PartNumber.StartNumber          | Part\<Id>PartStartNumber      | PT\<Id>PTN  | startno_pt\<Number>p        |
+| Part.AssemblyNumber.Prefix           | Part\<Id>AssemblyPrefix       | PT\<Id>ASMP | prefix_pt\<Number>a         |
+| Part.AssemblyNumber.StartNumber      | Part\<Id>AssemblyStartNumber  | PT\<Id>ASMN | startno_pt\<Number>a        |
+| **Plate**\.Name                      | Plate\<Id>Name                | PL\<Id>NAME |                             |
+| **Plate**.Thickness                  | Plate\<Id>Thickness           | PL\<Id>T    |                             |
+| **Plate**.Breadth                    | Plate\<Id>Breadth             | PL\<Id>B    |                             |
+| **Plate**.Height                     | Plate\<Id>Height              | PL\<Id>H    |                             |
+| **Plate**.Material.MaterialString    | Plate\<Id>Material            | PL\<Id>MATL |                             |
+| **Plate**.Finish                     | Plate\<Id>Finish              | PL\<Id>FNSH |                             |
+| **Plate**.Class                      | Plate\<Id>Class               | PL\<Id>CLS  |                             |
+| **Plate**.PartNumber.Prefix          | Plate\<Id>PartPrefix          | PL\<Id>PTP  | prefix_pl\<Number>p         |
+| **Plate**.PartNumber.StartNumber     | Plate\<Id>PartStartNumber     | PL\<Id>PTN  | startno_pl\<Number>p        |
+| **Plate**.AssemblyNumber.Prefix      | Plate\<Id>AssemblyPrefix      | PL\<Id>ASMP | prefix_pl\<Number>a         |
+| **Plate**.AssemblyNumber.StartNumber | Plate\<Id>AssemblyStartNumber | PL\<Id>ASMN | startno_pl\<Number>a        |
+| Chamfer.Type                         | Chamfer\<Id>Type              | CF\<Id>TYPE |                             |
+| Chamfer.X                            | Chamfer\<Id>X                 | CF\<Id>X    |                             |
+| Chamfer.Y                            | Chamfer\<Id>Y                 | CF\<Id>Y    |                             |
+| Chamfer.Dz1                          | Chamfer\<Id>Dz1               | CF\<Id>DZ1  |                             |
+| Chamfer.Dz2                          | Chamfer\<Id>Dz2               | CF\<Id>DZ2  |                             |
+| BoltGroup.**Shape**                  | Bolt\<Id>Shape                | B\<Id>SHAPE |                             |
+| BoltGroup.BoltStandard               | Bolt\<Id>Standard             | B\<Id>STD   | b\<Number>_screwdin         |
+| BoltGroup.BoltSize                   | Bolt\<Id>Size                 | B\<Id>SIZE  | b\<Number>_diameter         |
+| BoltGroup.***BoltDistX***            | Bolt\<Id>DistX                | B\<Id>DISTX |                             |
+| BoltGroup.***BoltDistY***            | Bolt\<Id>DistY                | B\<Id>DISTY |                             |
+| BoltGroup.***NumberOfBolts***        | Bolt\<Id>NumberOfBolts        | B\<Id>NUM   |                             |
+| BoltGroup.***Diameter***             | Bolt\<Id>Diameter             | B\<Id>DIAM  |                             |
+| BoltGroup.BoltType                   | Bolt\<Id>Type                 | B\<Id>TYPE  |                             |
+| BoltGroup.ThreadInMaterial           | Bolt\<Id>ThreadInMaterial     | B\<Id>THRD  |                             |
+| BoltGroup.Length                     | Bolt\<Id>Length               | B\<Id>LEN   |                             |
+| BoltGroup.CutLength                  | Bolt\<Id>CutLength            | B\<Id>CLEN  |                             |
+| BoltGroup.ExtraLength                | Bolt\<Id>ExtraLength          | B\<Id>XLEN  |                             |
+| BoltGroup.Tolerance                  | Bolt\<Id>Tolerance            | B\<Id>TOL   |                             |
+| BoltGroup.PlainHoleType              | Bolt\<Id>PlainType            | B\<Id>PLAIN |                             |
+| BoltGroup.BlindHoleDepth             | Bolt\<Id>BlindHoleDepth       | B\<Id>DEPTH |                             |
+| BoltGroup.HoleType                   | Bolt\<Id>HoleType             | B\<Id>HOLTY |                             |
+| BoltGroup.SlottedHoleX               | Bolt\<Id>SlottedHoleX         | B\<Id>SLOTX |                             |
+| BoltGroup.SlottedHoleY               | Bolt\<Id>SlottedHoleY         | B\<Id>SLOTY |                             |
+| BoltGroup.SlotOffsetX\*              | Bolt\<Id>SlotOffsetX          | B\<Id>SOFFX |                             |
+| BoltGroup.SlotOffsetY\*              | Bolt\<Id>SlotOffsetY          | B\<Id>SOFFY |                             |
+| BoltGroup.RotateSlots                | Bolt\<Id>RotateSlots          | B\<Id>RSLOT |                             |
+| BoltGroup.Hole1                      | Bolt\<Id>Hole1                | B\<Id>HOLE1 |                             |
+| BoltGroup.Hole2                      | Bolt\<Id>Hole2                | B\<Id>HOLE2 |                             |
+| BoltGroup.Hole3                      | Bolt\<Id>Hole3                | B\<Id>HOLE3 |                             |
+| BoltGroup.Hole4                      | Bolt\<Id>Hole4                | B\<Id>HOLE4 |                             |
+| BoltGroup.Hole5                      | Bolt\<Id>Hole5                | B\<Id>HOLE5 |                             |
+| BoltGroup.Bolt                       | Bolt\<Id>IsBolt               | B\<Id>ISBOT |                             |
+| BoltGroup.Nut1                       | Bolt\<Id>UseNut1              | B\<Id>NUT1  |                             |
+| BoltGroup.Nut2                       | Bolt\<Id>UseNut2              | B\<Id>NUT2  |                             |
+| BoltGroup.Washer1                    | Bolt\<Id>UseWasher1           | B\<Id>WSHR1 |                             |
+| BoltGroup.Washer2                    | Bolt\<Id>UseWasher2           | B\<Id>WSHR2 |                             |
+| BoltGroup.Washer3                    | Bolt\<Id>UseWasher3           | B\<Id>WSHR3 |                             |
+| **Stud**.**Shape**                   | Stud\<Id>Shape                | S\<Id>SHAPE |                             |
+| **Stud**.Standard                    | Stud\<Id>Standard             | S\<Id>STD   | s\<Number>_standard         |
+| **Stud**.Size                        | Stud\<Id>Size                 | S\<Id>SIZE  | s\<Number>_size             |
+| **Stud**.Type                        | Stud\<Id>Type                 | S\<Id>TYPE  |                             |
+| **Stud**.Length                      | Stud\<Id>Length               | S\<Id>LEN   | s\<Number>_length           |
+| **Stud**.CutLength                   | Stud\<Id>CutLength            | S\<Id>CLEN  |                             |
+| **Stud**.***DistX***                 | Stud\<Id>DistX                | S\<Id>DISTX |                             |
+| **Stud**.***DistY***                 | Stud\<Id>DistY                | S\<Id>DISTY |                             |
+| **Stud**.***NumberOfBolts***         | Stud\<Id>NumberOfBolts        | S\<Id>NUM   |                             |
+| **Stud**.***Diameter***              | Stud\<Id>Diameter             | S\<Id>DIAM  |                             |
+| BaseWeld.PrefixAboveLine             | Weld\<Id>PrefixAbove          | W\<Id>PRFXA | w\<Number>_prefix           |
+| BaseWeld.PrefixBelowLine             | Weld\<Id>PrefixBelow          | W\<Id>PRFXB | w\<Number>_prefix2          |
+| BaseWeld.TypeAbove                   | Weld\<Id>TypeAbove            | W\<Id>TYPEA | w\<Number>_type             |
+| BaseWeld.TypeBelow                   | Weld\<Id>TypeBelow            | W\<Id>TYPEB | w\<Number>_type2            |
+| BaseWeld.SizeAbove                   | Weld\<Id>SizeAbove            | W\<Id>SIZEA | w\<Number>_size             |
+| BaseWeld.SizeBelow                   | Weld\<Id>SizeBelow            | W\<Id>SIZEB | w\<Number>_size2            |
+| BaseWeld.AdditionalSizeAbove         | Weld\<Id>AdditionalSizeAbove  | W\<Id>ADDSA | w\<Number>_other_size       |
+| BaseWeld.AdditionalSizeBelow         | Weld\<Id>AdditionalSizeBelow  | W\<Id>ADDSB | w\<Number>_other_size2      |
+| BaseWeld.AngleAbove                  | Weld\<Id>AngleAbove           | W\<Id>ANGA  | w\<Number>_angle            |
+| BaseWeld.AngleBelow                  | Weld\<Id>AngleBelow           | W\<Id>ANGB  | w\<Number>_angle2           |
+| BaseWeld.ContourAbove                | Weld\<Id>ContourAbove         | W\<Id>CTRA  | w\<Number>_ftype            |
+| BaseWeld.ContourBelow                | Weld\<Id>ContourBelow         | W\<Id>CTRB  | w\<Number>_ftype2           |
+| BaseWeld.FinishAbove                 | Weld\<Id>FinishAbove          | W\<Id>FNSHA | w\<Number>_finish           |
+| BaseWeld.FinishBelow                 | Weld\<Id>FinishBelow          | W\<Id>FNSHB | w\<Number>_finish2          |
+| BaseWeld.RootFaceAbove               | Weld\<Id>RootFaceAbove        | W\<Id>FACEA | w\<Number>_root_face_thick  |
+| BaseWeld.RootFaceBelow               | Weld\<Id>RootFaceBelow        | W\<Id>FACEB | w\<Number>_root_face_thck2  |
+| BaseWeld.EffectiveThroatAbove        | Weld\<Id>EffectiveThroatAbove | W\<Id>THROA | w\<Number>_effective_throat |
+| BaseWeld.EffectiveThroatBelow        | Weld\<Id>EffectiveThroatBelow | W\<Id>THROB | w\<Number>_eff_throat2      |
+| BaseWeld.RootOpeningAbove            | Weld\<Id>RootOpeningAbove     | W\<Id>OPNGA | w\<Number>_root_opening     |
+| BaseWeld.RootOpeningBelow            | Weld\<Id>RootOpeningBelow     | W\<Id>OPNGB | w\<Number>_root_opening2    |
+| BaseWeld.AroundWeld                  | Weld\<Id>Around               | W\<Id>ARND  | w\<Number>_around           |
+| BaseWeld.ShopWeld                    | Weld\<Id>Shop                 | W\<Id>SHOP  | w\<Number>_wtype            |
+| BaseWeld.Placement                   | Weld\<Id>Placement            | W\<Id>PLACE | w\<Number>_placement        |
+| BaseWeld.Preparation                 | Weld\<Id>Preparation          | W\<Id>PREP  | w\<Number>_preparation      |
+| BaseWeld.IntermittentType            | Weld\<Id>Intermittent         | W\<Id>INTMI | w\<Number>_stitch           |
+| BaseWeld.IncrementAmountAbove        | Weld\<Id>IncrementAmountAbove | W\<Id>INCRA | w\<Number>_inc_amount       |
+| BaseWeld.IncrementAmountBelow        | Weld\<Id>IncrementAmountBelow | W\<Id>INCRB | w\<Number>_inc_amount2      |
+| BaseWeld.LengthAbove                 | Weld\<Id>LengthAbove          | W\<Id>LENA  | w\<Number>_length           |
+| BaseWeld.LengthBelow                 | Weld\<Id>LengthBelow          | W\<Id>LENB  | w\<Number>_length2          |
+| BaseWeld.PitchAbove                  | Weld\<Id>PitchAbove           | W\<Id>PITA  | w\<Number>_cc               |
+| BaseWeld.PitchBelow                  | Weld\<Id>PitchBelow           | W\<Id>PITB  | w\<Number>_cc2              |
+| BaseWeld.ReferenceText               | Weld\<Id>ReferenceText        | W\<Id>TEXT  | w\<Number>_text             |

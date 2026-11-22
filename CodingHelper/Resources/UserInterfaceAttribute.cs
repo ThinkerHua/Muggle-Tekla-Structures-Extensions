@@ -1,13 +1,11 @@
-﻿using System;
-
-namespace Muggle.TsExtensions.CodingHelper.Generators {
+﻿namespace Muggle.TsExtensions.CodingHelper.Generators {
 
     /// <summary>
     /// Used to generate a simple user interface for plugin.
     /// </summary>
     /// <remarks>Should be applied on plugin data class.</remarks>
-    [AttributeUsage(AttributeTargets.Class)]
-    public class UserInterfaceAttribute : Attribute {
+    [System.AttributeUsage(System.AttributeTargets.Class)]
+    public class UserInterfaceAttribute : System.Attribute {
 
         /// <summary>
         /// The type of user interface to be generated.

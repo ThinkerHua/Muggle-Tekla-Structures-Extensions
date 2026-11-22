@@ -9,11 +9,11 @@ namespace Muggle.TsExtensions.CodingHelper.Generators.Information {
     /// </summary>
     /// <remarks>
     /// <list type="bullet">
-    ///     <item>Key - model object id, such as 'Brace1'.</item>
-    ///     <item>Value - dictionary for property default values,
+    ///     <item>Key - model object id, such as 'Brace1'</item>
+    ///     <item>Value - dictionary for property default values
     ///         <list type="bullet">
-    ///             <item>Key - property name, such as 'profile'.</item>
-    ///             <item>Value - property default value, such as 'HM244*175*7*11'.</item>
+    ///             <item>Key - property name, such as 'Profile'</item>
+    ///             <item>Value - property default value, such as 'HM244*175*7*11'</item>
     ///         </list>
     ///     </item>
     /// </list>

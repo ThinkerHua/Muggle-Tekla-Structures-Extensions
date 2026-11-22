@@ -10,7 +10,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators.Information {
     /// semantics tailored for use as required information in the generator pipeline.
     /// </summary>
     /// <remarks>
-    /// Key - parameter category. Maybe an attribute name, such as 'PartFieldsAttribute';
+    /// Key - parameter category. Maybe an attribute name, such as 'PartAttribute';
     /// or a parameter name, such as 'profile'; or other identifier that can distinguish categories.<br/>
     /// Value - argument values classified according to key.
     /// </remarks>

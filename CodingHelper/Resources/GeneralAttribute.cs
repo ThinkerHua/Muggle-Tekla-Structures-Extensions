@@ -1,24 +1,22 @@
-﻿using System;
-using System.Collections.Generic;
-
-namespace Muggle.TsExtensions.CodingHelper.Generators {
+﻿namespace Muggle.TsExtensions.CodingHelper.Generators {
 
     /// <summary>
-    /// Register properties with default values for view model.
+    /// Register general data.
     /// </summary>
     /// <remarks>
     /// <para>
     /// The passed-in names are used directly for 'StructuresDialogAttribute',
-    /// and used for property names after converted to PascalCase.
+    /// and used for field or property names after converted to PascalCase.
     /// </para>
-    /// <example>Using namespace: 
+    /// <example>
+    /// Using namespace: 
     /// <code>
     /// using Muggle.TsExtensions.CodingHelper.Generators;
     /// using Tekla.Structures.Datatype;
     /// </code>
     /// apply attribute to view model class like this:
     /// <code>
-    /// [GeneralPropertiesWithDefaultValuesAttribute(typeof(DistanceList), "Param", "2*70.0")]
+    /// [GeneralAttribute(typeof(DistanceList), "Param", "2*70.0")]
     /// </code>
     /// then the code behind will be generated like this:
     /// <code>
@@ -36,24 +34,30 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
     /// </code>
     /// </example>
     /// </remarks>
-    [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
-    public class GeneralPropertiesAttribute : Attribute {
-        public Type Type { get; set; }
-        public Dictionary<string, object> DefaultValues { get; }
+    [System.AttributeUsage(System.AttributeTargets.Class, AllowMultiple = true)]
+    public class GeneralAttribute : System.Attribute {
+        public System.Type Type { get; set; }
+        public System.Collections.Generic.Dictionary<string, object> DefaultValues { get; }
         
         /// <summary>
-        /// Register property and default values.
+        /// Register general data.
         /// </summary>
-        /// <param name="type">The data type of properties. Only support 'Integer', 'Double', 'Distance',
-        /// 'DistanceList', 'String' within 'Tekla.Structures.Datatype' namespace.
-        /// <b>Should not use 'Boolean' type, use 'Integer' instead.</b> Although Tekla officially states support
-        /// for the 'Boolean' type, but in reality, the 'Boolean' type cannot be properly passed into the Plugin.
+        /// <param name="type">The data type of properties.
+        /// If applied on data class, only support 'int', 'double', 'string';
+        /// if applied on view model, only support 'Integer', 'Double', 'Distance', 'DistanceList', 'String'
+        /// within 'Tekla.Structures.Datatype' namespace.
+        /// <b>Should not use 'Boolean' type, use 'Integer' instead.</b>
+        /// Although Tekla officially states support for the 'Boolean' type, but in reality,
+        /// the 'Boolean' type cannot be properly passed into the Plugin.
         /// </param>
-        /// <param name="nameValuePairs">Property name and default values, must be passed in pairs.
+        /// <param name="nameValuePairs">Data name and default values, must be passed in pairs.
         /// The data type of default value should comply with the following rules: 
         /// <code>
         /// | The value of argument 'type' | The data type of default value |
         /// | ---------------------------- | ------------------------------ |
+        /// |          int                 |             int                |
+        /// |          double              |             double             |
+        /// |          string              |             string             |
         /// |          Boolean             |             N/A                |
         /// |          Integer             |             int                |
         /// |          Double              |             double             |
@@ -62,12 +66,12 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
         /// |          String              |             string             |
         /// </code>
         /// <example>
-        /// For 'Integer' type property: ["Param1", 8, "Param2", 10, "Param3", 12]
+        /// For 'Integer' type data: ["Param1", 8, "Param2", 10, "Param3", 12]
         /// </example>
         /// </param>
-        public GeneralPropertiesAttribute(Type type, params object[] nameValuePairs) { 
+        public GeneralAttribute(System.Type type, params object[] nameValuePairs) { 
             Type = type;
-            DefaultValues = new Dictionary<string, object>();
+            DefaultValues = new System.Collections.Generic.Dictionary<string, object>();
             
             for (int i = 0; i < nameValuePairs.Length / 2 * 2; i += 2) {
                 var name = nameValuePairs[i];

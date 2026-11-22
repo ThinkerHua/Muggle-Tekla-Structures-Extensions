@@ -13,16 +13,18 @@
  *  written by Huang YongXing - thinkerhua@hotmail.com
  *==============================================================================*/
 
+using System;
 using Microsoft.CodeAnalysis;
 using Muggle.TsExtensions.CodingHelper.Generators.Information;
 
 namespace Muggle.TsExtensions.CodingHelper.Generators {
     internal class WinFormUiGenerator : IUserInterfaceGenerator {
         public static WinFormUiGenerator Instance { get; } = new WinFormUiGenerator();
-        
+
         private WinFormUiGenerator() { }
 
-        public void Generate(SourceProductionContext context, UserInterfaceInfo info, string projectDir) {
+        public void Generate(SourceProductionContext context, UserInterfaceInfo info, Version tsmVersion,
+            string projectDir) {
             throw new System.NotImplementedException();
         }
     }

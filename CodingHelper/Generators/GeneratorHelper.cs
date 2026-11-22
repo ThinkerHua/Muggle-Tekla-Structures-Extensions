@@ -98,7 +98,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
             IEnumerable<AttributeListSyntax> attributeLists,
             SemanticModel semanticModel,
             IEnumerable<string> matchAttributes,
-            ref AttributeSyntax[] attributeSyntaxes) {
+            out AttributeSyntax[] attributeSyntaxes) {
             var query = attributeLists
                 .SelectMany(attListSyntax => attListSyntax.Attributes)
                 // 适用于在初始化阶段就生成了特性，semanticModel可以获取特性的完全限定名
@@ -108,7 +108,10 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                     matchAttributes.Any(x => x.Contains(GetAttributeQualifiedName(attSyntax, semanticModel))))
                 .ToArray();
 
-            if (!query.Any()) return false;
+            if (!query.Any()) {
+                attributeSyntaxes = [];
+                return false;
+            }
 
             attributeSyntaxes = query;
             return true;
@@ -199,6 +202,14 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
             }
 
             return dict;
+        }
+
+        internal static bool IsDistanceList(string value) {
+            if (value is null) return false;
+            if (value == string.Empty) return true;
+
+            var values = value.Split([' '], StringSplitOptions.RemoveEmptyEntries);
+            return values.All(v => Regex.IsMatch(v, @"(\d+\*)?\d+(\.\d+)?"));
         }
     }
 }

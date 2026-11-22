@@ -9,15 +9,13 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program. If not, see <http://www.gnu.org/licenses/>.
  *==============================================================================
- *  ViewModelPropertiesGenerator.cs: help to generate properties (with "StructuresDialogAttribute" applied)
- *  for view model which used by plugin WPF UI.
+ *  ViewModelPropertiesGenerator.cs: help to generate code for view model which used by plugin WPF UI.
  *  written by Huang YongXing - thinkerhua@hotmail.com
  *==============================================================================*/
 
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -26,218 +24,169 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 using Muggle.TsExtensions.CodingHelper.Generators.Information;
-using static Muggle.TsExtensions.CodingHelper.Diagnosers.InternalAttributesDiagnoser;
 using static Muggle.TsExtensions.CodingHelper.Generators.GeneratorHelper;
-using PropertyInfo = (string Name, string AttributeName, string Type, string Predicate);
 
 namespace Muggle.TsExtensions.CodingHelper.Generators;
 
 [Generator]
 public class ViewModelPropertiesGenerator : IIncrementalGenerator {
+
+    private readonly record struct PropertyInfo(
+        string PropertyName,
+        string DataType,
+        string PresetValue,
+        string Validation,
+        string AttributeNamePattern) {
+
+        public string PropertyName { get; } = PropertyName;
+        public string DataType { get; } = DataType;
+        public string PresetValue { get; } = PresetValue;
+        public string Validation { get; } = Validation;
+        public string AttributeNamePattern { get; } = AttributeNamePattern;
+    }
+
     private const string TsDatatype = "global::Tekla.Structures.Datatype";
     private const string TsDialog = "global::Tekla.Structures.Dialog";
+    private const string CurrentCulture = "global::System.Globalization.CultureInfo.CurrentCulture";
 
-    internal static string[] ConcernedAttributes => [
-        "Muggle.TsExtensions.CodingHelper.Generators.PartPropertiesAttribute",
-        "Muggle.TsExtensions.CodingHelper.Generators.PlatePropertiesAttribute",
-        "Muggle.TsExtensions.CodingHelper.Generators.WeldPropertiesAttribute",
-        "Muggle.TsExtensions.CodingHelper.Generators.BoltPropertiesAttribute",
-        "Muggle.TsExtensions.CodingHelper.Generators.BoltCirclePropertiesAttribute",
-        "Muggle.TsExtensions.CodingHelper.Generators.ChamferPropertiesAttribute",
-        "Muggle.TsExtensions.CodingHelper.Generators.GeneralPropertiesAttribute"
+    private static IReadOnlyList<PropertyInfo> PartPropertyInfos(Version tsmVersion) => [
+        new("Name", "String", "", "string.IsNullOrEmpty(value)", "PT{0}NAME"),
+        new("Profile", "String", "", "string.IsNullOrEmpty(value)", "PT{0}PRF"),
+        new("Material", "String", "", "string.IsNullOrEmpty(value)", "PT{0}MATL"),
+        new("Finish", "String", "", "string.IsNullOrEmpty(value)", "PT{0}FNSH"),
+        new("Class", "Integer", "99", "value == int.MinValue", "PT{0}CLS"),
+        new("PartPrefix", "String", "P", "string.IsNullOrEmpty(value)", "PT{0}PTP"),
+        new("PartStartNumber", "Integer", "1", "value == int.MinValue", "PT{0}PTN"),
+        new("AssemblyPrefix", "String", "A-", "string.IsNullOrEmpty(value)", "PT{0}ASMP"),
+        new("AssemblyStartNumber", "Integer", "1", "value == int.MinValue", "PT{0}ASMN"),
     ];
 
-    internal static IReadOnlyList<PropertyInfo> PartPropertyInfos(Version tsmVersion) => [
-        ("Profile", "PRF", "String", "string.IsNullOrEmpty(value)"),
-        ("Material", "MATL", "String", "string.IsNullOrEmpty(value)"),
-        ("Name", "NAME", "String", "string.IsNullOrEmpty(value)"),
-        ("Finish", "FNSH", "String", "string.IsNullOrEmpty(value)"),
-        ("Class", "CLS", "Integer", "value == int.MinValue"),
-        ("AssemblyPrefix", "ASMP", "String", "string.IsNullOrEmpty(value)"),
-        ("AssemblyStartNumber", "ASMN", "Integer", "value == int.MinValue"),
-        ("PartPrefix", "PTP", "String", "string.IsNullOrEmpty(value)"),
-        ("PartStartNumber", "PTN", "Integer", "value == int.MinValue"),
+    private static IReadOnlyList<PropertyInfo> PlatePropertyInfos(Version tsmVersion) => [
+        new("Name", "String", "", "string.IsNullOrEmpty(value)", "PL{0}NAME"),
+        new("Thickness", "Double", "0.0", "value == int.MinValue", "PL{0}T"),
+        new("Breadth", "Double", "0.0", "value == int.MinValue", "PL{0}B"),
+        new("Height", "Double", "0.0", "value == int.MinValue", "PL{0}H"),
+        new("Material", "String", "", "string.IsNullOrEmpty(value)", "PL{0}MATL"),
+        new("Finish", "String", "", "string.IsNullOrEmpty(value)", "PL{0}FNSH"),
+        new("Class", "Integer", "99", "value == int.MinValue", "PL{0}CLS"),
+        new("PartPrefix", "String", "P", "string.IsNullOrEmpty(value)", "PL{0}PTP"),
+        new("PartStartNumber", "Integer", "1", "value == int.MinValue", "PL{0}PTN"),
+        new("AssemblyPrefix", "String", "A-", "string.IsNullOrEmpty(value)", "PL{0}ASMP"),
+        new("AssemblyStartNumber", "Integer", "1", "value == int.MinValue", "PL{0}ASMN"),
     ];
 
-    internal static IReadOnlyList<PropertyInfo> PlatePropertyInfos(Version tsmVersion) => [
-        ("Thickness", "T", "Double", "value == int.MinValue"),
-        ("Breadth", "B", "Double", "value == int.MinValue"),
-        ("Height", "H", "Double", "value == int.MinValue"),
-        ("Material", "MATL", "String", "string.IsNullOrEmpty(value)"),
-        ("Name", "NAME", "String", "string.IsNullOrEmpty(value)"),
-        ("Finish", "FNSH", "String", "string.IsNullOrEmpty(value)"),
-        ("Class", "CLS", "Integer", "value == int.MinValue"),
-        ("AssemblyPrefix", "ASMP", "String", "string.IsNullOrEmpty(value)"),
-        ("AssemblyStartNumber", "ASMN", "Integer", "value == int.MinValue"),
-        ("PartPrefix", "PTP", "String", "string.IsNullOrEmpty(value)"),
-        ("PartStartNumber", "PTN", "Integer", "value == int.MinValue"),
+    private static IReadOnlyList<PropertyInfo> WeldPropertyInfos(Version tsmVersion) => [
+        new("PrefixAbove", "String", "", "string.IsNullOrEmpty(value)", "W{0}PRFXA"),
+        new("PrefixBelow", "String", "", "string.IsNullOrEmpty(value)", "W{0}PRFXB"),
+        new("TypeAbove", "Integer", "0", "value < 0 || value > 26", "W{0}TYPEA"),
+        new("TypeBelow", "Integer", "0", "value < 0 || value > 26", "W{0}TYPEB"),
+        new("SizeAbove", "Double", "0.0", "value == int.MinValue", "W{0}SIZEA"),
+        new("SizeBelow", "Double", "0.0", "value == int.MinValue", "W{0}SIZEB"),
+        new("AdditionalSizeAbove", "Double", "0.0", "value == int.MinValue", "W{0}ADDSA"),
+        new("AdditionalSizeBelow", "Double", "0.0", "value == int.MinValue", "W{0}ADDSB"),
+        new("AngleAbove", "Double", "0.0", "value == int.MinValue", "W{0}ANGA"),
+        new("AngleBelow", "Double", "0.0", "value == int.MinValue", "W{0}ANGB"),
+        new("ContourAbove", "Integer", "0", "value < 0 || value > 3", "W{0}CTRA"),
+        new("ContourBelow", "Integer", "0", "value < 0 || value > 3", "W{0}CTRB"),
+        new("FinishAbove", "Integer", "0", "value < 0 || value > 5", "W{0}FNSHA"),
+        new("FinishBelow", "Integer", "0", "value < 0 || value > 5", "W{0}FNSHB"),
+        new("RootFaceAbove", "Double", "0", "value == int.MinValue", "W{0}FACEA"),
+        new("RootFaceBelow", "Double", "0", "value == int.MinValue", "W{0}FACEB"),
+        new("EffectiveThroatAbove", "Double", "0.0", "value == int.MinValue", "W{0}THROA"),
+        new("EffectiveThroatBelow", "Double", "0.0", "value == int.MinValue", "W{0}THROB"),
+        new("RootOpeningAbove", "Double", "0.0", "value == int.MinValue", "W{0}OPNGA"),
+        new("RootOpeningBelow", "Double", "0.0", "value == int.MinValue", "W{0}OPNGB"),
+        new("Around", "Integer", "0", "value < 0 || value > 1", "W{0}ARND"),
+        new("Shop", "Integer", "0", "value < 0 || value > 1", "W{0}SHOP"),
+        new("Placement", "Integer", "0", "value < 0 || value > 2", "W{0}PLACE"),
+        new("Preparation", "Integer", "0", "value < 0 || value > 3", "W{0}PREP"),
+        new("Intermittent", "Integer", "0", "value < 0 || value > 2", "W{0}INTMI"),
+        new("IncrementAmountAbove", "Integer", "0", "value == int.MinValue", "W{0}INCRA"),
+        new("IncrementAmountBelow", "Integer", "0", "value == int.MinValue", "W{0}INCRB"),
+        new("LengthAbove", "Double", "0.0", "value == int.MinValue", "W{0}LENA"),
+        new("LengthBelow", "Double", "0.0", "value == int.MinValue", "W{0}LENB"),
+        new("PitchAbove", "Double", "0.0", "value == int.MinValue", "W{0}PITA"),
+        new("PitchBelow", "Double", "0.0", "value == int.MinValue", "W{0}PITB"),
+        new("ReferenceText", "String", "", "string.IsNullOrEmpty(value)", "W{0}TEXT"),
     ];
 
-    internal static IReadOnlyList<PropertyInfo> WeldPropertyInfos(Version tsmVersion) => [
-        ("TypeAbove", "TYPEA", "Integer", "value < 0 || value > 26"),
-        ("TypeBelow", "TYPEB", "Integer", "value < 0 || value > 26"),
-        ("SizeAbove", "SIZEA", "Double", "value == int.MinValue"),
-        ("SizeBelow", "SIZEB", "Double", "value == int.MinValue"),
-        ("AngleAbove", "ANGA", "Double", "value == int.MinValue"),
-        ("AngleBelow", "ANGB", "Double", "value == int.MinValue"),
-        ("ContourAbove", "CTRA", "Integer", "value < 0 || value > 3"),
-        ("ContourBelow", "CTRB", "Integer", "value < 0 || value > 3"),
-        ("FinishAbove", "FNSHA", "Integer", "value < 0 || value > 5"),
-        ("FinishBelow", "FNSHB", "Integer", "value < 0 || value > 5"),
-        ("RootFaceAbove", "FACEA", "Double", "value == int.MinValue"),
-        ("RootFaceBelow", "FACEB", "Double", "value == int.MinValue"),
-        ("EffectiveThroatAbove", "THROA", "Double", "value == int.MinValue"),
-        ("EffectiveThroatBelow", "THROB", "Double", "value == int.MinValue"),
-        ("RootOpeningAbove", "OPNGA", "Double", "value == int.MinValue"),
-        ("RootOpeningBelow", "OPNGB", "Double", "value == int.MinValue"),
-        ("IncrementAmountAbove", "INCRA", "Integer", "value == int.MinValue"),
-        ("IncrementAmountBelow", "INCRB", "Integer", "value == int.MinValue"),
-        ("LengthAbove", "LENA", "Double", "value == int.MinValue"),
-        ("LengthBelow", "LENB", "Double", "value == int.MinValue"),
-        ("PitchAbove", "PITA", "Double", "value == int.MinValue"),
-        ("PitchBelow", "PITB", "Double", "value == int.MinValue"),
-        ("Around", "ARND", "Integer", "value < 0 || value > 1"),
-        ("Shop", "SHOP", "Integer", "value < 0 || value > 1"),
-        ("Placement", "PLACE", "Integer", "value < 0 || value > 2"),
-        ("Preparation", "PREP", "Integer", "value < 0 || value > 3"),
-        ("Intermittent", "INTMI", "Integer", "value < 0 || value > 2"),
-        ("ReferenceText", "TEXT", "String", "string.IsNullOrEmpty(value)"),
-        ("PrefixAbove", "PRFXA", "String", "string.IsNullOrEmpty(value)"),
-        ("PrefixBelow", "PRFXB", "String", "string.IsNullOrEmpty(value)"),
-        ("AdditionalSizeAbove", "ADDSA", "Double", "value == int.MinValue"),
-        ("AdditionalSizeBelow", "ADDSB", "Double", "value == int.MinValue"),
-    ];
-
-    internal static IReadOnlyList<PropertyInfo> BoltPropertyInfos(Version tsmVersion) {
+    private static IReadOnlyList<PropertyInfo> BoltPropertyInfos(Version tsmVersion) {
         var result = new List<PropertyInfo> {
-            ("Size", "SIZE", "Distance", "value.Value == int.MinValue || value.Value == 0.0"),
-            ("Standard", "STD", "String", "string.IsNullOrEmpty(value)"),
-            ("DistX", "DISTX", "DistanceList", "value.Count == 0"),
-            ("DistY", "DISTY", "DistanceList", "value.Count == 0"),
-            ("Type", "TYPE", "Integer", "value < 0 || value > 1"),
-            ("ThreadInMaterial", "THRD", "Integer", "value < 0 || value > 1"),
-            ("Length", "LEN", "Double", "value == int.MinValue"),
-            ("CutLength", "CLEN", "Double", "value == int.MinValue"),
-            ("ExtraLength", "XLEN", "Double", "value == int.MinValue"),
-            ("Tolerance", "TOL", "Double", "value == int.MinValue"),
-            ("PlainType", "PLAIN", "Integer", "value < 0 || value > 1"),
-            ("BlindHoleDepth", "DEPTH", "Double", "value == int.MinValue"),
-            ("Hole1", "HOLE1", "Integer", "value < 0 || value > 1"),
-            ("Hole2", "HOLE2", "Integer", "value < 0 || value > 1"),
-            ("Hole3", "HOLE3", "Integer", "value < 0 || value > 1"),
-            ("Hole4", "HOLE4", "Integer", "value < 0 || value > 1"),
-            ("Hole5", "HOLE5", "Integer", "value < 0 || value > 1"),
+            new("Shape", "Integer", "0", "value == int.MinValue", "B{0}SHAPE"),
+            new("Standard", "String", "A", "string.IsNullOrEmpty(value)", "B{0}STD"),
+            new("Size", "Distance", "8.0", "value.Value == int.MinValue || value.Value == 0.0", "B{0}SIZE"),
+            new("DistX", "DistanceList", "0.0", "value.Count == 0", "B{0}DISTX"),
+            new("DistY", "DistanceList", "0.0", "value.Count == 0", "B{0}DISTY"),
+            new("NumberOfBolts", "Integer", "6", "value == int.MinValue", "B{0}NUM"),
+            new("Diameter", "Double", "100.0", "value == int.MinValue", "B{0}DIAM"),
+            new("Type", "Integer", "0", "value < 0 || value > 1", "B{0}TYPE"),
+            new("ThreadInMaterial", "Integer", "1", "value < 0 || value > 1", "B{0}THRD"),
+            new("Length", "Double", "40.0", "value == int.MinValue", "B{0}LEN"),
+            new("CutLength", "Double", "100.0", "value == int.MinValue", "B{0}CLEN"),
+            new("ExtraLength", "Double", "0.0", "value == int.MinValue", "B{0}XLEN"),
+            new("Tolerance", "Double", "2.0", "value == int.MinValue", "B{0}TOL"),
+            new("PlainType", "Integer", "0", "value < 0 || value > 1", "B{0}PLAIN"),
+            new("BlindHoleDepth", "Double", "0.0", "value == int.MinValue", "B{0}DEPTH"),
         };
 
         if (tsmVersion is not null && tsmVersion.Major >= 2023) {
-            result.Add(("HoleType", "HOLTY", "Integer", "value < 0 || value > 3"));
+            result.Add(new("HoleType", "Integer", "0", "value < 0 || value > 3", "B{0}HOLTY"));
         } else {
-            result.Add(("HoleType", "HOLTY", "Integer", "value < 0 || value > 2"));
+            result.Add(new("HoleType", "Integer", "0", "value < 0 || value > 2", "B{0}HOLTY"));
         }
 
         result.AddRange([
-            ("SlottedHoleX", "SLOTX", "Double", "value == int.MinValue"),
-            ("SlottedHoleY", "SLOTY", "Double", "value == int.MinValue"),
+            new("SlottedHoleX", "Double", "0.0", "value == int.MinValue", "B{0}SLOTX"),
+            new("SlottedHoleY", "Double", "0.0", "value == int.MinValue", "B{0}SLOTY"),
         ]);
 
         if (tsmVersion is not null && tsmVersion.Major >= 2023) {
             result.AddRange([
-                ("SlotOffsetX", "SOFFX", "Double", "value == int.MinValue"),
-                ("SlotOffsetY", "SOFFY", "Double", "value == int.MinValue"),
+                new("SlotOffsetX", "Double", "0.0", "value == int.MinValue", "B{0}SOFFX"),
+                new("SlotOffsetY", "Double", "0.0", "value == int.MinValue", "B{0}SOFFY"),
             ]);
         }
 
         result.AddRange([
-            ("RotateSlots", "RSLOT", "Integer", "value < 0 || value > 2"),
-            ("IsBolt", "ISBOT", "Integer", "value < 0 || value > 1"),
-            ("UseNut1", "NUT1", "Integer", "value < 0 || value > 1"),
-            ("UseNut2", "NUT2", "Integer", "value < 0 || value > 1"),
-            ("UseWasher1", "WSHR1", "Integer", "value < 0 || value > 1"),
-            ("UseWasher2", "WSHR2", "Integer", "value < 0 || value > 1"),
-            ("UseWasher3", "WSHR3", "Integer", "value < 0 || value > 1"),
+            new("RotateSlots", "Integer", "2", "value < 0 || value > 2", "B{0}RSLOT"),
+            new("Hole1", "Integer", "1", "value < 0 || value > 1", "B{0}HOLE1"),
+            new("Hole2", "Integer", "1", "value < 0 || value > 1", "B{0}HOLE2"),
+            new("Hole3", "Integer", "0", "value < 0 || value > 1", "B{0}HOLE3"),
+            new("Hole4", "Integer", "0", "value < 0 || value > 1", "B{0}HOLE4"),
+            new("Hole5", "Integer", "0", "value < 0 || value > 1", "B{0}HOLE5"),
+            new("IsBolt", "Integer", "1", "value < 0 || value > 1", "B{0}ISBOT"),
+            new("UseNut1", "Integer", "1", "value < 0 || value > 1", "B{0}NUT1"),
+            new("UseNut2", "Integer", "0", "value < 0 || value > 1", "B{0}NUT2"),
+            new("UseWasher1", "Integer", "0", "value < 0 || value > 1", "B{0}WSHR1"),
+            new("UseWasher2", "Integer", "0", "value < 0 || value > 1", "B{0}WSHR2"),
+            new("UseWasher3", "Integer", "1", "value < 0 || value > 1", "B{0}WSHR3"),
         ]);
 
         return result;
     }
 
-    internal static IReadOnlyList<PropertyInfo> BoltCirclePropertyInfos(Version tsmVersion) {
-        var result = new List<PropertyInfo> {
-            ("Size", "SIZE", "Distance", "value.Value == int.MinValue || value.Value == 0.0"),
-            ("Standard", "STD", "String", "string.IsNullOrEmpty(value)"),
-            ("NumberOfBolts", "NUM", "Integer", "value == int.MinValue"),
-            ("Diameter", "DIAM", "Double", "value == int.MinValue"),
-            ("Type", "TYPE", "Integer", "value < 0 || value > 1"),
-            ("ThreadInMaterial", "THRD", "Integer", "value < 0 || value > 1"),
-            ("Length", "LEN", "Double", "value == int.MinValue"),
-            ("CutLength", "CLEN", "Double", "value == int.MinValue"),
-            ("ExtraLength", "XLEN", "Double", "value == int.MinValue"),
-            ("Tolerance", "TOL", "Double", "value == int.MinValue"),
-            ("PlainType", "PLAIN", "Integer", "value < 0 || value > 1"),
-            ("BlindHoleDepth", "DEPTH", "Double", "value == int.MinValue"),
-            ("Hole1", "HOLE1", "Integer", "value < 0 || value > 1"),
-            ("Hole2", "HOLE2", "Integer", "value < 0 || value > 1"),
-            ("Hole3", "HOLE3", "Integer", "value < 0 || value > 1"),
-            ("Hole4", "HOLE4", "Integer", "value < 0 || value > 1"),
-            ("Hole5", "HOLE5", "Integer", "value < 0 || value > 1"),
-        };
-
-        if (tsmVersion is not null && tsmVersion.Major >= 2023) {
-            result.Add(("HoleType", "HOLTY", "Integer", "value < 0 || value > 3"));
-        } else {
-            result.Add(("HoleType", "HOLTY", "Integer", "value < 0 || value > 2"));
-        }
-
-        result.AddRange([
-            ("SlottedHoleX", "SLOTX", "Double", "value == int.MinValue"),
-            ("SlottedHoleY", "SLOTY", "Double", "value == int.MinValue"),
-        ]);
-
-        if (tsmVersion is not null && tsmVersion.Major >= 2023) {
-            result.AddRange([
-                ("SlotOffsetX", "SOFFX", "Double", "value == int.MinValue"),
-                ("SlotOffsetY", "SOFFY", "Double", "value == int.MinValue"),
-            ]);
-        }
-
-        result.AddRange([
-            ("RotateSlots", "RSLOT", "Integer", "value < 0 || value > 2"),
-            ("IsBolt", "ISBOT", "Integer", "value < 0 || value > 1"),
-            ("UseNut1", "NUT1", "Integer", "value < 0 || value > 1"),
-            ("UseNut2", "NUT2", "Integer", "value < 0 || value > 1"),
-            ("UseWasher1", "WSHR1", "Integer", "value < 0 || value > 1"),
-            ("UseWasher2", "WSHR2", "Integer", "value < 0 || value > 1"),
-            ("UseWasher3", "WSHR3", "Integer", "value < 0 || value > 1"),
-        ]);
-
-        return result;
-    }
-
-    internal static IReadOnlyList<PropertyInfo> ChamferPropertyInfos(Version tsmVersion) => [
-        ("Type", "TYPE", "Integer", "value < 0 || value > 7"),
-        ("X", "X", "Double", "value == int.MinValue"),
-        ("Y", "Y", "Double", "value == int.MinValue"),
-        ("Dz1", "DZ1", "Double", "value == int.MinValue"),
-        ("Dz2", "DZ2", "Double", "value == int.MinValue"),
+    private static IReadOnlyList<PropertyInfo> StudPropertyInfos(Version tsmVersion) => [
+        new("Shape", "Integer", "0", "value == int.MinValue", "S{0}SHAPE"),
+        new("Standard", "String", "STUD", "string.IsNullOrEmpty(value)", "S{0}STD"),
+        new("Size", "Distance", "10.0", "value.Value == int.MinValue || value.Value == 0.0", "S{0}SIZE"),
+        new("DistX", "DistanceList", "0.0", "value.Count == 0", "S{0}DISTX"),
+        new("DistY", "DistanceList", "0.0", "value.Count == 0", "S{0}DISTY"),
+        new("NumberOfBolts", "Integer", "6", "value == int.MinValue", "S{0}NUM"),
+        new("Diameter", "Double", "100.0", "value == int.MinValue", "S{0}DIAM"),
+        new("Type", "Integer", "0", "value < 0 || value > 1", "S{0}TYPE"),
+        new("Length", "Double", "40.0", "value == int.MinValue", "S{0}LEN"),
+        new("CutLength", "Double", "100.0", "value == int.MinValue", "S{0}CLEN"),
     ];
 
-    private Version TsmVersion { get; set; }
-
-    /// <summary>
-    /// Dictionary of preset values.
-    /// <list type="bullet">
-    ///     <item>Key - attribute short name, such as "PartPropertiesAttribute".</item>
-    ///     <item>Value - dictionary of property name and preset value.
-    ///         <list type="bullet">
-    ///             <item>Key - property name, such as "profile".</item>
-    ///             <item>Value - preset value.</item>
-    ///         </list>
-    ///     </item>
-    /// </list>
-    /// </summary>
-    private ReadOnlyDictionary<string, ReadOnlyDictionary<string, string>> PresetValues { get; set; }
+    private static IReadOnlyList<PropertyInfo> ChamferPropertyInfos(Version tsmVersion) => [
+        new("Type", "Integer", "0", "value < 0 || value > 7", "CF{0}TYPE"),
+        new("X", "Double", "0.0", "value == int.MinValue", "CF{0}X"),
+        new("Y", "Double", "0.0", "value == int.MinValue", "CF{0}Y"),
+        new("Dz1", "Double", "0.0", "value == int.MinValue", "CF{0}DZ1"),
+        new("Dz2", "Double", "0.0", "value == int.MinValue", "CF{0}DZ2"),
+    ];
 
     public void Initialize(IncrementalGeneratorInitializationContext context) {
-
         context.RegisterPostInitializationOutput(static ctx => {
             ctx.AddSource("NotificationObject.g.cs",
                 SourceText.From(GetResourceAsString("NotificationObject.cs"), Encoding.UTF8));
@@ -247,6 +196,8 @@ public class ViewModelPropertiesGenerator : IIncrementalGenerator {
                 SourceText.From(GetResourceAsString("DetailViewModel.cs"), Encoding.UTF8));
             ctx.AddSource("CustomPartViewModel.g.cs",
                 SourceText.From(GetResourceAsString("CustomPartViewModel.cs"), Encoding.UTF8));
+
+            // no need to register attribute source, already registered in PluginDataFieldsGenerator
         });
 
         var versionProvider = context.CompilationProvider.Select(static (compilation, _) => {
@@ -263,37 +214,17 @@ public class ViewModelPropertiesGenerator : IIncrementalGenerator {
             return null;
         });
 
-        context.RegisterSourceOutput(versionProvider, (spc, version) => {
-            TsmVersion = version;
-
-            foreach (var attribute in ConcernedAttributes) {
-                var shortName = attribute.Substring(attribute.LastIndexOf('.') + 1);
-                spc.AddSource($"{shortName}.g.cs",
-                    SourceText.From(GetResourceAsString($"{shortName}.cs", version), Encoding.UTF8));
-            }
-
-            var dict = new Dictionary<string, ReadOnlyDictionary<string, string>>();
-
-            //  exclude 'GeneralPropertyWithDefaultValueAttribute'
-            foreach (var text
-                     in GetAttributeSourceTexts(ConcernedAttributes.Take(ConcernedAttributes.Length - 1), version)) {
-                var defaultValues =
-                    GetDefaultValuesFromSyntaxTree(CSharpSyntaxTree.ParseText(text), out var attributeName);
-                dict.Add(attributeName, new ReadOnlyDictionary<string, string>(defaultValues));
-            }
-
-            PresetValues = new ReadOnlyDictionary<string, ReadOnlyDictionary<string, string>>(dict);
-        });
-
-        var provider = context.SyntaxProvider.CreateSyntaxProvider(Predicate, Transform)
-            .Where(x => x != default);
+        var provider = context.SyntaxProvider.CreateSyntaxProvider(Predicate, Transform).Where(x => x != default);
 
         var diagnostics = provider.SelectMany(static (x, _) => x.DiagnosticInfos);
         context.RegisterSourceOutput(diagnostics, static (spc, info) => {
             spc.ReportDiagnostic(Diagnostic.Create(info.Descriptor, info.Location, info.Arguments));
         });
 
-        var propertiesDefaultValues = provider.Select(static (x, _) => x.Value).Where(x => x != default);
+        var propertiesDefaultValues = provider
+            .Select(static (x, _) => x.Value)
+            .Combine(versionProvider)
+            .Where(x => x.Left != default && x.Right != null);
         context.RegisterSourceOutput(propertiesDefaultValues, Generate);
     }
 
@@ -303,389 +234,149 @@ public class ViewModelPropertiesGenerator : IIncrementalGenerator {
         return syntaxNode is ClassDeclarationSyntax { AttributeLists.Count: > 0 };
     }
 
-    private static GatheredInfo<ViewModelPropertiesInfo> Transform(
-        GeneratorSyntaxContext context, CancellationToken token) {
-
+    private static GatheredInfo<PluginDataFieldsInfo> Transform(GeneratorSyntaxContext context,
+        CancellationToken token) {
         var semanticModel = context.SemanticModel;
         var classDeclarationSyntax = (ClassDeclarationSyntax)context.Node;
 
         var classSymbol = semanticModel.GetDeclaredSymbol(classDeclarationSyntax);
-        if (classSymbol is null) return default;
+        if (classSymbol is null ||
+            !classSymbol.AllInterfaces.Any(i => i.ToDisplayString() == "System.ComponentModel.INotifyPropertyChanged"))
+            return default; // it is not a view model
 
-        AttributeSyntax[] attSyntaxes = null;
-        if (!TryGetMatchedAttributes(classDeclarationSyntax.AttributeLists, semanticModel, ConcernedAttributes,
-                ref attSyntaxes))
-            return default;
+        var gatheredInfo = PluginDataFieldsGenerator.Transform(classDeclarationSyntax, semanticModel, token, 1);
 
-        var result = new GatheredInfo<ViewModelPropertiesInfo>(default, []);
-        var builder = ImmutableArray.CreateBuilder<DiagnosticInfo>();
-
-        if (!classDeclarationSyntax.Modifiers.Any(SyntaxKind.PartialKeyword)) {
-            builder.Add(new DiagnosticInfo(
-                NotPartial,
-                classDeclarationSyntax.Identifier.GetLocation(),
-                [classDeclarationSyntax.Identifier.ValueText]));
-            result.DiagnosticInfos = builder.ToImmutableArray();
-            return result;
-        }
-
-        if (!classSymbol.AllInterfaces.Any(i =>
-                i.ToDisplayString() == "System.ComponentModel.INotifyPropertyChanged")) {
-            foreach (var attSyntax in attSyntaxes) {
-                builder.Add(
-                    new DiagnosticInfo(
-                        NotImplementINotifyPropertyChanged,
-                        attSyntax.Name.GetLocation(),
-                        [attSyntax.Name]));
-            }
-
-            result.DiagnosticInfos = builder.ToImmutableArray();
-            return result;
-        }
-
-        //  Key - attribute name
-        //  Value - 
-        //      Key - for 'GeneralPropertiesAttribute' is data type,
-        //            for other attributes is id
-        //      Value - 
-        //          Key - for 'GeneralPropertiesAttribute' is parameter name,
-        //                for other attributes is property name of model object
-        //          Value - default value
-        var attDict = new ArgumentsDictionary<DefaultValueDictionary>();
-        var generalPropertySet = new HashSet<string>();
-
-        foreach (var attSyntax in attSyntaxes) {
-            if (attSyntax.ArgumentList is null) continue;
-
-            var attName = GetAttributeName(attSyntax, semanticModel);
-
-            if (!attDict.TryGetValue(attName, out var elementDict)) {
-                elementDict = new DefaultValueDictionary();
-                attDict.Add(attName, elementDict);
-            }
-
-            if (attName is "GeneralPropertiesAttribute") {
-                AnalyzeGeneralProperties(attSyntax, attName,
-                    ref builder, ref elementDict, ref generalPropertySet);
-            } else {
-                AnalyzeSeriesProperties(attSyntax, attName, ref builder, ref elementDict);
-            }
-        }
-
-        if (attDict.Count == 0) return result;
-
-        token.ThrowIfCancellationRequested();
-
-        result.DiagnosticInfos = builder.ToImmutableArray();
-        result.Value = new ViewModelPropertiesInfo {
-            ClassInfo = new ClassInfo {
-                Name = classDeclarationSyntax.Identifier.Text,
-                NameSpace = classSymbol.ContainingNamespace.ToDisplayString(),
-                Accessibility = classSymbol.DeclaredAccessibility,
-                IsRecord = classSymbol.IsRecord,
-            },
-            Arguments = attDict
-        };
-
-        return result;
+        return gatheredInfo == default
+            ? default
+            : new GatheredInfo<PluginDataFieldsInfo>(gatheredInfo.Item1, gatheredInfo.Item2.ToImmutableArray());
     }
 
-    private static void AnalyzeGeneralProperties(AttributeSyntax attSyntax, string attName,
-        ref ImmutableArray<DiagnosticInfo>.Builder builder,
-        ref DefaultValueDictionary elementDict,
-        ref HashSet<string> generalPropertySet) {
-
-        var typeSyntax = attSyntax.ArgumentList?.DescendantNodes()
-            .OfType<TypeOfExpressionSyntax>().FirstOrDefault()?.Type;
-        if (typeSyntax is null) return;
-
-        var type = GetUnqualifiedName(typeSyntax.ToString());
-        var supportedDatatypes = SupportedDataTypes(attName);
-
-        if (type is "Boolean") {
-            builder.Add(
-                new DiagnosticInfo(ShouldNotUseBooleanType, typeSyntax.GetLocation(), []));
-            return;
-        }
-
-        if (!supportedDatatypes.Contains(type)) {
-            builder.Add(
-                new DiagnosticInfo(
-                    NotSupportedDataType,
-                    typeSyntax.GetLocation(),
-                    [string.Join(", ", supportedDatatypes), "within 'Tekla.Structures.Datatype'"])
-            );
-            return;
-        }
-
-        if (!elementDict.TryGetValue(type, out var paramDict)) {
-            paramDict = new Dictionary<string, string>();
-            elementDict.Add(type, paramDict);
-        }
-
-        var argSyntaxes = attSyntax.ArgumentList
-            .DescendantNodes().OfType<LiteralExpressionSyntax>().ToList();
-        if (argSyntaxes.Count == 0) return;
-
-        if (argSyntaxes.Count % 2 != 0) {
-            builder.Add(
-                new DiagnosticInfo(ArgumentsMustBePassedInPairs, argSyntaxes.Last().GetLocation(), []));
-            if (argSyntaxes.Count < 2) return;
-        }
-
-        for (int i = 0; i < argSyntaxes.Count / 2 * 2; i += 2) {
-            var paramSyntax = argSyntaxes[i];
-            var valueSyntax = argSyntaxes[i + 1];
-
-            if (!paramSyntax.IsKind(SyntaxKind.StringLiteralExpression)) {
-                builder.Add(
-                    new DiagnosticInfo(NotExpectedDataType, paramSyntax!.GetLocation(), ["string"]));
-                continue;
-            }
-
-            var param = paramSyntax.Token.ValueText;
-            var value = valueSyntax.Token.ValueText;
-
-            if (!DiagnoseIdCharacters(param, attName, paramSyntax.GetLocation(), true, ref builder)) {
-                continue;
-            }
-
-            var isRightType = type switch {
-                "Integer" => valueSyntax.IsKind(SyntaxKind.NumericLiteralExpression) && int.TryParse(value, out _),
-                "Double" or "Distance" => valueSyntax.IsKind(SyntaxKind.NumericLiteralExpression) &&
-                                          double.TryParse(value, out _),
-                "DistanceList" or "String" => valueSyntax.IsKind(SyntaxKind.StringLiteralExpression),
-                _ => false
-            };
-            if (!isRightType) {
-                builder.Add(
-                    new DiagnosticInfo(
-                        NotExpectedDataType,
-                        valueSyntax.GetLocation(),
-                        [
-                            type switch {
-                                "Integer" => "int",
-                                "Double" or "Distance" => "double",
-                                "DistanceList" or "String" => "string",
-                                _ => string.Empty
-                            }
-                        ]));
-                continue;
-            }
-
-            if (generalPropertySet.Add(param)) {
-                paramDict.Add(param, value);
-            } else {
-                builder.Add(
-                    new DiagnosticInfo(RegisterFieldOrPropertyMultiTimes, paramSyntax.GetLocation(), [param]));
-            }
-        }
-    }
-
-    private static void AnalyzeSeriesProperties(AttributeSyntax attSyntax, string attName,
-        ref ImmutableArray<DiagnosticInfo>.Builder builder, ref DefaultValueDictionary elementDict) {
-
-        var argSyntaxes = attSyntax.ArgumentList?.Arguments;
-        if (argSyntaxes is null) return;
-
-        var valueDict = new Dictionary<string, string>();
-
-        var id = string.Empty;
-        var index = -1;
-        foreach (var argSyntax in argSyntaxes) {
-            index++;
-
-            //  style of (param: value)
-            var paramName = argSyntax.NameColon?.Name.Identifier.ValueText;
-            var paramValue = ((LiteralExpressionSyntax)argSyntax.Expression).Token.ValueText;
-
-            if (paramName is null && index == 0 || paramName is "id") {
-                id = paramValue;
-
-                if (!DiagnoseIdCharacters(id, attName, argSyntax.GetLocation(), false, ref builder)) {
-                    return;
-                }
-
-                if (elementDict.ContainsKey(id)) {
-                    builder.Add(
-                        new DiagnosticInfo(RegisterFieldOrPropertyMultiTimes, argSyntax.GetLocation(), [id]));
-                    return;
-                }
-
-                continue;
-            }
-
-            //  style of (Property = value), Property => property
-            paramName ??= argSyntax.NameEquals?.Name.Identifier.ValueText;
-            if (paramName is not null) paramName = ToLocalVariableNameStyle(paramName);
-
-            //  index-1 is safe here
-            // paramName ??= presetValues[attName].ElementAt(index - 1).Key;
-            paramName ??= $"positionalParameter{index - 1}";
-
-            valueDict.Add(paramName, paramValue);
-        }
-
-        //  id != string.Empty
-        elementDict.Add(id, valueDict);
-    }
-
-    private void Generate(SourceProductionContext context, ViewModelPropertiesInfo info) {
+    private static void Generate(SourceProductionContext context, (PluginDataFieldsInfo, Version) pair) {
+        var info = pair.Item1;
+        var tsmVersion = pair.Item2;
 
         var fieldsBuilder = new StringBuilder();
         var propertiesBuilder = new StringBuilder();
 
         foreach (var attDict in info.Arguments) {
             var attName = attDict.Key;
-            var g = attName switch {
-                "GeneralPropertiesAttribute" => GenerateGeneralSource(attDict.Value),
-                _ => GenerateSeriesSource(attName, attDict.Value, PresetValues, TsmVersion)
-            };
-
-            fieldsBuilder.Append(g.fields);
-            propertiesBuilder.Append(g.properties);
+            if (attName == "GeneralAttribute") {
+                GenerateGeneralSource(attDict.Value, ref fieldsBuilder, ref propertiesBuilder);
+            } else {
+                GenerateSeriesSource(attName, attDict.Value, tsmVersion, ref fieldsBuilder, ref propertiesBuilder);
+            }
         }
 
         var generatedSourceText =
-            $"//  <auto-generated/>" +
 #if DEBUG
-            $" at {DateTime.Now}" +
+            $"//  <auto-generated/> at {DateTime.Now}\r\n" +
+#else
+            $"//  <auto-generated/>\r\n" +
 #endif
-            $"\n\n" +
-            $"using System;\n" +
-            $"\n" +
-            $"namespace {info.ClassInfo.NameSpace} {{\n" +
-            $"    {info.ClassInfo.Accessibility.ToString().ToLower()} partial {(info.ClassInfo.IsRecord ? "record " : "")}class {info.ClassInfo.Name} {{\n" +
-            $"{fieldsBuilder}\n" +
-            $"{propertiesBuilder}\n" +
-            $"    }}\n" +
+            $"\r\n" +
+            $"namespace {info.ClassInfo.NameSpace} {{\r\n" +
+            $"    {info.ClassInfo.Accessibility.ToString().ToLower()} partial {(info.ClassInfo.IsRecord ? "record " : "")}class {info.ClassInfo.Name} {{\r\n" +
+            $"{fieldsBuilder}\r\n" +
+            $"{propertiesBuilder}\r\n" +
+            $"    }}\r\n" +
             $"}}";
 
         context.AddSource($"{info.ClassInfo.Name}.g.cs", generatedSourceText);
     }
 
-    private static (string fields, string properties) GenerateGeneralSource(
-        DefaultValueDictionary defaultValueDict) {
-
-        var fieldsBuilder = new StringBuilder();
-        var propertiesBuilder = new StringBuilder();
-
+    private static void GenerateGeneralSource(DefaultValueDictionary defaultValueDict, ref StringBuilder fieldsBuilder,
+        ref StringBuilder propertiesBuilder) {
         foreach (var kvp in defaultValueDict) {
             var dataType = kvp.Key;
 
-            var predicate = dataType switch {
+            var validation = dataType switch {
                 "Integer" or "Double" => "value == int.MinValue",
                 "Distance" => "value.Value == int.MinValue",
-                "DistanceList" => "value.Count == 0",
+                "DistanceList" => "value.Count == 0 || value.Count == 1 && value[0].Value == 0.0",
                 "String" => "string.IsNullOrEmpty(value)",
                 _ => string.Empty
             };
 
             foreach (var kvp2 in kvp.Value) {
-                var name = kvp2.Key;
-                var fieldName = ToPrivateFieldNameStyle(name);
-                var propertyName = ToPropertyNameStyle(name);
+                var attributeName = kvp2.Key;
+                var fieldName = ToPrivateFieldNameStyle(attributeName);
+                var propertyName = ToPropertyNameStyle(attributeName);
 
                 fieldsBuilder.AppendLine(
                     $"        private {TsDatatype}.{dataType} {fieldName};");
 
                 var defaultValue = kvp2.Value;
-                var equalsValueClause = dataType switch {
-                    "Integer" or "Double" => $"{predicate} ? {defaultValue} : value",
-                    "Distance" => $"{predicate} ? new {TsDatatype}.{dataType}({defaultValue}) : value",
-                    "DistanceList" => $"{predicate} ? {TsDatatype}.{dataType}.Parse(\"{defaultValue}\") : value",
-                    "String" => $"{predicate} ? \"{defaultValue}\" : value",
+                var valueIfTrue = dataType switch {
+                    "Integer" or "Double" => $"{defaultValue}",
+                    "Distance" => $"new {TsDatatype}.{dataType}({defaultValue})",
+                    "DistanceList" =>
+                        $"{TsDatatype}.{dataType}.Parse(\"{defaultValue}\", {CurrentCulture}, {TsDatatype}.Distance.CurrentUnitType)",
+                    "String" => $"\"{defaultValue}\"",
                     _ => string.Empty
                 };
+                var equalsValueClause = $"{validation} ? {valueIfTrue} : value";
 
                 propertiesBuilder.AppendLine(
-                    $"        \n" +
-                    $"        [{TsDialog}.StructuresDialog(\"{name}\", typeof({TsDatatype}.{dataType}))]\n" +
-                    $"        public {TsDatatype}.{dataType} {propertyName} {{\n" +
-                    $"            get {{\n" +
-                    $"                return {fieldName};\n" +
-                    $"            }}\n" +
-                    $"            set {{\n" +
-                    $"                {fieldName} = {equalsValueClause};\n" +
-                    $"                OnPropertyChanged();\n" +
-                    $"            }}\n" +
+                    $"        \r\n" +
+                    $"        [{TsDialog}.StructuresDialog(\"{attributeName}\", typeof({TsDatatype}.{dataType}))]\r\n" +
+                    $"        public {TsDatatype}.{dataType} {propertyName} {{\r\n" +
+                    $"            get {{\r\n" +
+                    $"                return {fieldName};\r\n" +
+                    $"            }}\r\n" +
+                    $"            set {{\r\n" +
+                    $"                {fieldName} = {equalsValueClause};\r\n" +
+                    $"                OnPropertyChanged(\"{propertyName}\");\r\n" +
+                    $"            }}\r\n" +
                     $"        }}");
             }
         }
-
-        return (fieldsBuilder.ToString(), propertiesBuilder.ToString());
     }
 
-    private static (string fields, string properties) GenerateSeriesSource(string attributeName,
-        DefaultValueDictionary defaultValueDict,
-        ReadOnlyDictionary<string, ReadOnlyDictionary<string, string>> presetValues,
-        Version tsmVersion) {
-
-        var fieldsBuilder = new StringBuilder();
-        var propertiesBuilder = new StringBuilder();
-
+    private static void GenerateSeriesSource(string attributeName, DefaultValueDictionary defaultValueDict,
+        Version tsmVersion, ref StringBuilder fieldsBuilder, ref StringBuilder propertiesBuilder) {
         var propertyInfos = attributeName switch {
-            "PartPropertiesAttribute" => PartPropertyInfos(tsmVersion),
-            "PlatePropertiesAttribute" => PlatePropertyInfos(tsmVersion),
-            "WeldPropertiesAttribute" => WeldPropertyInfos(tsmVersion),
-            "BoltPropertiesAttribute" => BoltPropertyInfos(tsmVersion),
-            "BoltCirclePropertiesAttribute" => BoltCirclePropertyInfos(tsmVersion),
-            "ChamferPropertiesAttribute" => ChamferPropertyInfos(tsmVersion),
+            "PartAttribute" => PartPropertyInfos(tsmVersion),
+            "PlateAttribute" => PlatePropertyInfos(tsmVersion),
+            "BoltAttribute" => BoltPropertyInfos(tsmVersion),
+            "StudAttribute" => StudPropertyInfos(tsmVersion),
+            "WeldAttribute" => WeldPropertyInfos(tsmVersion),
+            "ChamferAttribute" => ChamferPropertyInfos(tsmVersion),
             _ => []
         };
-
-        var propertyPrefix = attributeName.Substring(0, attributeName.Length - 19);
-        var attributePrefix = propertyPrefix switch {
-            "Part" => "PT",
-            "Plate" => "PL",
-            "Weld" => "W",
-            "Bolt" => "B",
-            "BoltCircle" => "BC",
-            "Chamfer" => "CF",
-            _ => string.Empty
-        };
-
-        var preset = presetValues[attributeName];
+        var prefix = attributeName.Substring(0, attributeName.Length - 9);
 
         foreach (var idDict in defaultValueDict) {
             var id = idDict.Key;
             var defaultValues = idDict.Value;
 
-            for (int i = 0; i < preset.Count; i++) {
-                var property = preset.ElementAt(i).Key;
+            foreach (var (property, dataType, presetValue, validation, attributeNamePattern) in propertyInfos) {
+                var fieldName = $"{ToPrivateFieldNameStyle(prefix)}{ToPropertyNameStyle(id)}{property}";
+                var propertyName = $"{prefix}{ToPropertyNameStyle(id)}{property}";
 
-                if (!defaultValues.TryGetValue(property, out var value) &&
-                    !defaultValues.TryGetValue($"positionalParameter{i}", out value)) {
-                    value = preset.ElementAt(i).Value;
-                }
+                fieldsBuilder.AppendLine($"        private {TsDatatype}.{dataType} {fieldName};");
 
-                value = propertyInfos[i].Type switch {
-                    "String" => $"\"{value}\"",
-                    "Distance" => $"new {TsDatatype}.Distance({value})",
-                    "DistanceList" => $"{TsDatatype}.DistanceList.Parse(\"{value}\")",
-                    _ => value
+                if (!defaultValues.TryGetValue(property, out var defaultValue)) defaultValue = presetValue;
+                var valueIfTrue = dataType switch {
+                    "Integer" or "Double" => $"{defaultValue}",
+                    "Distance" => $"new {TsDatatype}.{dataType}({defaultValue})",
+                    "DistanceList" =>
+                        $"{TsDatatype}.{dataType}.Parse(\"{defaultValue}\", {CurrentCulture}, {TsDatatype}.Distance.CurrentUnitType)",
+                    "String" => $"\"{defaultValue}\"",
+                    _ => string.Empty
                 };
-
-                var propertyName = propertyPrefix + ToPropertyNameStyle(id) + ToPropertyNameStyle(property);
-                var fieldName = ToPrivateFieldNameStyle(propertyName);
-
-                fieldsBuilder.AppendLine($"        private {TsDatatype}.{propertyInfos[i].Type} {fieldName};");
                 propertiesBuilder.AppendLine(
-                    $"        \n" +
-                    $"        [{TsDialog}.StructuresDialog(\"{attributePrefix}{id}{propertyInfos[i].AttributeName}\", typeof({TsDatatype}.{propertyInfos[i].Type}))]\n" +
-                    $"        public {TsDatatype}.{propertyInfos[i].Type} {propertyName} {{\n" +
-                    $"            get {{\n" +
-                    $"                return {fieldName};\n" +
-                    $"            }}\n" +
-                    $"            set {{\n" +
-                    $"                {fieldName} = {propertyInfos[i].Predicate} ? {value} : value;\n" +
-                    $"                OnPropertyChanged();\n" +
-                    $"            }}\n" +
+                    $"        \r\n" +
+                    $"        [{TsDialog}.StructuresDialog(\"{string.Format(attributeNamePattern, ToPropertyNameStyle(id))}\", typeof({TsDatatype}.{dataType}))]\r\n" +
+                    $"        public {TsDatatype}.{dataType} {propertyName} {{\r\n" +
+                    $"            get {{\r\n" +
+                    $"                return {fieldName};\r\n" +
+                    $"            }}\r\n" +
+                    $"            set {{\r\n" +
+                    $"                {fieldName} = {validation} ? {valueIfTrue} : value;\r\n" +
+                    $"                OnPropertyChanged(\"{propertyName}\");\r\n" +
+                    $"            }}\r\n" +
                     $"        }}");
             }
         }
-
-        return (fieldsBuilder.ToString(), propertiesBuilder.ToString());
     }
-
 }

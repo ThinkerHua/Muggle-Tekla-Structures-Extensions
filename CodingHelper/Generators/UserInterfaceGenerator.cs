@@ -23,8 +23,8 @@ using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Text;
 using Muggle.TsExtensions.CodingHelper.Generators.Information;
-using static Muggle.TsExtensions.CodingHelper.Generators.GeneratorHelper;
 using static Muggle.TsExtensions.CodingHelper.Diagnosers.InternalAttributesDiagnoser;
+using static Muggle.TsExtensions.CodingHelper.Generators.GeneratorHelper;
 
 namespace Muggle.TsExtensions.CodingHelper.Generators;
 
@@ -32,6 +32,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators;
 public class UserInterfaceGenerator : IIncrementalGenerator {
     internal const string ConcernedAttribute = "Muggle.TsExtensions.CodingHelper.Generators.UserInterfaceAttribute";
 
+    private const string PluginAttribute = "Tekla.Structures.Plugins.PluginAttribute";
     private const string StructuresFieldAttribute = "Tekla.Structures.Plugins.StructuresFieldAttribute";
     private const string SecondaryTypeAttribute = "Tekla.Structures.Plugins.SecondaryTypeAttribute";
     private const string SeamInputTypeAttribute = "Tekla.Structures.Plugins.SeamInputTypeAttribute";
@@ -53,6 +54,20 @@ public class UserInterfaceGenerator : IIncrementalGenerator {
                 SourceText.From(GetResourceAsString("UserInterfaceAttribute.cs"), Encoding.UTF8));
         });
 
+        var versionProvider = context.CompilationProvider.Select(static (compilation, _) => {
+            foreach (var reference in compilation.References) {
+                if (compilation.GetAssemblyOrModuleSymbol(reference) is not IAssemblySymbol assemblySymbol ||
+                    assemblySymbol.Name != "Tekla.Structures.Model" &&
+                    assemblySymbol.Identity.Name != "Tekla.Structures.Model") {
+                    continue;
+                }
+
+                return assemblySymbol.Identity.Version;
+            }
+
+            return null;
+        });
+
         var projectDirProvider = context.AnalyzerConfigOptionsProvider
             .Select(static (provider, _) => {
                 provider.GlobalOptions.TryGetValue("build_property.projectdir", out var dir);
@@ -68,7 +83,7 @@ public class UserInterfaceGenerator : IIncrementalGenerator {
         });
 
         var userInterfaceInfo = provider.Select(static (x, _) => x.Value).Where(x => x != default);
-        context.RegisterSourceOutput(userInterfaceInfo.Combine(projectDirProvider), GenerateUiClass);
+        context.RegisterSourceOutput(userInterfaceInfo.Combine(versionProvider.Combine(projectDirProvider)), GenerateUiClass);
         context.RegisterSourceOutput(userInterfaceInfo, GeneratePluginClass);
     }
 
@@ -130,9 +145,8 @@ public class UserInterfaceGenerator : IIncrementalGenerator {
             return gatheredInfo;
         }
 
-        AttributeSyntax[] pluginUserInterfaceAttSyntaxes = null;
         if (TryGetMatchedAttributes(classDeclarationSyntax.AttributeLists, semanticModel,
-                [PluginUserInterfaceAttribute], ref pluginUserInterfaceAttSyntaxes)) {
+                [PluginUserInterfaceAttribute], out var pluginUserInterfaceAttSyntaxes)) {
             builder.Add(new DiagnosticInfo(ShouldRemovePluginUserInterfaceAttribute,
                 pluginUserInterfaceAttSyntaxes.First().GetLocation(), []));
             gatheredInfo.DiagnosticInfos = builder.ToImmutableArray();
@@ -166,15 +180,14 @@ public class UserInterfaceGenerator : IIncrementalGenerator {
         var pluginType = PluginTypes.Connection;
         switch (GetUnqualifiedName(baseTypeSyntax.Type.ToString())) {
         case "ConnectionBase":
-            AttributeSyntax[] distinction = null;
             if (TryGetMatchedAttributes(classDeclarationSyntax.AttributeLists, semanticModel, [SeamInputTypeAttribute],
-                    ref distinction)) {
+                    out _)) {
                 pluginType = PluginTypes.Seam;
                 break;
             }
 
             if (TryGetMatchedAttributes(classDeclarationSyntax.AttributeLists, semanticModel, [SecondaryTypeAttribute],
-                    ref distinction)) {
+                    out var distinction)) {
                 var expression = distinction.First().ArgumentList?.Arguments.First().Expression.ToString();
                 if (expression == "0" || !string.IsNullOrEmpty(expression) && SecondaryZero.Contains(expression))
                     pluginType = PluginTypes.Detail;
@@ -192,31 +205,28 @@ public class UserInterfaceGenerator : IIncrementalGenerator {
             break;
         }
 
-        var dataType = semanticModel.GetTypeInfo(parameterSyntax.Type!).ConvertedType!;
-        var dataClassAttArgs = PluginFieldDefaultValuesGenerator.AnalyzeDataClassAttributeArguments(dataType);
-        var dataClassManualFields = (from fieldSymbol in dataType.GetMembers().OfType<IFieldSymbol>()
-                from attribute in fieldSymbol.GetAttributes()
-                where StructuresFieldAttribute.Contains(attribute.AttributeClass!.MetadataName)
-                let attributeName = attribute.ConstructorArguments.First().Value!.ToString()
-                select (type: fieldSymbol.Type.ToDisplayString(), attributeName))
-            .ToArray();
-
-        var arguments = new ArgumentsDictionary<IdSet>();
-        foreach (var attArg in dataClassAttArgs) {
-            if (!arguments.TryGetValue(attArg.category, out var idSet)) {
-                idSet = [];
-                arguments.Add(attArg.category, idSet);
-            }
-
-            foreach (var id in attArg.ids) {
-                idSet.Add(id);
-            }
+        var pluginName = string.Empty;
+        if (TryGetMatchedAttributes(classDeclarationSyntax.AttributeLists, semanticModel, [PluginAttribute],
+                out var pluginAttSyntaxes)) {
+            pluginName = pluginAttSyntaxes.FirstOrDefault()?.DescendantNodes().OfType<LiteralExpressionSyntax>()
+                .FirstOrDefault()?.Token.ValueText;
         }
 
+        if (string.IsNullOrEmpty(pluginName)) pluginName = classSymbol.Name;
+
+        var dataType = semanticModel.GetTypeInfo(parameterSyntax.Type!).ConvertedType!;
+        var dataClassRegisteredIds = PluginFieldsGenerator.AnalyzePluginDataRegisteredIds(dataType);
+
+        var dataClassManualFields = (from fieldSymbol in dataType.GetMembers().OfType<IFieldSymbol>()
+                                     from attribute in fieldSymbol.GetAttributes()
+                                     where StructuresFieldAttribute.Contains(attribute.AttributeClass!.MetadataName)
+                                     let attributeName = attribute.ConstructorArguments.First().Value!.ToString()
+                                     select (type: fieldSymbol.Type.ToDisplayString(), attributeName))
+            .ToArray();
         foreach (var field in dataClassManualFields) {
-            if (!arguments.TryGetValue(field.type, out var idSet)) {
+            if (!dataClassRegisteredIds.TryGetValue(field.type, out var idSet)) {
                 idSet = [];
-                arguments.Add(field.type, idSet);
+                dataClassRegisteredIds.Add(field.type, idSet);
             }
 
             idSet.Add(field.attributeName);
@@ -232,7 +242,8 @@ public class UserInterfaceGenerator : IIncrementalGenerator {
                 Name = classSymbol.Name,
             },
             PluginType = pluginType,
-            Arguments = arguments,
+            PluginName = pluginName,
+            Arguments = dataClassRegisteredIds,
         };
 
         gatheredInfo.Value = userInterfaceInfo;
@@ -242,14 +253,14 @@ public class UserInterfaceGenerator : IIncrementalGenerator {
     }
 
     private static void GenerateUiClass(SourceProductionContext context,
-        (UserInterfaceInfo uiInfo, string projectDir) info) {
+        (UserInterfaceInfo uiInfo, (Version tsmVersion, string projectDir)) info) {
         IUserInterfaceGenerator generator = info.uiInfo.UiType switch {
-            /*UserInterfaceType.INP => InpUiGenerator.Instance,
-            UserInterfaceType.WinForm => WinFormUiGenerator.Instance,*/
+            UserInterfaceType.INP => InpUiGenerator.Instance,
+            // UserInterfaceType.WinForm => WinFormUiGenerator.Instance,
             UserInterfaceType.WPF => WpfUiGenerator.Instance,
             _ => throw new ArgumentOutOfRangeException()
         };
-        generator.Generate(context, info.uiInfo, info.projectDir);
+        generator.Generate(context, info.uiInfo, info.Item2.tsmVersion, info.Item2.projectDir);
     }
 
     private static void GeneratePluginClass(SourceProductionContext context, UserInterfaceInfo info) {
@@ -257,8 +268,8 @@ public class UserInterfaceGenerator : IIncrementalGenerator {
         var builder = new StringBuilder();
 
         var uiName = info.UiType switch {
-            /*UserInterfaceType.INP => $"{classInfo.NameSpace}.InpUi.Definition",
-            UserInterfaceType.WinForm => $"\"{classInfo.NameSpace}.WinFormUi\"",*/
+            UserInterfaceType.INP => $"{classInfo.NameSpace}.InpUi.Definition",
+            // UserInterfaceType.WinForm => $"\"{classInfo.NameSpace}.WinFormUi\"",
             UserInterfaceType.WPF => $"\"{classInfo.NameSpace}.WpfUi\"",
             _ => throw new ArgumentOutOfRangeException()
         };
@@ -268,7 +279,6 @@ public class UserInterfaceGenerator : IIncrementalGenerator {
             $"    [Tekla.Structures.Plugins.PluginUserInterfaceAttribute({uiName})]\r\n" +
             $"    {classInfo.Accessibility.ToString().ToLower()} partial {(classInfo.IsRecord ? "record " : "")}class {classInfo.Name};\r\n" +
             $"}}");
-
 
         context.AddSource($"{classInfo.Name}.g.cs", SourceText.From(builder.ToString(), Encoding.UTF8));
     }

@@ -13,11 +13,12 @@
  *  written by Huang YongXing - thinkerhua@hotmail.com
  *==============================================================================*/
 
+using System;
 using Microsoft.CodeAnalysis;
 using Muggle.TsExtensions.CodingHelper.Generators.Information;
 
 namespace Muggle.TsExtensions.CodingHelper.Generators;
 
 internal interface IUserInterfaceGenerator {
-    void Generate(SourceProductionContext context, UserInterfaceInfo info, string projectDir);
+    void Generate(SourceProductionContext context, UserInterfaceInfo info, Version tsmVersion, string projectDir);
 }

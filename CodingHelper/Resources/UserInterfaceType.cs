@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Muggle.TsExtensions.CodingHelper.Generators {
+﻿namespace Muggle.TsExtensions.CodingHelper.Generators {
 
     /// <summary>
     /// User interface type.
@@ -9,12 +7,12 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
         /// <summary>
         /// INP-type user interface.
         /// </summary>
-        [Obsolete("Not supported yet.", true)] INP,
+        INP,
 
         /// <summary>
         /// WinForm-type user interface.
         /// </summary>
-        [Obsolete("Not supported yet.", true)] WinForm,
+        [System.Obsolete("Not supported yet.", true)] WinForm,
 
         /// <summary>
         /// WPF-type user interface.

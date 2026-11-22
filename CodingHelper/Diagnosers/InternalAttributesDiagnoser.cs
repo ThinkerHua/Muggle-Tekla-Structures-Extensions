@@ -15,6 +15,7 @@
 
 #pragma warning disable RS2008
 
+using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Text.RegularExpressions;
@@ -40,6 +41,7 @@ internal class InternalAttributesDiagnoser : DiagnosticAnalyzer {
         DiagnosticSeverity.Error,
         true);
 
+    [Obsolete("No longer needed since version 3.0", true)]
     internal static readonly DiagnosticDescriptor NotImplementINotifyPropertyChanged = new(
         "MTSECH002",
         "INotifyPropertyChanged not implemented",
@@ -79,6 +81,7 @@ internal class InternalAttributesDiagnoser : DiagnosticAnalyzer {
         DiagnosticSeverity.Info,
         true);
 
+    [Obsolete("No longer needed since version 3.0", true)]
     internal static readonly DiagnosticDescriptor FieldsFromAttributeNotApplied = new(
         "MTSECH010",
         "\"FieldsFromAttribute\" not applied",
@@ -87,6 +90,7 @@ internal class InternalAttributesDiagnoser : DiagnosticAnalyzer {
         DiagnosticSeverity.Error,
         true);
 
+    [Obsolete("No longer needed since version 3.0", true)]
     internal static readonly DiagnosticDescriptor AppliedOnOverOnePlace = new(
         "MTSECH011",
         "Applied on over one place",
@@ -95,6 +99,7 @@ internal class InternalAttributesDiagnoser : DiagnosticAnalyzer {
         DiagnosticSeverity.Error,
         true);
 
+    [Obsolete("No longer needed since version 3.0", true)]
     internal static readonly DiagnosticDescriptor DataTypeDoesNotContainTheseFields = new(
         "MTSECH012",
         "Target data type doesn't contain these fields",
@@ -103,6 +108,7 @@ internal class InternalAttributesDiagnoser : DiagnosticAnalyzer {
         DiagnosticSeverity.Error,
         true);
 
+    [Obsolete("No longer needed since version 3.0", true)]
     internal static readonly DiagnosticDescriptor SetDefaultValueMultiTimes = new(
         "MTSECH013",
         "Set default value multi times",
@@ -204,12 +210,10 @@ internal class InternalAttributesDiagnoser : DiagnosticAnalyzer {
     #endregion
 
     public override ImmutableArray<DiagnosticDescriptor> SupportedDiagnostics => [
-        NotPartial, NotImplementINotifyPropertyChanged, LengthExceedLimitation, ContainsSpecialCharacters,
-        ContainsUnsuggestedCharacters, FieldsFromAttributeNotApplied, AppliedOnOverOnePlace,
-        DataTypeDoesNotContainTheseFields, SetDefaultValueMultiTimes, NameStartsWithNumber,
-        ArgumentsMustBePassedInPairs, NotSupportedDataType, NotExpectedDataType, RegisterFieldOrPropertyMultiTimes,
-        ShouldNotUseBooleanType, NeedViewModelQualifiedName, BaseTypeNotFound, ShouldRemovePluginUserInterfaceAttribute,
-        UniqueConstructorNotFound, UniqueParameterNotFound
+        NotPartial, LengthExceedLimitation, ContainsSpecialCharacters, ContainsUnsuggestedCharacters,
+        NameStartsWithNumber, ArgumentsMustBePassedInPairs, NotSupportedDataType, NotExpectedDataType,
+        RegisterFieldOrPropertyMultiTimes, ShouldNotUseBooleanType, NeedViewModelQualifiedName, BaseTypeNotFound,
+        ShouldRemovePluginUserInterfaceAttribute, UniqueConstructorNotFound, UniqueParameterNotFound
     ];
 
     public override void Initialize(AnalysisContext context) {
@@ -221,9 +225,9 @@ internal class InternalAttributesDiagnoser : DiagnosticAnalyzer {
         if (attributeName is null) return string.Empty;
         if (attributeName.StartsWith("Part")) return "PT<Id>MATL";
         if (attributeName.StartsWith("Plate")) return "PL<Id>MATL";
-        if (attributeName.StartsWith("Weld")) return "W<Id>SIZEA";
-        if (attributeName.StartsWith("BoltCircle")) return "BC<Id>PLAIN";
         if (attributeName.StartsWith("Bolt")) return "B<Id>DISTX";
+        if (attributeName.StartsWith("Stud")) return "S<Id>DISTX";
+        if (attributeName.StartsWith("Weld")) return "W<Id>SIZEA";
         if (attributeName.StartsWith("Chamfer")) return "CF<Id>TYPE";
         return "TheLongestAttribute";
     }
@@ -241,48 +245,48 @@ internal class InternalAttributesDiagnoser : DiagnosticAnalyzer {
         if (attributeName is null) return int.MinValue;
         if (attributeName.StartsWith("Part")) return 13;
         if (attributeName.StartsWith("Plate")) return 13;
-        if (attributeName.StartsWith("Weld")) return 13;
-        if (attributeName.StartsWith("BoltCircle")) return 12;
         if (attributeName.StartsWith("Bolt")) return 13;
+        if (attributeName.StartsWith("Stud")) return 13;
+        if (attributeName.StartsWith("Weld")) return 13;
         if (attributeName.StartsWith("Chamfer")) return 13;
         return 19;
     }
 
-    internal static HashSet<string> SupportedDataTypes(string attributeName) => attributeName switch {
-        "GeneralFieldsAttribute" => ["int", "double", "string"],
-        "GeneralPropertiesAttribute" =>
-            ["Integer", "Double", "Distance", "DistanceList", "String"],
+    /// <summary>
+    /// 
+    /// </summary>
+    /// <param name="classType">
+    /// 0 - Plugin data class;<br/>
+    /// 1 - View model class;</param>
+    /// <returns></returns>
+    internal static HashSet<string> SupportedDataTypes(int classType) => classType switch {
+        0 => ["int", "double", "string"],
+        1 => ["Integer", "Double", "Distance", "DistanceList", "String"],
         _ => []
     };
 
     internal static bool DiagnoseIdCharacters(string id, string attName, Location argSyntaxLocation,
-        bool isGeneralFieldsAttribute, ref ImmutableArray<DiagnosticInfo>.Builder builder) {
+        ref ImmutableArray<DiagnosticInfo>.Builder builder) {
 
         var pass = true;
         if (id.Length == 0 || id.Length > MaxLengthOfArgument(attName)) {
-            builder.Add(
-                new DiagnosticInfo(LengthExceedLimitation, argSyntaxLocation,
-                    [attName, PrefixSuffixExample(attName), MaxLengthOfArgument(attName)])
-            );
+            builder.Add(new DiagnosticInfo(LengthExceedLimitation, argSyntaxLocation,
+                    [attName, PrefixSuffixExample(attName), MaxLengthOfArgument(attName)]));
             pass = false;
         }
 
         if (Regex.IsMatch(id, SpecialCharacterPattern)) {
-            builder.Add(
-                new DiagnosticInfo(ContainsSpecialCharacters, argSyntaxLocation, [])
-            );
+            builder.Add(new DiagnosticInfo(ContainsSpecialCharacters, argSyntaxLocation, []));
             pass = false;
         }
 
-        if (isGeneralFieldsAttribute && Regex.IsMatch(id, "^[0-9]")) {
+        if (attName is "GeneralAttribute" && Regex.IsMatch(id, "^[0-9]")) {
             builder.Add(new DiagnosticInfo(NameStartsWithNumber, argSyntaxLocation, []));
             pass = false;
         }
 
         if (Regex.IsMatch(id, UnsuggestedCharacterPattern)) {
-            builder.Add(
-                new DiagnosticInfo(ContainsUnsuggestedCharacters, argSyntaxLocation, [])
-            );
+            builder.Add(new DiagnosticInfo(ContainsUnsuggestedCharacters, argSyntaxLocation, []));
         }
 
         return pass;
