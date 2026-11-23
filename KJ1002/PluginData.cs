@@ -17,10 +17,12 @@ using Muggle.TsExtensions.CodingHelper.Generators;
 
 namespace Muggle.TsExtensions.KJ1002;
 
-[PartFields("Brace")]
-[PlateFields("Stiffener", "Gusset")]
-[BoltFields(1)]
-[WeldFields(1, 2)]
-[GeneralFields(typeof(int), "CreateUpperSplices")]
-[GeneralFields(typeof(double), "SectionLength", "Clearance", "ExtendedDistance", "BoltOffsetX")]
+[Part("Brace", Profile = "L70*5.0", Material = "Q235B")]
+[Plate("Stiffener", Thickness = 8, Material = "Q235B")]
+[Plate("Gusset", Thickness = 8, Material = "Q235B")]
+[Bolt(1, Standard = "HS10.9", Size = 16, DistX = "70")]
+[Weld(1, TypeAbove = 10, SizeAbove = 6, Around = 1, Shop = 1)]
+[Weld(2, TypeAbove = 10, SizeAbove = 6, Around = 1, Shop = 1)]
+[General(typeof(int), "CreateUpperSplices", 0)]
+[General(typeof(double), "SectionLength", 1000, "Clearance", 50, "ExtendedDistance", 30, "BoltOffsetX", 50)]
 public partial class PluginData { }

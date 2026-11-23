@@ -39,7 +39,7 @@ namespace Muggle.TsExtensions.KJ1002;
 [PluginUserInterface("Muggle.TsExtensions.KJ1002.View")]
 [SecondaryType(SecondaryType.SECONDARYTYPE_MULTIPLE)]
 [AutoDirectionType(AutoDirectionTypeEnum.AUTODIR_GLOBAL_Z)]
-[FieldsFrom(typeof(PluginData))]
+[FieldsFromData]
 public partial class KJ1002 : ConnectionBase {
 
     private class GussetIdentifiers {
@@ -55,14 +55,6 @@ public partial class KJ1002 : ConnectionBase {
 
     private Model Model { get; }
 
-    [PartFieldDefaultValues("Brace", profile: "L70*5.0", material: "Q235B")]
-    [PlateFieldDefaultValues("Stiffener", thickness: 8, material: "Q235B")]
-    [PlateFieldDefaultValues("Gusset", thickness: 8, material: "Q235B")]
-    [BoltFieldDefaultValues(1, standard: "HS10.9", size: 16, distXText: "70")]
-    [WeldFieldDefaultValues(1, typeAbove: 10, sizeAbove: 6, around: 1, shop: 1)]
-    [WeldFieldDefaultValues(2, typeAbove: 10, sizeAbove: 6, around: 1, shop: 1)]
-    [GeneralFieldDefaultValues("CreateUpperSplices", 0, "SectionLength", 1000, "Clearance", 50, "ExtendedDistance", 30,
-        "BoltOffsetX", 50)]
     private PluginData Data { get; }
 
     public KJ1002(PluginData data) {
@@ -93,13 +85,13 @@ public partial class KJ1002 : ConnectionBase {
 
             Verify(beamIDs, reverseDirection);
 
-            SetDataToDefaultIfUnset();
+            Data.SetFieldsToDefaultIfUnset();
 
             _ = new ProfileL(Data.PartBraceProfile);
 
             GetFieldValuesFrom(Data);
 
-            _boltDistListX = TsData.DistanceList.Parse(_bolt1DistXText, CultureInfo.CurrentCulture,
+            _boltDistListX = TsData.DistanceList.Parse(_bolt1DistX, CultureInfo.CurrentCulture,
                 TsData.Distance.CurrentUnitType);
 
             var workTp = GetWorkTransformationPlane(beamIDs, reverseDirection);
@@ -492,7 +484,7 @@ public partial class KJ1002 : ConnectionBase {
         direction *= reverseDirection ? -1 : 1;
 
         ContourPlate InsertContourPlate(ArrayList arr) {
-            var contourPlate = CreatePlateStiffener<ContourPlate>();
+            var contourPlate = Data.CreatePlateStiffener<ContourPlate>();
             contourPlate.Contour.ContourPoints = arr;
             contourPlate.Position.Depth = Position.DepthEnum.MIDDLE;
             contourPlate.Insert();
@@ -524,7 +516,7 @@ public partial class KJ1002 : ConnectionBase {
         Model.GetWorkPlaneHandler().SetCurrentTransformationPlane(tmpTp);
 
         foreach (var stif in stifs) {
-            var weld = CreateWeld1<Weld>();
+            var weld = Data.CreateWeld1<Weld>();
             weld.MainObject = beam;
             weld.SecondaryObject = stif;
             weld.Position = Weld.WeldPositionEnum.WELD_POSITION_PLUS_X;
@@ -738,14 +730,14 @@ public partial class KJ1002 : ConnectionBase {
         ];
 
         //  ContourPlate 的 Position.DepthEnum 与其 Contour.ContourPoints 顺序有关，根据右手螺旋法则确定
-        var plate = CreatePlateGusset<ContourPlate>();
+        var plate = Data.CreatePlateGusset<ContourPlate>();
         plate.Contour.ContourPoints = new ArrayList(contour.Select(p => new ContourPoint(p, new Chamfer())).ToArray());
         plate.Position.Depth = isLower && !isPre || !isLower && isPre
             ? Position.DepthEnum.FRONT
             : Position.DepthEnum.BEHIND;
         plate.Insert();
 
-        var weld = CreateWeld2<Weld>();
+        var weld = Data.CreateWeld2<Weld>();
         weld.MainObject = beam;
         weld.SecondaryObject = plate;
         weld.Position = Weld.WeldPositionEnum.WELD_POSITION_PLUS_Z;
@@ -787,7 +779,7 @@ public partial class KJ1002 : ConnectionBase {
         p1 -= direction * coincidentLength;
         p2 += direction * coincidentLength;
 
-        var brace = CreatePartBrace<Beam>();
+        var brace = Data.CreatePartBrace<Beam>();
         brace.StartPoint = isLower ? p2 : p1;
         brace.EndPoint = isLower ? p1 : p2;
         brace.Position.Rotation = isLower ? Position.RotationEnum.FRONT : Position.RotationEnum.BACK;
@@ -795,7 +787,7 @@ public partial class KJ1002 : ConnectionBase {
         brace.Position.DepthOffset = _plateGussetThickness;
         brace.Insert();
 
-        var curBolt = CreateBolt1<BoltArray>();
+        var curBolt = Data.CreateBolt1<BoltArray>();
         curBolt.PartToBoltTo = curGusset;
         curBolt.PartToBeBolted = brace;
         curBolt.FirstPosition = p1;
@@ -804,7 +796,7 @@ public partial class KJ1002 : ConnectionBase {
         curBolt.StartPointOffset.Dx = _boltOffsetX;
         curBolt.Insert();
 
-        var nxtBolt = CreateBolt1<BoltArray>();
+        var nxtBolt = Data.CreateBolt1<BoltArray>();
         nxtBolt.PartToBoltTo = nxtGusset;
         nxtBolt.PartToBeBolted = brace;
         nxtBolt.FirstPosition = p2;

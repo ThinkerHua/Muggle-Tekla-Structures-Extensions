@@ -30,7 +30,6 @@ using Tekla.Structures.Geometry3d;
 using Tekla.Structures.Model;
 using Tekla.Structures.Model.Operations;
 using Tekla.Structures.Plugins;
-using Assembly = System.Reflection.Assembly;
 using TsData = Tekla.Structures.Datatype;
 
 namespace Muggle.TsExtensions.KJ2001 {
@@ -40,26 +39,11 @@ namespace Muggle.TsExtensions.KJ2001 {
     [SecondaryType(SecondaryType.SECONDARYTYPE_ZERO)]
     [AutoDirectionType(AutoDirectionTypeEnum.AUTODIR_DETAIL)]
     [DetailType(DetailTypeEnum.END)]
-    [FieldsFrom(typeof(PluginData))]
+    [FieldsFromData]
     public partial class KJ2001 : ConnectionBase {
 
         private Model Model { get; }
 
-        [PartFieldDefaultValues("AnchorRod", material: "Q355", @class: 0)]
-        [PlateFieldDefaultValues("Base", thickness: 22, material: "Q355")]
-        [PlateFieldDefaultValues("Washer", thickness: 22, breadth: 70, height: 70, material: "Q355")]
-        [PlateFieldDefaultValues("Stif", material: "Q355")]
-        [ChamferFieldDefaultValues("Stif", 1, 25, 25)]
-        [BoltFieldDefaultValues("AnchorRod", size: 24)]
-        [BoltFieldDefaultValues("StudX", standard: "STUD", size: 16, length: 80, distXText: "8*200", distYText: "200",
-            type: 1)]
-        [BoltFieldDefaultValues("StudY", standard: "STUD", size: 16, length: 80, distXText: "8*200", distYText: "200",
-            type: 1)]
-        [WeldFieldDefaultValues(1, typeAbove: 10, sizeAbove: 8, around: 1, shop: 1)]
-        [WeldFieldDefaultValues(2, typeAbove: 10, sizeAbove: 8, around: 1, shop: 1)]
-        [GeneralFieldDefaultValues("AnchorLen1", 120, "AnchorLen2", 50, "AnchorLen3", 510, "AnchorLen4", 330,
-            "AnchorLen5", 100, "StudXOffset", 100, "StudYOffset", 100, "StifDistToBase", 1800,
-            "PouringHoleDiameter", 200, "ExhaustHoleDiameter", 25, "ExhaustHolePosX", 100, "ExhaustHolePosY", 100)]
         private PluginData Data { get; }
 
         private Localization Localization { get; }
@@ -96,15 +80,15 @@ namespace Muggle.TsExtensions.KJ2001 {
                     throw new Exception(Localization.GetText("exception_column_profile_not_supported"));
                 }
 
-                SetDataToDefaultIfUnset();
+                Data.SetFieldsToDefaultIfUnset();
                 if (Data.PlateBaseBreadth <= 0.0) Data.PlateBaseBreadth = _primProfile.b1 + 200;
                 if (Data.PlateBaseHeight <= 0.0) Data.PlateBaseHeight = _primProfile.h1 + 200;
-                if (IsDefaultValue(Data.BoltAnchorRodDistXText) ||
-                    Regex.IsMatch(Data.BoltAnchorRodDistXText, "0(\\.0+)?"))
-                    Data.BoltAnchorRodDistXText = $"50 2*{_primProfile.h1 * 0.5 + 100} {_primProfile.h1 + 150}";
-                if (IsDefaultValue(Data.BoltAnchorRodDistYText) ||
-                    Regex.IsMatch(Data.BoltAnchorRodDistYText, "0(\\.0+)?"))
-                    Data.BoltAnchorRodDistYText = $"0 {_primProfile.b1 * -0.5 - 50} {_primProfile.b1 * 0.5 + 50} 0";
+                if (IsDefaultValue(Data.BoltAnchorRodDistX) ||
+                    Regex.IsMatch(Data.BoltAnchorRodDistX, "0(\\.0+)?"))
+                    Data.BoltAnchorRodDistX = $"50 2*{_primProfile.h1 * 0.5 + 100} {_primProfile.h1 + 150}";
+                if (IsDefaultValue(Data.BoltAnchorRodDistY) ||
+                    Regex.IsMatch(Data.BoltAnchorRodDistY, "0(\\.0+)?"))
+                    Data.BoltAnchorRodDistY = $"0 {_primProfile.b1 * -0.5 - 50} {_primProfile.b1 * 0.5 + 50} 0";
                 Data.PartAnchorRodProfile = $"D{Data.BoltAnchorRodSize}";
                 Data.PlateStifBreadth = _primProfile.b1 - _primProfile.s * 2;
                 GetFieldValuesFrom(Data);
@@ -157,7 +141,7 @@ namespace Muggle.TsExtensions.KJ2001 {
             var p1 = new Point(_plateBaseHeight * -0.5, 0.0, 0.0);
             var p2 = new Point(_plateBaseHeight * 0.5, 0.0, 0.0);
 
-            var basePlate = CreatePlateBase<Beam>();
+            var basePlate = Data.CreatePlateBase<Beam>();
             basePlate.StartPoint = p1;
             basePlate.EndPoint = p2;
             basePlate.Position.Rotation = Position.RotationEnum.FRONT;
@@ -165,7 +149,7 @@ namespace Muggle.TsExtensions.KJ2001 {
             basePlate.Position.Depth = Position.DepthEnum.BEHIND;
             basePlate.Insert();
 
-            var weld = CreateWeld1<Weld>();
+            var weld = Data.CreateWeld1<Weld>();
             weld.MainObject = prim;
             weld.SecondaryObject = basePlate;
 
@@ -186,12 +170,12 @@ namespace Muggle.TsExtensions.KJ2001 {
                 weld.Insert();
             }
 
-            var anchorRodDistListX = TsData.DistanceList.Parse(_boltAnchorRodDistXText, CultureInfo.CurrentCulture,
+            var anchorRodDistListX = TsData.DistanceList.Parse(_boltAnchorRodDistX, CultureInfo.CurrentCulture,
                 TsData.Distance.CurrentUnitType);
-            var anchorRodDistListY = TsData.DistanceList.Parse(_boltAnchorRodDistYText, CultureInfo.CurrentCulture,
+            var anchorRodDistListY = TsData.DistanceList.Parse(_boltAnchorRodDistY, CultureInfo.CurrentCulture,
                 TsData.Distance.CurrentUnitType);
 
-            var bolt = CreateBoltAnchorRod<BoltXYList>();
+            var bolt = Data.CreateBoltAnchorRod<BoltXYList>();
             bolt.PartToBoltTo = basePlate;
             bolt.PartToBeBolted = basePlate;
             bolt.FirstPosition = p1;
@@ -226,12 +210,12 @@ namespace Muggle.TsExtensions.KJ2001 {
 
                 var anchorRod = anchorRodParts.FirstOrDefault(part => part.Name == "ANCHORROD");
                 if (anchorRod is not null) {
-                    ModifyToPartAnchorRod(ref anchorRod);
+                    Data.ModifyToPartAnchorRod(ref anchorRod);
                     anchorRod.Modify();
                 }
 
                 if (anchorRodParts.FirstOrDefault(part => part.Name == "WASHERPLATE") is Beam washerPlate) {
-                    ModifyToPlateWasher(ref washerPlate);
+                    Data.ModifyToPlateWasher(ref washerPlate);
                     washerPlate.Modify();
                 }
             }
@@ -243,7 +227,7 @@ namespace Muggle.TsExtensions.KJ2001 {
             p1 = new Point(0, _primProfile.b1 * -0.5);
             p2 = p1 + axisZ * _stifDistToBase;
 
-            var stud = CreateBoltStudX<BoltArray>();
+            var stud = Data.CreateBoltStudX<BoltArray>();
             stud.PartToBoltTo = prim;
             stud.PartToBeBolted = prim;
             stud.FirstPosition = p1;
@@ -263,7 +247,7 @@ namespace Muggle.TsExtensions.KJ2001 {
             p1 = new Point(_primProfile.h1 * -0.5, 0);
             p2 = p1 + axisZ * _stifDistToBase;
 
-            stud = CreateBoltStudY<BoltArray>();
+            stud = Data.CreateBoltStudY<BoltArray>();
             stud.PartToBoltTo = prim;
             stud.PartToBeBolted = prim;
             stud.FirstPosition = p1;
@@ -293,7 +277,7 @@ namespace Muggle.TsExtensions.KJ2001 {
             var p3 = new Point(p2.X, -p2.Y, _stifDistToBase);
             var p4 = new Point(p1.X, -p1.Y, _stifDistToBase);
 
-            var chamfer = CreateChamferStif();
+            var chamfer = Data.CreateChamferStif();
             var chamferReversed = chamfer.GetReversed();
             var contours = new ArrayList {
                 new ContourPoint(p1, chamfer),
@@ -302,12 +286,12 @@ namespace Muggle.TsExtensions.KJ2001 {
                 new ContourPoint(p4, chamferReversed)
             };
 
-            var stif = CreatePlateStif<ContourPlate>();
+            var stif = Data.CreatePlateStif<ContourPlate>();
             stif.Contour.ContourPoints = contours;
             stif.Position.Depth = Position.DepthEnum.BEHIND;
             stif.Insert();
 
-            weld = CreateWeld2<Weld>();
+            weld = Data.CreateWeld2<Weld>();
             weld.MainObject = prim;
             weld.SecondaryObject = stif;
             if (_weld1Around != 0) {

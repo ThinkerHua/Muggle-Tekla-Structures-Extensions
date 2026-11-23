@@ -37,21 +37,13 @@ namespace Muggle.TsExtensions.HJ1001;
 [InputObjectType(InputObjectType.INPUTOBJECT_PART)]
 [SecondaryType(SecondaryType.SECONDARYTYPE_ONE)]
 [PositionType(PositionTypeEnum.END_END_PLANE)]
-[FieldsFrom(typeof(PluginData))]
+[FieldsFromData]
 public partial class HJ1001 : ConnectionBase {
 
     private Localization Localization { get; }
 
     private Model Model { get; }
 
-    [PlateFieldDefaultValues("End", thickness: 20, breadth: 550, material: "Q235B")]
-    [PlateFieldDefaultValues("Stiffener", breadth: 120, material: "Q235B")]
-    [ChamferFieldDefaultValues("Inside", type: 1, x: 25, y: 25)]
-    [ChamferFieldDefaultValues("Outside", type: 1, x: 40, y: 40)]
-    [BoltCircleFieldDefaultValues(1, size: 20, standard: "HS10.9", diameter: 450, numberOfBolts: 16)]
-    [WeldFieldDefaultValues(1, typeAbove: 10, sizeAbove: 8, around: 1, shop: 1)]
-    [WeldFieldDefaultValues(2, typeAbove: 10, sizeAbove: 8, typeBelow: 10, sizeBelow: 8, shop: 1)]
-    [GeneralFieldDefaultValues("StifKind", 0, "Quantity", 0, "Margin", 10)]
     private PluginData Data { get; }
 
     public HJ1001(PluginData data) {
@@ -77,9 +69,9 @@ public partial class HJ1001 : ConnectionBase {
 
     public override bool Run() {
         try {
-            SetDataToDefaultIfUnset();
+            Data.SetFieldsToDefaultIfUnset();
             GetFieldValuesFrom(Data);
-            
+
             VerifyProfile(out var prfPrim, out var prfSec);
 
             Model.GetWorkPlaneHandler()
@@ -234,17 +226,17 @@ public partial class HJ1001 : ConnectionBase {
         var cp3 = new ContourPoint(p3, chamferNone);
         var cp4 = new ContourPoint(p4, chamferArcPoint);
 
-        var endplate1 = CreatePlateEnd<ContourPlate>();
+        var endplate1 = Data.CreatePlateEnd<ContourPlate>();
         endplate1.Contour.ContourPoints = new ArrayList { cp1, cp2, cp3, cp4 };
         endplate1.Position.Depth = Position.DepthEnum.BEHIND;
         endplate1.Insert();
 
-        var endplate2 = CreatePlateEnd<ContourPlate>();
+        var endplate2 = Data.CreatePlateEnd<ContourPlate>();
         endplate2.Contour.ContourPoints = new ArrayList { cp1, cp2, cp3, cp4 };
         endplate2.Position.Depth = Position.DepthEnum.FRONT;
         endplate2.Insert();
 
-        var weld = CreateWeld1<Weld>();
+        var weld = Data.CreateWeld1<Weld>();
         weld.MainObject = prim;
         weld.SecondaryObject = endplate1;
         weld.Position = Weld.WeldPositionEnum.WELD_POSITION_MINUS_Z;
@@ -295,12 +287,12 @@ public partial class HJ1001 : ConnectionBase {
 
         #region 创建螺栓
 
-        if (_boltCircle1Diameter <= 0 || _boltCircle1NumberOfBolts <= 0) goto SkipBolt;
+        if (_bolt1Diameter <= 0 || _bolt1NumberOfBolts <= 0) goto SkipBolt;
 
-        matrix = MatrixFactory.Rotate(Math.PI / _boltCircle1NumberOfBolts, axisZ);
+        matrix = MatrixFactory.Rotate(Math.PI / _bolt1NumberOfBolts, axisZ);
         p1 = matrix.Transform(axisX * 100);
 
-        var bolt = CreateBoltCircle1();
+        var bolt = Data.CreateBolt1<BoltCircle>();
         bolt.FirstPosition = origin;
         bolt.SecondPosition = p1;
         bolt.PartToBoltTo = endplate1;
@@ -365,9 +357,9 @@ public partial class HJ1001 : ConnectionBase {
         Part booleanOperativePart) {
         var axisX = new Vector(1, 0, 0);
         var axisZ = new Vector(0, 0, 1);
-        var chamferInside = CreateChamferInside();
+        var chamferInside = Data.CreateChamferInside();
         var chamferNone = new Chamfer();
-        var chamferOutside = CreateChamferOutside();
+        var chamferOutside = Data.CreateChamferOutside();
 
         var p1 = new Point(-inputPartDiameter * 0.5, 0, aboveXyPlane ? _plateEndThickness : -_plateEndThickness);
         var p2 = p1 - axisX * stifHeight;
@@ -397,7 +389,7 @@ public partial class HJ1001 : ConnectionBase {
             contourPoints = inputPartIsCurve ? [.. simulated, cp2, cp4, cp5, cp6] : [cp1, cp2, cp4];
         }
 
-        var stif = CreatePlateStiffener<ContourPlate>();
+        var stif = Data.CreatePlateStiffener<ContourPlate>();
         stif.Contour.ContourPoints = new ArrayList(contourPoints);
         stif.Insert();
 
@@ -405,7 +397,7 @@ public partial class HJ1001 : ConnectionBase {
             _ = ModelOperation.ApplyBooleanOperation(stif, booleanOperativePart);
         }
 
-        var weld = CreateWeld2<Weld>();
+        var weld = Data.CreateWeld2<Weld>();
         weld.MainObject = inputPart;
         weld.SecondaryObject = stif;
         weld.Position = Weld.WeldPositionEnum.WELD_POSITION_PLUS_Y;

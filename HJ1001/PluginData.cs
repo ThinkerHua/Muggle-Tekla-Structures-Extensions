@@ -12,15 +12,18 @@
  *  PluginData.cs: data class for 'HJ1001' connection
  *  written by Huang YongXing - thinkerhua@hotmail.com
  *==============================================================================*/
- 
+
 using Muggle.TsExtensions.CodingHelper.Generators;
 
 namespace Muggle.TsExtensions.HJ1001;
 
-[PlateFields("End", "Stiffener")]
-[ChamferFields("Inside", "Outside")]
-[BoltCircleFields(1)]
-[WeldFields(1, 2)]
-[GeneralFields(typeof(int), "StifKind", "Quantity")]
-[GeneralFields(typeof(double), "Margin")]
+[Plate("End", Thickness = 20, Breadth = 550, Material = "Q235B")]
+[Plate("Stiffener", Thickness = 10, Breadth = 120, Material = "Q235B")]
+[Chamfer("Inside", Type = 1, X = 25, Y = 25)]
+[Chamfer("Outside", Type = 1, X = 40, Y = 40)]
+[Bolt(1, Shape = 1, Size = 20, Standard = "HS10.9", Diameter = 450, NumberOfBolts = 16)]
+[Weld(1, TypeAbove = 10, SizeAbove = 8, Around = 1, Shop = 1)]
+[Weld(2, TypeAbove = 10, SizeAbove = 8, TypeBelow = 10, SizeBelow = 8, Shop = 1)]
+[General(typeof(int), "StifKind", 0, "Quantity", 8)]
+[General(typeof(double), "Margin", 10)]
 public partial class PluginData;

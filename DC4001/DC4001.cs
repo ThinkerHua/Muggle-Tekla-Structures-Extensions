@@ -31,48 +31,26 @@ namespace Muggle.TsExtensions.DC4001;
 [PluginUserInterface("Muggle.TsExtensions.DC4001.View")]
 [CustomPartInputType(CustomPartInputType.INPUT_2_POINTS)]
 [CustomPartPositioningType(CustomPartPositioningType.POSITIONING_BY_INPUTPOINTS)]
-[FieldsFrom(typeof(PluginData))]
+[FieldsFromData]
 public partial class DC4001 : CustomPartBase {
 
     private Model Model { get; }
 
-    [PartFieldDefaultValues("main", name: "Main", material: "Q345B")]
-    [PlateFieldDefaultValues(4, thickness: 16, breadth: 250, name: "4")]
-    [PlateFieldDefaultValues(5, thickness: 8, breadth: 90, name: "5")]
-    [PlateFieldDefaultValues(10, thickness: 10, breadth: 120, name: "10")]
-    [PlateFieldDefaultValues(11, thickness: 10, breadth: 120, name: "11")]
-    [PlateFieldDefaultValues(12, thickness: 20, breadth: 90, height: 340, name: "12")]
-    [PlateFieldDefaultValues(13, thickness: 10, breadth: 120, name: "13")]
-    [WeldFieldDefaultValues("4_1", typeAbove: 10, typeBelow: 10, sizeAbove: 8, sizeBelow: 8, shop: 1)]
-    [WeldFieldDefaultValues("4_2", typeAbove: 10, typeBelow: 10, sizeAbove: 10, sizeBelow: 10, shop: 1)]
-    [WeldFieldDefaultValues("4_3", typeAbove: 10, typeBelow: 10, sizeAbove: 10, sizeBelow: 10, shop: 1)]
-    [WeldFieldDefaultValues("5", typeAbove: 10, typeBelow: 10, sizeAbove: 6, sizeBelow: 6, shop: 1)]
-    [WeldFieldDefaultValues("10_1", typeAbove: 4, sizeAbove: 2, angleAbove: 45, rootOpeningAbove: 2, shop: 1,
-        preparation: 1)]
-    [WeldFieldDefaultValues("10_2", typeAbove: 10, typeBelow: 10, sizeAbove: 8, sizeBelow: 8, shop: 1)]
-    [WeldFieldDefaultValues("11", typeAbove: 10, typeBelow: 10, sizeAbove: 6, sizeBelow: 6, shop: 1)]
-    [WeldFieldDefaultValues("12", typeAbove: 10, sizeAbove: 8, around: 1, shop: 1)]
-    [WeldFieldDefaultValues("13", typeAbove: 10, typeBelow: 10, sizeAbove: 8, sizeBelow: 8, shop: 1)]
-    [ChamferFieldDefaultValues(5, type: 1, x: 30, y: 45)]
-    [ChamferFieldDefaultValues(10, type: 1, x: 20, y: 20)]
-    [ChamferFieldDefaultValues(13, type: 1, x: 20, y: 20)]
-    [GeneralFieldDefaultValues("kind", 0, "h", 900, "b1", 550, "b2", 300, "tw", 12, "tf", 18,
-        "gap", 5, "stretch4", 20, "shrink5", 54, "distance5", 1500, "position10", 600, "position11", 163)]
     private PluginData Data { get; }
 
     public DC4001(PluginData data) {
         Model = new Model();
         Data = data;
 
-        SetDataToDefaultIfUnset();
+        Data.SetFieldsToDefaultIfUnset();
 
-        if (IsDefaultValue(Data.Plate4Material)) Data.Plate4Material = Data.PartMainMaterial; 
-        if (IsDefaultValue(Data.Plate5Material)) Data.Plate5Material = Data.PartMainMaterial; 
-        if (IsDefaultValue(Data.Plate10Material)) Data.Plate10Material = Data.PartMainMaterial; 
-        if (IsDefaultValue(Data.Plate11Material)) Data.Plate11Material = Data.PartMainMaterial; 
-        if (IsDefaultValue(Data.Plate12Material)) Data.Plate12Material = Data.PartMainMaterial; 
-        if (IsDefaultValue(Data.Plate13Material)) Data.Plate13Material = Data.PartMainMaterial; 
-        
+        if (IsDefaultValue(Data.Plate4Material)) Data.Plate4Material = Data.PartMainMaterial;
+        if (IsDefaultValue(Data.Plate5Material)) Data.Plate5Material = Data.PartMainMaterial;
+        if (IsDefaultValue(Data.Plate10Material)) Data.Plate10Material = Data.PartMainMaterial;
+        if (IsDefaultValue(Data.Plate11Material)) Data.Plate11Material = Data.PartMainMaterial;
+        if (IsDefaultValue(Data.Plate12Material)) Data.Plate12Material = Data.PartMainMaterial;
+        if (IsDefaultValue(Data.Plate13Material)) Data.Plate13Material = Data.PartMainMaterial;
+
         GetFieldValuesFrom(Data);
     }
 
@@ -105,7 +83,7 @@ public partial class DC4001 : CustomPartBase {
             var p1 = ps + axisX * (_gap + _plate4Thickness);
             var p2 = pe - axisX * (_gap + (_kind == 0 ? _plate4Thickness : 0));
 
-            var main = CreatePartMain<Beam>();
+            var main = Data.CreatePartMain<Beam>();
             main.Profile.ProfileString = mainProfile;
             main.StartPoint = p1;
             main.EndPoint = p2;
@@ -119,26 +97,26 @@ public partial class DC4001 : CustomPartBase {
 
             var p3 = p1 + axisZ * (_h * 0.5 - _tf * 0.5);
             var p4 = p1 - axisZ * (_h * 0.5 + _stretch4);
-            var plate4S = CreatePlate4<Beam>();
+            var plate4S = Data.CreatePlate4<Beam>();
             plate4S.StartPoint = p3;
             plate4S.EndPoint = p4;
             plate4S.Position.Rotation = Position.RotationEnum.FRONT;
             plate4S.Position.Depth = Position.DepthEnum.BEHIND;
             plate4S.Insert();
 
-            var weld = CreateWeld4_1<Weld>();
+            var weld = Data.CreateWeld4_1<Weld>();
             weld.MainObject = main;
             weld.SecondaryObject = plate4S;
             weld.Position = Weld.WeldPositionEnum.WELD_POSITION_PLUS_Z;
             weld.Insert();
 
-            weld = CreateWeld4_2<Weld>();
+            weld = Data.CreateWeld4_2<Weld>();
             weld.MainObject = main;
             weld.SecondaryObject = plate4S;
             weld.Position = Weld.WeldPositionEnum.WELD_POSITION_PLUS_X;
             weld.Insert();
 
-            weld = CreateWeld4_3<Weld>();
+            weld = Data.CreateWeld4_3<Weld>();
             weld.MainObject = main;
             weld.SecondaryObject = plate4S;
             weld.Position = Weld.WeldPositionEnum.WELD_POSITION_MINUS_Z;
@@ -147,26 +125,26 @@ public partial class DC4001 : CustomPartBase {
             if (_kind == 0) {
                 p3 = p2 + axisZ * (_h * 0.5 - _tf * 0.5);
                 p4 = p2 - axisZ * (_h * 0.5 + _stretch4);
-                var plate4E = CreatePlate4<Beam>();
+                var plate4E = Data.CreatePlate4<Beam>();
                 plate4E.StartPoint = p3;
                 plate4E.EndPoint = p4;
                 plate4E.Position.Rotation = Position.RotationEnum.BACK;
                 plate4E.Position.Depth = Position.DepthEnum.FRONT;
                 plate4E.Insert();
 
-                weld = CreateWeld4_1<Weld>();
+                weld = Data.CreateWeld4_1<Weld>();
                 weld.MainObject = main;
                 weld.SecondaryObject = plate4E;
                 weld.Position = Weld.WeldPositionEnum.WELD_POSITION_PLUS_Z;
                 weld.Insert();
 
-                weld = CreateWeld4_2<Weld>();
+                weld = Data.CreateWeld4_2<Weld>();
                 weld.MainObject = main;
                 weld.SecondaryObject = plate4E;
                 weld.Position = Weld.WeldPositionEnum.WELD_POSITION_MINUS_X;
                 weld.Insert();
 
-                weld = CreateWeld4_3<Weld>();
+                weld = Data.CreateWeld4_3<Weld>();
                 weld.MainObject = main;
                 weld.SecondaryObject = plate4E;
                 weld.Position = Weld.WeldPositionEnum.WELD_POSITION_MINUS_Z;
@@ -201,18 +179,18 @@ public partial class DC4001 : CustomPartBase {
             for (int i = 0; i < cnt; i++, p3 += axisX * _distance5, p4 += axisX * _distance5) {
 
                 var cps = new ArrayList {
-                    new ContourPoint(p3 - axisY * (_tw * 0.5), CreateChamfer5()),
+                    new ContourPoint(p3 - axisY * (_tw * 0.5), Data.CreateChamfer5()),
                     new ContourPoint(p3 - axisY * (_tw * 0.5 + _plate5Breadth), new Chamfer()),
                     new ContourPoint(p4 - axisY * (_tw * 0.5 + _plate5Breadth), new Chamfer()),
                     new ContourPoint(p4 - axisY * (_tw * 0.5), new Chamfer()),
                 };
 
-                var plate5 = CreatePlate5<ContourPlate>();
+                var plate5 = Data.CreatePlate5<ContourPlate>();
                 plate5.Contour.ContourPoints = cps;
                 plate5.Position.Depth = Position.DepthEnum.MIDDLE;
                 plate5.Insert();
 
-                weld = CreateWeld5<Weld>();
+                weld = Data.CreateWeld5<Weld>();
                 weld.MainObject = main;
                 weld.SecondaryObject = plate5;
                 weld.Position = Weld.WeldPositionEnum.WELD_POSITION_PLUS_Z;
@@ -220,7 +198,6 @@ public partial class DC4001 : CustomPartBase {
 
                 weld.Position = Weld.WeldPositionEnum.WELD_POSITION_PLUS_X;
                 weld.Insert();
-
 
                 foreach (ContourPoint cp in cps) {
                     cp.Y *= -1;
@@ -245,7 +222,8 @@ public partial class DC4001 : CustomPartBase {
             p3 = pe - axisX * _position10 + axisZ * (_h * 0.5 - _tf);
             p4 = p3 - axisZ * (_h - _tf * 2);
             var contour = new ArrayList {
-                new ContourPoint(p3 - axisY * (_tw * 0.5), _kind == 1 ? CreateChamfer10() : CreateChamfer13()),
+                new ContourPoint(p3 - axisY * (_tw * 0.5),
+                    _kind == 1 ? Data.CreateChamfer10() : Data.CreateChamfer13()),
                 new ContourPoint(p3 - axisY * (_tw * 0.5 + (_kind == 1 ? _plate10Breadth : _plate13Breadth)),
                     new Chamfer()),
                 new ContourPoint(p4 - axisY * (_tw * 0.5 + (_kind == 1 ? _plate10Breadth : _plate13Breadth)),
@@ -253,20 +231,20 @@ public partial class DC4001 : CustomPartBase {
                 new ContourPoint(p4 - axisY * (_tw * 0.5), new Chamfer()),
             };
 
-            var plate = _kind == 1 ? CreatePlate10<ContourPlate>() : CreatePlate13<ContourPlate>();
+            var plate = _kind == 1 ? Data.CreatePlate10<ContourPlate>() : Data.CreatePlate13<ContourPlate>();
             plate.Contour.ContourPoints = contour;
             plate.Position.Depth = Position.DepthEnum.MIDDLE;
             plate.Insert();
 
             switch (_kind) {
             case 1:
-                weld = CreateWeld10_1<Weld>();
+                weld = Data.CreateWeld10_1<Weld>();
                 weld.MainObject = main;
                 weld.SecondaryObject = plate;
                 weld.Position = Weld.WeldPositionEnum.WELD_POSITION_PLUS_Z;
                 weld.Insert();
 
-                weld = CreateWeld10_2<Weld>();
+                weld = Data.CreateWeld10_2<Weld>();
                 weld.MainObject = main;
                 weld.SecondaryObject = plate;
                 weld.Position = Weld.WeldPositionEnum.WELD_POSITION_PLUS_X;
@@ -276,7 +254,7 @@ public partial class DC4001 : CustomPartBase {
                 weld.Insert();
                 break;
             case 2:
-                weld = CreateWeld13<Weld>();
+                weld = Data.CreateWeld13<Weld>();
                 weld.MainObject = main;
                 weld.SecondaryObject = plate;
                 weld.Position = Weld.WeldPositionEnum.WELD_POSITION_PLUS_Z;
@@ -299,14 +277,14 @@ public partial class DC4001 : CustomPartBase {
 
             switch (_kind) {
             case 1:
-                weld = CreateWeld10_1<Weld>();
+                weld = Data.CreateWeld10_1<Weld>();
                 weld.SwapAboveBelow();
                 weld.MainObject = main;
                 weld.SecondaryObject = plate;
                 weld.Position = Weld.WeldPositionEnum.WELD_POSITION_PLUS_Z;
                 weld.Insert();
 
-                weld = CreateWeld10_2<Weld>();
+                weld = Data.CreateWeld10_2<Weld>();
                 weld.MainObject = main;
                 weld.SecondaryObject = plate;
                 weld.Position = Weld.WeldPositionEnum.WELD_POSITION_PLUS_X;
@@ -316,7 +294,7 @@ public partial class DC4001 : CustomPartBase {
                 weld.Insert();
                 break;
             case 2:
-                weld = CreateWeld13<Weld>();
+                weld = Data.CreateWeld13<Weld>();
                 weld.MainObject = main;
                 weld.SecondaryObject = plate;
                 weld.Position = Weld.WeldPositionEnum.WELD_POSITION_PLUS_Z;
@@ -330,7 +308,7 @@ public partial class DC4001 : CustomPartBase {
                 break;
             }
 
-        SkipPlate10Plate13:;
+            SkipPlate10Plate13: ;
 
             #endregion
 
@@ -341,18 +319,18 @@ public partial class DC4001 : CustomPartBase {
             p3 = pe - axisX * (_gap + _position11) + axisZ * (_h * 0.5 - _tf);
             p4 = p3 - axisZ * (_h - _tf * 2 - _shrink5);
             contour = new ArrayList {
-                new ContourPoint(p3 - axisY * (_tw * 0.5), CreateChamfer5()),
+                new ContourPoint(p3 - axisY * (_tw * 0.5), Data.CreateChamfer5()),
                 new ContourPoint(p3 - axisY * (_tw * 0.5 + _plate11Breadth), new Chamfer()),
                 new ContourPoint(p4 - axisY * (_tw * 0.5 + _plate11Breadth), new Chamfer()),
                 new ContourPoint(p4 - axisY * (_tw * 0.5), new Chamfer()),
             };
 
-            plate = _kind == 1 ? CreatePlate11<ContourPlate>() : CreatePlate5<ContourPlate>();
+            plate = _kind == 1 ? Data.CreatePlate11<ContourPlate>() : Data.CreatePlate5<ContourPlate>();
             plate.Contour.ContourPoints = contour;
             plate.Position.Depth = Position.DepthEnum.MIDDLE;
             plate.Insert();
 
-            weld = _kind == 1 ? CreateWeld11<Weld>() : CreateWeld5<Weld>();
+            weld = _kind == 1 ? Data.CreateWeld11<Weld>() : Data.CreateWeld5<Weld>();
             weld.MainObject = main;
             weld.SecondaryObject = plate;
             weld.Position = Weld.WeldPositionEnum.WELD_POSITION_PLUS_Z;
@@ -374,7 +352,7 @@ public partial class DC4001 : CustomPartBase {
             weld.Position = Weld.WeldPositionEnum.WELD_POSITION_PLUS_X;
             weld.Insert();
 
-        SkipPlate11Plate5:;
+            SkipPlate11Plate5: ;
 
             #endregion
 
@@ -385,7 +363,7 @@ public partial class DC4001 : CustomPartBase {
             p3 = pe - axisX * _position10 - axisY * (_plate12Height * 0.5) - axisZ * (_h * 0.5);
             p4 = p3 + axisY * _plate12Height;
 
-            var plate12 = CreatePlate12<Beam>();
+            var plate12 = Data.CreatePlate12<Beam>();
             plate12.StartPoint = p3;
             plate12.EndPoint = p4;
             plate12.Position.Rotation = Position.RotationEnum.BACK;
@@ -393,12 +371,12 @@ public partial class DC4001 : CustomPartBase {
             plate12.Position.Depth = Position.DepthEnum.BEHIND;
             plate12.Insert();
 
-            weld = CreateWeld12<Weld>();
+            weld = Data.CreateWeld12<Weld>();
             weld.MainObject = main;
             weld.SecondaryObject = plate12;
             weld.Insert();
 
-        SkipPlate12:;
+            SkipPlate12: ;
 
             #endregion
 

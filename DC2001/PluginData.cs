@@ -17,9 +17,18 @@ using Muggle.TsExtensions.CodingHelper.Generators;
 
 namespace Muggle.TsExtensions.DC2001;
 
-[PartFields("LeftCorbel", "RightCorbel")]
-[PlateFields("PrimStif", "LCorbelStif", "RCorbelStif", "LeftPad", "RightPad")]
-[ChamferFields("PrimStif")]
-[WeldFields("Corbel", "PrimStif", "CorbelStif", "Pad")]
-[GeneralFields(typeof(double), "LeftCorbelLength", "RightCorbelLength", "LeftCorbelStifPos", "RightCorbelStifPos")]
+[Part("LeftCorbel", Profile = "HI530-270-30-30*600", Name = "LeftCorbel")]
+[Part("RightCorbel", Name = "RightCorbel")]
+[Plate("PrimStif", Thickness = 20, Name = "ColumnStiffener")]
+[Plate("LCorbelStif", Thickness = 20, Breadth = 185, Name = "LeftCorbelStiffener")]
+[Plate("RCorbelStif", Thickness = 20, Breadth = 185, Name = "RightCorbelStiffener")]
+[Plate("LeftPad", Thickness = 30, Breadth = 560, Height = 560, Name = "LeftPad")]
+[Plate("RightPad", Thickness = 30, Breadth = 560, Height = 560, Name = "RightPad")]
+[Chamfer("PrimStif", Type = 1, X = 25, Y = 25)]
+[Weld("Corbel", TypeAbove = 10, SizeAbove = 6, Around = 1, Shop = 1)]
+[Weld("PrimStif", TypeAbove = 10, TypeBelow = 10, SizeAbove = 6, SizeBelow = 6, Shop = 1)]
+[Weld("CorbelStif", TypeAbove = 10, TypeBelow = 10, SizeAbove = 6, SizeBelow = 6, Shop = 1)]
+[Weld("Pad", TypeAbove = 10, SizeAbove = 6, Around = 1, Shop = 1)]
+[General(typeof(double), "LeftCorbelLength", 800, "RightCorbelLength", 800,
+    "LeftCorbelStifPos", 500, "RightCorbelStifPos", 500)]
 public partial class PluginData;

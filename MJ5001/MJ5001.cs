@@ -25,8 +25,6 @@ using Muggle.TsExtensions.Common.Model;
 using Muggle.TsExtensions.Common.Profile;
 using Muggle.TsExtensions.Common.Resources;
 using Tekla.Structures;
-using Tekla.Structures.Datatype;
-using Tekla.Structures.Geometry3d;
 using Tekla.Structures.Model;
 using Tekla.Structures.Model.Operations;
 using Tekla.Structures.Model.UI;
@@ -40,7 +38,7 @@ namespace Muggle.TsExtensions.MJ5001;
 [Plugin("MJ5001")]
 [PluginUserInterface("Muggle.TsExtensions.MJ5001.View")]
 [InputObjectDependency(InputObjectDependency.DEPENDENT)]
-[FieldsFrom(typeof(PluginData))]
+[FieldsFromData]
 public partial class MJ5001 : PluginBase {
 
     private readonly record struct Profile(char Type, double H, double B, double S, double T) {
@@ -53,16 +51,6 @@ public partial class MJ5001 : PluginBase {
 
     private Model Model { get; }
 
-    [PartFieldDefaultValues("AnchorRod", material: "Q345B", @class: 0)]
-    [PlateFieldDefaultValues("Embedment", thickness: 20, breadth: 300, height: 800, material: "Q345B")]
-    [PlateFieldDefaultValues("Cleat", thickness: 12, breadth: 300, height: 300, material: "Q345B")]
-    [BoltFieldDefaultValues("AnchorRod", size: 20, length: 150, distXText: "4*125", distYText: "160")]
-    [BoltFieldDefaultValues("1", standard: "HS10.9", size: 20, distXText: "3*70", distYText: "2*70")]
-    [WeldFieldDefaultValues(1, typeAbove: 10, sizeAbove: 6, around: 1, shop: 1)]
-    [WeldFieldDefaultValues(2, typeAbove: 10, sizeAbove: 8, around: 1, shop: 1)]
-    [WeldFieldDefaultValues(3, sizeAbove: 10, angleAbove: 45, rootOpeningAbove: 2, rootFaceAbove: 2)]
-    [ChamferFieldDefaultValues(1, type: 3, x: 30)]
-    [GeneralFieldDefaultValues("Gap", 15)]
     private PluginData Data { get; }
 
     private Localization Localization { get; }
@@ -124,9 +112,9 @@ public partial class MJ5001 : PluginBase {
             Verify(beamId, out var beamProfile);
 
             var concreteId = (Identifier)input[1].GetInput();
-            var points = ((ArrayList)input[2].GetInput()).Cast<Point>().ToArray();
+            var points = ((ArrayList)input[2].GetInput()).Cast<TsG3d.Point>().ToArray();
 
-            SetDataToDefaultIfUnset();
+            Data.SetFieldsToDefaultIfUnset();
             Data.PartAnchorRodProfile = $"D{Data.BoltAnchorRodSize}";
             GetFieldValuesFrom(Data);
 
@@ -152,8 +140,8 @@ public partial class MJ5001 : PluginBase {
 
         try {
             var prfH = new ProfileH_Symmetrical(beam.Profile.ProfileString);
-            if (Math.Abs(prfH.h2 - prfH.h1) > GeometryConstants.DISTANCE_EPSILON ||
-                Math.Abs(prfH.b2 - prfH.b1) > GeometryConstants.DISTANCE_EPSILON) {
+            if (Math.Abs(prfH.h2 - prfH.h1) > TsG3d.GeometryConstants.DISTANCE_EPSILON ||
+                Math.Abs(prfH.b2 - prfH.b1) > TsG3d.GeometryConstants.DISTANCE_EPSILON) {
                 throw new NotSupportedException(
                     Localization.GetText("exception_not_supported_section_profile"));
             }
@@ -191,12 +179,12 @@ public partial class MJ5001 : PluginBase {
     /// <param name="points"></param>
     /// <param name="embedmentTp"></param>
     /// <returns></returns>
-    private TransformationPlane GetWorkPlane(Identifier beamId, Point[] points,
+    private TransformationPlane GetWorkPlane(Identifier beamId, TsG3d.Point[] points,
         out TransformationPlane embedmentTp) {
         var part = (Part)Model.SelectModelObject(beamId);
         var plane = GeometricPlaneFactory.ByPoints(points[0], points[1], points[2]);
 
-        var centerLine = part.GetCenterLine(false).Cast<Point>().ToArray();
+        var centerLine = part.GetCenterLine(false).Cast<TsG3d.Point>().ToArray();
         var firstPoint = centerLine.First();
         var lastPoint = centerLine.Last();
 
@@ -205,9 +193,9 @@ public partial class MJ5001 : PluginBase {
         var index = disFirst <= disLast ? 0 : centerLine.Length - 1;
         var step = disFirst <= disLast ? 1 : -1;
 
-        var origin = Intersection.LineToPlane(new Line(centerLine[index], centerLine[index + step]), plane);
+        var origin = TsG3d.Intersection.LineToPlane(new TsG3d.Line(centerLine[index], centerLine[index + step]), plane);
 
-        CoordinateSystem cs = null;
+        TsG3d.CoordinateSystem cs = null;
         switch (part) {
         case Beam beam:
             cs = beam.GetCoordinateSystem();
@@ -223,11 +211,11 @@ public partial class MJ5001 : PluginBase {
         if (disFirst > disLast) axisX *= -1;
         var axisY = cs.AxisY;
 
-        var globalZ = new Vector(0, 0, 100).TransformFrom(new TransformationPlane());
+        var globalZ = new TsG3d.Vector(0, 0, 100).TransformFrom(new TransformationPlane());
         if (globalZ.Dot(axisY) < 0) axisY *= -1;
 
-        var partXyPlane = new GeometricPlane(origin, axisX.Cross(axisY));
-        var crossLine = Intersection.PlaneToPlane(partXyPlane, plane);
+        var partXyPlane = new TsG3d.GeometricPlane(origin, axisX.Cross(axisY));
+        var crossLine = TsG3d.Intersection.PlaneToPlane(partXyPlane, plane);
 
         var embedmentAxisX = crossLine.Direction;
         if (embedmentAxisX.Dot(axisY) < 0) embedmentAxisX *= -1;
@@ -246,14 +234,14 @@ public partial class MJ5001 : PluginBase {
         var beam = (Part)Model.SelectModelObject(beamId);
         var concrete = (Part)Model.SelectModelObject(concreteId);
 
-        var origin = new Point();
-        var axisX = new Vector(1, 0, 0);
-        var axisY = new Vector(0, 1, 0);
-        var axisZ = new Vector(0, 0, 1);
+        var origin = new TsG3d.Point();
+        var axisX = new TsG3d.Vector(1, 0, 0);
+        var axisY = new TsG3d.Vector(0, 1, 0);
+        var axisZ = new TsG3d.Vector(0, 0, 1);
 
-        var beamTopLine = new Line(origin + axisY * (beamProfile.H * 0.5), axisX);
+        var beamTopLine = new TsG3d.Line(origin + axisY * (beamProfile.H * 0.5), axisX);
         var beamTopInsideLine = beamTopLine.Offset(beamProfile.T, LineExtension.OffsetDirection.Right);
-        var beamBottomLine = new Line(origin - axisY * (beamProfile.H * 0.5), axisX);
+        var beamBottomLine = new TsG3d.Line(origin - axisY * (beamProfile.H * 0.5), axisX);
         var beamBottomInsideLine = beamBottomLine.Offset(beamProfile.T, LineExtension.OffsetDirection.Left);
 
         var beamTp = Model.GetWorkPlaneHandler().GetCurrentTransformationPlane();
@@ -266,10 +254,10 @@ public partial class MJ5001 : PluginBase {
 
         #region 创建预埋板
 
-        var p1 = new Point(_plateEmbedmentHeight * -0.5, 0);
-        var p2 = new Point(_plateEmbedmentHeight * 0.5, 0);
+        var p1 = new TsG3d.Point(_plateEmbedmentHeight * -0.5, 0);
+        var p2 = new TsG3d.Point(_plateEmbedmentHeight * 0.5, 0);
 
-        var embedment = CreatePlateEmbedment<Beam>();
+        var embedment = Data.CreatePlateEmbedment<Beam>();
         embedment.StartPoint = p1;
         embedment.EndPoint = p2;
         embedment.Position.Rotation = Position.RotationEnum.FRONT;
@@ -283,9 +271,9 @@ public partial class MJ5001 : PluginBase {
 
         #region 布置锚杆
 
-        var anchorRodDisListX = DistanceList.Parse(_boltAnchorRodDistXText, CultureInfo.CurrentCulture,
+        var anchorRodDisListX = TsData.DistanceList.Parse(_boltAnchorRodDistX, CultureInfo.CurrentCulture,
             TsData.Distance.CurrentUnitType);
-        var anchorRodDisListY = DistanceList.Parse(_boltAnchorRodDistYText, CultureInfo.CurrentCulture,
+        var anchorRodDisListY = TsData.DistanceList.Parse(_boltAnchorRodDistY, CultureInfo.CurrentCulture,
             TsData.Distance.CurrentUnitType);
 
         var anchorRodPosX = new double[anchorRodDisListX.Count + 1];
@@ -306,22 +294,22 @@ public partial class MJ5001 : PluginBase {
 
         foreach (var x in anchorRodPosX) {
             foreach (var y in anchorRodPosY) {
-                var pos = new Point(anchorRodPosX.Last() * -0.5 + x, anchorRodPosY.Last() * -0.5 + y);
+                var pos = new TsG3d.Point(anchorRodPosX.Last() * -0.5 + x, anchorRodPosY.Last() * -0.5 + y);
                 p1 = pos - axisZ * _plateEmbedmentThickness;
                 p2 = p1 - axisZ * _boltAnchorRodLength;
                 CreateAnchorRodAndWeld(p1, p2);
             }
         }
 
-        void CreateAnchorRodAndWeld(Point startPoint, Point endPoint) {
-            var anchorRod = CreatePartAnchorRod<Beam>();
+        void CreateAnchorRodAndWeld(TsG3d.Point startPoint, TsG3d.Point endPoint) {
+            var anchorRod = Data.CreatePartAnchorRod<Beam>();
             anchorRod.Position.Plane = Position.PlaneEnum.MIDDLE;
             anchorRod.Position.Depth = Position.DepthEnum.MIDDLE;
             anchorRod.StartPoint = startPoint;
             anchorRod.EndPoint = endPoint;
             anchorRod.Insert();
 
-            var weld = CreateWeld1<Weld>();
+            var weld = Data.CreateWeld1<Weld>();
             weld.MainObject = embedment;
             weld.SecondaryObject = anchorRod;
             weld.Insert();
@@ -346,18 +334,18 @@ public partial class MJ5001 : PluginBase {
         #region 开焊孔
 
         var chamferNone = new Chamfer();
-        
+
         if (_chamfer1Type == 0) goto SkipChamfer;
 
         var fittingPlane = GeometricPlaneFactory.ByPlane(plane);
         if (_weld3TypeAbove != 0) fittingPlane.Origin += embedmentAxisZ * _gap;
-        
-        p1 = Intersection.LineToPlane(beamBottomInsideLine, fittingPlane);
+
+        p1 = TsG3d.Intersection.LineToPlane(beamBottomInsideLine, fittingPlane);
         p2 = p1 + axisX * 1000;
-        var p3 = Intersection.LineToPlane(beamTopInsideLine, fittingPlane);
+        var p3 = TsG3d.Intersection.LineToPlane(beamTopInsideLine, fittingPlane);
         var p4 = p3 + axisX * 1000;
 
-        var chamfer = CreateChamfer1();
+        var chamfer = Data.CreateChamfer1();
         var cp1 = new ContourPoint(p1, chamfer);
         var simulated = cp1.GetSimulatedContourPoints(p2, p3);
 
@@ -370,7 +358,7 @@ public partial class MJ5001 : PluginBase {
 
         cps.AddRange(simulated);
         cps.Add(new ContourPoint(p3 - axisX * 50, chamferNone));
-        
+
         var boolean = ModelOperation.CreateBooleanOperationPolygon(cps, beamProfile.B + 10);
         boolean.Insert();
         _ = ModelOperation.ApplyBooleanOperation(beam, boolean);
@@ -382,25 +370,25 @@ public partial class MJ5001 : PluginBase {
 
         #region 焊梁
 
-        var embedmentXyPlane = new GeometricPlane(origin, embedmentAxisX, embedmentAxisY);
+        var embedmentXyPlane = new TsG3d.GeometricPlane(origin, embedmentAxisX, embedmentAxisY);
 
         if (_weld3TypeAbove == 0) goto SkipWeldBeam;
 
-        p1 = Intersection.LineToPlane(beamTopLine.Offset(axisZ.GetNormal(beamProfile.B * 0.5)), embedmentXyPlane);
-        p2 = Intersection.LineToPlane(beamTopLine.Offset(axisZ.GetNormal(beamProfile.B * -0.5)), embedmentXyPlane);
+        p1 = TsG3d.Intersection.LineToPlane(beamTopLine.Offset(axisZ.GetNormal(beamProfile.B * 0.5)), embedmentXyPlane);
+        p2 = TsG3d.Intersection.LineToPlane(beamTopLine.Offset(axisZ.GetNormal(beamProfile.B * -0.5)), embedmentXyPlane);
 
-        var polyWeld = CreateWeld3<PolygonWeld>();
+        var polyWeld = Data.CreateWeld3<PolygonWeld>();
         polyWeld.Polygon = new Polygon { Points = new ArrayList { p1, p2 } };
         polyWeld.MainObject = embedment;
         polyWeld.SecondaryObject = beam;
         polyWeld.Insert();
 
-        p1 = Intersection.LineToPlane(beamBottomInsideLine.Offset(axisZ.GetNormal(beamProfile.B * 0.5)),
+        p1 = TsG3d.Intersection.LineToPlane(beamBottomInsideLine.Offset(axisZ.GetNormal(beamProfile.B * 0.5)),
             embedmentXyPlane);
-        p2 = Intersection.LineToPlane(beamBottomInsideLine.Offset(axisZ.GetNormal(beamProfile.B * -0.5)),
+        p2 = TsG3d.Intersection.LineToPlane(beamBottomInsideLine.Offset(axisZ.GetNormal(beamProfile.B * -0.5)),
             embedmentXyPlane);
 
-        polyWeld = CreateWeld3<PolygonWeld>();
+        polyWeld = Data.CreateWeld3<PolygonWeld>();
         polyWeld.Polygon = new Polygon { Points = new ArrayList { p1, p2 } };
         polyWeld.MainObject = embedment;
         polyWeld.SecondaryObject = beam;
@@ -412,15 +400,15 @@ public partial class MJ5001 : PluginBase {
 
         #region 创建夹板
 
-        var embedmentXzPlane = new GeometricPlane(origin, embedmentAxisX, embedmentAxisZ);
+        var embedmentXzPlane = new TsG3d.GeometricPlane(origin, embedmentAxisX, embedmentAxisZ);
         var axisXProjOnEmbedXz = ProjectionExtension.VectorToPlane(axisX, embedmentXzPlane);
         var isSloping = axisXProjOnEmbedXz.GetAngleBetweenPrecisely(embedmentAxisZ) >
-                        GeometryConstants.ANGULAR_EPSILON;
+                        TsG3d.GeometryConstants.ANGULAR_EPSILON;
 
-        var embedmentYzPlane = new GeometricPlane(origin, embedmentAxisY, embedmentAxisZ);
+        var embedmentYzPlane = new TsG3d.GeometricPlane(origin, embedmentAxisY, embedmentAxisZ);
         var axisXProjOnEmbedYz = ProjectionExtension.VectorToPlane(axisX, embedmentYzPlane);
         var isSkew = axisXProjOnEmbedYz.GetAngleBetweenPrecisely(embedmentAxisZ) >
-                     GeometryConstants.ANGULAR_EPSILON;
+                     TsG3d.GeometryConstants.ANGULAR_EPSILON;
 
         var cleatAxisX = axisX.GetNormal(1 / axisXProjOnEmbedYz.GetLength());
 
@@ -445,21 +433,21 @@ public partial class MJ5001 : PluginBase {
             ? beamProfile.S * 0.5
             : beamProfile.B * 0.5 - beamProfile.S - _plateCleatThickness;
 
-        var cleatFront = CreatePlateCleat<ContourPlate>();
+        var cleatFront = Data.CreatePlateCleat<ContourPlate>();
         cleatFront.Contour.ContourPoints = contours;
         cleatFront.Position.Depth = Position.DepthEnum.FRONT;
         cleatFront.Position.DepthOffset = depthOffset;
         cleatFront.Insert();
 
-        var cleatBehind = CreatePlateCleat<ContourPlate>();
+        var cleatBehind = Data.CreatePlateCleat<ContourPlate>();
         cleatBehind.Contour.ContourPoints = contours;
         cleatBehind.Position.Depth = Position.DepthEnum.BEHIND;
         cleatBehind.Position.DepthOffset = depthOffset;
         cleatBehind.Insert();
 
         if (isSkew) {
-            p1 = Intersection.LineToPlane(beamTopLine, embedmentXyPlane) + embedmentAxisX * 100;
-            p2 = Intersection.LineToPlane(beamBottomLine, embedmentXyPlane) - embedmentAxisX * 100;
+            p1 = TsG3d.Intersection.LineToPlane(beamTopLine, embedmentXyPlane) + embedmentAxisX * 100;
+            p2 = TsG3d.Intersection.LineToPlane(beamBottomLine, embedmentXyPlane) - embedmentAxisX * 100;
             boolean = ModelOperation.CreateBooleanOperationPolygon(
                 [
                     p1 + embedmentAxisY * (beamProfile.B * 0.5 + 10) - embedmentAxisZ * 75,
@@ -474,7 +462,7 @@ public partial class MJ5001 : PluginBase {
             boolean.Delete();
         }
 
-        var weld = CreateWeld2<Weld>();
+        var weld = Data.CreateWeld2<Weld>();
         weld.MainObject = embedment;
         weld.SecondaryObject = cleatFront;
         weld.Insert();
@@ -487,13 +475,13 @@ public partial class MJ5001 : PluginBase {
         #region 布置螺栓
 
         var boltDisListX =
-            DistanceList.Parse(_bolt1DistXText, CultureInfo.CurrentCulture, TsData.Distance.CurrentUnitType);
+            TsData.DistanceList.Parse(_bolt1DistX, CultureInfo.CurrentCulture, TsData.Distance.CurrentUnitType);
         var boltDisListY =
-            DistanceList.Parse(_bolt1DistYText, CultureInfo.CurrentCulture, TsData.Distance.CurrentUnitType);
+            TsData.DistanceList.Parse(_bolt1DistY, CultureInfo.CurrentCulture, TsData.Distance.CurrentUnitType);
         var boltTotalDisX = boltDisListX.Sum(dis => dis.Value);
         var boltTotalDisY = boltDisListY.Sum(dis => dis.Value);
 
-        var bolt = CreateBolt1<BoltArray>();
+        var bolt = Data.CreateBolt1<BoltArray>();
         bolt.PartToBoltTo = beam;
         bolt.PartToBeBolted = cleatFront;
         bolt.AddOtherPartToBolt(cleatBehind);

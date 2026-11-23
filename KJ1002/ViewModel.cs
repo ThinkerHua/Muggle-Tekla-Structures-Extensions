@@ -18,12 +18,12 @@ using Tekla.Structures.Datatype;
 
 namespace Muggle.TsExtensions.KJ1002;
 
-[PartProperties("Brace", profile: "L70*5.0", material: "Q235B")]
-[PlateProperties("Stiffener", thickness: 8, material: "Q235B")]
-[PlateProperties("Gusset", thickness: 8, material: "Q235B")]
-[BoltProperties(1, standard: "HS10.9", size: 16, distX: "70")]
-[WeldProperties(1, typeAbove: 10, sizeAbove: 6, around: 1, shop: 1)]
-[WeldProperties(2, typeAbove: 10, sizeAbove: 6, around: 1, shop: 1)]
-[GeneralProperties(typeof(Integer), "CreateUpperSplices", 0)]
-[GeneralProperties(typeof(Double), "SectionLength", 1000, "Clearance", 50, "ExtendedDistance", 30, "BoltOffsetX", 50)]
+[Part("Brace", Profile = "L70*5.0", Material = "Q235B")]
+[Plate("Stiffener", Thickness = 8, Material = "Q235B")]
+[Plate("Gusset", Thickness = 8, Material = "Q235B")]
+[Bolt(1, Standard = "HS10.9", Size = 16, DistX = "70")]
+[Weld(1, TypeAbove = 10, SizeAbove = 6, Around = 1, Shop = 1)]
+[Weld(2, TypeAbove = 10, SizeAbove = 6, Around = 1, Shop = 1)]
+[General(typeof(Integer), "CreateUpperSplices", 0)]
+[General(typeof(Double), "SectionLength", 1000, "Clearance", 50, "ExtendedDistance", 30, "BoltOffsetX", 50)]
 public partial class ViewModel : ConnectionViewModel { }

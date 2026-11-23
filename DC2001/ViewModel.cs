@@ -18,18 +18,18 @@ using Tekla.Structures.Datatype;
 
 namespace Muggle.TsExtensions.DC2001;
 
-[PartProperties("LeftCorbel", profile: "HI530-270-30-30*600", name: "LeftCorbel")]
-[PartProperties("RightCorbel", name: "RightCorbel")]
-[PlateProperties("PrimStif", 20, name: "ColumnStiffener")]
-[PlateProperties("LCorbelStif", 20, 185, name: "LeftCorbelStiffener")]
-[PlateProperties("RCorbelStif", 20, 185, name: "RightCorbelStiffener")]
-[PlateProperties("LeftPad", 30, 560, 560, name: "LeftPad")]
-[PlateProperties("RightPad", 30, 560, 560, name: "RightPad")]
-[ChamferProperties("PrimStif", 1, 25, 25)]
-[WeldProperties("PrimStif", typeAbove: 10, typeBelow: 10, sizeAbove: 6, sizeBelow: 6, shop: 1)]
-[WeldProperties("Corbel", typeAbove: 10, sizeAbove: 6, around: 1, shop: 1)]
-[WeldProperties("CorbelStif", typeAbove: 10, typeBelow: 10, sizeAbove: 6, sizeBelow: 6, shop: 1)]
-[WeldProperties("Pad", typeAbove: 10, sizeAbove: 6, around: 1, shop: 1)]
-[GeneralProperties(typeof(Double), "LeftCorbelLength", 800, "RightCorbelLength", 800,
+[Part("LeftCorbel", Profile = "HI530-270-30-30*600", Name = "LeftCorbel")]
+[Part("RightCorbel", Name = "RightCorbel")]
+[Plate("PrimStif", Thickness = 20, Name = "ColumnStiffener")]
+[Plate("LCorbelStif", Thickness = 20, Breadth = 185, Name = "LeftCorbelStiffener")]
+[Plate("RCorbelStif", Thickness = 20, Breadth = 185, Name = "RightCorbelStiffener")]
+[Plate("LeftPad", Thickness = 30, Breadth = 560, Height = 560, Name = "LeftPad")]
+[Plate("RightPad", Thickness = 30, Breadth = 560, Height = 560, Name = "RightPad")]
+[Chamfer("PrimStif", Type = 1, X = 25, Y = 25)]
+[Weld("Corbel", TypeAbove = 10, SizeAbove = 6, Around = 1, Shop = 1)]
+[Weld("PrimStif", TypeAbove = 10, TypeBelow = 10, SizeAbove = 6, SizeBelow = 6, Shop = 1)]
+[Weld("CorbelStif", TypeAbove = 10, TypeBelow = 10, SizeAbove = 6, SizeBelow = 6, Shop = 1)]
+[Weld("Pad", TypeAbove = 10, SizeAbove = 6, Around = 1, Shop = 1)]
+[General(typeof(Double), "LeftCorbelLength", 800, "RightCorbelLength", 800,
     "LeftCorbelStifPos", 500, "RightCorbelStifPos", 500)]
 public partial class ViewModel : DetailViewModel;

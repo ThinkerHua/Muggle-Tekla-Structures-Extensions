@@ -29,7 +29,6 @@ using Tekla.Structures.Geometry3d;
 using Tekla.Structures.Model;
 using Tekla.Structures.Model.Operations;
 using Tekla.Structures.Plugins;
-using static TeklaStructuresAttributes.Attributes;
 using Distance = Tekla.Structures.Geometry3d.Distance;
 using TsData = Tekla.Structures.Datatype;
 
@@ -39,7 +38,7 @@ namespace Muggle.TsExtensions.KJ1004;
 [PluginUserInterface("Muggle.TsExtensions.KJ1004.View")]
 [SecondaryType(SecondaryType.SECONDARYTYPE_ONE)]
 [PositionType(PositionTypeEnum.MIDDLE_PLANE)]
-[FieldsFrom(typeof(PluginData))]
+[FieldsFromData]
 public partial class KJ1004 : ConnectionBase {
 
     private readonly record struct Profile(char Type, double H, double B, double S, double T) {
@@ -53,26 +52,6 @@ public partial class KJ1004 : ConnectionBase {
     private Localization Localization { get; }
 
     private Model Model { get; }
-
-    #region DefaultValues
-
-    [PartFieldDefaultValues("ShortBeam")]
-    [PlateFieldDefaultValues("PrimStif", thickness: 10, material: "Q235B")]
-    [PlateFieldDefaultValues("Thickened")]
-    [PlateFieldDefaultValues("WebSplice", thickness: 16, breadth: 350, height: 300, material: "Q235B")]
-    [ChamferFieldDefaultValues("PrimStif", type: 1, x: 25, y: 25)]
-    [ChamferFieldDefaultValues("Beam", type: 3, x: 25, y: 25)]
-    [BoltFieldDefaultValues("Web", size: 20, standard: "HS10.9", distXText: "3*70", distYText: "70 100 70")]
-    [WeldFieldDefaultValues(1, typeAbove: 10, sizeAbove: 8, around: 1)]
-    [WeldFieldDefaultValues(2, typeAbove: 0, sizeAbove: 10, angleAbove: 45, rootFaceAbove: 4, rootOpeningAbove: 2)]
-    [WeldFieldDefaultValues(3, typeAbove: 10, sizeAbove: 8)]
-    [WeldFieldDefaultValues(4, typeAbove: 6, sizeAbove: 10, angleAbove: 45, rootFaceAbove: 4, rootOpeningAbove: 2)]
-    [WeldFieldDefaultValues(5, typeAbove: 6, sizeAbove: 10, angleAbove: 45, rootFaceAbove: 4, rootOpeningAbove: 2,
-        placement: 1)]
-    [WeldFieldDefaultValues(6, typeAbove: 5, sizeAbove: 10, angleAbove: 45, rootFaceAbove: 4, rootOpeningAbove: 2)]
-    [GeneralFieldDefaultValues("ExtraLen", 150, "Gap", 15, "ShortBeamLen", 1200, "MoreStifDisList", "")]
-
-    #endregion
 
     private PluginData Data { get; }
 
@@ -111,7 +90,7 @@ public partial class KJ1004 : ConnectionBase {
                 Data.PartShortBeamMaterial = sec.Material.MaterialString;
             if (Data.PlatePrimStifThickness <= 0) Data.PlatePrimStifThickness = prfSec.t1;
 
-            SetDataToDefaultIfUnset();
+            Data.SetFieldsToDefaultIfUnset();
 
             GetFieldValuesFrom(Data);
 
@@ -246,6 +225,7 @@ public partial class KJ1004 : ConnectionBase {
 
     private void CreateConnection(Profile prfPrim, ProfileH_Symmetrical prfSec,
         TransformationPlane secWorkTp) {
+
         #region 共用变量、方法
 
         var prim = (Part)Model.SelectModelObject(Primary);
@@ -293,7 +273,7 @@ public partial class KJ1004 : ConnectionBase {
         var isSkew = axisZ.GetAngleBetweenPrecisely(secAxisZ) > GeometryConstants.ANGULAR_EPSILON;
 
         var webBoltDisListX =
-            TsData.DistanceList.Parse(_boltWebDistXText, CultureInfo.CurrentCulture, TsData.Distance.CurrentUnitType);
+            TsData.DistanceList.Parse(_boltWebDistX, CultureInfo.CurrentCulture, TsData.Distance.CurrentUnitType);
         var webBoltTotalDisX = webBoltDisListX.Sum(d => d.Value);
 
         var chamferNone = new Chamfer();
@@ -318,7 +298,7 @@ public partial class KJ1004 : ConnectionBase {
         p2.Y -= _extraLen;
         p1.Z = isFlangeSide ? prfPrim.B * 0.5 : prfPrim.H * 0.5;
         p2.Z = p1.Z;
-        thkdPlate1 = CreatePlateThickened<Beam>();
+        thkdPlate1 = Data.CreatePlateThickened<Beam>();
         thkdPlate1.StartPoint = p1;
         thkdPlate1.EndPoint = p2;
         thkdPlate1.Position.Rotation = Position.RotationEnum.FRONT;
@@ -328,7 +308,7 @@ public partial class KJ1004 : ConnectionBase {
 
         p1.Z *= -1;
         p2.Z *= -1;
-        thkdPlate2 = CreatePlateThickened<Beam>();
+        thkdPlate2 = Data.CreatePlateThickened<Beam>();
         thkdPlate2.StartPoint = p1;
         thkdPlate2.EndPoint = p2;
         thkdPlate2.Position.Rotation = Position.RotationEnum.BACK;
@@ -339,7 +319,7 @@ public partial class KJ1004 : ConnectionBase {
         _ = ModelOperation.ApplyBooleanOperation(prim, thkdPlate1);
         _ = ModelOperation.ApplyBooleanOperation(prim, thkdPlate2);
 
-        var weld = CreateWeld4<Weld>();
+        var weld = Data.CreateWeld4<Weld>();
         weld.MainObject = prim;
         weld.SecondaryObject = thkdPlate1;
         weld.Position = Weld.WeldPositionEnum.WELD_POSITION_PLUS_Y;
@@ -355,7 +335,7 @@ public partial class KJ1004 : ConnectionBase {
         weld.Position = Weld.WeldPositionEnum.WELD_POSITION_MINUS_Y;
         weld.Insert();
 
-        weld = CreateWeld5<Weld>();
+        weld = Data.CreateWeld5<Weld>();
         weld.MainObject = prim;
         weld.SecondaryObject = thkdPlate1;
         weld.Position = Weld.WeldPositionEnum.WELD_POSITION_PLUS_X;
@@ -405,7 +385,7 @@ public partial class KJ1004 : ConnectionBase {
         p1 = new Point(secOrigin);
         p2 = p1 + secAxisX * _shortBeamLen;
 
-        var shortBeam = CreatePartShortBeam<Beam>();
+        var shortBeam = Data.CreatePartShortBeam<Beam>();
         shortBeam.StartPoint = p1;
         shortBeam.EndPoint = p2;
         shortBeam.Position.Plane = Position.PlaneEnum.MIDDLE;
@@ -439,7 +419,7 @@ public partial class KJ1004 : ConnectionBase {
         p2 = p1 + secAxisX * 1000;
         var p3 = p1 + axisY * 1000;
 
-        var chamfer = CreateChamferBeam();
+        var chamfer = Data.CreateChamferBeam();
         var cp1 = new ContourPoint(p1, chamfer);
         var simulated = cp1.GetSimulatedContourPoints(p2, p3);
         p4 = simulated.Last();
@@ -500,7 +480,7 @@ public partial class KJ1004 : ConnectionBase {
 
         #endregion
 
-        var polyWeld = CreateWeld2<PolygonWeld>();
+        var polyWeld = Data.CreateWeld2<PolygonWeld>();
         polyWeld.MainObject = prim;
         polyWeld.SecondaryObject = shortBeam;
         polyWeld.Polygon = new Polygon { Points = new ArrayList { secTFxPrim, secTBxPrim } };
@@ -530,13 +510,13 @@ public partial class KJ1004 : ConnectionBase {
                 polygon = new Polygon { Points = new ArrayList(new[] { p1, p4 }) };
             }
 
-            polyWeld = CreateWeld1<PolygonWeld>();
+            polyWeld = Data.CreateWeld1<PolygonWeld>();
             polyWeld.MainObject = prim;
             polyWeld.SecondaryObject = shortBeam;
             polyWeld.Polygon = polygon;
             polyWeld.Insert();
         } else {
-            weld = CreateWeld1<Weld>();
+            weld = Data.CreateWeld1<Weld>();
             weld.MainObject = prim;
             weld.SecondaryObject = shortBeam;
             weld.Position = Weld.WeldPositionEnum.WELD_POSITION_MINUS_X;
@@ -553,7 +533,7 @@ public partial class KJ1004 : ConnectionBase {
         p1 = new Point(0, _plateWebSpliceHeight * 0.5, 0);
         p2 = new Point(0, _plateWebSpliceHeight * -0.5, 0);
 
-        var webSpliceFront = CreatePlateWebSplice<Beam>();
+        var webSpliceFront = Data.CreatePlateWebSplice<Beam>();
         webSpliceFront.StartPoint = p1;
         webSpliceFront.EndPoint = p2;
         webSpliceFront.Position.Plane = Position.PlaneEnum.MIDDLE;
@@ -562,7 +542,7 @@ public partial class KJ1004 : ConnectionBase {
         webSpliceFront.Position.DepthOffset = prfSec.s * 0.5;
         webSpliceFront.Insert();
 
-        var webSpliceBehind = CreatePlateWebSplice<Beam>();
+        var webSpliceBehind = Data.CreatePlateWebSplice<Beam>();
         webSpliceBehind.StartPoint = p1;
         webSpliceBehind.EndPoint = p2;
         webSpliceBehind.Position.Plane = Position.PlaneEnum.MIDDLE;
@@ -571,7 +551,7 @@ public partial class KJ1004 : ConnectionBase {
         webSpliceBehind.Position.DepthOffset = prfSec.s * 0.5;
         webSpliceBehind.Insert();
 
-        var bolt = CreateBoltWeb<BoltArray>();
+        var bolt = Data.CreateBoltWeb<BoltArray>();
         bolt.PartToBoltTo = shortBeam;
         bolt.PartToBeBolted = sec;
         bolt.AddOtherPartToBolt(webSpliceFront);
@@ -601,7 +581,7 @@ public partial class KJ1004 : ConnectionBase {
 
         cps = new ArrayList { new ContourPoint(p1, chamferNone) };
 
-        chamfer = CreateChamferBeam();
+        chamfer = Data.CreateChamferBeam();
         var cp2 = new ContourPoint(p2, chamfer);
         cps.AddRange(cp2.GetSimulatedContourPoints(p3, p5));
 
@@ -624,7 +604,7 @@ public partial class KJ1004 : ConnectionBase {
         p1 = new Point(0, prfSec.h1 * 0.5, prfSec.b1 * 0.5);
         p2 = new Point(p1.X, p1.Y, -p1.Z);
 
-        polyWeld = CreateWeld6<PolygonWeld>();
+        polyWeld = Data.CreateWeld6<PolygonWeld>();
         polyWeld.Polygon.Points = new ArrayList { p1, p2 };
         polyWeld.MainObject = shortBeam;
         polyWeld.SecondaryObject = sec;
@@ -637,6 +617,7 @@ public partial class KJ1004 : ConnectionBase {
         polyWeld.Insert();
 
         #endregion
+
     }
 
     private void CreateAndWeldPrimStif(double y, bool isFlangeSide, Position.DepthEnum depthEnum, Profile prfPrim,
@@ -647,7 +628,7 @@ public partial class KJ1004 : ConnectionBase {
             _ => y,
         };
 
-        var chamfer = CreateChamferPrimStif();
+        var chamfer = Data.CreateChamferPrimStif();
         var chamferReversed = chamfer.GetReversed();
 
         ContourPlate stif;
@@ -665,11 +646,11 @@ public partial class KJ1004 : ConnectionBase {
                 new ContourPoint(new Point(-x, y, -z), chamfer),
                 new ContourPoint(new Point(x, y, -z), chamferReversed),
             };
-            stif = CreatePlatePrimStif<ContourPlate>();
+            stif = Data.CreatePlatePrimStif<ContourPlate>();
             stif.Contour.ContourPoints = cps;
             stif.Insert();
 
-            weld = CreateWeld3<Weld>();
+            weld = Data.CreateWeld3<Weld>();
             weld.MainObject = prim;
             weld.SecondaryObject = stif;
             if (_weld3Around != 0 && thickenedPlate1 is null) {
@@ -706,11 +687,11 @@ public partial class KJ1004 : ConnectionBase {
 
             if (isFlangeSide) {
                 foreach (var arr in contours) {
-                    stif = CreatePlatePrimStif<ContourPlate>();
+                    stif = Data.CreatePlatePrimStif<ContourPlate>();
                     stif.Contour.ContourPoints = arr;
                     stif.Insert();
 
-                    weld = CreateWeld3<Weld>();
+                    weld = Data.CreateWeld3<Weld>();
                     weld.MainObject = prim;
                     weld.SecondaryObject = stif;
                     weld.Position = Weld.WeldPositionEnum.WELD_POSITION_MINUS_X;
@@ -723,11 +704,11 @@ public partial class KJ1004 : ConnectionBase {
                     weld.Insert();
                 }
             } else {
-                stif = CreatePlatePrimStif<ContourPlate>();
+                stif = Data.CreatePlatePrimStif<ContourPlate>();
                 stif.Contour.ContourPoints = contours.First(arr => ((Point)arr[0]).X < 0);
                 stif.Insert();
 
-                weld = CreateWeld3<Weld>();
+                weld = Data.CreateWeld3<Weld>();
                 weld.MainObject = prim;
                 weld.SecondaryObject = stif;
                 weld.Position = Weld.WeldPositionEnum.WELD_POSITION_PLUS_Z;

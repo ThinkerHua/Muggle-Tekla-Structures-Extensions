@@ -37,7 +37,7 @@ namespace Muggle.TsExtensions.WK1001;
 [SecondaryType(SecondaryType.SECONDARYTYPE_MULTIPLE)]
 [PositionType(PositionTypeEnum.COLLISION_PLANE)]
 [AutoDirectionType(AutoDirectionTypeEnum.AUTODIR_GLOBAL_Z)]
-[FieldsFrom(typeof(PluginData))]
+[FieldsFromData]
 public partial class WK1001 : ConnectionBase {
     private const double HalfPi = Math.PI * 0.5;
 
@@ -47,17 +47,7 @@ public partial class WK1001 : ConnectionBase {
     }
 
     private Model Model { get; }
-
-    [PartFieldDefaultValues("Pipe", material: "Q345B")]
-    [PlateFieldDefaultValues("TopEnd", thickness: 16, material: "Q345B")]
-    [PlateFieldDefaultValues("BotEnd", thickness: 16, material: "Q345B")]
-    [PlateFieldDefaultValues("Stif", thickness: 25, material: "Q345B")]
-    [WeldFieldDefaultValues(1, typeAbove: 10, sizeAbove: 8, around: 1)]
-    [WeldFieldDefaultValues(2, typeAbove: 10, sizeAbove: 8, around: 1, shop: 1)]
-    [WeldFieldDefaultValues(3, typeAbove: 6, sizeAbove: 14, angleAbove: 45, rootFaceAbove: 4, placement: 2,
-        preparation: 3, around: 1, shop: 1)]
-    [WeldFieldDefaultValues(4, typeAbove: 10, sizeAbove: 6, around: 1, shop: 1)]
-    [GeneralFieldDefaultValues("MinDis", 100, "ExtendLenTop", 20, "ExtendLenBot", 20)]
+    
     private PluginData Data { get; }
 
     private Localization Localization { get; }
@@ -85,7 +75,7 @@ public partial class WK1001 : ConnectionBase {
 
     public override bool Run() {
         try {
-            SetDataToDefaultIfUnset();
+            Data.SetFieldsToDefaultIfUnset();
             Data.Weld1Around = 1;
             Data.Weld2Around = 1;
             Data.Weld3Around = 1;
@@ -374,7 +364,7 @@ public partial class WK1001 : ConnectionBase {
         var p1 = new Point(0, 0, maxHeight * 0.5 + _extendLenTop);
         var p2 = new Point(0, 0, maxHeight * -0.5 - _extendLenBot + (isKindA ? 0 : _plateBotEndThickness));
 
-        var pipe = CreatePartPipe<Beam>();
+        var pipe = Data.CreatePartPipe<Beam>();
         pipe.StartPoint = p1;
         pipe.EndPoint = p2;
         pipe.Position.Plane = Position.PlaneEnum.MIDDLE;
@@ -385,7 +375,7 @@ public partial class WK1001 : ConnectionBase {
 
         #region 切割焊接杆件
 
-        var boolean = CreatePartPipe<Beam>();
+        var boolean = Data.CreatePartPipe<Beam>();
         boolean.StartPoint = p1 + axisZ * 100;
         boolean.EndPoint = p2 - axisZ * 100;
         boolean.Profile.ProfileString = $"D{pipPrf.d1}";
@@ -395,7 +385,7 @@ public partial class WK1001 : ConnectionBase {
 
         var workTp = Model.GetWorkPlaneHandler().GetCurrentTransformationPlane();
 
-        var weld = CreateWeld1<Weld>();
+        var weld = Data.CreateWeld1<Weld>();
         weld.MainObject = pipe;
         for (var i = 0; i < rods.Count; i++) {
             var rod = rods[i];
@@ -425,7 +415,7 @@ public partial class WK1001 : ConnectionBase {
         p1 = pipe.StartPoint;
         p2 = p1 - axisZ * _plateTopEndThickness;
 
-        var topEnd = CreatePlateTopEnd<Beam>();
+        var topEnd = Data.CreatePlateTopEnd<Beam>();
         topEnd.Profile.ProfileString = $"D{innerDiameter}";
         topEnd.StartPoint = p1;
         topEnd.EndPoint = p2;
@@ -436,7 +426,7 @@ public partial class WK1001 : ConnectionBase {
         p2 = pipe.EndPoint - axisZ * (isKindA ? 0 : _plateBotEndThickness);
         p1 = p2 + axisZ * _plateBotEndThickness;
 
-        var botEnd = CreatePlateBotEnd<Beam>();
+        var botEnd = Data.CreatePlateBotEnd<Beam>();
         botEnd.Profile.ProfileString = $"D{_plateBotEndBreadth}";
         botEnd.StartPoint = p1;
         botEnd.EndPoint = p2;
@@ -444,20 +434,20 @@ public partial class WK1001 : ConnectionBase {
         botEnd.Position.Depth = Position.DepthEnum.MIDDLE;
         botEnd.Insert();
 
-        weld = CreateWeld3<Weld>();
+        weld = Data.CreateWeld3<Weld>();
         weld.MainObject = pipe;
         weld.SecondaryObject = topEnd;
         weld.Position = Weld.WeldPositionEnum.WELD_POSITION_PLUS_Z;
         weld.Insert();
 
         if (isKindA) {
-            weld = CreateWeld3<Weld>();
+            weld = Data.CreateWeld3<Weld>();
             weld.MainObject = pipe;
             weld.SecondaryObject = botEnd;
             weld.Position = Weld.WeldPositionEnum.WELD_POSITION_MINUS_Z;
             weld.Insert();
         } else {
-            weld = CreateWeld2<Weld>();
+            weld = Data.CreateWeld2<Weld>();
             weld.MainObject = pipe;
             weld.SecondaryObject = botEnd;
             weld.Position = Weld.WeldPositionEnum.WELD_POSITION_PLUS_Z;
@@ -476,7 +466,7 @@ public partial class WK1001 : ConnectionBase {
             _plateBotEndBreadth * 0.5, _plateBotEndBreadth * 0.5, _plateBotEndThickness * 0.5);
         var botEndSolid = botEnd.GetSolid(Solid.SolidCreationTypeEnum.RAW);
 
-        boolean = CreatePlateBotEnd<Beam>();
+        boolean = Data.CreatePlateBotEnd<Beam>();
         boolean.StartPoint = botEnd.StartPoint;
         boolean.EndPoint = botEnd.EndPoint - axisZ * 100;
         boolean.Profile.ProfileString = botEnd.Profile.ProfileString;
@@ -503,7 +493,7 @@ public partial class WK1001 : ConnectionBase {
 
             _ = ModelOperation.ApplyBooleanOperation(rod, boolean);
 
-            weld = CreateWeld1<Weld>();
+            weld = Data.CreateWeld1<Weld>();
             weld.MainObject = botEnd;
             weld.SecondaryObject = rod;
             weld.Position = Weld.WeldPositionEnum.WELD_POSITION_PLUS_Z;
@@ -525,7 +515,7 @@ public partial class WK1001 : ConnectionBase {
         p1 = new Point(-innerDiameter * 0.5, 0, pipe.StartPoint.Z - _plateTopEndThickness);
         p2 = new Point(-p1.X, 0, p1.Z);
 
-        var stif1 = CreatePlateStif<Beam>();
+        var stif1 = Data.CreatePlateStif<Beam>();
         stif1.StartPoint = p1;
         stif1.EndPoint = p2;
         stif1.Position.Rotation = Position.RotationEnum.TOP;
@@ -536,7 +526,7 @@ public partial class WK1001 : ConnectionBase {
         p1 = new Point(0, p1.X, p1.Z);
         p2 = new Point(0, _plateStifThickness * -0.5, p1.Z);
 
-        var stif2 = CreatePlateStif<Beam>();
+        var stif2 = Data.CreatePlateStif<Beam>();
         stif2.StartPoint = p1;
         stif2.EndPoint = p2;
         stif2.Position.Rotation = Position.RotationEnum.TOP;
@@ -547,7 +537,7 @@ public partial class WK1001 : ConnectionBase {
         p1.Y *= -1;
         p2.Y *= -1;
 
-        var stif3 = CreatePlateStif<Beam>();
+        var stif3 = Data.CreatePlateStif<Beam>();
         stif3.StartPoint = p1;
         stif3.EndPoint = p2;
         stif3.Position.Rotation = Position.RotationEnum.TOP;
@@ -555,7 +545,7 @@ public partial class WK1001 : ConnectionBase {
         stif3.Position.Depth = Position.DepthEnum.BEHIND;
         stif3.Insert();
 
-        weld = CreateWeld4<Weld>();
+        weld = Data.CreateWeld4<Weld>();
         weld.MainObject = pipe;
         weld.SecondaryObject = stif1;
         weld.Position = Weld.WeldPositionEnum.WELD_POSITION_PLUS_X;

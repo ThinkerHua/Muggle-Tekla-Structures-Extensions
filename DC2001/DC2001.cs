@@ -36,24 +36,11 @@ namespace Muggle.TsExtensions.DC2001 {
     [DetailType(DetailTypeEnum.INTERMEDIATE)]
     [PositionType(PositionTypeEnum.MIDDLE_PLANE)]
     [AutoDirectionType(AutoDirectionTypeEnum.AUTODIR_DETAIL)]
-    [FieldsFrom(typeof(PluginData))]
+    [FieldsFromData]
     public partial class DC2001 : ConnectionBase {
         private Model Model { get; }
 
-        [PartFieldDefaultValues("LeftCorbel", profile: "HI530-270-30-30*600", name: "LeftCorbel")]
-        [PartFieldDefaultValues("RightCorbel", name: "RightCorbel")]
-        [PlateFieldDefaultValues("PrimStif", 20, name: "ColumnStiffener")]
-        [PlateFieldDefaultValues("LCorbelStif", 20, 185, name: "LeftCorbelStiffener")]
-        [PlateFieldDefaultValues("RCorbelStif", 20, 185, name: "RightCorbelStiffener")]
-        [PlateFieldDefaultValues("LeftPad", 30, 560, 560, name: "LeftPad")]
-        [PlateFieldDefaultValues("RightPad", 30, 560, 560, name: "RightPad")]
-        [ChamferFieldDefaultValues("PrimStif", 1, 25, 25)]
-        [WeldFieldDefaultValues("Corbel", typeAbove: 10, sizeAbove: 6, around: 1, shop: 1)]
-        [WeldFieldDefaultValues("PrimStif", typeAbove: 10, typeBelow: 10, sizeAbove: 6, sizeBelow: 6, shop: 1)]
-        [WeldFieldDefaultValues("CorbelStif", typeAbove: 10, typeBelow: 10, sizeAbove: 6, sizeBelow: 6, shop: 1)]
-        [WeldFieldDefaultValues("Pad", typeAbove: 10, sizeAbove: 6, around: 1, shop: 1)]
-        [GeneralFieldDefaultValues("LeftCorbelLength", 800, "RightCorbelLength", 800,
-            "LeftCorbelStifPos", 500, "RightCorbelStifPos", 500)]
+
         private PluginData Data { get; }
 
         public DC2001(PluginData data) {
@@ -63,7 +50,7 @@ namespace Muggle.TsExtensions.DC2001 {
 
         public override bool Run() {
             try {
-                SetDataToDefaultIfUnset();
+                Data.SetFieldsToDefaultIfUnset();
 
                 var prim = (Part)Model.SelectModelObject(Primary);
                 if (IsDefaultValue(Data.PartLeftCorbelMaterial))
@@ -168,7 +155,7 @@ namespace Muggle.TsExtensions.DC2001 {
             var depthOffset = DepthOffsetOfVariableHeightSection(_partLeftCorbelProfile);
             if (depthOffset != 0.0) (p1, p2) = (p2, p1);
 
-            var leftCorbel = CreatePartLeftCorbel<Beam>();
+            var leftCorbel = Data.CreatePartLeftCorbel<Beam>();
             leftCorbel.StartPoint = p1;
             leftCorbel.EndPoint = p2;
             leftCorbel.Position = new Position {
@@ -176,7 +163,7 @@ namespace Muggle.TsExtensions.DC2001 {
             };
             leftCorbel.Insert();
 
-            var weld = CreateWeldCorbel<Weld>();
+            var weld = Data.CreateWeldCorbel<Weld>();
             weld.MainObject = column;
             weld.SecondaryObject = leftCorbel;
             weld.Insert();
@@ -201,7 +188,7 @@ namespace Muggle.TsExtensions.DC2001 {
             depthOffset = DepthOffsetOfVariableHeightSection(_partRightCorbelProfile);
             if (depthOffset != 0.0) (p1, p2) = (p2, p1);
 
-            rightCorbel = CreatePartRightCorbel<Beam>();
+            rightCorbel = Data.CreatePartRightCorbel<Beam>();
             rightCorbel.StartPoint = p1;
             rightCorbel.EndPoint = p2;
             rightCorbel.Position = new Position {
@@ -209,7 +196,7 @@ namespace Muggle.TsExtensions.DC2001 {
             };
             rightCorbel.Insert();
 
-            weld = CreateWeldCorbel<Weld>();
+            weld = Data.CreateWeldCorbel<Weld>();
             weld.MainObject = column;
             weld.SecondaryObject = rightCorbel;
             weld.Insert();
@@ -235,20 +222,22 @@ namespace Muggle.TsExtensions.DC2001 {
             solid = leftCorbel.GetSolid(Solid.SolidCreationTypeEnum.RAW);
             var p = solid.MaximumPoint - axisZ * (_platePrimStifThickness * 0.5);
 
-            var chamfer = CreateChamferPrimStif();
+            var chamfer = Data.CreateChamferPrimStif();
             var contours = ModelOperation.CalculateStiffeners(column, p, _platePrimStifThickness, chamfer: chamfer);
-            var primStifs = contours.Select(arr => InsertContourPlate(CreatePlatePrimStif<ContourPlate>, arr)).ToList();
+            var primStifs = contours.Select(arr => InsertContourPlate(Data.CreatePlatePrimStif<ContourPlate>, arr))
+                .ToList();
 
             p = solid.MinimumPoint + axisZ * (_platePrimStifThickness * 0.5);
             contours = ModelOperation.CalculateStiffeners(column, p, _platePrimStifThickness, chamfer: chamfer);
-            primStifs.AddRange(contours.Select(arr => InsertContourPlate(CreatePlatePrimStif<ContourPlate>, arr)));
+            primStifs.AddRange(contours.Select(arr => InsertContourPlate(Data.CreatePlatePrimStif<ContourPlate>, arr)));
 
             if (rightCorbel is not null &&
                 Math.Abs(rightCorbelHeight - leftCorbelHeight) > GeometryConstants.DISTANCE_EPSILON) {
                 solid = rightCorbel.GetSolid(Solid.SolidCreationTypeEnum.RAW);
                 p = solid.MinimumPoint + axisZ * (_platePrimStifThickness * 0.5);
                 contours = ModelOperation.CalculateStiffeners(column, p, _platePrimStifThickness, chamfer: chamfer);
-                primStifs.AddRange(contours.Select(arr => InsertContourPlate(CreatePlatePrimStif<ContourPlate>, arr)));
+                primStifs.AddRange(contours.Select(arr =>
+                    InsertContourPlate(Data.CreatePlatePrimStif<ContourPlate>, arr)));
             }
 
             var primCs = column.GetCoordinateSystem();
@@ -260,7 +249,7 @@ namespace Muggle.TsExtensions.DC2001 {
             foreach (var stif in primStifs) {
                 cnt++;
 
-                weld = CreateWeldPrimStif<Weld>();
+                weld = Data.CreateWeldPrimStif<Weld>();
                 weld.MainObject = column;
                 weld.SecondaryObject = stif;
                 weld.Position = Weld.WeldPositionEnum.WELD_POSITION_PLUS_Y;
@@ -296,7 +285,7 @@ namespace Muggle.TsExtensions.DC2001 {
             var indent = (leftCorbelWidth - leftCorbelWebThickness) * 0.5 - _plateLCorbelStifBreadth;
             contours = ModelOperation.CalculateStiffeners(leftCorbel, p, _plateLCorbelStifThickness, indent: indent);
             var corbelStifs = contours
-                .Select(arr => InsertContourPlate(CreatePlateLCorbelStif<ContourPlate>, arr))
+                .Select(arr => InsertContourPlate(Data.CreatePlateLCorbelStif<ContourPlate>, arr))
                 .ToList();
 
             Model.GetWorkPlaneHandler()
@@ -306,7 +295,7 @@ namespace Muggle.TsExtensions.DC2001 {
             foreach (var stif in corbelStifs) {
                 cnt++;
 
-                weld = CreateWeldCorbelStif<Weld>();
+                weld = Data.CreateWeldCorbelStif<Weld>();
                 weld.MainObject = leftCorbel;
                 weld.SecondaryObject = stif;
                 weld.AroundWeld = false;
@@ -335,7 +324,8 @@ namespace Muggle.TsExtensions.DC2001 {
             indent = (rightCorbelWidth - rightCorbelWebThickness) * 0.5 - _plateRCorbelStifBreadth;
             contours = ModelOperation.CalculateStiffeners(rightCorbel, p, _plateRCorbelStifThickness,
                 indent: indent);
-            corbelStifs = contours.Select(arr => InsertContourPlate(CreatePlateRCorbelStif<ContourPlate>, arr)).ToList();
+            corbelStifs = contours.Select(arr => InsertContourPlate(Data.CreatePlateRCorbelStif<ContourPlate>, arr))
+                .ToList();
 
             Model.GetWorkPlaneHandler()
                 .SetCurrentTransformationPlane(new TransformationPlane(rightCorbel.GetCoordinateSystem()));
@@ -344,7 +334,7 @@ namespace Muggle.TsExtensions.DC2001 {
             foreach (var stif in corbelStifs) {
                 cnt++;
 
-                weld = CreateWeldCorbelStif<Weld>();
+                weld = Data.CreateWeldCorbelStif<Weld>();
                 weld.MainObject = rightCorbel;
                 weld.SecondaryObject = stif;
                 weld.AroundWeld = false;
@@ -372,14 +362,14 @@ namespace Muggle.TsExtensions.DC2001 {
             p1 = intersectionMinusX - axisX * (_leftCorbelStifPos + _plateLeftPadHeight * 0.5);
             p2 = p1 + axisX * _plateLeftPadHeight;
 
-            var leftPad = CreatePlateLeftPad<Beam>();
+            var leftPad = Data.CreatePlateLeftPad<Beam>();
             leftPad.StartPoint = p1;
             leftPad.EndPoint = p2;
             leftPad.Position.Rotation = Position.RotationEnum.FRONT;
             leftPad.Position.Depth = Position.DepthEnum.FRONT;
             leftPad.Insert();
 
-            weld = CreateWeldPad<Weld>();
+            weld = Data.CreateWeldPad<Weld>();
             weld.MainObject = leftCorbel;
             weld.SecondaryObject = leftPad;
             weld.Insert();
@@ -392,14 +382,14 @@ namespace Muggle.TsExtensions.DC2001 {
 
             p1 = intersectionPlusX + axisX * (_rightCorbelStifPos + _plateRightPadHeight * 0.5);
             p2 = p1 - axisX * _plateRightPadHeight;
-            var rightPad = CreatePlateRightPad<Beam>();
+            var rightPad = Data.CreatePlateRightPad<Beam>();
             rightPad.StartPoint = p1;
             rightPad.EndPoint = p2;
             rightPad.Position.Rotation = Position.RotationEnum.FRONT;
             rightPad.Position.Depth = Position.DepthEnum.FRONT;
             rightPad.Insert();
 
-            weld = CreateWeldPad<Weld>();
+            weld = Data.CreateWeldPad<Weld>();
             weld.MainObject = rightCorbel;
             weld.SecondaryObject = rightPad;
             weld.Insert();

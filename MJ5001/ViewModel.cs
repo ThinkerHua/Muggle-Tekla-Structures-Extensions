@@ -1,13 +1,13 @@
 ﻿/*==============================================================================
  *  Muggle TsExtensions - extensions for Tekla Structures
  *
- *  Copyright © 2025-2026 Huang YongXing.                 
+ *  Copyright © 2025-2026 Huang YongXing.
  *
- *  This library is free software, licensed under the terms of the GNU 
- *  General Public License as published by the Free Software Foundation, 
- *  either version 3 of the License, or (at your option) any later version. 
- *  You should have received a copy of the GNU General Public License 
- *  along with this program. If not, see <http://www.gnu.org/licenses/>. 
+ *  This library is free software, licensed under the terms of the GNU
+ *  General Public License as published by the Free Software Foundation,
+ *  either version 3 of the License, or (at your option) any later version.
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program. If not, see <http://www.gnu.org/licenses/>.
  *==============================================================================
  *  ViewModel.cs: view model for view of MJ5001
  *  written by Huang YongXing - thinkerhua@hotmail.com
@@ -18,14 +18,14 @@ using Tekla.Structures.Datatype;
 
 namespace Muggle.TsExtensions.MJ5001;
 
-[PartProperties("AnchorRod", material: "Q345B", @class: 0)]
-[PlateProperties("Embedment", thickness: 20, breadth: 300, height: 800, material: "Q345B")]
-[PlateProperties("Cleat", thickness: 12, breadth: 300, height: 300, material: "Q345B")]
-[BoltProperties("AnchorRod", size: 20, length: 150, distX: "4*125", distY: "160")]
-[BoltProperties("1", standard: "HS10.9", size: 20, distX: "3*70", distY: "2*70")]
-[WeldProperties(1, typeAbove: 10, sizeAbove: 6, around: 1, shop: 1)]
-[WeldProperties(2, typeAbove: 10, sizeAbove: 8, around: 1, shop: 1)]
-[WeldProperties(3, sizeAbove: 10, angleAbove: 45, rootOpeningAbove: 2, rootFaceAbove: 2)]
-[ChamferProperties(1, type: 3, x: 30)]
-[GeneralProperties(typeof(Double), "Gap", 15)]
+[Part("AnchorRod", Material = "Q345B", Class = 0)]
+[Plate("Embedment", Thickness = 20, Breadth = 300, Height = 800, Material = "Q345B")]
+[Plate("Cleat", Thickness = 12, Breadth = 300, Height = 300, Material = "Q345B")]
+[Bolt("AnchorRod", Size = 20, Length = 150, DistX = "4*125", DistY = "160")]
+[Bolt("1", Standard = "HS10.9", Size = 20, DistX = "3*70", DistY = "2*70")]
+[Weld(1, TypeAbove = 10, SizeAbove = 6, Around = 1, Shop = 1)]
+[Weld(2, TypeAbove = 10, SizeAbove = 8, Around = 1, Shop = 1)]
+[Weld(3, SizeAbove = 10, AngleAbove = 45, RootOpeningAbove = 2, RootFaceAbove = 2)]
+[Chamfer(1, Type = 3, X = 30)]
+[General(typeof(Double), "Gap", 15)]
 public partial class ViewModel : NotificationObject;
