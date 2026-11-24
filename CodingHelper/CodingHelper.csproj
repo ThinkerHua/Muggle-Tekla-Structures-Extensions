@@ -8,7 +8,7 @@
         <IsRoslynComponent>true</IsRoslynComponent>
         <PackageId>Muggle.TsExtensions.CodingHelper</PackageId>
         <Title>Tekla Structures OpenAPI development helper</Title>
-        <Version>3.0.0-beta.1</Version>
+        <Version>3.0.0-beta.2</Version>
         <Authors>Huang YongXing</Authors>
         <Description>Generate fields and utility methods for plugin data class, fields for plugin class, properties for view model class, and a simple user interface for plugin.
         为组件数据类生成字段和实用方法，为组件类生成字段，为视图模型类生成属性，为组件生成简易的用户界面。</Description>
@@ -22,34 +22,11 @@
         <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
         <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
         <PackageReleaseNotes>
-            1. The original three sets of registration fields/properties and default value attributes have been merged into one set, making it easier to use.
-            Previously:
-            *FieldsAttribute was applied to plugin data class to register fields;
-            *FieldDefaultValuesAttribute was applied to plugin class to register default values;
-            *PropertiesAttribute was applied to view model class to register properties and default values.
-            Now:
-            Only one *Attribute is needed, applied to plugin data class and view model class. The generator automatically decides whether to generate fields and default values or properties and default values based on whether the class implements the INotifyPropertyChanged interface.
-            2. The SetDataToDefaultIfUnset, Create*&lt;T>, and ModifyTo*&lt;T> methods that were previously generated in plugin class are now generated in plugin data class, and the SetDataToDefaultIfUnset method has been renamed SetFieldsToDefaultIfUnset.
-            3. The previous FieldsFromAttribute has been renamed FieldsFromDataAttribute and no longer requires passing the data class type as a parameter.
-            4. The previous three BoltCircle-related attributes have now been merged into BoltAttribute. Bolt now has three new fields/properties: Shape, NumberOfBolts, and Diameter.
-            5. To compatible with stud-related parameters in the INP dialog, a new StudAttribute has been added. Both WPF and WinForm dialogs can freely choose either BoltAttribute or StudAttribute.
-            6. Fixed the issue in previous versions where the CreateWeld*&lt;T> and ModifyToWeld&lt;T> methods did not set the BlindHoleDepth value.
-            7. Add support for INP type in the user interface generation feature.
-            
-            1、原先三套注册字段/属性和默认值的特性，合并为一套，更易于使用。
-            原先：
-            *FieldsAttribute 应用于组件数据类上，以注册字段；
-            *FieldDefaultValuesAttribute 应用于组件类上，以注册默认值；
-            *PropertiesAttribute 应用于视图模型上，以注册属性和默认值。
-            现在：
-            只需要一套 *Attribute 应用于组件数据类和视图模型上，
-            生成器自动根据类是否实现了 INotifyPropertyChanged 接口决定生成字段及默认值还是属性及默认值
-            2、原先在组件类中生成的 SetDataToDefaultIfUnset、Create*&lt;T> 和 ModifyTo*&lt;T> 方法，现在移至组件数据类中生成，且 SetDataToDefaultIfUnset 方法重命名为 SetFieldsToDefaultIfUnset。
-            3、原先的 FieldsFromAttribute 重命名为 FieldsFromDataAttribute，且不再需要传入数据类类型参数。
-            4、原先 BoltCircle 相关的三个特性，现合并至 BoltAttribute，现在 Bolt 多了 Shape, NumberOfBolts, Diameter 三个字段/属性。
-            5、为兼容 INP 对话框中栓钉相关的参数，新添加 StudAttribute 特性，WPF 和 WinForm 对话框可自由选用 BoltAttribute 或 StudAttribute 之一。
-            6、修复之前版本 CreateWeld*&lt;T> 和 ModifyToWeld&lt;T> 方法未设置 BlindHoleDepth 值的问题。
-            7、生成用户界面功能添加对 INP 类型的支持。
+            1. Fixed the issue where the INP interface stud circle diameter textbox was misaligned; 
+            2. Added a tip in the Readme about updating the INP interface;
+
+            1、修复 INP 界面栓钉圆环直径文本框错位的问题; 
+            2、Readme 添加更新 INP 界面的提示;
 		</PackageReleaseNotes>
         <IncludeBuildOutput>false</IncludeBuildOutput>
     </PropertyGroup>
@@ -70,18 +47,6 @@
             <PackagePath></PackagePath>
         </None>
         <None Update="Readme.md">
-            <Pack>True</Pack>
-            <PackagePath></PackagePath>
-        </None>
-        <None Update="Readme_zh-cn.md">
-            <Pack>True</Pack>
-            <PackagePath></PackagePath>
-        </None>
-        <None Update="AttributeNameReference.md">
-            <Pack>True</Pack>
-            <PackagePath></PackagePath>
-        </None>
-        <None Update="AttributeNameReference_zh-cn.md">
             <Pack>True</Pack>
             <PackagePath></PackagePath>
         </None>
