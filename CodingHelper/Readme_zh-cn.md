@@ -229,6 +229,9 @@ Connection、Detail、CustomPart 类型组件通用选项卡属性。
 
 目前支持 INP 和 WPF，计划在后续版本中添加对 WinForm 的支持。
 
+> *提示*：如果 INP 用户界面内容有更改，但实际显示没变化时，需要删除类似此路径的文件并重启 Tekla Structures：
+> "C:\Users\\\<UserName>\AppData\Local\Trimble\Tekla Structures\2021.0\Runtime\plugins\\\<PluginName>.inp"
+
 > ***注意***：使用 INP 用户界面时，焊缝的参数需要先在对话框里填好，点击应用，再创建组件，参数值才能生效。
 > 如果先创建组件，再打开对话框编辑焊缝的参数，点击修改，则参数值不会生效。  
 > 目前尚不清楚这是 Tekla Structures 本身的 BUG，还是生成的代码某处不符合 Tekla Structures 的规范，

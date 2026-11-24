@@ -347,7 +347,7 @@ namespace Muggle.TsExtensions.CodingHelper.Generators {
                     $"                        attribute(\"S{id}YLAB\", \"j_bolt_disty\", label, \"%s\", none, none, \"0\", \"0\", 8, 212)\r\n" +
                     $"                        parameter(\"\", \"S{id}DISTY\", distance_list, text, 156, 212, 152)\r\n" +
                     $"                        attribute(\"S{id}DLAB\", \"Circle diameter\", label, \"%s\", none, none, \"0\", \"0\", 8, 212)\r\n" +
-                    $"                        parameter(\"\", \"S{id}DIAM\", distance, number, 212, 240, 94)\r\n" +
+                    $"                        parameter(\"\", \"S{id}DIAM\", distance, number, 212, 212, 94)\r\n" +
                     $"                    }}");
             }
 

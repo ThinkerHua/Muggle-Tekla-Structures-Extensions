@@ -242,6 +242,10 @@ because you can directly make slight edits based on the generated code.
 
 Currently, supports INP and WPF; support for WinForm is planned for future versions.
 
+> *Tip*: If the INP user interface content has changed but nothing actually shows up, 
+> you need to delete a file like this path and restart Tekla Structures: 
+> "C:\Users\\\<UserName>\AppData\Local\Trimble\Tekla Structures\2021.0\Runtime\plugins\\\<PluginName>.inp"
+
 > ***Note***: When using the INP user interface, the weld parameters need to be filled in the dialog first, click Apply,
 > and create the component, then the parameter values will take effect.
 > If you create the component first and then open the dialog to edit the weld parameters and click Modify,
